@@ -1,0 +1,3 @@
+phase: phase4_forecasting_eval
+predictors: [naive, mlp, lstm, transformer, informer, tcn]
+horizons: [1, 2, 3]

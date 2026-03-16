@@ -1,0 +1,6 @@
+predictor_name: transformer
+d_model: 64
+nhead: 4
+num_layers: 2
+epochs: 10
+lr: 0.001

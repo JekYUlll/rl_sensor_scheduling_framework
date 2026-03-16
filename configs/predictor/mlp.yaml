@@ -1,0 +1,4 @@
+predictor_name: mlp
+hidden_dim: 128
+epochs: 10
+lr: 0.001

@@ -1,0 +1,10 @@
+env_name: windblown
+horizon: 2000
+base_freq_s: 1
+storm_transition:
+  p01: 0.02
+  p10: 0.04
+noise:
+  wind_speed: 0.4
+  temperature: 0.2
+  humidity: 0.8

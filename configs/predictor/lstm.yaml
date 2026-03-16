@@ -1,0 +1,5 @@
+predictor_name: lstm
+hidden_dim: 64
+num_layers: 1
+epochs: 10
+lr: 0.001

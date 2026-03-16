@@ -1,0 +1,21 @@
+sensors:
+  - sensor_id: wind_core
+    variables: [wind_speed_ms, wind_direction_deg]
+    refresh_interval: 1
+    power_cost: 1.0
+    noise_std: 0.2
+  - sensor_id: thermo_hygro
+    variables: [air_temperature_c, relative_humidity]
+    refresh_interval: 1
+    power_cost: 0.8
+    noise_std: 0.2
+  - sensor_id: pressure
+    variables: [air_pressure_pa]
+    refresh_interval: 2
+    power_cost: 0.6
+    noise_std: 15.0
+  - sensor_id: snow_flux
+    variables: [snow_mass_flux_kg_m2_s, snow_number_flux_m2_s]
+    refresh_interval: 1
+    power_cost: 1.4
+    noise_std: 0.1

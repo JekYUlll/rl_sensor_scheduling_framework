@@ -1,0 +1,10 @@
+phase: phase1_debug
+env_cfg: configs/env/linear_gaussian_case.yaml
+sensor_cfg: configs/sensors/linear_gaussian_sensors.yaml
+estimator_cfg: configs/estimator/kalman.yaml
+schedulers:
+  - configs/scheduler/random.yaml
+  - configs/scheduler/periodic.yaml
+  - configs/scheduler/round_robin.yaml
+  - configs/scheduler/info_priority.yaml
+  - configs/scheduler/dqn.yaml

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+reports/runs/
+reports/aggregate/
+*.pt
+*.pth
+*.npz
+*.csv
+*.png
+.DS_Store

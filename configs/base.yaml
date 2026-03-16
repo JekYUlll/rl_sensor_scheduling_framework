@@ -1,0 +1,19 @@
+seed: 42
+run:
+  episode_len: 400
+  num_episodes: 80
+  eval_episodes: 10
+  max_steps: 400
+  save_every: 10
+cost:
+  alpha_estimation: 1.0
+  beta_prediction: 0.0
+  lambda_power: 0.1
+  eta_switch: 0.01
+  rho_coverage: 0.1
+constraints:
+  max_active: 2
+  per_step_budget: 2.2
+  min_coverage_ratio: 0.05
+logging:
+  level: INFO
