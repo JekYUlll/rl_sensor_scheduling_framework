@@ -1,4 +1,7 @@
 seed: 42
+data:
+  train_ratio: 0.7
+  val_ratio: 0.15
 run:
   episode_len: 400
   num_episodes: 80

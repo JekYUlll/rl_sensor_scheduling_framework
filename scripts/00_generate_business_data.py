@@ -15,8 +15,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--env_cfg", default="configs/env/windblown_case.yaml")
     parser.add_argument("--sensor_cfg", default="configs/sensors/windblown_sensors.yaml")
-    parser.add_argument("--steps", type=int, default=2000)
-    parser.add_argument("--out", default="data/generated/windblown_case.csv")
+    parser.add_argument("--steps", type=int, default=10000)
+    parser.add_argument("--out", default="data/generated/windblown_truth.csv")
     args = parser.parse_args()
 
     out = generate_windblown_csv(args.env_cfg, args.sensor_cfg, args.steps, args.out)

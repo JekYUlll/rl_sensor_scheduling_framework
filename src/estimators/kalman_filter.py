@@ -53,10 +53,16 @@ class KalmanFilterEstimator(BaseEstimator):
             self.P = (I - K @ C) @ self.P
             self.x_hat = x_col.reshape(-1)
 
-    def on_step(self, selected_sensor_ids: list[str], power_ratio: float = 1.0) -> None:
+    def on_step(
+        self,
+        selected_sensor_ids: list[str],
+        power_ratio: float = 1.0,
+        observed_sensor_ids: list[str] | None = None,
+    ) -> None:
         self.t += 1
         self.freshness += 1.0
         self.last_action = np.zeros(len(self.sensor_ids), dtype=float)
+        observed_ids = list(observed_sensor_ids) if observed_sensor_ids is not None else list(selected_sensor_ids)
         for sid in self.sensor_ids:
             idx = self.id_to_idx[sid]
             self.coverage_total[idx] += 1.0
@@ -64,9 +70,13 @@ class KalmanFilterEstimator(BaseEstimator):
             idx = self.id_to_idx.get(sid)
             if idx is None:
                 continue
+            self.last_action[idx] = 1.0
+        for sid in observed_ids:
+            idx = self.id_to_idx.get(sid)
+            if idx is None:
+                continue
             self.freshness[idx] = 0.0
             self.coverage_hits[idx] += 1.0
-            self.last_action[idx] = 1.0
         self.current_budget_ratio = float(power_ratio)
 
     def get_state_estimate(self) -> np.ndarray:

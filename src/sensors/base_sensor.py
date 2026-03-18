@@ -39,6 +39,9 @@ class AbstractSensor(BaseSensor):
     def _touch_sampled(self, t: int) -> None:
         self._last_sample_time = t
 
+    def reset(self) -> None:
+        self._last_sample_time = -10**9
+
     def _noise_vec(self) -> np.ndarray:
         if isinstance(self.spec.noise_std, list):
             std = np.asarray(self.spec.noise_std, dtype=float)

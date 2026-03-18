@@ -13,31 +13,102 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from core.config import load_yaml
-from forecasting.dataset_builder import build_window_dataset, split_dataset
+from evaluation.forecast_metrics import compute_forecast_metrics
+from forecasting.dataset_builder import ForecastDataset, build_window_dataset, split_dataset
 from forecasting.factory import build_predictor
+
+
+def _normalize_split(train: ForecastDataset, val: ForecastDataset, test: ForecastDataset):
+    x_mean = train.X.mean(axis=(0, 1), keepdims=True)
+    x_std = np.maximum(train.X.std(axis=(0, 1), keepdims=True), 1e-6)
+    y_mean = train.Y.mean(axis=(0, 1), keepdims=True)
+    y_std = np.maximum(train.Y.std(axis=(0, 1), keepdims=True), 1e-6)
+
+    def _apply(ds: ForecastDataset) -> ForecastDataset:
+        return ForecastDataset(
+            X=(ds.X - x_mean) / x_std,
+            Y=(ds.Y - y_mean) / y_std,
+        )
+
+    stats = {
+        "x_mean": x_mean,
+        "x_std": x_std,
+        "y_mean": y_mean,
+        "y_std": y_std,
+    }
+    return _apply(train), _apply(val), _apply(test), stats
+
+
+def _load_dataset_meta(series_npz: str) -> dict:
+    meta_path = Path(series_npz).with_suffix(".meta.yaml")
+    if meta_path.exists():
+        return load_yaml(meta_path)
+    return {}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--series_npz", default="data/processed/forecast_dataset.npz")
+    parser.add_argument("--series_npz", required=True)
     parser.add_argument("--predictor_cfg", required=True)
     parser.add_argument("--run_id", required=True)
+    parser.add_argument("--lookback", type=int, default=20)
+    parser.add_argument("--horizon", type=int, default=3)
     args = parser.parse_args()
 
-    data = np.load(args.series_npz)
-    series = data["series"]
-    ds = build_window_dataset(series, lookback=20, horizon=3)
+    data = np.load(args.series_npz, allow_pickle=True)
+    input_series = data["input_series"] if "input_series" in data else data["series"]
+    target_series = data["target_series"] if "target_series" in data else input_series
+    feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
+
+    ds = build_window_dataset(
+        series=input_series,
+        lookback=args.lookback,
+        horizon=args.horizon,
+        target_series=target_series,
+    )
     train, val, test = split_dataset(ds)
+    train_norm, val_norm, test_norm, stats = _normalize_split(train, val, test)
 
     cfg = load_yaml(args.predictor_cfg)
     predictor = build_predictor(cfg)
-    predictor.fit(train, val)
-    metrics = predictor.evaluate(test)
+    predictor.fit(train_norm, val_norm)
+    pred_norm = predictor.predict(test_norm)
+    y_pred = pred_norm * stats["y_std"] + stats["y_mean"]
+
+    metrics = compute_forecast_metrics(test.Y, y_pred)
+    metrics_norm = compute_forecast_metrics(test_norm.Y, pred_norm)
+    meta = _load_dataset_meta(args.series_npz)
 
     out_dir = ROOT / "reports" / "runs" / args.run_id
     out_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame([{"model": cfg.get("predictor_name", "unknown"), **metrics}]).to_csv(out_dir / "metrics_forecast.csv", index=False)
-    print(json.dumps(metrics, indent=2))
+    row = {
+        "model": cfg.get("predictor_name", "unknown"),
+        "scheduler": meta.get("scheduler_name", "unknown"),
+        "source_run_id": meta.get("run_id", ""),
+        "dataset_npz": args.series_npz,
+        "lookback": int(args.lookback),
+        "horizon": int(args.horizon),
+        "n_features": int(len(feature_names)),
+        "avg_power": float(meta.get("avg_power", float("nan"))),
+        "total_power": float(meta.get("total_power", float("nan"))),
+        "coverage_mean": float(meta.get("coverage_mean", float("nan"))),
+        "trace_P_mean": float(meta.get("trace_P_mean", float("nan"))),
+        "full_open_power": float(meta.get("full_open_power", float("nan"))),
+        **metrics,
+        "rmse_norm": float(metrics_norm["rmse"]),
+        "mae_norm": float(metrics_norm["mae"]),
+        "mape_norm": float(metrics_norm["mape"]),
+    }
+    pd.DataFrame([row]).to_csv(out_dir / "metrics_forecast.csv", index=False)
+    np.savez(
+        out_dir / "forecast_predictions.npz",
+        y_true=test.Y,
+        y_pred=y_pred,
+        y_true_norm=test_norm.Y,
+        y_pred_norm=pred_norm,
+        feature_names=np.asarray(feature_names),
+    )
+    print(json.dumps(row, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

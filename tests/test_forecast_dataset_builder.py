@@ -13,3 +13,11 @@ def test_dataset_builder_alignment():
     assert ds.Y.shape[1] == 2
     # first label should start at index 5
     assert ds.Y[0, 0, 0] == 5.0
+
+
+def test_dataset_builder_supports_separate_target_series():
+    source = np.arange(20, dtype=float).reshape(-1, 1)
+    target = (np.arange(20, dtype=float) * 10.0).reshape(-1, 1)
+    ds = build_window_dataset(source, lookback=4, horizon=3, target_series=target)
+    assert ds.X.shape[0] == 14
+    assert ds.Y[0, 0, 0] == 40.0

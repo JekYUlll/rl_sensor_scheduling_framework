@@ -1,6 +1,18 @@
 env_name: windblown
 horizon: 2000
 base_freq_s: 1
+start_timestamp: "2026-01-01 00:00:00"
+state_columns:
+  - wind_speed_ms
+  - wind_direction_deg
+  - air_temperature_c
+  - relative_humidity
+  - air_pressure_pa
+  - snow_mass_flux_kg_m2_s
+  - snow_number_flux_m2_s
+event_column: event_flag
+event_source_column: snow_mass_flux_kg_m2_s
+event_quantile: 0.9
 storm_transition:
   p01: 0.02
   p10: 0.04

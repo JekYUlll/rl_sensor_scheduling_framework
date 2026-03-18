@@ -5,47 +5,36 @@ import argparse
 import sys
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
-
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from core.config import load_yaml
-from pipelines.common import build_linear_stack
-from scheduling.action_space import DiscreteActionSpace
+from pipelines.truth_pipeline import build_scheduler_dataset
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--env_cfg", default="configs/env/linear_gaussian_case.yaml")
-    parser.add_argument("--sensor_cfg", default="configs/sensors/linear_gaussian_sensors.yaml")
+    parser.add_argument("--truth_csv", default="data/generated/windblown_truth.csv")
+    parser.add_argument("--env_cfg", default="configs/env/windblown_case.yaml")
+    parser.add_argument("--sensor_cfg", default="configs/sensors/windblown_sensors.yaml")
     parser.add_argument("--estimator_cfg", default="configs/estimator/kalman.yaml")
-    parser.add_argument("--steps", type=int, default=2000)
-    parser.add_argument("--out_npz", default="data/processed/forecast_dataset.npz")
+    parser.add_argument("--scheduler_cfg", required=True)
+    parser.add_argument("--run_id", required=True)
+    parser.add_argument("--checkpoint", default=None)
+    parser.add_argument("--out_npz", default=None)
     args = parser.parse_args()
 
-    env, estimator, action_space, base_cfg, sensor_cfg = build_linear_stack(args.env_cfg, args.sensor_cfg, args.estimator_cfg)
-    env.reset()
-    estimator.reset()
-
-    xs = []
-    for _ in range(args.steps):
-        aid = np.random.randint(0, action_space.size())
-        selected = action_space.decode(int(aid))
-        step = env.step(selected)
-        estimator.predict()
-        estimator.update(step["available_observations"])
-        estimator.on_step(selected, power_ratio=step.get("info", {}).get("power_cost", 0.0) / max(action_space.per_step_budget, 1e-6))
-        xs.append(estimator.get_state_estimate())
-        if step["done"]:
-            break
-
-    x = np.asarray(xs, dtype=float)
-    out = Path(args.out_npz)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    np.savez(out, series=x)
-    print(out)
+    out_npz = args.out_npz or f"data/processed/{args.run_id}.npz"
+    out = build_scheduler_dataset(
+        truth_csv=args.truth_csv,
+        env_cfg_path=args.env_cfg,
+        sensor_cfg_path=args.sensor_cfg,
+        estimator_cfg_path=args.estimator_cfg,
+        scheduler_cfg_path=args.scheduler_cfg,
+        run_id=args.run_id,
+        out_npz=out_npz,
+        checkpoint=args.checkpoint,
+    )
+    print(out["out_npz"])
 
 
 if __name__ == "__main__":
