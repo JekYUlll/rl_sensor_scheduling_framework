@@ -5,6 +5,7 @@ import argparse
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,6 +13,8 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+
+MetricRecord = dict[str, Any]
 
 
 def _discover_prediction_runs(run_tag: str, model: str | None) -> list[tuple[str, str, Path]]:
@@ -55,12 +58,22 @@ def _load_comparison_table(run_tag: str) -> pd.DataFrame:
     return pd.DataFrame()
 
 
+def _as_finite_float(value: Any) -> float | None:
+    try:
+        out = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not np.isfinite(out):
+        return None
+    return out
+
+
 def _plot_overlay(
     y_true: np.ndarray,
     preds: dict[str, np.ndarray],
     title: str,
     out_path: Path,
-    metrics_map: dict[str, dict[str, float]],
+    metrics_map: dict[str, MetricRecord],
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(12, 4))
@@ -68,10 +81,10 @@ def _plot_overlay(
     ax.plot(x, y_true, color="black", linewidth=2.0, label="true")
     for scheduler, series in preds.items():
         meta = metrics_map.get(scheduler, {})
-        rmse_delta = meta.get("rmse_selected_target_increase_pct_vs_full_open")
-        power_save = meta.get("power_saving_pct_vs_full_open")
+        rmse_delta = _as_finite_float(meta.get("rmse_selected_target_increase_pct_vs_full_open"))
+        power_save = _as_finite_float(meta.get("power_saving_pct_vs_full_open"))
         label = scheduler
-        if rmse_delta is not None and power_save is not None and np.isfinite(rmse_delta) and np.isfinite(power_save):
+        if rmse_delta is not None and power_save is not None:
             label = f"{scheduler} (dRMSE={rmse_delta:+.2f}%, save={power_save:.1f}%)"
         ax.plot(x, series, linewidth=1.4, alpha=0.9, label=label)
     ax.set_title(title)
@@ -89,7 +102,7 @@ def _plot_small_multiples(
     preds: dict[str, np.ndarray],
     title: str,
     out_path: Path,
-    metrics_map: dict[str, dict[str, float]],
+    metrics_map: dict[str, MetricRecord],
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     schedulers = list(preds)
@@ -103,12 +116,12 @@ def _plot_small_multiples(
     for ax, scheduler in zip(axes_arr.flatten(), schedulers):
         series = preds[scheduler]
         meta = metrics_map.get(scheduler, {})
-        rmse_delta = meta.get("rmse_selected_target_increase_pct_vs_full_open", float("nan"))
-        power_save = meta.get("power_saving_pct_vs_full_open", float("nan"))
+        rmse_delta = _as_finite_float(meta.get("rmse_selected_target_increase_pct_vs_full_open"))
+        power_save = _as_finite_float(meta.get("power_saving_pct_vs_full_open"))
         ax.plot(x, y_true, color="black", linewidth=1.8, label="true")
         ax.plot(x, series, linewidth=1.2, alpha=0.95, label=scheduler)
         subtitle = scheduler
-        if np.isfinite(rmse_delta) and np.isfinite(power_save):
+        if rmse_delta is not None and power_save is not None:
             subtitle = f"{scheduler} | dRMSE={rmse_delta:+.2f}%, save={power_save:.1f}%"
         ax.set_title(subtitle, fontsize=10)
         ax.grid(alpha=0.25)
@@ -136,10 +149,12 @@ def main() -> None:
     args = parser.parse_args()
 
     comparison_df = _load_comparison_table(args.run_tag)
-    metrics_map_all: dict[tuple[str, str], dict[str, float]] = {}
+    metrics_map_all: dict[tuple[str, str], MetricRecord] = {}
     if not comparison_df.empty:
         for _, row in comparison_df.iterrows():
-            metrics_map_all[(str(row["model"]), str(row["scheduler"]))] = row.to_dict()
+            metrics_map_all[(str(row["model"]), str(row["scheduler"]))] = {
+                str(k): v for k, v in row.to_dict().items()
+            }
 
     discovered = _discover_prediction_runs(args.run_tag, None if args.model == "all" else args.model)
     if not discovered:
@@ -165,13 +180,15 @@ def main() -> None:
 
         for scheduler, pred_path in sorted(items):
             data = np.load(pred_path, allow_pickle=True)
-            features = data["feature_names"].tolist()
+            feature_key = "target_feature_names" if "target_feature_names" in data else "feature_names"
+            features = data[feature_key].tolist()
+            current_feature_names = [str(name) for name in features]
             if feature_names is None:
-                feature_names = features
-            elif feature_names != features:
+                feature_names = current_feature_names
+            elif feature_names != current_feature_names:
                 raise ValueError(f"feature_names mismatch for {pred_path}")
 
-            target_idx = _resolve_target_index(feature_names, str(args.target))
+            target_idx = _resolve_target_index(current_feature_names, str(args.target))
             horizon_idx = args.horizon - 1
             y_true = data["y_true"][:, horizon_idx, target_idx].astype(float)
             y_pred = data["y_pred"][:, horizon_idx, target_idx].astype(float)
@@ -192,7 +209,7 @@ def main() -> None:
         target_name = feature_names[target_idx]
 
         metrics_rows = []
-        metrics_map_model: dict[str, dict[str, float]] = {}
+        metrics_map_model: dict[str, MetricRecord] = {}
         full_open_rmse = None
         if "full_open" in preds:
             full_open_rmse = _rmse(reference_true, preds["full_open"])

@@ -9,6 +9,7 @@ from core.config import load_yaml, save_yaml
 from core.seed import set_seed
 from envs.truth_replay_env import TruthReplayConfig, TruthReplayEnvironment
 from estimators.kalman_filter import KalmanFilterEstimator
+from estimators.linear_gaussian_fit import fit_linear_gaussian_dynamics, safe_feature_scale, target_relevance_weights
 from estimators.state_summary import flatten_rl_state
 from evaluation.cost_metrics import compute_step_cost
 from scheduling.action_space import DiscreteActionSpace
@@ -78,10 +79,16 @@ def _build_sensors(sensor_cfg: dict, state_columns: list[str]) -> list[DatasetSe
     for item in sensor_cfg.get("sensors", []):
         variables = [str(v) for v in item.get("variables", [])]
         noise_std = item.get("noise_std", 0.0)
-        if isinstance(noise_std, list):
+        if isinstance(noise_std, dict):
+            obs_dim = len(variables)
+        elif isinstance(noise_std, list):
             obs_dim = len(noise_std)
         else:
             obs_dim = len(variables)
+        if obs_dim != len(variables):
+            raise ValueError(
+                f"Sensor {item['sensor_id']} has {len(variables)} variables but observation dimension {obs_dim}"
+            )
         spec = SensorSpec(
             sensor_id=str(item["sensor_id"]),
             obs_dim=obs_dim,
@@ -104,6 +111,16 @@ def _sensor_to_dims(sensor_cfg: dict, state_columns: list[str]) -> dict[str, lis
     return out
 
 
+def _resolve_reward_target_columns(base_cfg: dict, env_cfg: dict, state_columns: list[str]) -> list[str]:
+    configured = [str(col) for col in base_cfg.get("cost", {}).get("reward_target_columns", [])]
+    if configured:
+        return [col for col in configured if col in state_columns]
+    fallback = str(env_cfg.get("event_source_column", ""))
+    if fallback and fallback in state_columns:
+        return [fallback]
+    return []
+
+
 def _make_action_space(sensor_cfg: dict, base_cfg: dict) -> DiscreteActionSpace:
     sensor_ids = [str(s["sensor_id"]) for s in sensor_cfg.get("sensors", [])]
     power_costs = {str(s["sensor_id"]): float(s.get("power_cost", 1.0)) for s in sensor_cfg.get("sensors", [])}
@@ -121,18 +138,17 @@ def _build_estimator(
     state_columns: list[str],
     estimator_cfg: dict,
     sensor_cfg: dict,
+    cost_cfg: dict,
+    reward_target_columns: list[str],
     x0: np.ndarray | None = None,
 ) -> KalmanFilterEstimator:
     values = truth_df[state_columns].to_numpy(dtype=float)
-    diffs = np.diff(values, axis=0)
-    if diffs.shape[0] >= 2:
-        q_mat = np.cov(diffs, rowvar=False)
-        if np.ndim(q_mat) == 0:
-            q_mat = np.array([[float(q_mat)]], dtype=float)
-    else:
-        q_mat = np.eye(len(state_columns), dtype=float) * 1e-3
-    q_mat = np.asarray(q_mat, dtype=float)
-    q_mat += 1e-6 * np.eye(q_mat.shape[0], dtype=float)
+    a_mat, b_vec, q_mat = fit_linear_gaussian_dynamics(
+        values,
+        ridge_lambda=float(estimator_cfg.get("ridge_lambda", 1e-4)),
+        fit_intercept=bool(estimator_cfg.get("fit_intercept", True)),
+        max_spectral_radius=float(estimator_cfg.get("max_spectral_radius", 0.995)),
+    )
 
     p0_diag = estimator_cfg.get("P0_diag", [1.0])
     if len(p0_diag) == 1:
@@ -143,12 +159,24 @@ def _build_estimator(
         p0 = np.diag(np.asarray(p0_diag, dtype=float))
 
     sensor_ids = [str(s["sensor_id"]) for s in sensor_cfg.get("sensors", [])]
+    state_scale = safe_feature_scale(values, min_scale=float(estimator_cfg.get("min_scale", 1e-6)))
+    uncertainty_weights = target_relevance_weights(
+        values,
+        state_columns=state_columns,
+        target_columns=reward_target_columns,
+        min_weight=float(cost_cfg.get("min_relevance_weight", 0.25)),
+        power=float(cost_cfg.get("relevance_power", 1.0)),
+    )
     return KalmanFilterEstimator(
-        A=np.eye(len(state_columns), dtype=float),
+        A=a_mat,
         Q=q_mat,
         x0=values[0] if x0 is None else np.asarray(x0, dtype=float),
         P0=p0,
         sensor_ids=sensor_ids,
+        b=b_vec,
+        state_scale=state_scale,
+        uncertainty_weights=uncertainty_weights,
+        normalize_rl_state=bool(estimator_cfg.get("normalize_rl_state", True)),
         use_logdet=bool(estimator_cfg.get("use_logdet", False)),
     )
 
@@ -200,6 +228,18 @@ def _switch_count(prev_selected: list[str], selected: list[str]) -> int:
     return len(set(prev_selected) ^ set(selected))
 
 
+def _prediction_error_norm(
+    estimator: KalmanFilterEstimator,
+    latent_state: dict[str, float],
+    state_columns: list[str],
+    reward_target_indices: list[int],
+) -> float:
+    if not reward_target_indices:
+        return 0.0
+    truth = np.asarray([float(latent_state[col]) for col in state_columns], dtype=float)
+    return estimator.normalized_state_error(truth, dims=reward_target_indices)
+
+
 def _build_truth_stack(
     truth_csv: str,
     env_cfg_path: str,
@@ -219,6 +259,11 @@ def _build_truth_stack(
     truth_df = pd.read_csv(truth_csv)
     truth_df, event_col = _ensure_event_column(truth_df, env_cfg)
     state_columns = _infer_state_columns(truth_df, env_cfg)
+    cost_cfg = {
+        **base_cfg.get("cost", {}),
+        "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
+    }
+    reward_target_columns = _resolve_reward_target_columns(base_cfg, env_cfg, state_columns)
     split_cfg = base_cfg.get("data", {})
     bounds = _split_bounds(
         n_rows=len(truth_df),
@@ -249,9 +294,13 @@ def _build_truth_stack(
         state_columns=state_columns,
         estimator_cfg=estimator_cfg,
         sensor_cfg=sensor_cfg,
+        cost_cfg=cost_cfg,
+        reward_target_columns=reward_target_columns,
         x0=truth_df.iloc[split_start][state_columns].to_numpy(dtype=float),
     )
     action_space = _make_action_space(sensor_cfg, base_cfg)
+    col_to_idx = {name: i for i, name in enumerate(state_columns)}
+    reward_target_indices = [col_to_idx[col] for col in reward_target_columns if col in col_to_idx]
     meta = {
         "truth_df": truth_df,
         "state_columns": state_columns,
@@ -259,6 +308,9 @@ def _build_truth_stack(
         "bounds": bounds,
         "base_cfg": base_cfg,
         "sensor_cfg": sensor_cfg,
+        "cost_cfg": cost_cfg,
+        "reward_target_columns": reward_target_columns,
+        "reward_target_indices": reward_target_indices,
     }
     return env, estimator, action_space, meta
 
@@ -269,6 +321,7 @@ def _rollout_scheduler(
     scheduler,
     action_space: DiscreteActionSpace,
     cost_cfg: dict,
+    reward_target_indices: list[int],
     greedy: bool = False,
     collect_series: bool = False,
 ):
@@ -280,6 +333,7 @@ def _rollout_scheduler(
     total_reward = 0.0
     action_ids: list[int] = []
     trace_hist: list[float] = []
+    uncertainty_hist: list[float] = []
     power_hist: list[float] = []
     coverage_hist: list[float] = []
     truth_hist: list[list[float]] = []
@@ -314,17 +368,26 @@ def _rollout_scheduler(
         next_state = estimator.get_rl_state_features()
         current_event = bool(step.get("event_flags", {}).get("event", False))
         next_state["event"] = current_event
-        trace_p = float(estimator.get_uncertainty_summary()["trace_P"])
+        unc_summary = estimator.get_uncertainty_summary()
+        trace_p = float(unc_summary["trace_P"])
+        pred_error = _prediction_error_norm(
+            estimator,
+            latent_state=step["latent_state"],
+            state_columns=state_columns,
+            reward_target_indices=reward_target_indices,
+        )
         cost = compute_step_cost(
-            uncertainty_trace=trace_p,
+            uncertainty_summary=unc_summary,
             power_cost=power_cost,
             switch_count=_switch_count(prev_selected, selected),
             coverage_ratio=next_state.get("coverage_ratio", []),
             cost_cfg=cost_cfg,
+            prediction_error=pred_error,
         )
         reward = -cost
         total_reward += reward
         trace_hist.append(trace_p)
+        uncertainty_hist.append(float(unc_summary.get(str(cost_cfg.get("uncertainty_metric", "trace_P")), trace_p)))
         power_hist.append(power_cost)
         cov = next_state.get("coverage_ratio", [])
         coverage_hist.append(float(np.mean(cov)) if cov else 0.0)
@@ -348,6 +411,7 @@ def _rollout_scheduler(
     return {
         "episode_reward": total_reward,
         "trace_hist": trace_hist,
+        "uncertainty_hist": uncertainty_hist,
         "power_hist": power_hist,
         "coverage_hist": coverage_hist,
         "action_ids": action_ids,
@@ -401,18 +465,29 @@ def run_scheduler_training(
         **base_cfg.get("cost", {}),
         "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
     }
+    reward_target_indices = list(meta.get("reward_target_indices", []))
 
     if name != "dqn":
         episodes = int(run_cfg.get("eval_episodes", 10))
         rewards = []
         traces = []
+        uncertainties = []
         powers = []
         coverages = []
         all_actions = []
         for _ in range(episodes):
-            out = _rollout_scheduler(env, estimator, scheduler, action_space, cost_cfg, greedy=True)
+            out = _rollout_scheduler(
+                env,
+                estimator,
+                scheduler,
+                action_space,
+                cost_cfg,
+                reward_target_indices=reward_target_indices,
+                greedy=True,
+            )
             rewards.append(out["episode_reward"])
             traces.append(float(np.mean(out["trace_hist"])))
+            uncertainties.append(float(np.mean(out["uncertainty_hist"])))
             powers.append(float(np.mean(out["power_hist"])))
             coverages.append(float(np.mean(out["coverage_hist"])))
             all_actions.extend(out["action_ids"])
@@ -421,6 +496,7 @@ def run_scheduler_training(
             "scheduler": name,
             "reward_mean": float(np.mean(rewards)),
             "trace_P_mean": float(np.mean(traces)),
+            "uncertainty_mean": float(np.mean(uncertainties)),
             "power_mean": float(np.mean(powers)),
             "coverage_mean": float(np.mean(coverages)),
         }
@@ -437,6 +513,7 @@ def run_scheduler_training(
     rewards = []
     losses = []
     trace_means = []
+    uncertainty_means = []
     power_means = []
     coverage_means = []
     for _ in range(num_episodes):
@@ -446,6 +523,7 @@ def run_scheduler_training(
         ep_reward = 0.0
         ep_losses = []
         ep_trace = []
+        ep_uncertainty = []
         ep_power = []
         ep_cov = []
         prev_selected: list[str] = []
@@ -473,24 +551,34 @@ def run_scheduler_training(
             next_state["event"] = current_event
             next_vec = np.asarray(flatten_rl_state(next_state), dtype=np.float32)
 
-            trace_p = float(estimator.get_uncertainty_summary()["trace_P"])
+            unc_summary = estimator.get_uncertainty_summary()
+            trace_p = float(unc_summary["trace_P"])
+            pred_error = _prediction_error_norm(
+                estimator,
+                latent_state=step["latent_state"],
+                state_columns=meta["state_columns"],
+                reward_target_indices=reward_target_indices,
+            )
             cost = compute_step_cost(
-                uncertainty_trace=trace_p,
+                uncertainty_summary=unc_summary,
                 power_cost=power_cost,
                 switch_count=_switch_count(prev_selected, selected),
                 coverage_ratio=next_state.get("coverage_ratio", []),
                 cost_cfg=cost_cfg,
+                prediction_error=pred_error,
             )
             reward = -cost
             info = agent.observe(state_vec, aid, reward, next_vec, bool(step["done"]))
 
             ep_reward += reward
             ep_trace.append(trace_p)
+            ep_uncertainty.append(float(unc_summary.get(str(cost_cfg.get("uncertainty_metric", "trace_P")), trace_p)))
             ep_power.append(power_cost)
             cov = next_state.get("coverage_ratio", [])
             ep_cov.append(float(np.mean(cov)) if cov else 0.0)
-            if info.get("loss") is not None:
-                ep_losses.append(float(info["loss"]))
+            loss_value = info.get("loss")
+            if loss_value is not None:
+                ep_losses.append(float(loss_value))
             prev_selected = list(selected)
 
             if step["done"]:
@@ -498,6 +586,7 @@ def run_scheduler_training(
 
         rewards.append(ep_reward)
         trace_means.append(float(np.mean(ep_trace)))
+        uncertainty_means.append(float(np.mean(ep_uncertainty)))
         power_means.append(float(np.mean(ep_power)))
         coverage_means.append(float(np.mean(ep_cov)))
         if ep_losses:
@@ -507,6 +596,7 @@ def run_scheduler_training(
         "scheduler": "dqn",
         "reward_mean": float(np.mean(rewards)),
         "trace_P_mean": float(np.mean(trace_means)),
+        "uncertainty_mean": float(np.mean(uncertainty_means)),
         "power_mean": float(np.mean(power_means)),
         "coverage_mean": float(np.mean(coverage_means)),
     }
@@ -515,6 +605,7 @@ def run_scheduler_training(
         {
             "reward": rewards,
             "trace_P": trace_means,
+            "uncertainty": uncertainty_means,
             "power": power_means,
             "coverage": coverage_means,
         }
@@ -571,11 +662,20 @@ def evaluate_scheduler(
         **base_cfg.get("cost", {}),
         "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
     }
-    out = _rollout_scheduler(env, estimator, scheduler, action_space, cost_cfg, greedy=True)
+    out = _rollout_scheduler(
+        env,
+        estimator,
+        scheduler,
+        action_space,
+        cost_cfg,
+        reward_target_indices=list(meta.get("reward_target_indices", [])),
+        greedy=True,
+    )
     summary = {
         "scheduler": name,
         "reward_mean": float(out["episode_reward"]),
         "trace_P_mean": float(np.mean(out["trace_hist"])) if out["trace_hist"] else float("nan"),
+        "uncertainty_mean": float(np.mean(out["uncertainty_hist"])) if out["uncertainty_hist"] else float("nan"),
         "power_mean": float(np.mean(out["power_hist"])) if out["power_hist"] else float("nan"),
         "coverage_mean": float(np.mean(out["coverage_hist"])) if out["coverage_hist"] else float("nan"),
     }
@@ -653,6 +753,7 @@ def build_scheduler_dataset(
         scheduler,
         action_space,
         cost_cfg=cost_cfg,
+        reward_target_indices=list(meta.get("reward_target_indices", [])),
         greedy=True,
         collect_series=True,
     )
@@ -684,10 +785,12 @@ def build_scheduler_dataset(
         "truth_csv": truth_csv,
         "feature_names": meta["state_columns"],
         "n_steps": int(input_series.shape[0]),
+        "reward_target_columns": list(meta.get("reward_target_columns", [])),
         "avg_power": float(np.mean(power)) if power.size else 0.0,
         "total_power": float(np.sum(power)),
         "coverage_mean": float(np.mean(rollout["coverage_hist"])) if rollout["coverage_hist"] else 0.0,
         "trace_P_mean": float(np.mean(trace_p)) if trace_p.size else float("nan"),
+        "uncertainty_mean": float(np.mean(rollout["uncertainty_hist"])) if rollout["uncertainty_hist"] else float("nan"),
         "full_open_power": float(total_full_power),
         "budget_per_step": float(base_cfg.get("constraints", {}).get("per_step_budget", 0.0)),
         "max_active": int(base_cfg.get("constraints", {}).get("max_active", 0)),

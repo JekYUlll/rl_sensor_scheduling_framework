@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from typing import Any
+
+import numpy as np
 import torch
 from torch import nn
 
@@ -42,18 +45,21 @@ class TCNPredictor(BasePredictor):
         self.lr = lr
         self.batch_size = batch_size
         self.device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
-        self.model = None
-        self.horizon = None
-        self.n_features = None
-        self.history = None
+        self.model: _TCNRegressor | None = None
+        self.horizon: int | None = None
+        self.n_features: int | None = None
+        self.target_dim: int | None = None
+        self.history: dict[str, list[float]] | None = None
 
-    def fit(self, train_data, val_data=None) -> None:
+    def fit(self, train_data: Any, val_data: Any = None) -> None:
         X, Y = train_data.X, train_data.Y
         n, _, f = X.shape
         h = Y.shape[1]
+        target_dim = Y.shape[2]
         self.horizon = h
         self.n_features = f
-        self.model = _TCNRegressor(f, self.channels, self.kernel_size, h * f).to(self.device)
+        self.target_dim = target_dim
+        self.model = _TCNRegressor(f, self.channels, self.kernel_size, h * target_dim).to(self.device)
         x_t = torch.as_tensor(X, dtype=torch.float32, device=self.device)
         y_t = torch.as_tensor(Y.reshape(n, -1), dtype=torch.float32, device=self.device)
         x_val = y_val = None
@@ -71,11 +77,14 @@ class TCNPredictor(BasePredictor):
             batch_size=self.batch_size,
         )
 
-    def predict(self, test_data):
+    def predict(self, test_data: Any) -> np.ndarray:
         X = test_data.X
         n = X.shape[0]
         x_t = torch.as_tensor(X, dtype=torch.float32, device=self.device)
+        assert self.model is not None
+        assert self.horizon is not None
+        assert self.target_dim is not None
         self.model.eval()
         with torch.no_grad():
             y = self.model(x_t).cpu().numpy()
-        return y.reshape(n, self.horizon, self.n_features)
+        return y.reshape(n, self.horizon, self.target_dim)

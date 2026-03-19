@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import torch
 from torch import nn
@@ -16,6 +18,7 @@ class DQNAgent:
         expl_cfg = cfg.get("exploration", {})
 
         self.device = torch.device(device)
+        self.action_dim = int(action_dim)
         self.q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
         self.target_q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
         self.target_q.load_state_dict(self.q.state_dict())
@@ -43,25 +46,32 @@ class DQNAgent:
     def act(self, state_vec: np.ndarray, greedy: bool = False) -> int:
         epsilon = 0.0 if greedy else self.eps.value(self.total_steps)
         if np.random.rand() < epsilon:
-            return int(np.random.randint(0, self.q.net[-1].out_features))
+            return int(np.random.randint(0, self.action_dim))
         with torch.no_grad():
             s = torch.as_tensor(state_vec, dtype=torch.float32, device=self.device).unsqueeze(0)
             qv = self.q(s)
             return int(torch.argmax(qv, dim=1).item())
 
-    def observe(self, state, action, reward, next_state, done) -> dict:
+    def observe(
+        self,
+        state: np.ndarray,
+        action: int,
+        reward: float,
+        next_state: np.ndarray,
+        done: bool,
+    ) -> dict[str, float | None]:
         self.replay.push(state, action, reward, next_state, done)
         self.total_steps += 1
-        info = {"loss": None}
+        info: dict[str, float | None] = {"loss": None}
         if self.total_steps % self.train_interval == 0:
             loss = self._train_step()
             if loss is not None:
-                info["loss"] = float(loss)
+                info["loss"] = loss
         if self.total_steps % self.target_update_interval == 0:
             self.target_q.load_state_dict(self.q.state_dict())
         return info
 
-    def _train_step(self):
+    def _train_step(self) -> float | None:
         if len(self.replay) < max(self.batch_size, self.warmup_steps):
             return None
         s, a, r, ns, d = self.replay.sample(self.batch_size)

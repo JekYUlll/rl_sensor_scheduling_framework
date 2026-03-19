@@ -9,6 +9,7 @@ import numpy as np
 class ForecastDataset:
     X: np.ndarray
     Y: np.ndarray
+    target_indices: np.ndarray | None = None
 
 
 def build_window_dataset(
@@ -16,6 +17,7 @@ def build_window_dataset(
     lookback: int,
     horizon: int,
     target_series: np.ndarray | None = None,
+    target_indices: np.ndarray | None = None,
 ) -> ForecastDataset:
     series = np.asarray(series, dtype=float)
     if series.ndim == 1:
@@ -38,15 +40,20 @@ def build_window_dataset(
         return ForecastDataset(
             X=np.empty((0, lookback, series.shape[1])),
             Y=np.empty((0, horizon, target_series.shape[1])),
+            target_indices=None if target_indices is None else np.asarray(target_indices, dtype=int),
         )
-    return ForecastDataset(X=np.asarray(xs), Y=np.asarray(ys))
+    return ForecastDataset(
+        X=np.asarray(xs),
+        Y=np.asarray(ys),
+        target_indices=None if target_indices is None else np.asarray(target_indices, dtype=int),
+    )
 
 
 def split_dataset(ds: ForecastDataset, train_ratio: float = 0.7, val_ratio: float = 0.15):
     n = ds.X.shape[0]
     n_train = int(n * train_ratio)
     n_val = int(n * val_ratio)
-    train = ForecastDataset(ds.X[:n_train], ds.Y[:n_train])
-    val = ForecastDataset(ds.X[n_train : n_train + n_val], ds.Y[n_train : n_train + n_val])
-    test = ForecastDataset(ds.X[n_train + n_val :], ds.Y[n_train + n_val :])
+    train = ForecastDataset(ds.X[:n_train], ds.Y[:n_train], ds.target_indices)
+    val = ForecastDataset(ds.X[n_train : n_train + n_val], ds.Y[n_train : n_train + n_val], ds.target_indices)
+    test = ForecastDataset(ds.X[n_train + n_val :], ds.Y[n_train + n_val :], ds.target_indices)
     return train, val, test

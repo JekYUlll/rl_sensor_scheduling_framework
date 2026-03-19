@@ -1,17 +1,20 @@
 from __future__ import annotations
 
+import importlib
 from pathlib import Path
+from types import ModuleType
+from typing import Any
 
 import matplotlib.pyplot as plt
 
 try:
-    import seaborn as sns
+    sns = importlib.import_module("seaborn")
 except Exception:  # pragma: no cover
-    sns = None
+    sns: ModuleType | None = None
 
 
 def heatmap(
-    df,
+    df: Any,
     out_path: str | Path,
     title: str = "Heatmap",
     vmin: float | None = -1.0,

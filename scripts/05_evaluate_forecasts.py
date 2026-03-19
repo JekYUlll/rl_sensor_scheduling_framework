@@ -55,18 +55,18 @@ def main() -> None:
         print(out_path)
         return
 
-    baseline = baseline[
-        [
-            "model",
-            "rmse",
-            "mae",
-            "mape",
-            "rmse_norm",
-            "mae_norm",
-            "avg_power",
-            "total_power",
-        ]
-    ].rename(
+    baseline_cols = [
+        "model",
+        "rmse",
+        "mae",
+        "mape",
+        "rmse_norm",
+        "mae_norm",
+        "avg_power",
+        "total_power",
+    ]
+    baseline = baseline.loc[:, baseline_cols].copy()
+    baseline = baseline.rename(
         columns={
             "rmse": "rmse_full_open",
             "mae": "mae_full_open",

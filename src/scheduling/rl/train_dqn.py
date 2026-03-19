@@ -46,7 +46,7 @@ def rollout_episode(env, estimator, scheduler, action_space, cost_cfg: dict, gre
 
         unc = estimator.get_uncertainty_summary()
         step_cost = compute_step_cost(
-            uncertainty_trace=float(unc["trace_P"]),
+            uncertainty_summary=unc,
             power_cost=power_cost,
             switch_count=0,
             coverage_ratio=next_rl_state.get("coverage_ratio", []),

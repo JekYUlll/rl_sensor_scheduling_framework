@@ -126,10 +126,11 @@ def _rollout_baseline(env, estimator, scheduler, action_space, cost_cfg: dict):
         power_ratio = power_cost / max(action_space.per_step_budget, 1e-6)
         estimator.on_step(selected, power_ratio=power_ratio)
 
-        trace_p = float(estimator.get_uncertainty_summary()["trace_P"])
+        unc = estimator.get_uncertainty_summary()
+        trace_p = float(unc["trace_P"])
         cov = estimator.get_rl_state_features().get("coverage_ratio", [])
         cost = compute_step_cost(
-            uncertainty_trace=trace_p,
+            uncertainty_summary=unc,
             power_cost=power_cost,
             switch_count=0,
             coverage_ratio=cov,
@@ -241,9 +242,10 @@ def run_scheduler_training(
             next_state["event"] = bool(step.get("event_flags", {}).get("event", False))
             next_vec = np.asarray(flatten_rl_state(next_state), dtype=np.float32)
 
-            trace_p = float(estimator.get_uncertainty_summary()["trace_P"])
+            unc = estimator.get_uncertainty_summary()
+            trace_p = float(unc["trace_P"])
             cost = compute_step_cost(
-                uncertainty_trace=trace_p,
+                uncertainty_summary=unc,
                 power_cost=power_cost,
                 switch_count=0,
                 coverage_ratio=next_state.get("coverage_ratio", []),
@@ -255,8 +257,9 @@ def run_scheduler_training(
             ep_reward += reward
             ep_trace.append(trace_p)
             ep_power.append(power_cost)
-            if info.get("loss") is not None:
-                ep_losses.append(float(info["loss"]))
+            loss_value = info.get("loss")
+            if loss_value is not None:
+                ep_losses.append(float(loss_value))
 
             if step["done"]:
                 break

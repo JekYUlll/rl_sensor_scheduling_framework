@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -13,7 +14,7 @@ def main() -> None:
     args = parser.parse_args()
 
     run_dir = Path("reports/runs") / args.run_id
-    summary = {}
+    summary: dict[str, Any] = {}
     est = run_dir / "metrics_estimation.csv"
     fc = run_dir / "metrics_forecast.csv"
     if est.exists():

@@ -46,6 +46,21 @@ def _load_dataset_meta(series_npz: str) -> dict:
     return {}
 
 
+def _select_target_columns(
+    target_series: np.ndarray,
+    input_feature_names: list[str],
+    meta: dict,
+) -> tuple[np.ndarray, list[str], np.ndarray | None]:
+    configured = meta.get("reward_target_columns", [])
+    if not configured:
+        return np.asarray(target_series, dtype=float), list(input_feature_names), None
+    target_names = [str(name) for name in configured if str(name) in input_feature_names]
+    if not target_names:
+        return np.asarray(target_series, dtype=float), list(input_feature_names), None
+    indices = [input_feature_names.index(name) for name in target_names]
+    return np.asarray(target_series, dtype=float)[:, indices], target_names, np.asarray(indices, dtype=int)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--series_npz", required=True)
@@ -57,14 +72,17 @@ def main() -> None:
 
     data = np.load(args.series_npz, allow_pickle=True)
     input_series = data["input_series"] if "input_series" in data else data["series"]
-    target_series = data["target_series"] if "target_series" in data else input_series
-    feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
+    raw_target_series = data["target_series"] if "target_series" in data else input_series
+    input_feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
+    meta = _load_dataset_meta(args.series_npz)
+    target_series, target_feature_names, target_indices = _select_target_columns(raw_target_series, list(input_feature_names), meta)
 
     ds = build_window_dataset(
         series=input_series,
         lookback=args.lookback,
         horizon=args.horizon,
         target_series=target_series,
+        target_indices=target_indices,
     )
     train, val, test = split_dataset(ds)
     train_norm, val_norm, test_norm, stats = _normalize_split(train, val, test)
@@ -77,7 +95,6 @@ def main() -> None:
 
     metrics = compute_forecast_metrics(test.Y, y_pred)
     metrics_norm = compute_forecast_metrics(test_norm.Y, pred_norm)
-    meta = _load_dataset_meta(args.series_npz)
 
     out_dir = ROOT / "reports" / "runs" / args.run_id
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -88,11 +105,14 @@ def main() -> None:
         "dataset_npz": args.series_npz,
         "lookback": int(args.lookback),
         "horizon": int(args.horizon),
-        "n_features": int(len(feature_names)),
+        "n_features": int(len(input_feature_names)),
+        "n_targets": int(len(target_feature_names)),
+        "target_columns": json.dumps(target_feature_names, ensure_ascii=False),
         "avg_power": float(meta.get("avg_power", float("nan"))),
         "total_power": float(meta.get("total_power", float("nan"))),
         "coverage_mean": float(meta.get("coverage_mean", float("nan"))),
         "trace_P_mean": float(meta.get("trace_P_mean", float("nan"))),
+        "uncertainty_mean": float(meta.get("uncertainty_mean", float("nan"))),
         "full_open_power": float(meta.get("full_open_power", float("nan"))),
         **metrics,
         "rmse_norm": float(metrics_norm["rmse"]),
@@ -106,7 +126,9 @@ def main() -> None:
         y_pred=y_pred,
         y_true_norm=test_norm.Y,
         y_pred_norm=pred_norm,
-        feature_names=np.asarray(feature_names),
+        feature_names=np.asarray(target_feature_names),
+        input_feature_names=np.asarray(input_feature_names),
+        target_feature_names=np.asarray(target_feature_names),
     )
     print(json.dumps(row, ensure_ascii=False, indent=2))
 

@@ -9,8 +9,8 @@ def switch_cost(prev_action: list[str], action: list[str], weight: float) -> flo
 
 
 def coverage_penalty(coverage_ratio: list[float], min_ratio: float) -> float:
-    penalty = 0.0
-    for r in coverage_ratio:
-        if r < min_ratio:
-            penalty += (min_ratio - r)
-    return penalty
+    if not coverage_ratio or min_ratio <= 0.0:
+        return 0.0
+    ratios = [float(r) for r in coverage_ratio]
+    shortfalls = [max(float(min_ratio) - r, 0.0) for r in ratios]
+    return float(sum(shortfalls) / (len(ratios) * max(float(min_ratio), 1e-6)))

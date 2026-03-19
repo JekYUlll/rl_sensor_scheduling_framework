@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 
+import numpy as np
+
 
 class BaseEnvironment(ABC):
     @abstractmethod
@@ -86,7 +88,7 @@ class BasePredictor(ABC):
         ...
 
     @abstractmethod
-    def predict(self, test_data):
+    def predict(self, test_data) -> np.ndarray:
         ...
 
     @abstractmethod

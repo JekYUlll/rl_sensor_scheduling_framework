@@ -16,7 +16,7 @@ class SensorSpec:
     refresh_interval: int
     power_cost: float
     startup_delay: int = 0
-    noise_std: float | list[float] = 0.0
+    noise_std: float | list[float] | dict[str, float] = 0.0
 
 
 class AbstractSensor(BaseSensor):
@@ -42,11 +42,22 @@ class AbstractSensor(BaseSensor):
     def reset(self) -> None:
         self._last_sample_time = -10**9
 
-    def _noise_vec(self) -> np.ndarray:
-        if isinstance(self.spec.noise_std, list):
-            std = np.asarray(self.spec.noise_std, dtype=float)
+    def _noise_std_vec(self) -> np.ndarray:
+        noise_std = self.spec.noise_std
+        if isinstance(noise_std, dict):
+            std = np.asarray([float(noise_std.get(name, 0.0)) for name in self.spec.variables], dtype=float)
+        elif isinstance(noise_std, list):
+            std = np.asarray(noise_std, dtype=float)
         else:
-            std = np.full(self.spec.obs_dim, float(self.spec.noise_std), dtype=float)
+            std = np.full(self.spec.obs_dim, float(noise_std), dtype=float)
+        if std.shape[0] != self.spec.obs_dim:
+            raise ValueError(
+                f"Sensor {self.sensor_id} expected noise vector of length {self.spec.obs_dim}, got {std.shape[0]}"
+            )
+        return std
+
+    def _noise_vec(self) -> np.ndarray:
+        std = self._noise_std_vec()
         return np.random.randn(self.spec.obs_dim) * std
 
     def observe(self, latent_state: Any) -> dict:

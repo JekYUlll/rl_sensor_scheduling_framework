@@ -28,7 +28,7 @@ class InfoPriorityScheduler(BaseScheduler):
         return None
 
     def act(self, state: dict) -> int:
-        diag_p = state.get("diag_P", [])
+        diag_p = state.get("diag_P_norm", state.get("diag_P", []))
         freshness = state.get("freshness", [0.0] * len(self.sensor_ids))
         coverage = state.get("coverage_ratio", [0.0] * len(self.sensor_ids))
         prev = state.get("previous_action", [0.0] * len(self.sensor_ids))

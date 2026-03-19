@@ -26,10 +26,7 @@ class DatasetSensor(AbstractSensor):
         for row_idx, col_idx in enumerate(self.obs_indices):
             c_mat[row_idx, col_idx] = 1.0
 
-        if isinstance(self.spec.noise_std, list):
-            std = np.asarray(self.spec.noise_std, dtype=float)
-        else:
-            std = np.full(len(self.obs_indices), float(self.spec.noise_std), dtype=float)
+        std = self._noise_std_vec()
         r_mat = np.diag(np.maximum(std, 1e-6) ** 2)
 
         self._touch_sampled(t)
