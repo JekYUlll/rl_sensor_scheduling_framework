@@ -1,7 +1,9 @@
 seed: 42
 data:
-  train_ratio: 0.7
-  val_ratio: 0.15
+  reward_pretrain_ratio: 0.2
+  rl_train_ratio: 0.5
+  rl_val_ratio: 0.15
+  rl_test_ratio: 0.15
 run:
   episode_len: 400
   num_episodes: 80
@@ -11,6 +13,7 @@ run:
 cost:
   alpha_estimation: 1.0
   beta_prediction: 2.0
+  beta_forecast: 0.25
   lambda_power: 0.25
   eta_switch: 0.02
   rho_coverage: 1.0
@@ -18,6 +21,8 @@ cost:
   reward_target_columns: [snow_mass_flux_kg_m2_s]
   min_relevance_weight: 0.25
   relevance_power: 1.0
+forecast_reward:
+  enabled: true
 constraints:
   max_active: 2
   per_step_budget: 2.2

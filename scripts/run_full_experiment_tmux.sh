@@ -55,6 +55,18 @@ python scripts/00_generate_business_data.py \
   --out data/generated/windblown_truth.csv \
   | tee "reports/logs/${RUN_TAG}_00_generate.log"
 
+REWARD_RUN_ID="${RUN_TAG}_reward_model"
+python scripts/00b_pretrain_reward_predictor.py \
+  --truth_csv data/generated/windblown_truth.csv \
+  --env_cfg configs/env/windblown_case.yaml \
+  --sensor_cfg configs/sensors/windblown_sensors.yaml \
+  --estimator_cfg configs/estimator/kalman.yaml \
+  --reward_cfg configs/reward/lstm_aux.yaml \
+  --run_id "${REWARD_RUN_ID}" \
+  | tee "reports/logs/${RUN_TAG}_00b_reward_pretrain.log"
+
+REWARD_ARTIFACT="reports/runs/${REWARD_RUN_ID}/reward_predictor.pt"
+
 declare -A SCHED_CFG=(
   [full_open]="configs/scheduler/full_open.yaml"
   [random]="configs/scheduler/random.yaml"
@@ -74,6 +86,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn; do
     --estimator_cfg configs/estimator/kalman.yaml \
     --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
     --run_id "${RUN_ID}" \
+    --reward_artifact "${REWARD_ARTIFACT}" \
     | tee "reports/logs/${RUN_ID}_train.log"
 
   if [[ "${sched_name}" == "dqn" ]]; then
@@ -85,6 +98,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn; do
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
       --checkpoint "reports/runs/${RUN_ID}/scheduler_dqn.pt" \
+      --reward_artifact "${REWARD_ARTIFACT}" \
       | tee "reports/logs/${RUN_ID}_eval.log"
 
     python scripts/03_build_forecast_dataset.py \
@@ -105,6 +119,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn; do
       --estimator_cfg configs/estimator/kalman.yaml \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
+      --reward_artifact "${REWARD_ARTIFACT}" \
       | tee "reports/logs/${RUN_ID}_eval.log"
 
     python scripts/03_build_forecast_dataset.py \

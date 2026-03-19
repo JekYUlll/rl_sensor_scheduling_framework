@@ -102,3 +102,10 @@ class TruthReplayEnvironment(BaseEnvironment):
 
     def get_time_index(self) -> int:
         return self._local_t
+
+    def peek_future_targets(self, horizon: int, target_columns: list[str]) -> np.ndarray:
+        start = self._current_idx + 1
+        end = start + int(horizon)
+        if start < 0 or end > self.cfg.split_end:
+            return np.empty((0, len(target_columns)), dtype=float)
+        return self.truth_df.iloc[start:end][target_columns].to_numpy(dtype=float)

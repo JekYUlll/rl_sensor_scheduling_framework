@@ -21,7 +21,8 @@ class _PositionalEncoding(nn.Module):
         self.register_buffer("pe", pe.unsqueeze(0), persistent=False)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return x + self.pe[:, : x.size(1), :]
+        pe = self.get_buffer("pe")
+        return x + pe[:, : x.size(1), :]
 
 
 class _TransformerRegressor(nn.Module):

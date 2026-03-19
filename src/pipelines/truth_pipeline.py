@@ -12,6 +12,7 @@ from estimators.kalman_filter import KalmanFilterEstimator
 from estimators.linear_gaussian_fit import fit_linear_gaussian_dynamics, safe_feature_scale, target_relevance_weights
 from estimators.state_summary import flatten_rl_state
 from evaluation.cost_metrics import compute_step_cost
+from reward.forecast_reward import FrozenForecastRewardOracle, load_reward_oracle, train_reward_oracle_from_series
 from scheduling.action_space import DiscreteActionSpace
 from scheduling.baselines.full_open_scheduler import FullOpenScheduler
 from scheduling.baselines.info_priority_scheduler import InfoPriorityScheduler
@@ -32,15 +33,46 @@ def _build_run_dir(run_id: str) -> Path:
     return root
 
 
-def _split_bounds(n_rows: int, train_ratio: float, val_ratio: float) -> dict[str, tuple[int, int]]:
-    n_train = int(n_rows * train_ratio)
-    n_val = int(n_rows * val_ratio)
-    return {
-        "train": (0, n_train),
-        "val": (n_train, n_train + n_val),
-        "test": (n_train + n_val, n_rows),
+def _split_bounds(n_rows: int, split_cfg: dict) -> dict[str, tuple[int, int]]:
+    reward_ratio = float(split_cfg.get("reward_pretrain_ratio", 0.0))
+    rl_train_ratio = split_cfg.get("rl_train_ratio")
+    rl_val_ratio = split_cfg.get("rl_val_ratio")
+    rl_test_ratio = split_cfg.get("rl_test_ratio")
+
+    if rl_train_ratio is None:
+        rl_train_ratio = float(split_cfg.get("train_ratio", 0.7 - reward_ratio))
+    else:
+        rl_train_ratio = float(rl_train_ratio)
+    if rl_val_ratio is None:
+        rl_val_ratio = float(split_cfg.get("val_ratio", 0.15))
+    else:
+        rl_val_ratio = float(rl_val_ratio)
+    if rl_test_ratio is None:
+        rl_test_ratio = max(0.0, 1.0 - reward_ratio - rl_train_ratio - rl_val_ratio)
+    else:
+        rl_test_ratio = float(rl_test_ratio)
+
+    total_ratio = reward_ratio + rl_train_ratio + rl_val_ratio + rl_test_ratio
+    if total_ratio <= 0.0:
+        raise ValueError("Split ratios must sum to a positive value")
+
+    reward_end = int(n_rows * reward_ratio)
+    rl_train_end = reward_end + int(n_rows * rl_train_ratio)
+    rl_val_end = rl_train_end + int(n_rows * rl_val_ratio)
+    rl_test_end = n_rows
+
+    bounds = {
+        "reward_pretrain": (0, reward_end),
+        "rl_train": (reward_end, rl_train_end),
+        "rl_val": (rl_train_end, rl_val_end),
+        "rl_test": (rl_val_end, rl_test_end),
+        "task_all": (reward_end, rl_test_end),
         "all": (0, n_rows),
     }
+    bounds["train"] = bounds["rl_train"]
+    bounds["val"] = bounds["rl_val"]
+    bounds["test"] = bounds["rl_test"]
+    return bounds
 
 
 def _infer_state_columns(df: pd.DataFrame, env_cfg: dict) -> list[str]:
@@ -240,6 +272,26 @@ def _prediction_error_norm(
     return estimator.normalized_state_error(truth, dims=reward_target_indices)
 
 
+def _load_reward_cfg(reward_cfg_path: str | None) -> dict | None:
+    if not reward_cfg_path:
+        return None
+    return load_yaml(reward_cfg_path)
+
+
+def _forecast_reward_loss(
+    env: TruthReplayEnvironment,
+    oracle: FrozenForecastRewardOracle | None,
+    estimate_history: list[np.ndarray],
+) -> float:
+    if oracle is None:
+        return 0.0
+    future_truth = env.peek_future_targets(oracle.horizon, oracle.target_columns)
+    if not oracle.ready(len(estimate_history), len(future_truth)):
+        return 0.0
+    history = np.asarray(estimate_history[-oracle.lookback :], dtype=float)
+    return oracle.score(history, future_truth)
+
+
 def _build_truth_stack(
     truth_csv: str,
     env_cfg_path: str,
@@ -265,11 +317,7 @@ def _build_truth_stack(
     }
     reward_target_columns = _resolve_reward_target_columns(base_cfg, env_cfg, state_columns)
     split_cfg = base_cfg.get("data", {})
-    bounds = _split_bounds(
-        n_rows=len(truth_df),
-        train_ratio=float(split_cfg.get("train_ratio", 0.7)),
-        val_ratio=float(split_cfg.get("val_ratio", 0.15)),
-    )
+    bounds = _split_bounds(n_rows=len(truth_df), split_cfg=split_cfg)
     split_start, split_end = bounds[split_name]
     sensors = _build_sensors(sensor_cfg, state_columns)
     run_cfg = base_cfg.get("run", {})
@@ -290,7 +338,7 @@ def _build_truth_stack(
         seed=seed,
     )
     estimator = _build_estimator(
-        truth_df.iloc[bounds["train"][0] : bounds["train"][1]].reset_index(drop=True),
+        truth_df.iloc[bounds["rl_train"][0] : bounds["rl_train"][1]].reset_index(drop=True),
         state_columns=state_columns,
         estimator_cfg=estimator_cfg,
         sensor_cfg=sensor_cfg,
@@ -322,6 +370,7 @@ def _rollout_scheduler(
     action_space: DiscreteActionSpace,
     cost_cfg: dict,
     reward_target_indices: list[int],
+    reward_oracle: FrozenForecastRewardOracle | None = None,
     greedy: bool = False,
     collect_series: bool = False,
 ):
@@ -329,11 +378,13 @@ def _rollout_scheduler(
     estimator.reset()
     scheduler.reset()
     current_event = bool(reset_out.get("event_flags", {}).get("event", False))
+    estimate_history: list[np.ndarray] = [estimator.get_state_estimate().copy()]
 
     total_reward = 0.0
     action_ids: list[int] = []
     trace_hist: list[float] = []
     uncertainty_hist: list[float] = []
+    forecast_hist: list[float] = []
     power_hist: list[float] = []
     coverage_hist: list[float] = []
     truth_hist: list[list[float]] = []
@@ -370,12 +421,14 @@ def _rollout_scheduler(
         next_state["event"] = current_event
         unc_summary = estimator.get_uncertainty_summary()
         trace_p = float(unc_summary["trace_P"])
+        estimate_history.append(estimator.get_state_estimate().copy())
         pred_error = _prediction_error_norm(
             estimator,
             latent_state=step["latent_state"],
             state_columns=state_columns,
             reward_target_indices=reward_target_indices,
         )
+        forecast_error = _forecast_reward_loss(env, reward_oracle, estimate_history)
         cost = compute_step_cost(
             uncertainty_summary=unc_summary,
             power_cost=power_cost,
@@ -384,10 +437,12 @@ def _rollout_scheduler(
             cost_cfg=cost_cfg,
             prediction_error=pred_error,
         )
+        cost += float(cost_cfg.get("beta_forecast", 0.0)) * forecast_error
         reward = -cost
         total_reward += reward
         trace_hist.append(trace_p)
         uncertainty_hist.append(float(unc_summary.get(str(cost_cfg.get("uncertainty_metric", "trace_P")), trace_p)))
+        forecast_hist.append(float(forecast_error))
         power_hist.append(power_cost)
         cov = next_state.get("coverage_ratio", [])
         coverage_hist.append(float(np.mean(cov)) if cov else 0.0)
@@ -412,6 +467,7 @@ def _rollout_scheduler(
         "episode_reward": total_reward,
         "trace_hist": trace_hist,
         "uncertainty_hist": uncertainty_hist,
+        "forecast_hist": forecast_hist,
         "power_hist": power_hist,
         "coverage_hist": coverage_hist,
         "action_ids": action_ids,
@@ -427,12 +483,12 @@ def base_cfg_seed() -> int:
     return int(base.get("seed", 42))
 
 
-def run_scheduler_training(
+def pretrain_reward_predictor(
     truth_csv: str,
     env_cfg_path: str,
     sensor_cfg_path: str,
     estimator_cfg_path: str,
-    scheduler_cfg_path: str,
+    reward_cfg_path: str,
     run_id: str,
 ) -> dict:
     seed = base_cfg_seed()
@@ -441,7 +497,79 @@ def run_scheduler_training(
         env_cfg_path=env_cfg_path,
         sensor_cfg_path=sensor_cfg_path,
         estimator_cfg_path=estimator_cfg_path,
-        split_name="train",
+        split_name="reward_pretrain",
+        seed=seed,
+        random_reset=False,
+        episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="reward_pretrain"),
+    )
+    reward_cfg = load_yaml(reward_cfg_path)
+    run_dir = _build_run_dir(run_id)
+    scheduler = FullOpenScheduler([str(s["sensor_id"]) for s in meta["sensor_cfg"].get("sensors", [])])
+    rollout = _rollout_scheduler(
+        env,
+        estimator,
+        scheduler,
+        action_space,
+        cost_cfg=meta["cost_cfg"],
+        reward_target_indices=list(meta.get("reward_target_indices", [])),
+        reward_oracle=None,
+        greedy=True,
+        collect_series=True,
+    )
+    if not rollout["estimate_hist"] or not rollout["truth_hist"]:
+        raise ValueError("Reward predictor pretraining rollout produced empty series")
+
+    input_series = np.asarray(rollout["estimate_hist"], dtype=float)
+    truth_series = np.asarray(rollout["truth_hist"], dtype=float)
+    state_columns = list(meta["state_columns"])
+    target_columns = [str(col) for col in reward_cfg.get("target_columns", meta.get("reward_target_columns", []))]
+    if not target_columns:
+        target_columns = list(meta.get("reward_target_columns", []))
+    target_indices = [state_columns.index(col) for col in target_columns if col in state_columns]
+    if not target_indices:
+        raise ValueError("Reward predictor target_columns did not match any state columns")
+    target_series = truth_series[:, target_indices]
+
+    artifact_path = run_dir / "reward_predictor.pt"
+    reward_out = train_reward_oracle_from_series(
+        input_series=input_series,
+        target_series=target_series,
+        input_columns=state_columns,
+        target_columns=target_columns,
+        reward_cfg=reward_cfg,
+        artifact_path=artifact_path,
+    )
+    summary = {
+        "run_id": run_id,
+        "reward_cfg": reward_cfg_path,
+        "artifact_path": reward_out["artifact_path"],
+        "predictor_name": reward_out["predictor_name"],
+        "lookback": reward_out["lookback"],
+        "horizon": reward_out["horizon"],
+        "target_columns": reward_out["target_columns"],
+        **reward_out["metrics"],
+    }
+    save_yaml(summary, run_dir / "reward_predictor_meta.yaml")
+    pd.DataFrame([summary]).to_csv(run_dir / "reward_predictor_metrics.csv", index=False)
+    return {"run_dir": str(run_dir), "summary": summary}
+
+
+def run_scheduler_training(
+    truth_csv: str,
+    env_cfg_path: str,
+    sensor_cfg_path: str,
+    estimator_cfg_path: str,
+    scheduler_cfg_path: str,
+    run_id: str,
+    reward_artifact: str | None = None,
+) -> dict:
+    seed = base_cfg_seed()
+    env, estimator, action_space, meta = _build_truth_stack(
+        truth_csv=truth_csv,
+        env_cfg_path=env_cfg_path,
+        sensor_cfg_path=sensor_cfg_path,
+        estimator_cfg_path=estimator_cfg_path,
+        split_name="rl_train",
         seed=seed,
         random_reset=True,
     )
@@ -456,6 +584,7 @@ def run_scheduler_training(
             "sensor_cfg": sensor_cfg_path,
             "estimator_cfg": estimator_cfg_path,
             "scheduler_cfg": scheduler_cfg_path,
+            "reward_artifact": reward_artifact,
         },
         run_dir / "config_used.yaml",
     )
@@ -466,12 +595,17 @@ def run_scheduler_training(
         "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
     }
     reward_target_indices = list(meta.get("reward_target_indices", []))
+    reward_cfg = base_cfg.get("forecast_reward", {})
+    reward_oracle = None
+    if bool(reward_cfg.get("enabled", False)) and reward_artifact:
+        reward_oracle = load_reward_oracle(reward_artifact)
 
     if name != "dqn":
         episodes = int(run_cfg.get("eval_episodes", 10))
         rewards = []
         traces = []
         uncertainties = []
+        forecasts = []
         powers = []
         coverages = []
         all_actions = []
@@ -483,11 +617,13 @@ def run_scheduler_training(
                 action_space,
                 cost_cfg,
                 reward_target_indices=reward_target_indices,
+                reward_oracle=reward_oracle,
                 greedy=True,
             )
             rewards.append(out["episode_reward"])
             traces.append(float(np.mean(out["trace_hist"])))
             uncertainties.append(float(np.mean(out["uncertainty_hist"])))
+            forecasts.append(float(np.mean(out["forecast_hist"])))
             powers.append(float(np.mean(out["power_hist"])))
             coverages.append(float(np.mean(out["coverage_hist"])))
             all_actions.extend(out["action_ids"])
@@ -497,6 +633,7 @@ def run_scheduler_training(
             "reward_mean": float(np.mean(rewards)),
             "trace_P_mean": float(np.mean(traces)),
             "uncertainty_mean": float(np.mean(uncertainties)),
+            "forecast_reward_mean": float(np.mean(forecasts)),
             "power_mean": float(np.mean(powers)),
             "coverage_mean": float(np.mean(coverages)),
         }
@@ -514,16 +651,19 @@ def run_scheduler_training(
     losses = []
     trace_means = []
     uncertainty_means = []
+    forecast_means = []
     power_means = []
     coverage_means = []
     for _ in range(num_episodes):
         reset_out = env.reset()
         estimator.reset()
         current_event = bool(reset_out.get("event_flags", {}).get("event", False))
+        estimate_history: list[np.ndarray] = [estimator.get_state_estimate().copy()]
         ep_reward = 0.0
         ep_losses = []
         ep_trace = []
         ep_uncertainty = []
+        ep_forecast = []
         ep_power = []
         ep_cov = []
         prev_selected: list[str] = []
@@ -553,12 +693,14 @@ def run_scheduler_training(
 
             unc_summary = estimator.get_uncertainty_summary()
             trace_p = float(unc_summary["trace_P"])
+            estimate_history.append(estimator.get_state_estimate().copy())
             pred_error = _prediction_error_norm(
                 estimator,
                 latent_state=step["latent_state"],
                 state_columns=meta["state_columns"],
                 reward_target_indices=reward_target_indices,
             )
+            forecast_error = _forecast_reward_loss(env, reward_oracle, estimate_history)
             cost = compute_step_cost(
                 uncertainty_summary=unc_summary,
                 power_cost=power_cost,
@@ -567,12 +709,14 @@ def run_scheduler_training(
                 cost_cfg=cost_cfg,
                 prediction_error=pred_error,
             )
+            cost += float(cost_cfg.get("beta_forecast", 0.0)) * forecast_error
             reward = -cost
             info = agent.observe(state_vec, aid, reward, next_vec, bool(step["done"]))
 
             ep_reward += reward
             ep_trace.append(trace_p)
             ep_uncertainty.append(float(unc_summary.get(str(cost_cfg.get("uncertainty_metric", "trace_P")), trace_p)))
+            ep_forecast.append(float(forecast_error))
             ep_power.append(power_cost)
             cov = next_state.get("coverage_ratio", [])
             ep_cov.append(float(np.mean(cov)) if cov else 0.0)
@@ -587,6 +731,7 @@ def run_scheduler_training(
         rewards.append(ep_reward)
         trace_means.append(float(np.mean(ep_trace)))
         uncertainty_means.append(float(np.mean(ep_uncertainty)))
+        forecast_means.append(float(np.mean(ep_forecast)))
         power_means.append(float(np.mean(ep_power)))
         coverage_means.append(float(np.mean(ep_cov)))
         if ep_losses:
@@ -597,6 +742,7 @@ def run_scheduler_training(
         "reward_mean": float(np.mean(rewards)),
         "trace_P_mean": float(np.mean(trace_means)),
         "uncertainty_mean": float(np.mean(uncertainty_means)),
+        "forecast_reward_mean": float(np.mean(forecast_means)),
         "power_mean": float(np.mean(power_means)),
         "coverage_mean": float(np.mean(coverage_means)),
     }
@@ -606,6 +752,7 @@ def run_scheduler_training(
             "reward": rewards,
             "trace_P": trace_means,
             "uncertainty": uncertainty_means,
+            "forecast_reward": forecast_means,
             "power": power_means,
             "coverage": coverage_means,
         }
@@ -625,6 +772,7 @@ def evaluate_scheduler(
     scheduler_cfg_path: str,
     run_id: str,
     checkpoint: str | None = None,
+    reward_artifact: str | None = None,
 ) -> dict:
     seed = base_cfg_seed()
     env, estimator, action_space, meta = _build_truth_stack(
@@ -632,10 +780,10 @@ def evaluate_scheduler(
         env_cfg_path=env_cfg_path,
         sensor_cfg_path=sensor_cfg_path,
         estimator_cfg_path=estimator_cfg_path,
-        split_name="test",
+        split_name="rl_test",
         seed=seed,
         random_reset=False,
-        episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="test"),
+        episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="rl_test"),
     )
     base_cfg = meta["base_cfg"]
     scheduler_cfg = load_yaml(scheduler_cfg_path)
@@ -662,6 +810,10 @@ def evaluate_scheduler(
         **base_cfg.get("cost", {}),
         "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
     }
+    reward_cfg = base_cfg.get("forecast_reward", {})
+    reward_oracle = None
+    if bool(reward_cfg.get("enabled", False)) and reward_artifact:
+        reward_oracle = load_reward_oracle(reward_artifact)
     out = _rollout_scheduler(
         env,
         estimator,
@@ -669,6 +821,7 @@ def evaluate_scheduler(
         action_space,
         cost_cfg,
         reward_target_indices=list(meta.get("reward_target_indices", [])),
+        reward_oracle=reward_oracle,
         greedy=True,
     )
     summary = {
@@ -676,6 +829,7 @@ def evaluate_scheduler(
         "reward_mean": float(out["episode_reward"]),
         "trace_P_mean": float(np.mean(out["trace_hist"])) if out["trace_hist"] else float("nan"),
         "uncertainty_mean": float(np.mean(out["uncertainty_hist"])) if out["uncertainty_hist"] else float("nan"),
+        "forecast_reward_mean": float(np.mean(out["forecast_hist"])) if out["forecast_hist"] else float("nan"),
         "power_mean": float(np.mean(out["power_hist"])) if out["power_hist"] else float("nan"),
         "coverage_mean": float(np.mean(out["coverage_hist"])) if out["coverage_hist"] else float("nan"),
     }
@@ -692,11 +846,7 @@ def meta_length_from_truth_csv(truth_csv: str, env_cfg_path: str, split_name: st
     env_cfg = load_yaml(env_cfg_path)
     truth_df, _ = _ensure_event_column(truth_df, env_cfg)
     base_cfg = load_yaml("configs/base.yaml")
-    bounds = _split_bounds(
-        n_rows=len(truth_df),
-        train_ratio=float(base_cfg.get("data", {}).get("train_ratio", 0.7)),
-        val_ratio=float(base_cfg.get("data", {}).get("val_ratio", 0.15)),
-    )
+    bounds = _split_bounds(n_rows=len(truth_df), split_cfg=base_cfg.get("data", {}))
     start, end = bounds[split_name]
     return max(end - start, 1)
 
@@ -717,10 +867,10 @@ def build_scheduler_dataset(
         env_cfg_path=env_cfg_path,
         sensor_cfg_path=sensor_cfg_path,
         estimator_cfg_path=estimator_cfg_path,
-        split_name="all",
+        split_name="task_all",
         seed=seed,
         random_reset=False,
-        episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="all"),
+        episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="task_all"),
     )
     scheduler_cfg = load_yaml(scheduler_cfg_path)
     scheduler, name = _make_scheduler(scheduler_cfg, action_space, meta["sensor_cfg"], meta["state_columns"])
@@ -754,6 +904,7 @@ def build_scheduler_dataset(
         action_space,
         cost_cfg=cost_cfg,
         reward_target_indices=list(meta.get("reward_target_indices", [])),
+        reward_oracle=None,
         greedy=True,
         collect_series=True,
     )

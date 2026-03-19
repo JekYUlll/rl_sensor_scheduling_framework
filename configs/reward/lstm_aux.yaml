@@ -1,0 +1,11 @@
+predictor_cfg: configs/predictor/lstm.yaml
+pretrain_split: reward_pretrain
+lookback: 20
+horizon: 1
+loss: huber
+loss_delta: 1.0
+history_source: full_open_estimate
+input_columns: all_state_columns
+target_columns: [snow_mass_flux_kg_m2_s]
+train_ratio_within_pretrain: 0.8
+val_ratio_within_pretrain: 0.1

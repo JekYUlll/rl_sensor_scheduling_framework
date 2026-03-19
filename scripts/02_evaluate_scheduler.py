@@ -21,6 +21,7 @@ def main() -> None:
     parser.add_argument("--scheduler_cfg", required=True)
     parser.add_argument("--run_id", required=True)
     parser.add_argument("--checkpoint", default=None)
+    parser.add_argument("--reward_artifact", default=None)
     args = parser.parse_args()
 
     out = evaluate_scheduler(
@@ -31,6 +32,7 @@ def main() -> None:
         scheduler_cfg_path=args.scheduler_cfg,
         run_id=args.run_id,
         checkpoint=args.checkpoint,
+        reward_artifact=args.reward_artifact,
     )
     print(json.dumps(out, ensure_ascii=False, indent=2))
 
