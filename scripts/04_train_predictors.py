@@ -68,6 +68,7 @@ def main() -> None:
     parser.add_argument("--run_id", required=True)
     parser.add_argument("--lookback", type=int, default=20)
     parser.add_argument("--horizon", type=int, default=3)
+    parser.add_argument("--device", default=None)
     args = parser.parse_args()
 
     data = np.load(args.series_npz, allow_pickle=True)
@@ -88,6 +89,8 @@ def main() -> None:
     train_norm, val_norm, test_norm, stats = _normalize_split(train, val, test)
 
     cfg = load_yaml(args.predictor_cfg)
+    if args.device:
+        cfg["device"] = args.device
     predictor = build_predictor(cfg)
     predictor.fit(train_norm, val_norm)
     pred_norm = predictor.predict(test_norm)
@@ -107,6 +110,7 @@ def main() -> None:
         "horizon": int(args.horizon),
         "n_features": int(len(input_feature_names)),
         "n_targets": int(len(target_feature_names)),
+        "device": str(cfg.get("device", "auto")),
         "target_columns": json.dumps(target_feature_names, ensure_ascii=False),
         "avg_power": float(meta.get("avg_power", float("nan"))),
         "total_power": float(meta.get("total_power", float("nan"))),

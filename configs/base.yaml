@@ -11,12 +11,12 @@ run:
   max_steps: 400
   save_every: 10
 cost:
-  alpha_estimation: 1.0
-  beta_prediction: 2.0
-  beta_forecast: 0.25
-  lambda_power: 0.25
-  eta_switch: 0.02
-  rho_coverage: 1.0
+  alpha_estimation: 0.02
+  beta_prediction: 0.0
+  beta_forecast: 5.0
+  lambda_power: 0.0
+  eta_switch: 0.005
+  rho_coverage: 2.0
   uncertainty_metric: weighted_trace_P_norm
   reward_target_columns: [snow_mass_flux_kg_m2_s]
   min_relevance_weight: 0.25
@@ -26,6 +26,6 @@ forecast_reward:
 constraints:
   max_active: 2
   per_step_budget: 2.2
-  min_coverage_ratio: 0.15
+  min_coverage_ratio: 0.25
 logging:
   level: INFO

@@ -3,6 +3,7 @@ set -euo pipefail
 
 CONDA_ENV_NAME="darts"
 RUN_TAG=""
+PREDICTOR_GPUS=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -12,6 +13,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --run-tag)
       RUN_TAG="$2"
+      shift 2
+      ;;
+    --gpus)
+      PREDICTOR_GPUS="$2"
       shift 2
       ;;
     *)
@@ -135,17 +140,11 @@ for sched_name in full_open random periodic round_robin info_priority dqn; do
 
 done
 
-for sched_name in full_open random periodic round_robin info_priority dqn; do
-  DATASET_RUN_ID="${RUN_TAG}_${sched_name}"
-  for model_name in naive mlp lstm transformer informer tcn; do
-    RUN_ID="${DATASET_RUN_ID}_pred_${model_name}"
-    python scripts/04_train_predictors.py \
-      --series_npz "data/processed/${DATASET_RUN_ID}.npz" \
-      --predictor_cfg "configs/predictor/${model_name}.yaml" \
-      --run_id "${RUN_ID}" \
-      | tee "reports/logs/${RUN_ID}_train_predictor.log"
-  done
-done
+PREDICTOR_CMD=(bash scripts/04_train_predictors_multi_gpu.sh --run-tag "${RUN_TAG}")
+if [[ -n "${PREDICTOR_GPUS}" ]]; then
+  PREDICTOR_CMD+=(--gpus "${PREDICTOR_GPUS}")
+fi
+"${PREDICTOR_CMD[@]}" | tee "reports/logs/${RUN_TAG}_04_train_predictors_multi_gpu.log"
 
 python scripts/05_evaluate_forecasts.py \
   --reports_dir reports/runs \

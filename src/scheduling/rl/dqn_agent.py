@@ -12,12 +12,15 @@ from scheduling.rl.replay_buffer import ReplayBuffer
 
 
 class DQNAgent:
-    def __init__(self, state_dim: int, action_dim: int, cfg: dict, device: str = "cpu") -> None:
+    def __init__(self, state_dim: int, action_dim: int, cfg: dict, device: str | None = None) -> None:
         hidden_dims = cfg.get("network", {}).get("hidden_dims", [128, 128])
         train_cfg = cfg.get("training", {})
         expl_cfg = cfg.get("exploration", {})
 
-        self.device = torch.device(device)
+        resolved_device = device or str(cfg.get("device", "cpu"))
+        if resolved_device == "auto":
+            resolved_device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device(resolved_device)
         self.action_dim = int(action_dim)
         self.q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
         self.target_q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
