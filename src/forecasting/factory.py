@@ -4,6 +4,7 @@ from forecasting.baselines import NaivePredictor
 from forecasting.informer import InformerPredictor
 from forecasting.lstm import LSTMPredictor
 from forecasting.mlp import MLPPredictor
+from forecasting.pinn import PINNPredictor
 from forecasting.tcn import TCNPredictor
 from forecasting.transformer import TransformerPredictor
 
@@ -58,6 +59,17 @@ def build_predictor(cfg: dict):
             epochs=int(cfg.get("epochs", 10)),
             lr=float(cfg.get("lr", 1e-3)),
             batch_size=batch_size,
+            device=device,
+        )
+    if name == "pinn":
+        return PINNPredictor(
+            hidden_dim=int(cfg.get("hidden_dim", 64)),
+            num_layers=int(cfg.get("num_layers", 1)),
+            epochs=int(cfg.get("epochs", 10)),
+            lr=float(cfg.get("lr", 1e-3)),
+            batch_size=batch_size,
+            physics_weight=float(cfg.get("physics_weight", 0.1)),
+            constraints=list(cfg.get("constraints", [])),
             device=device,
         )
     raise ValueError(f"Unsupported predictor_name: {name}")

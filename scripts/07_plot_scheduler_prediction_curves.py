@@ -183,6 +183,16 @@ def main() -> None:
             feature_key = "target_feature_names" if "target_feature_names" in data else "feature_names"
             features = data[feature_key].tolist()
             current_feature_names = [str(name) for name in features]
+            if data["y_true"].shape[2] != len(current_feature_names):
+                raise ValueError(
+                    f"y_true channel count {data['y_true'].shape[2]} does not match target features "
+                    f"{len(current_feature_names)} for {pred_path}"
+                )
+            if data["y_pred"].shape[2] != len(current_feature_names):
+                raise ValueError(
+                    f"y_pred channel count {data['y_pred'].shape[2]} does not match target features "
+                    f"{len(current_feature_names)} for {pred_path}; stale or invalid prediction artifact"
+                )
             if feature_names is None:
                 feature_names = current_feature_names
             elif feature_names != current_feature_names:

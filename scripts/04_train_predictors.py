@@ -28,6 +28,7 @@ def _normalize_split(train: ForecastDataset, val: ForecastDataset, test: Forecas
         return ForecastDataset(
             X=(ds.X - x_mean) / x_std,
             Y=(ds.Y - y_mean) / y_std,
+            target_indices=ds.target_indices,
         )
 
     stats = {
@@ -92,8 +93,20 @@ def main() -> None:
     if args.device:
         cfg["device"] = args.device
     predictor = build_predictor(cfg)
+    if hasattr(predictor, "set_context"):
+        predictor.set_context(
+            input_feature_names=list(input_feature_names),
+            target_feature_names=list(target_feature_names),
+            stats=stats,
+        )
     predictor.fit(train_norm, val_norm)
     pred_norm = predictor.predict(test_norm)
+    if pred_norm.shape != test_norm.Y.shape:
+        raise ValueError(
+            "predictor output shape mismatch: "
+            f"pred={pred_norm.shape}, target={test_norm.Y.shape}, "
+            f"model={cfg.get('predictor_name', 'unknown')}"
+        )
     y_pred = pred_norm * stats["y_std"] + stats["y_mean"]
 
     metrics = compute_forecast_metrics(test.Y, y_pred)
@@ -124,6 +137,10 @@ def main() -> None:
         "mape_norm": float(metrics_norm["mape"]),
     }
     pd.DataFrame([row]).to_csv(out_dir / "metrics_forecast.csv", index=False)
+    history = getattr(predictor, "history", None)
+    if isinstance(history, dict) and history:
+        with (out_dir / "training_history.json").open("w", encoding="utf-8") as f:
+            json.dump(history, f, ensure_ascii=False, indent=2)
     np.savez(
         out_dir / "forecast_predictions.npz",
         y_true=test.Y,

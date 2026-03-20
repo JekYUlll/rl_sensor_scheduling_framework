@@ -12,3 +12,11 @@ class BasePredictor(InterfaceBasePredictor):
     def evaluate(self, test_data: Any) -> dict[str, float]:
         y_pred = self.predict(test_data)
         return compute_forecast_metrics(test_data.Y, y_pred)
+
+    def set_context(
+        self,
+        input_feature_names: list[str],
+        target_feature_names: list[str],
+        stats: dict[str, np.ndarray],
+    ) -> None:
+        return None

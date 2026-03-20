@@ -15,6 +15,7 @@ from forecasting.factory import build_predictor
 from forecasting.informer import InformerPredictor
 from forecasting.lstm import LSTMPredictor, _LSTM
 from forecasting.mlp import MLPPredictor, _MLP
+from forecasting.pinn import PINNPredictor
 from forecasting.tcn import TCNPredictor, _TCNRegressor
 from forecasting.transformer import TransformerPredictor, _TransformerRegressor
 
@@ -103,8 +104,8 @@ def _build_model_for_payload(predictor: Any, payload: dict) -> Any:
         assert isinstance(predictor, MLPPredictor)
         predictor.lookback = int(payload["lookback"])
         predictor.model = _MLP(int(payload["lookback"]) * n_features, horizon * target_dim, predictor.hidden_dim).to(predictor.device)
-    elif name == "lstm":
-        assert isinstance(predictor, LSTMPredictor)
+    elif name in {"lstm", "pinn"}:
+        assert isinstance(predictor, (LSTMPredictor, PINNPredictor))
         predictor.model = _LSTM(n_features, predictor.hidden_dim, horizon * target_dim, num_layers=predictor.num_layers).to(predictor.device)
     elif name == "tcn":
         assert isinstance(predictor, TCNPredictor)

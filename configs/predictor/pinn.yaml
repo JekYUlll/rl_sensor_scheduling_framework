@@ -1,0 +1,23 @@
+predictor_name: pinn
+hidden_dim: 64
+num_layers: 1
+epochs: 10
+lr: 0.001
+physics_weight: 0.2
+event_weighting:
+  enabled: true
+  target: snow_mass_flux_kg_m2_s
+  mode: quantile
+  quantile: 0.9
+  weight: 3.0
+constraints:
+  - name: nonnegative_target
+    target: snow_mass_flux_kg_m2_s
+    weight: 1.0
+  - name: threshold_transport
+    target: snow_mass_flux_kg_m2_s
+    wind_feature: wind_speed_ms
+    wind_threshold: 6.0
+    max_flux_when_calm: 1.0e-5
+    min_flux_when_active: 2.0e-5
+    weight: 1.0

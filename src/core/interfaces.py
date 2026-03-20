@@ -94,3 +94,11 @@ class BasePredictor(ABC):
     @abstractmethod
     def evaluate(self, test_data) -> dict:
         ...
+
+    def set_context(
+        self,
+        input_feature_names: list[str],
+        target_feature_names: list[str],
+        stats: dict[str, np.ndarray],
+    ) -> None:
+        """Optional hook for predictors that need dataset metadata or scaling stats."""
