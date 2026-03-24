@@ -377,3 +377,54 @@ r_t = -\Big(
 - `full_open` 在大多数模型、尤其是中高容量模型上重新成为性能上限；
 - 预算受限策略不再依赖“偶然的平滑/去噪效应”取得表面优势；
 - 学习型调度器的贡献被重新解释为“在预算受限下逼近 `full_open`”，而不是“在个别模型上碰巧超过 `full_open`”。
+
+### TODO 9：加入 CMDP / constrained RL 作为并行学习型基线
+
+为了避免把功耗最小化本身误写成主要优化目标，需要保留两条可并行对比的 RL 路线：
+
+- `dqn`：延续当前 reward-based 路线，把功耗项视为可调的 reward 组成部分；
+- `cmdp_dqn`：把功率限制改写成约束问题，采用两层设计：
+  - 硬约束：瞬时稳态功率、启动峰值功率、供电安全裕度；
+  - 长期约束：平均功耗与 episode 总能量预算。
+
+该步骤的目标不是直接替换原有 `dqn`，而是形成可配置、可共存的两类学习型方法，并比较：
+
+- 将功耗作为 reward 时，策略是否倾向于过度节电；
+- 将功耗作为约束时，是否更容易把学习重点放回预测任务本身；
+- `cmdp_dqn` 是否能在不违反供电约束的前提下，缩小与 `round_robin` / `info_priority` 的性能差距。
+
+
+## 11. 当前实现状态（online projector 版本）
+
+截至当前版本，windblown 主实验已经完成两项关键架构调整：
+
+1. 不再把 windblown 调度建模成静态 `action_id` 选择问题；
+2. 不再把主任务定义成单一 `snow_mass_flux_kg_m2_s` 预测。
+
+当前 windblown 调度已经改为：
+
+- baseline 与 RL 都先输出传感器分数或排序；
+- 再由 `OnlineSubsetProjector` 在每一步在线求解满足硬功率约束的可行子集；
+- `cmdp_dqn` 在此基础上额外处理平均功耗与总能量的长期约束。
+
+当前 reward oracle 主目标已经缩减为：
+
+- `air_temperature_c`
+- `snow_surface_temperature_c`
+- `wind_speed_ms`
+
+同时，当前 forecast target 主集合已经移除 `solar_radiation_wm2`，原因不是它不重要，而是当前 truth 生成方式下的辐射信号呈现尖峰稀疏分布，现有预测器无法形成可信预测；如果继续保留，只会扭曲整体评价。
+
+当前评估也不再只看 `dRMSE`，而是同时输出：
+
+- `RMSE`
+- `MAE`
+- `sMAPE`
+- `Pearson`
+- `DTW`
+
+因此，后续所有结果解释都必须建立在以下前提上：
+
+- 主任务是实验室微气候数字孪生，而不是单一雪通量回归；
+- `snow_mass_flux_kg_m2_s` 仍然重要，但更适合作为辅助/事件变量单独分析；
+- 若部分简单模型上出现 `round_robin > full_open`，应优先解释为输入表达和模型利用不足，而不是信息量倒挂。

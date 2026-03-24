@@ -7,7 +7,7 @@ HORIZON=3
 GPUS=""
 SKIP_EXISTING=1
 MODELS="naive,mlp,lstm,transformer,informer,tcn,pinn,sert_like,s4m_like"
-SCHEDULERS="full_open,random,periodic,round_robin,info_priority,dqn"
+SCHEDULERS="full_open,random,periodic,round_robin,info_priority,dqn,cmdp_dqn"
 
 cleanup_children() {
   local pids

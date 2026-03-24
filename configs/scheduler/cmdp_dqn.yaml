@@ -1,0 +1,30 @@
+scheduler_name: cmdp_dqn
+device: auto
+network:
+  hidden_dims:
+  - 128
+  - 128
+training:
+  gamma: 0.99
+  lr: 0.001
+  batch_size: 64
+  replay_size: 50000
+  warmup_steps: 500
+  target_update_interval: 200
+  train_interval: 1
+  grad_clip: 5.0
+exploration:
+  eps_start: 1.0
+  eps_end: 0.05
+  eps_decay_steps: 10000
+cmdp:
+  average_power_budget: 1.6
+  episode_energy_budget: 640.0
+  lambda_avg_init: 0.0
+  lambda_energy_init: 0.0
+  dual_lr_avg: 0.1
+  dual_lr_energy: 0.001
+  lambda_max: 100.0
+  normalize_power: true
+  power_reference: 2.2
+  lambda_power_in_reward: 0.0

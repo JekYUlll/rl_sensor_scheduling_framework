@@ -16,7 +16,7 @@ from core.config import load_yaml
 from evaluation.forecast_metrics import compute_forecast_metrics
 from forecasting.dataset_builder import ForecastDataset, build_window_dataset, split_dataset
 from forecasting.factory import build_predictor
-from forecasting.input_augmentation import augment_input_series
+from forecasting.series_preparation import prepare_input_and_targets
 
 
 def _normalize_split(train: ForecastDataset, val: ForecastDataset, test: ForecastDataset):
@@ -48,19 +48,6 @@ def _load_dataset_meta(series_npz: str) -> dict:
     return {}
 
 
-def _select_target_columns(
-    target_series: np.ndarray,
-    input_feature_names: list[str],
-    meta: dict,
-) -> tuple[np.ndarray, list[str], np.ndarray | None]:
-    configured = meta.get("reward_target_columns", [])
-    if not configured:
-        return np.asarray(target_series, dtype=float), list(input_feature_names), None
-    target_names = [str(name) for name in configured if str(name) in input_feature_names]
-    if not target_names:
-        return np.asarray(target_series, dtype=float), list(input_feature_names), None
-    indices = [input_feature_names.index(name) for name in target_names]
-    return np.asarray(target_series, dtype=float)[:, indices], target_names, np.asarray(indices, dtype=int)
 
 
 def main() -> None:
@@ -76,20 +63,22 @@ def main() -> None:
     data = np.load(args.series_npz, allow_pickle=True)
     input_series = data["input_series"] if "input_series" in data else data["series"]
     raw_target_series = data["target_series"] if "target_series" in data else input_series
-    input_feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
+    base_feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
     observed_mask = data["observed_mask"] if "observed_mask" in data else None
+    meta = _load_dataset_meta(args.series_npz)
     cfg = load_yaml(args.predictor_cfg)
     use_observed_mask = bool(cfg.get("use_observed_mask", False))
     use_time_delta = bool(cfg.get("use_time_delta", False))
-    input_series, input_feature_names = augment_input_series(
+    target_columns = [str(name) for name in meta.get("forecast_target_columns", meta.get("reward_target_columns", []))]
+    input_series, input_feature_names, target_series, target_feature_names, target_indices = prepare_input_and_targets(
         input_series=np.asarray(input_series, dtype=float),
+        target_series=np.asarray(raw_target_series, dtype=float),
+        feature_names=[str(name) for name in base_feature_names],
         observed_mask=None if observed_mask is None else np.asarray(observed_mask, dtype=float),
-        feature_names=[str(name) for name in input_feature_names],
         use_observed_mask=use_observed_mask,
         use_time_delta=use_time_delta,
+        target_columns=target_columns,
     )
-    meta = _load_dataset_meta(args.series_npz)
-    target_series, target_feature_names, target_indices = _select_target_columns(raw_target_series, list(input_feature_names), meta)
 
     ds = build_window_dataset(
         series=input_series,

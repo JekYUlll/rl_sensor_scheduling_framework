@@ -51,5 +51,8 @@ class InfoPriorityScheduler(BaseScheduler):
             scored.append((sid, score))
 
         scored.sort(key=lambda x: x[1], reverse=True)
+        if hasattr(self.action_space, "select_from_scores") and not hasattr(self.action_space, "decode"):
+            prev_selected = [sid for sid, flag in zip(self.sensor_ids, prev) if float(flag) > 0.5]
+            return self.action_space.select_from_scores({sid: score for sid, score in scored}, prev_selected=prev_selected)
         chosen = [sid for sid, _ in scored[: self.max_active]]
         return self.action_space.nearest_feasible(chosen)

@@ -2,44 +2,75 @@
 
 ## 1. 文档目的
 
-本文件用于统一说明 `rl_sensor_scheduling_framework` 中各个调度算法的角色、实现逻辑与论文中的比较意义。
+本文件说明 `rl_sensor_scheduling_framework` 里各类调度算法的实际实现、适用范围和论文中的比较意义。当前框架已经分成两类调度问题：
 
-当前实验的基本设定是：
+- `linear_gaussian`：保留离散 `action_id` 形式，适合作为 toy benchmark；
+- `windblown`：使用 **online projector + sensor scoring**，在每一步在线生成满足功率约束的传感器子集，不再依赖静态动作编号。
 
-- 在共享的高频 truth 环境上进行多传感器调度；
-- 传感器受到 `per_step_budget` 与 `max_active` 约束；
-- 调度器输出的是当前时刻要开启的传感器子集；
-- 不同调度器生成不同的估计状态序列，再交给统一的下游预测模型训练与评估。
+如果不区分这两类问题，就很容易误解 `periodic`、`round_robin`、`dqn`、`cmdp_dqn` 当前到底在选择什么。
 
-因此，调度算法的比较目标不是“谁更省电”这一件事，而是：
+## 2. Windblown 场景下的统一约束
 
-> 在预算受限条件下，谁能保留对目标预测最有价值的信息。
+当前主实验是 `windblown`，对应：
 
-## 2. 统一约束与比较口径
+- `configs/env/windblown_case.yaml`
+- `configs/sensors/windblown_sensors.yaml`
 
-所有调度器都使用同一个离散动作空间：
+这里所有传感器都可调度。约束分成两层：
 
-- 传感器子集由 `DiscreteActionSpace` 预先枚举；
-- 每个动作必须满足总功耗不超过 `per_step_budget`；
-- 同时开启的传感器数不超过 `max_active`；
-- 在当前 windblown 设定下，基础气象类传感器功耗较低，风吹雪专用传感器功耗较高。
+### 2.1 硬约束
 
-论文中应统一使用以下两类指标：
+由 `src/scheduling/online_projector.py` 负责在线投影：
 
-- 估计层指标：
-  - `trace_P_mean`
-  - `power_mean`
-  - `coverage_mean`
-- 预测层指标：
-  - `rmse`
-  - `mae`
-  - 相对 `full_open` 的误差增幅
+- 瞬时稳态功率不超过 `per_step_budget`
+- 启动/加热峰值功率不超过 `startup_peak_budget`
+- 保留 `power_safety_margin`
+- 同时开启传感器数不超过 `max_active`
 
-其中 `full_open` 应视为信息最充分的 oracle 上限；预算受限算法的目标是尽量逼近它，而不是理论上超越它。
+这部分不是 reward 惩罚，而是动作可行域本身的定义。
 
-## 3. 各调度算法说明
+### 2.2 长期约束
 
-### 3.1 `full_open`
+只对 `cmdp_dqn` 生效：
+
+- 平均功耗约束 `average_power_budget`
+- 单 episode 总能量约束 `episode_energy_budget`
+
+这部分通过 dual variable 更新处理，不通过硬裁剪处理。
+
+## 3. 动作是如何生成的
+
+### 3.1 `linear_gaussian` 的旧机制
+
+在 toy `linear_gaussian` 任务中，动作仍然是：
+
+- `DiscreteActionSpace` 预枚举所有满足约束的传感器组合
+- 调度器直接选择一个 `action_id`
+
+这套机制仍然存在，但主要用于小规模离散动作的基准实验。
+
+### 3.2 `windblown` 的现机制
+
+在 `windblown` 中，主机制已经改成：
+
+- 调度器先输出 **传感器分数 / 排序**；
+- `OnlineSubsetProjector` 根据当前状态和上一步动作，在线求解可行子集；
+- 对于传感器数较少的情况，projector 在运行时对所有候选子集做精确搜索；
+- 传感器数变大时，再退化到 greedy 投影。
+
+所以在当前主实验中：
+
+- `periodic` 不是轮换预枚举 `action_id`
+- `round_robin` 也不是先构造固定离散动作表
+- `dqn/cmdp_dqn` 学的也不是静态动作编号
+
+而是统一变成了：
+
+> 输出每个传感器的优先级，再由在线约束投影器决定当前步真正开启哪些传感器。
+
+## 4. 各调度算法说明
+
+### 4.1 `full_open`
 
 配置：
 
@@ -51,21 +82,17 @@
 
 逻辑：
 
-- 每个时间步都尝试开启所有传感器；
-- 实际动作仍需通过动作空间约束，因此它代表的是“预算允许条件下尽量全开”的 oracle baseline。
+- 每一步都尝试开启全部传感器；
+- 它作为 oracle baseline 保留，不走受约束的 projector；
+- 作用是提供“信息最充分”参考上限，而不是部署可行策略。
 
-作用：
+解释口径：
 
-- 作为信息最充分的参考上限；
-- 用于比较预算受限策略的误差保持能力；
-- 所有 scheduler 的预测误差通常都要与它做差分比较。
+- `full_open` 应视为 oracle 上限；
+- 预算受限策略的目标是逼近它，而不是在理论上优于它；
+- 如果局部模型上出现 `round_robin > full_open`，更应解释为输入表达或模型利用不足，而不是信息量真的更高。
 
-注意：
-
-- `full_open` 不是直接输入真值，而是“全开传感器 + 观测噪声 + estimator”后的结果；
-- 因此它在单次实验、个别模型上偶尔不占优，并不等价于理论上信息更少的策略真的优于它。
-
-### 3.2 `random`
+### 4.2 `random`
 
 配置：
 
@@ -77,21 +104,15 @@
 
 逻辑：
 
-- 每一步从可行动作空间中均匀随机采样一个动作；
-- 不考虑不确定性、事件状态、覆盖率或历史动作。
+- 对每个传感器先给随机分数；
+- 再由 projector 在线投影为可行子集。
 
 作用：
 
-- 作为最低限度的无结构基线；
-- 用来验证“只要满足预算约束并随机开关传感器”通常不足以保留稳定预测性能。
+- 无结构随机基线；
+- 用来说明“只满足功率约束”本身不足以保留有预测价值的信息。
 
-预期特点：
-
-- 节电通常较高；
-- 误差波动大；
-- 对不同随机种子较敏感。
-
-### 3.3 `periodic`
+### 4.3 `periodic`
 
 配置：
 
@@ -103,21 +124,21 @@
 
 逻辑：
 
-- 按固定周期在离散动作空间中循环切换；
-- 不依赖当前状态，只依赖时间步和内部指针。
+- 先按固定节拍生成一个周期性传感器排序；
+- 再交给 projector 求出当前时刻可行子集。
+
+需要避免的误解：
+
+- 在旧的离散动作空间里，`periodic` 的“周期”指 action id 轮换；
+- 在当前 `windblown` 主实验里，`periodic` 的“周期”是对传感器优先级排序做周期切换；
+- 它已经不再等价于“遍历预枚举动作列表”。
 
 作用：
 
-- 代表“预先设定采样轮换计划”的工程基线；
+- 表示“预定义调度节奏”的工程基线；
 - 用于和真正状态自适应策略区分。
 
-预期特点：
-
-- 可解释性强；
-- 行为稳定；
-- 但无法根据事件段或不确定性动态调整资源分配。
-
-### 3.4 `round_robin`
+### 4.4 `round_robin`
 
 配置：
 
@@ -129,30 +150,22 @@
 
 逻辑：
 
-- 以传感器列表顺序轮询；
-- 每次优先选择一组传感器；
-- 通过 `nearest_feasible(...)` 映射到满足预算约束的最近可行动作；
-- `min_on_steps` 用于控制动作保持时间，避免过快切换。
+- 以传感器顺序做轮询；
+- 每一步输出一个传感器级排序；
+- 再经 projector 映射到当前可行子集。
 
-作用：
+与 `periodic` 的关键区别：
 
-- 代表“公平覆盖优先”的强结构化基线；
-- 特别适合当前“低功耗基础气象 + 高功耗专用风吹雪传感器”的结构。
+- `periodic`：按固定时间节奏给排序打分；
+- `round_robin`：按传感器覆盖公平性推进指针；
+- 因此 `round_robin` 更强调长期覆盖结构，而不是固定时间节拍。
 
-为什么它通常很强：
+额外说明：
 
-- 基础气象信息可以相对稳定保留；
-- 高功耗风吹雪传感器按结构化方式轮换；
-- 往往不会像随机策略那样丢失长期覆盖；
-- 也不会像极端目标驱动策略那样塌缩到少量传感器。
+- 此前 online projector 版本里，`round_robin` 曾有一个真实 bug：指针步长与排序长度耦合，导致指针不前进；
+- 该问题已修复，当前实现确实会轮换高功耗传感器，而不是固定输出同一子集。
 
-当前实验中，如果 `round_robin` 在部分模型上接近甚至略优于 `full_open`，更应解释为：
-
-- 输入表示还没有充分利用 `full_open` 的额外信息；
-- 或 `round_robin` 带来了轻度正则化/去噪效应；
-- 而不是它在信息论意义上优于 `full_open`。
-
-### 3.5 `info_priority`
+### 4.5 `info_priority`
 
 配置：
 
@@ -164,33 +177,26 @@
 
 逻辑：
 
-- 对每个传感器计算启发式评分；
-- 评分由以下部分加权组成：
-  - 不确定性
+- 为每个传感器计算启发式 score；
+- score 结合：
+  - uncertainty
   - freshness
-  - event 指示
+  - event signal
   - coverage deficit
   - switch penalty
-- 选择得分最高的若干传感器，再映射到最近的可行动作。
+- 再由 projector 在约束下选出可行子集。
 
 作用：
 
-- 代表“基于任务相关启发式的自适应调度”；
-- 是当前实验中非常关键的强基线。
+- 任务感知的强规则基线；
+- 在变量关系较明确、启发式设计合理时，本来就可能非常强。
 
-特点：
+当前解释要点：
 
-- 比 `random` 和 `periodic` 更有针对性；
-- 仍然不需要 RL 训练；
-- 在目标变量较明确、驱动变量结构比较清晰时，通常表现非常强。
+- `info_priority` 不是弱基线；
+- 若 learned scheduler 不能超过它，通常说明 reward、状态表示或输入表达还不够对齐。
 
-在当前 windblown 任务中，`info_priority` 强是合理现象，因为：
-
-- 目标是 `snow_mass_flux_kg_m2_s`；
-- 风速、辐射、雪面温度、粒径/粒子速度等驱动具有明显物理相关性；
-- 一个设计合理的启发式评分，本来就可能接近最优手工策略。
-
-### 3.6 `dqn`
+### 4.6 `dqn`
 
 配置：
 
@@ -198,95 +204,86 @@
 
 实现：
 
-- `src/scheduling/rl/dqn_agent.py`
+- `src/scheduling/rl/score_dqn_agent.py`
 - `src/scheduling/rl/q_network.py`
-- `src/scheduling/action_space.py`
 
 逻辑：
 
-- 使用离散动作 DQN；
-- 通过 replay buffer、target network 和 epsilon-greedy 进行 value-based 学习；
-- 学到的是 `Q(s, a)`，不是显式策略分布。
+- 在 `windblown` 场景中，`dqn` 采用 factorized / score-based value learning；
+- 网络不直接输出一个动作编号，而是输出每个传感器的 on/off 价值；
+- 再由 `OnlineSubsetProjector` 在硬约束下选出当前可执行子集。
 
-状态包含：
+这与旧版静态 action-id DQN 的区别必须明确：
 
-- 当前 Kalman 估计 `x_hat`
-- 协方差对角 `diag_P`
-- 总不确定性 `trace_P`
-- freshness
-- coverage ratio
-- previous action
-- event indicator
+- 旧版：学 `Q(s, a_id)`；
+- 现版 windblown：学每个传感器的局部开关价值，再在线组合。
 
 作用：
 
-- 代表“可学习的自适应调度”；
-- 目标是验证：在相同预算约束下，学习型策略是否能超过强规则基线。
+- 用于验证学习型策略是否能在同等约束下超过强规则基线；
+- 当前它已经摆脱了早期“极端省电 + 预测崩坏”的明显实现错误，但仍未稳定超过 `periodic / round_robin / info_priority`。
 
-当前解释要点：
+### 4.7 `cmdp_dqn`
 
-- 旧版本 DQN 曾明显受到 reward 错配影响；
-- 后续重构已将 reward 更强地对齐到预测目标；
-- 但目前 DQN 是否最终优于 `round_robin` / `info_priority`，仍需依赖实验结果，而不能先验假定。
+配置：
 
-## 4. 论文中建议的基线分层
+- `configs/scheduler/cmdp_dqn.yaml`
 
-建议将调度基线分成三层解释：
+实现：
+
+- `src/scheduling/rl/constrained_dqn_agent.py`
+- `src/scheduling/rl/score_dqn_agent.py`
+- `src/scheduling/online_projector.py`
+
+逻辑：
+
+- 继承同样的 score-based DQN 主体；
+- 瞬时稳态功率、启动峰值、供电安全裕度由 projector 做硬约束；
+- 平均功耗和总能量用 CMDP dual variable 做长期约束；
+- 因此它优化的是“在约束内尽量保住预测价值”，而不是“把功耗直接压进 reward 主目标”。
+
+作用：
+
+- 表示更符合 AWS 供电场景的 constrained RL 方案；
+- 重点不是一定比 `dqn` 更准，而是要在不违反供电约束的前提下获得更合理的功率—精度折中。
+
+## 5. 当前论文里应如何分层使用
+
+建议分三层：
 
 ### 第一层：oracle 上限
 
 - `full_open`
 
-含义：
-
-- 信息最充分；
-- 用作误差保持能力的比较上限。
-
-### 第二层：无学习规则基线
+### 第二层：规则型基线
 
 - `random`
 - `periodic`
 - `round_robin`
-
-含义：
-
-- 分别对应无结构、固定周期、结构化公平覆盖三类典型调度方式。
-
-### 第三层：任务感知与学习型方法
-
 - `info_priority`
+
+### 第三层：学习型方法
+
 - `dqn`
+- `cmdp_dqn`
 
-含义：
+当前最关键的比较对象不是 `random`，而是：
 
-- `info_priority`：强启发式任务感知基线
-- `dqn`：学习型任务感知调度
-
-论文中若要证明 RL 的价值，应优先证明它在稳定性或平均性能上超过 `info_priority`，而不是只超过 `random` 或 `periodic`。
-
-## 5. 当前使用建议
-
-在当前框架下，建议默认保留以下比较组：
-
-- `full_open`
-- `random`
 - `periodic`
 - `round_robin`
 - `info_priority`
-- `dqn`
 
-如果篇幅受限，最不建议删除的是：
+如果 learned scheduler 不能接近这三者，就不能说明 RL 方案已经成熟。
 
-- `full_open`
-- `round_robin`
-- `info_priority`
-- `dqn`
+## 6. 当前解释建议
 
-因为这四个算法基本覆盖了：
+当前 `windblown` 结果若出现：
 
-- 理论上限
-- 强规则结构基线
-- 强启发式自适应基线
-- 学习型方法
+- `round_robin`、`periodic` 很强；
+- `dqn/cmdp_dqn` 只达到“可用但不占优”；
 
-这也是当前论文叙述最完整的一组比较对象。
+更合理的解释是：
+
+- 当前任务的结构性强基线本来就非常接近工程合理策略；
+- online projector 虽然修复了旧版动作空间失真问题，但 learned scheduler 仍受限于 reward 对齐、输入表达和状态摘要；
+- 因此规则基线仍然是需要严肃对待的主要比较对象，而不是陪衬。

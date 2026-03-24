@@ -46,14 +46,25 @@ class DQNAgent:
         )
         self.total_steps = 0
 
-    def act(self, state_vec: np.ndarray, greedy: bool = False) -> int:
+    def _resolve_feasible(self, feasible_action_ids: list[int] | None) -> list[int]:
+        if feasible_action_ids:
+            return [int(aid) for aid in feasible_action_ids]
+        return list(range(self.action_dim))
+
+    def act(self, state_vec: np.ndarray, greedy: bool = False, feasible_action_ids: list[int] | None = None) -> int:
+        feasible = self._resolve_feasible(feasible_action_ids)
+        if not feasible:
+            return 0
         epsilon = 0.0 if greedy else self.eps.value(self.total_steps)
         if np.random.rand() < epsilon:
-            return int(np.random.randint(0, self.action_dim))
+            return int(np.random.choice(feasible))
         with torch.no_grad():
             s = torch.as_tensor(state_vec, dtype=torch.float32, device=self.device).unsqueeze(0)
-            qv = self.q(s)
-            return int(torch.argmax(qv, dim=1).item())
+            qv = self.q(s).squeeze(0)
+            feasible_tensor = torch.as_tensor(feasible, dtype=torch.int64, device=self.device)
+            feasible_q = qv.index_select(0, feasible_tensor)
+            best_idx = int(torch.argmax(feasible_q).item())
+            return int(feasible[best_idx])
 
     def observe(
         self,

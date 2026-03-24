@@ -16,6 +16,8 @@ class SensorSpec:
     refresh_interval: int
     power_cost: float
     startup_delay: int = 0
+    startup_peak_power: float | None = None
+    required: bool = False
     noise_std: float | list[float] | dict[str, float] = 0.0
 
 
@@ -30,6 +32,11 @@ class AbstractSensor(BaseSensor):
 
     def power_cost(self) -> float:
         return float(self.spec.power_cost)
+
+    def startup_peak_power(self) -> float:
+        if self.spec.startup_peak_power is None:
+            return float(self.spec.power_cost)
+        return float(self.spec.startup_peak_power)
 
     def can_sample(self, t: int) -> bool:
         if t < self.spec.startup_delay:

@@ -2,291 +2,243 @@
 
 ## 1. 文档目的
 
-本文件用于说明 `rl_sensor_scheduling_framework` 中各个下游时序预测模型的定位、实现形式与论文比较意义。
+本文件说明 `rl_sensor_scheduling_framework` 中各类下游预测模型的输入、目标和比较意义。当前框架的核心问题不是“哪个预测模型最好”，而是：
 
-当前实验中，预测模型的作用是：
+> 某种调度策略生成的估计状态序列，是否还能支撑稳定的微气候状态预测。
 
-- 接收某个 scheduler 生成的估计状态序列；
-- 在统一的 train/val/test 窗口切分下进行训练和测试；
-- 比较不同调度策略对预测性能的影响。
+因此，预测模型是调度评估器，不是调度方法本身。
 
-因此，这些模型不用于替代调度算法，而是用于回答：
+## 2. 当前输入与目标定义
 
-> 某种调度策略生成的数据，对不同类型的时序预测模型是否都仍然有效。
+### 2.1 预测器输入
 
-## 2. 统一比较原则
+下游 predictor 的输入不是 raw truth，而是：
 
-所有预测模型都共享以下基本条件：
+- scheduler 调度后的观测流；
+- 经 estimator（Kalman）融合后得到的估计状态序列；
+- 再拼接物理派生特征与可选 missing-aware 特征。
 
-- 输入来自同一个 scheduler-specific dataset；
-- 使用相同的 `lookback` 与 `horizon` 设置；
-- 目标变量默认为 `snow_mass_flux_kg_m2_s`；
-- 指标统一使用 `RMSE / MAE / MAPE`，并相对 `full_open` 做比较。
+当前基础状态列包括：
 
-需要强调：
+- `wind_speed_ms`
+- `wind_direction_deg`
+- `air_temperature_c`
+- `relative_humidity`
+- `air_pressure_pa`
+- `solar_radiation_wm2`
+- `snow_surface_temperature_c`
+- `snow_particle_mean_diameter_mm`
+- `snow_particle_mean_velocity_ms`
+- `snow_mass_flux_kg_m2_s`
 
-- 这些模型应当分别报告结果，而不应简单做模型平均来定义论文主结论；
-- 如果某个调度策略只对单一模型有效，而对其它模型明显失效，那么其结论不能视为稳健。
+当前默认物理派生特征包括：
+
+- `wind_dir_sin`
+- `wind_dir_cos`
+- `wind_u`
+- `wind_v`
+- `surface_air_temp_gap`
+- `particle_kinetic_proxy`
+- `size_velocity_interaction`
+- `transport_exceedance`
+
+因此，标准 predictor 默认看到的是“估计状态 + 物理增强特征”，而不是简单的原始单变量时间序列。
+
+### 2.2 当前 forecast targets
+
+当前 windblown 主实验已经不再把 `solar_radiation_wm2` 作为预测目标。原因很简单：在当前 truth 生成方式下，辐射呈现尖峰稀疏分布，现有预测器无法对它形成可信预测，因此继续把它放在主目标集合里会扭曲评价。
+
+当前 forecast target 列为：
+
+- `air_temperature_c`
+- `snow_surface_temperature_c`
+- `wind_speed_ms`
+- `wind_dir_sin`
+- `wind_dir_cos`
+- `snow_mass_flux_kg_m2_s`
+- `snow_particle_mean_velocity_ms`
+
+其中，当前主任务口径更偏向：
+
+- 微气候主状态预测：
+  - `air_temperature_c`
+  - `snow_surface_temperature_c`
+  - `wind_speed_ms`
+- 吹雪辅助状态预测：
+  - `wind_dir_sin`
+  - `wind_dir_cos`
+  - `snow_mass_flux_kg_m2_s`
+  - `snow_particle_mean_velocity_ms`
+
+### 2.3 评估指标
+
+当前不能只看 `dRMSE`。现已统一补充：
+
+- `RMSE`
+- `MAE`
+- `sMAPE`
+- `Pearson`
+- `DTW`
+
+原因：
+
+- `RMSE/MAE` 看点误差；
+- `sMAPE` 看相对尺度；
+- `Pearson` 看同步性和形状相关；
+- `DTW` 看局部相位偏移后的整体轨迹相似性。
+
+对于你现在这种多传感器调度问题，只用 `dRMSE` 证据不够。
 
 ## 3. 各预测模型说明
 
 ### 3.1 `naive`
 
-配置：
-
-- `configs/predictor/naive.yaml`
-
-实现：
-
-- `src/forecasting/baselines.py`
+- 配置：`configs/predictor/naive.yaml`
+- 实现：`src/forecasting/baselines.py`
 
 逻辑：
 
-- 直接复制最后一个观测时间步；
-- 对所有 horizon 重复该值。
+- 复制最后一个观测时间步；
+- 对所有 horizon 直接外推。
 
 作用：
 
-- 最基础的 persistence baseline；
-- 用来衡量数据本身的短时可预测性。
-
-解释意义：
-
-- 如果 `naive` 已经很强，说明目标变量具有很强的短时自相关；
-- 这时更复杂模型的收益应重点体现在事件段、峰值段或更长 horizon 上。
+- persistence baseline；
+- 用来判断目标变量的短时自相关是否已经足够强。
 
 ### 3.2 `mlp`
 
-配置：
-
-- `configs/predictor/mlp.yaml`
-
-实现：
-
-- `src/forecasting/mlp.py`
+- 配置：`configs/predictor/mlp.yaml`
+- 实现：`src/forecasting/mlp.py`
 
 逻辑：
 
 - 将 `lookback × feature_dim` 展平；
-- 通过全连接网络直接回归未来多步目标。
+- 用全连接网络直接回归未来多步目标。
 
 作用：
 
-- 作为不显式建模时序结构的简单神经网络基线；
-- 用于检验输入特征本身的线性/非线性可分性。
-
-特点：
-
-- 实现简单；
-- 对输入噪声较敏感；
-- 若其性能异常波动，往往说明输入表示或归一化存在问题。
+- 检验输入表达本身是否已经足够可分；
+- 若它表现异常波动，通常说明输入尺度或噪声处理仍有问题。
 
 ### 3.3 `lstm`
 
-配置：
-
-- `configs/predictor/lstm.yaml`
-
-实现：
-
-- `src/forecasting/lstm.py`
+- 配置：`configs/predictor/lstm.yaml`
+- 实现：`src/forecasting/lstm.py`
 
 逻辑：
 
-- 通过单向 LSTM 编码历史窗口；
-- 使用最后一个时间步的隐藏状态回归未来多步输出。
+- 用 LSTM 编码历史窗口；
+- 用最终隐藏状态回归未来多步目标。
 
 作用：
 
-- 作为经典时序神经网络基线；
-- 用于检验历史依赖与短期动态模式是否重要。
-
-特点：
-
-- 对短时依赖建模稳定；
-- 对小样本通常比大 transformer 更稳；
-- 常可作为论文中的“标准深度时序基线”。
+- 经典深度时序基线；
+- 对短时和中短期依赖通常比较稳。
 
 ### 3.4 `transformer`
 
-配置：
-
-- `configs/predictor/transformer.yaml`
-
-实现：
-
-- `src/forecasting/transformer.py`
+- 配置：`configs/predictor/transformer.yaml`
+- 实现：`src/forecasting/transformer.py`
 
 逻辑：
 
-- 先将输入投影到 `d_model`；
-- 加入位置编码；
-- 再通过 Transformer encoder 提取时序表示；
-- 使用最后一个时间步编码回归未来多步目标。
+- 输入投影到 `d_model`；
+- 加位置编码；
+- 用 encoder 提取时序表示并回归未来目标。
 
 作用：
 
-- 作为自注意力架构基线；
-- 用于检验长依赖建模是否优于 RNN/TCN。
-
-特点：
-
-- 表达力强；
-- 对数据量和输入表示更敏感；
-- 若输入中冗余信息较多，性能不一定稳定优于 LSTM。
+- 检验更强的全局依赖建模是否能更好利用调度后输入。
 
 ### 3.5 `informer`
 
-配置：
-
-- `configs/predictor/informer.yaml`
-
-实现：
-
-- `src/forecasting/informer.py`
+- 配置：`configs/predictor/informer.yaml`
+- 实现：`src/forecasting/informer.py`
 
 逻辑：
 
-- 当前版本是简化的 informer-like baseline；
-- 实现上继承 `TransformerPredictor`，本质仍是 encoder-style transformer。
+- 当前是简化的 informer-like 工程基线；
+- 结构风格近似 transformer family，但不是完整论文级 Informer 复现。
 
 作用：
 
-- 保留一个“长序列 transformer 家族”的对照模型；
-- 方便与标准 transformer 比较。
-
-说明：
-
-- 当前实现不是论文级完整 Informer 复现；
-- 更适合作为结构风格接近的工程基线。
+- 提供一个长依赖 transformer 家族的对照模型。
 
 ### 3.6 `tcn`
 
-配置：
-
-- `configs/predictor/tcn.yaml`
-
-实现：
-
-- `src/forecasting/tcn.py`
+- 配置：`configs/predictor/tcn.yaml`
+- 实现：`src/forecasting/tcn.py`
 
 逻辑：
 
-- 使用 1D 卷积堆叠提取时序局部模式；
-- 以最后时刻的高层表示回归未来多步目标。
+- 使用时序卷积提取局部模式；
+- 用卷积堆叠后的表示回归未来多步目标。
 
 作用：
 
-- 作为卷积式时序建模基线；
-- 特别适合检验局部平滑趋势与短期动态是否主导预测。
-
-特点：
-
-- 对短时局部模式通常较强；
-- 训练稳定；
-- 在高自相关任务上常可与 LSTM 接近甚至更优。
+- 对局部平滑结构和短时动态通常较强；
+- 在高自相关任务上常常是强基线。
 
 ### 3.7 `pinn`
 
-配置：
-
-- `configs/predictor/pinn.yaml`
-
-实现：
-
-- `src/forecasting/pinn.py`
-- `src/forecasting/physics_constraints.py`
+- 配置：`configs/predictor/pinn.yaml`
+- 实现：
+  - `src/forecasting/pinn.py`
+  - `src/forecasting/physics_constraints.py`
 
 逻辑：
 
-- 主体是 LSTM 回归器；
-- 训练时额外加入 physics-informed 约束项；
-- 当前支持的约束包括：
-  - `nonnegative_target`
-  - `threshold_transport`
-  - 事件段加权
+- 主体是 LSTM；
+- 训练时加入轻量 physics-informed 约束。
+
+当前约束包括：
+
+- `nonnegative_target`
+- `threshold_transport`
+- 事件段加权
 
 作用：
 
-- 作为 physics-informed forecasting baseline；
-- 用于验证：加入轻量物理约束后，是否能缓解调度诱导的观测缺失对预测的影响。
-
-解释注意：
-
-- 当前版本属于“轻量物理正则”而非完整物理模型；
-- 如果它没有明显改变 scheduler 排名，更可能说明瓶颈在调度/输入表示，而不是仅仅缺少物理约束。
+- 检验物理约束是否能提高对调度后数据的利用效率；
+- 更适合看“补强 forecasting 端”的价值，而不是替代调度侧修复。
 
 ### 3.8 `sert_like`
 
-配置：
-
-- `configs/predictor/sert_like.yaml`
-
-实现：
-
-- `src/forecasting/sert_like.py`
+- 配置：`configs/predictor/sert_like.yaml`
+- 实现：`src/forecasting/sert_like.py`
 
 逻辑：
 
-- 基于 transformer encoder；
-- 对输入先做 value projection 与 gating；
-- 设计上强调 missing-aware 输入；
-- 期望调用方预先拼接：
-  - observed mask
-  - time delta
+- transformer 风格；
+- 显式依赖 `observed_mask` 与 `time_delta`；
+- 面向缺测感知输入。
 
 作用：
 
-- 作为缺失感知 transformer 风格基线；
-- 用于检验“显式利用缺测结构”是否比普通 transformer 更稳。
-
-说明：
-
-- 当前是 scoped baseline，不是论文级严格复现；
-- 更适合作为“missing-aware architecture family”的代表。
+- 检验 missing-aware 输入建模是否比普通 transformer 更稳。
 
 ### 3.9 `s4m_like`
 
-配置：
-
-- `configs/predictor/s4m_like.yaml`
-
-实现：
-
-- `src/forecasting/s4m_like.py`
+- 配置：`configs/predictor/s4m_like.yaml`
+- 实现：`src/forecasting/s4m_like.py`
 
 逻辑：
 
-- 使用状态空间风格的递推更新；
-- 通过 gated state update 累积时序信息；
-- 同样期望调用方预先拼接：
-  - observed mask
-  - time delta
+- 状态空间风格递推更新；
+- 同样依赖 `observed_mask` 与 `time_delta`。
 
 作用：
 
-- 作为 missing-aware state-space-like baseline；
-- 用于检验状态空间风格方法在不规则观测输入下的稳健性。
+- 作为 missing-aware state-space-like baseline。
 
-说明：
-
-- 当前也是 scoped baseline；
-- 更强调“建模风格”而非论文级严格复现。
-
-## 4. 建议的模型分层
-
-为了让论文比较更清晰，建议将预测模型分成四组：
+## 4. 论文中建议的模型分层
 
 ### 第一组：极简基线
 
 - `naive`
 
-作用：
-
-- 给出最小可接受基准；
-- 判断任务是否被强自相关主导。
-
-### 第二组：标准深度基线
+### 第二组：标准深度时序基线
 
 - `mlp`
 - `lstm`
@@ -294,72 +246,32 @@
 - `transformer`
 - `informer`
 
-作用：
-
-- 覆盖常见的多种时序建模范式；
-- 是论文主结果最应依赖的一组。
-
 ### 第三组：物理约束扩展
 
 - `pinn`
-
-作用：
-
-- 检验物理先验是否能提高调度生成数据的利用效率；
-- 也可为后续 reward oracle 设计提供参考。
 
 ### 第四组：缺失感知扩展
 
 - `sert_like`
 - `s4m_like`
 
-作用：
+主结论更应依赖第二组与第三组，而不是只看 `naive` 或单一 missing-aware 模型。
 
-- 检验显式 missing-aware 输入增强是否有效；
-- 当前更适合作为扩展实验，而不是论文主结论的唯一依据。
+## 5. 当前解释建议
 
-## 5. 当前实验解释建议
+当前若出现：
 
-当前实验若出现如下现象：
-
-- 某些简单模型上 `round_robin` 略优于 `full_open`
-
-不应直接解释为：
-
-- `round_robin` 的信息量高于 `full_open`
+- 某些简单模型上 `round_robin` 或 `periodic` 略优于 `full_open`
 
 更合理的解释是：
 
-- 现有输入表达尚未充分利用 `full_open` 的额外信息；
-- 结构化低功耗调度可能带来了轻度正则化或去噪效应；
-- 简单模型对这种输入更敏感。
+- 全开观测的额外信息尚未被当前输入表示充分利用；
+- 某些结构化调度产生了轻度去噪/正则化效应；
+- 不应直接写成“轮询优于全开”。
 
-因此，预测模型部分的正确使用方式应当是：
+因此，预测模型部分的正确使用方式是：
 
 - 分模型分别报告；
-- 强调跨模型一致性；
-- 将 `full_open` 视作理论上限；
-- 把局部负增幅解释为“输入表示问题需要进一步优化”，而不是直接作为调度优越性的最终结论。
-
-## 6. 当前使用建议
-
-如果篇幅允许，建议完整保留：
-
-- `naive`
-- `mlp`
-- `lstm`
-- `tcn`
-- `transformer`
-- `informer`
-- `pinn`
-
-其中：
-
-- 主结论建议优先依据：
-  - `lstm`
-  - `tcn`
-  - `transformer`
-  - `informer`
-- `naive` 用于解释目标的短时可预测性；
-- `pinn` 用于解释物理约束是否有额外收益；
-- `sert_like / s4m_like` 可作为扩展实验保留，不必强行写成论文主结论核心。
+- 在 `RMSE + DTW + Pearson` 三类指标上同时看；
+- 优先看主任务目标集合，而不是只盯单一雪通量目标；
+- 把局部负增幅视为输入表示和目标定义仍需优化的信号，而不是最终结论本身。

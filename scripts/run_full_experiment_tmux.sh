@@ -79,9 +79,10 @@ declare -A SCHED_CFG=(
   [round_robin]="configs/scheduler/round_robin.yaml"
   [info_priority]="configs/scheduler/info_priority.yaml"
   [dqn]="configs/scheduler/dqn.yaml"
+  [cmdp_dqn]="configs/scheduler/cmdp_dqn.yaml"
 )
 
-for sched_name in full_open random periodic round_robin info_priority dqn; do
+for sched_name in full_open random periodic round_robin info_priority dqn cmdp_dqn; do
   RUN_ID="${RUN_TAG}_${sched_name}"
 
   python scripts/01_train_rl_scheduler.py \
@@ -94,7 +95,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn; do
     --reward_artifact "${REWARD_ARTIFACT}" \
     | tee "reports/logs/${RUN_ID}_train.log"
 
-  if [[ "${sched_name}" == "dqn" ]]; then
+  if [[ "${sched_name}" == "dqn" || "${sched_name}" == "cmdp_dqn" ]]; then
     python scripts/02_evaluate_scheduler.py \
       --truth_csv data/generated/windblown_truth.csv \
       --env_cfg configs/env/windblown_case.yaml \
@@ -102,7 +103,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn; do
       --estimator_cfg configs/estimator/kalman.yaml \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
-      --checkpoint "reports/runs/${RUN_ID}/scheduler_dqn.pt" \
+      --checkpoint "reports/runs/${RUN_ID}/scheduler_${sched_name}.pt" \
       --reward_artifact "${REWARD_ARTIFACT}" \
       | tee "reports/logs/${RUN_ID}_eval.log"
 
@@ -113,7 +114,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn; do
       --estimator_cfg configs/estimator/kalman.yaml \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
-      --checkpoint "reports/runs/${RUN_ID}/scheduler_dqn.pt" \
+      --checkpoint "reports/runs/${RUN_ID}/scheduler_${sched_name}.pt" \
       --out_npz "data/processed/${RUN_ID}.npz" \
       | tee "reports/logs/${RUN_ID}_dataset.log"
   else
@@ -156,6 +157,28 @@ python scripts/06_posthoc_analysis.py \
   --metrics_csv "reports/aggregate/metrics_forecast_all_${RUN_TAG}.csv" \
   --out_dir "reports/aggregate/posthoc_${RUN_TAG}" \
   | tee "reports/logs/${RUN_TAG}_06_posthoc.log"
+
+python scripts/09_generate_all_plots.py \
+  --run-tag "${RUN_TAG}" \
+  --target-set primary \
+  --max-points 300 \
+  --timeline-start 0 \
+  --timeline-end 300 \
+  | tee "reports/logs/${RUN_TAG}_09_generate_all_plots.log"
+
+python scripts/09_generate_all_plots.py \
+  --run-tag "${RUN_TAG}" \
+  --target snow_mass_flux_kg_m2_s \
+  --target-set single \
+  --max-points 300 \
+  --timeline-start 0 \
+  --timeline-end 300 \
+  | tee "reports/logs/${RUN_TAG}_09b_generate_snow_flux_plots.log"
+
+python scripts/10_posthoc_task_focus.py \
+  --run-tag "${RUN_TAG}" \
+  --env-cfg configs/env/windblown_case.yaml \
+  | tee "reports/logs/${RUN_TAG}_10_posthoc_task_focus.log"
 
 echo "DONE: ${RUN_TAG}"
 echo "Logs: reports/logs/"

@@ -7,19 +7,27 @@ import pandas as pd
 
 from core.config import load_yaml, save_yaml
 from core.seed import set_seed
+from business_cases.windblown_case.predictor_targets import (
+    default_forecast_target_columns,
+    default_reward_target_columns,
+)
 from envs.truth_replay_env import TruthReplayConfig, TruthReplayEnvironment
 from estimators.kalman_filter import KalmanFilterEstimator
 from estimators.linear_gaussian_fit import fit_linear_gaussian_dynamics, safe_feature_scale, target_relevance_weights
 from estimators.state_summary import flatten_rl_state
+from evaluation.constraint_metrics import summarize_constraint_metrics
 from evaluation.cost_metrics import compute_step_cost
 from reward.forecast_reward import FrozenForecastRewardOracle, load_reward_oracle, train_reward_oracle_from_series
 from scheduling.action_space import DiscreteActionSpace
 from scheduling.baselines.full_open_scheduler import FullOpenScheduler
 from scheduling.baselines.info_priority_scheduler import InfoPriorityScheduler
+from scheduling.online_projector import OnlineSubsetProjector
 from scheduling.baselines.periodic_scheduler import PeriodicScheduler
 from scheduling.baselines.random_scheduler import RandomScheduler
 from scheduling.baselines.round_robin_scheduler import RoundRobinScheduler
+from scheduling.rl.constrained_dqn_agent import ConstrainedDQNAgent
 from scheduling.rl.dqn_agent import DQNAgent
+from scheduling.rl.score_dqn_agent import ConstrainedScoreDQNAgent, ScoreDQNAgent
 from sensors.base_sensor import SensorSpec
 from sensors.dataset_sensor import DatasetSensor
 from visualization.estimation_plots import plot_trace_power
@@ -128,6 +136,8 @@ def _build_sensors(sensor_cfg: dict, state_columns: list[str]) -> list[DatasetSe
             refresh_interval=int(item.get("refresh_interval", 1)),
             power_cost=float(item.get("power_cost", 1.0)),
             startup_delay=int(item.get("startup_delay", 0)),
+            startup_peak_power=(None if item.get("startup_peak_power") is None else float(item.get("startup_peak_power"))),
+            required=bool(item.get("required", False)),
             noise_std=noise_std,
         )
         sensors.append(DatasetSensor(spec=spec, state_columns=state_columns))
@@ -143,25 +153,67 @@ def _sensor_to_dims(sensor_cfg: dict, state_columns: list[str]) -> dict[str, lis
     return out
 
 
+def _selector_mode(env_cfg: dict) -> str:
+    return str(env_cfg.get("selector_mode", "discrete")).strip().lower()
+
+
 def _resolve_reward_target_columns(base_cfg: dict, env_cfg: dict, state_columns: list[str]) -> list[str]:
+    configured = [str(col) for col in env_cfg.get("reward_target_columns", [])]
+    if configured:
+        return [col for col in configured if col in state_columns]
     configured = [str(col) for col in base_cfg.get("cost", {}).get("reward_target_columns", [])]
     if configured:
         return [col for col in configured if col in state_columns]
+    if str(env_cfg.get("env_name", "")).strip().lower() == "windblown":
+        return [col for col in default_reward_target_columns() if col in state_columns]
     fallback = str(env_cfg.get("event_source_column", ""))
     if fallback and fallback in state_columns:
         return [fallback]
     return []
 
 
-def _make_action_space(sensor_cfg: dict, base_cfg: dict) -> DiscreteActionSpace:
+def _resolve_forecast_target_columns(env_cfg: dict, state_columns: list[str]) -> list[str]:
+    configured = [str(col) for col in env_cfg.get("forecast_target_columns", [])]
+    if configured:
+        return configured
+    if str(env_cfg.get("env_name", "")).strip().lower() == "windblown":
+        return default_forecast_target_columns()
+    return list(state_columns)
+
+
+def _make_selector(sensor_cfg: dict, base_cfg: dict, env_cfg: dict):
     sensor_ids = [str(s["sensor_id"]) for s in sensor_cfg.get("sensors", [])]
     power_costs = {str(s["sensor_id"]): float(s.get("power_cost", 1.0)) for s in sensor_cfg.get("sensors", [])}
+    startup_peak_costs = {
+        str(s["sensor_id"]): float(s.get("startup_peak_power", s.get("power_cost", 1.0)))
+        for s in sensor_cfg.get("sensors", [])
+    }
     constraints = base_cfg.get("constraints", {})
+    max_active = int(constraints.get("max_active", len(sensor_ids)))
+    per_step_budget = float(constraints.get("per_step_budget", 2.0))
+    startup_peak_budget = None if constraints.get("startup_peak_budget") is None else float(constraints.get("startup_peak_budget"))
+    safety_margin = float(constraints.get("power_safety_margin", 0.0))
+    selector_mode = _selector_mode(env_cfg)
+    if selector_mode == "online_projector":
+        return OnlineSubsetProjector(
+            sensor_ids=sensor_ids,
+            power_costs=power_costs,
+            max_active=max_active,
+            per_step_budget=per_step_budget,
+            startup_peak_costs=startup_peak_costs,
+            startup_peak_budget=startup_peak_budget,
+            safety_margin=safety_margin,
+        )
+    required_sensor_ids = [str(s["sensor_id"]) for s in sensor_cfg.get("sensors", []) if bool(s.get("required", False))]
     return DiscreteActionSpace(
         sensor_ids=sensor_ids,
         power_costs=power_costs,
-        max_active=int(constraints.get("max_active", 2)),
-        per_step_budget=float(constraints.get("per_step_budget", 2.0)),
+        max_active=max_active,
+        per_step_budget=per_step_budget,
+        startup_peak_costs=startup_peak_costs,
+        startup_peak_budget=startup_peak_budget,
+        safety_margin=safety_margin,
+        required_sensor_ids=required_sensor_ids,
     )
 
 
@@ -215,27 +267,27 @@ def _build_estimator(
 
 def _make_scheduler(
     scheduler_cfg: dict,
-    action_space: DiscreteActionSpace,
+    selector,
     sensor_cfg: dict,
     state_columns: list[str],
 ):
     name = str(scheduler_cfg.get("scheduler_name", "random"))
     sensor_ids = [str(s["sensor_id"]) for s in sensor_cfg.get("sensors", [])]
-    max_active = action_space.max_active
+    max_active = int(getattr(selector, "max_active", len(sensor_ids)))
     if name == "random":
-        return RandomScheduler(action_space), name
+        return RandomScheduler(selector), name
     if name == "periodic":
-        return PeriodicScheduler(action_space, period=int(scheduler_cfg.get("period", 1))), name
+        return PeriodicScheduler(selector, period=int(scheduler_cfg.get("period", 1))), name
     if name == "round_robin":
         return RoundRobinScheduler(
-            action_space,
+            selector,
             sensor_ids=sensor_ids,
             max_active=max_active,
             min_on_steps=int(scheduler_cfg.get("min_on_steps", 1)),
         ), name
     if name == "info_priority":
         return InfoPriorityScheduler(
-            action_space,
+            selector,
             sensor_ids=sensor_ids,
             sensor_to_dims=_sensor_to_dims(sensor_cfg, state_columns),
             max_active=max_active,
@@ -243,17 +295,120 @@ def _make_scheduler(
         ), name
     if name == "full_open":
         return FullOpenScheduler(sensor_ids), name
-    if name == "dqn":
+    if name in {"dqn", "cmdp_dqn"}:
         return None, name
     raise ValueError(f"Unknown scheduler_name: {name}")
 
 
-def _resolve_action(action, action_space: DiscreteActionSpace) -> tuple[list[str], int | None]:
+def _is_rl_scheduler(name: str) -> bool:
+    return name in {"dqn", "cmdp_dqn"}
+
+
+def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector):
+    if isinstance(selector, OnlineSubsetProjector):
+        if name == "dqn":
+            return ScoreDQNAgent(
+                state_dim=state_dim,
+                sensor_ids=list(selector.sensor_ids),
+                cfg=scheduler_cfg,
+                projector=selector,
+            )
+        if name == "cmdp_dqn":
+            return ConstrainedScoreDQNAgent(
+                state_dim=state_dim,
+                sensor_ids=list(selector.sensor_ids),
+                cfg=scheduler_cfg,
+                projector=selector,
+            )
+    action_dim = selector.size()
+    if name == "dqn":
+        return DQNAgent(state_dim=state_dim, action_dim=action_dim, cfg=scheduler_cfg)
+    if name == "cmdp_dqn":
+        return ConstrainedDQNAgent(
+            state_dim=state_dim,
+            action_dim=action_dim,
+            cfg=scheduler_cfg,
+            steady_power_limit=selector.per_step_budget,
+        )
+    raise ValueError(f"Unsupported RL scheduler: {name}")
+
+
+def _optional_float(value) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and value.strip().lower() in {"", "none", "null"}:
+        return None
+    return float(value)
+
+
+def _resolve_constraint_budgets(base_constraints: dict, scheduler_cfg: dict | None = None) -> dict[str, float | None]:
+    scheduler_cfg = scheduler_cfg or {}
+    cmdp_cfg = scheduler_cfg.get("cmdp", {}) if isinstance(scheduler_cfg, dict) else {}
+    return {
+        "peak_power_budget": _optional_float(base_constraints.get("startup_peak_budget")),
+        "average_power_budget": _optional_float(cmdp_cfg.get("average_power_budget", base_constraints.get("average_power_budget"))),
+        "episode_energy_budget": _optional_float(cmdp_cfg.get("episode_energy_budget", base_constraints.get("episode_energy_budget"))),
+    }
+
+
+def _task_cost_cfg(cost_cfg: dict, scheduler_name: str, scheduler_cfg: dict) -> dict:
+    merged = dict(cost_cfg)
+    if scheduler_name == "cmdp_dqn":
+        merged["lambda_power"] = float(scheduler_cfg.get("cmdp", {}).get("lambda_power_in_reward", 0.0))
+    return merged
+
+
+def _checkpoint_name(name: str) -> str:
+    return f"scheduler_{name}.pt"
+
+
+def _is_score_agent(agent) -> bool:
+    return isinstance(agent, (ScoreDQNAgent, ConstrainedScoreDQNAgent))
+
+
+def _is_constrained_agent(agent) -> bool:
+    return isinstance(agent, (ConstrainedDQNAgent, ConstrainedScoreDQNAgent))
+
+
+def _agent_act(agent, state_vec: np.ndarray, selector, prev_selected: list[str], greedy: bool):
+    if _is_score_agent(agent):
+        return agent.act(state_vec, greedy=greedy, prev_selected=prev_selected)
+    feasible_ids = selector.feasible_action_ids(prev_selected)
+    return agent.act(state_vec, greedy=greedy, feasible_action_ids=feasible_ids)
+
+
+def _prev_selected_from_state(state: dict, selector) -> list[str]:
+    prev_mask = state.get("previous_action", [])
+    selected: list[str] = []
+    for sid, flag in zip(getattr(selector, "sensor_ids", []), prev_mask):
+        if float(flag) > 0.5:
+            selected.append(sid)
+    return selected
+
+
+def _resolve_action(
+    action,
+    selector,
+    prev_selected: list[str] | None = None,
+    scheduler_name: str | None = None,
+) -> tuple[list[str], int | None]:
+    if isinstance(selector, OnlineSubsetProjector):
+        if isinstance(action, (list, tuple, np.ndarray)):
+            subset = [str(sid) for sid in action]
+            if scheduler_name == "full_open":
+                return subset, None
+            if selector.is_subset_feasible(subset, prev_selected=prev_selected):
+                return subset, None
+            return selector.project_ranked(subset, prev_selected=prev_selected), None
+        raise TypeError(f"Online projector expects subset/ranking action, got {type(action)!r}")
     if isinstance(action, (list, tuple)):
-        selected = [str(sid) for sid in action]
-        return selected, None
-    action_id = int(action)
-    return action_space.decode(action_id), action_id
+        ranked = [str(sid) for sid in action]
+        if scheduler_name == "full_open":
+            return ranked, None
+        aid = selector.nearest_feasible(ranked, prev_selected=prev_selected)
+        return selector.decode(aid), aid
+    action_id = selector.sanitize_action_id(int(action), prev_selected=prev_selected)
+    return selector.decode(action_id), action_id
 
 
 def _switch_count(prev_selected: list[str], selected: list[str]) -> int:
@@ -282,14 +437,18 @@ def _forecast_reward_loss(
     env: TruthReplayEnvironment,
     oracle: FrozenForecastRewardOracle | None,
     estimate_history: list[np.ndarray],
+    observed_mask_history: list[np.ndarray] | None = None,
 ) -> float:
     if oracle is None:
         return 0.0
-    future_truth = env.peek_future_targets(oracle.horizon, oracle.target_columns)
+    future_truth = env.peek_future_targets(oracle.horizon, list(env.state_columns))
     if not oracle.ready(len(estimate_history), len(future_truth)):
         return 0.0
     history = np.asarray(estimate_history[-oracle.lookback :], dtype=float)
-    return oracle.score(history, future_truth)
+    mask_history = None
+    if observed_mask_history:
+        mask_history = np.asarray(observed_mask_history[-oracle.lookback :], dtype=float)
+    return oracle.score(history, future_truth, mask_history)
 
 
 def _build_truth_stack(
@@ -346,39 +505,46 @@ def _build_truth_stack(
         reward_target_columns=reward_target_columns,
         x0=truth_df.iloc[split_start][state_columns].to_numpy(dtype=float),
     )
-    action_space = _make_action_space(sensor_cfg, base_cfg)
+    selector = _make_selector(sensor_cfg, base_cfg, env_cfg)
     col_to_idx = {name: i for i, name in enumerate(state_columns)}
     reward_target_indices = [col_to_idx[col] for col in reward_target_columns if col in col_to_idx]
+    forecast_target_columns = _resolve_forecast_target_columns(env_cfg, state_columns)
     meta = {
         "truth_df": truth_df,
         "state_columns": state_columns,
         "event_column": event_col,
         "bounds": bounds,
         "base_cfg": base_cfg,
+        "env_cfg": env_cfg,
         "sensor_cfg": sensor_cfg,
         "cost_cfg": cost_cfg,
         "reward_target_columns": reward_target_columns,
         "reward_target_indices": reward_target_indices,
+        "forecast_target_columns": forecast_target_columns,
     }
-    return env, estimator, action_space, meta
+    return env, estimator, selector, meta
 
 
 def _rollout_scheduler(
     env,
     estimator,
     scheduler,
-    action_space: DiscreteActionSpace,
+    selector,
     cost_cfg: dict,
     reward_target_indices: list[int],
     reward_oracle: FrozenForecastRewardOracle | None = None,
     greedy: bool = False,
     collect_series: bool = False,
+    scheduler_name: str | None = None,
 ):
     reset_out = env.reset()
     estimator.reset()
     scheduler.reset()
     current_event = bool(reset_out.get("event_flags", {}).get("event", False))
+    state_columns = getattr(env, "state_columns", [])
+    col_to_idx = {name: i for i, name in enumerate(state_columns)}
     estimate_history: list[np.ndarray] = [estimator.get_state_estimate().copy()]
+    observed_mask_history: list[np.ndarray] = [np.ones(len(state_columns), dtype=float)]
 
     total_reward = 0.0
     action_ids: list[int] = []
@@ -386,30 +552,31 @@ def _rollout_scheduler(
     uncertainty_hist: list[float] = []
     forecast_hist: list[float] = []
     power_hist: list[float] = []
+    peak_power_hist: list[float] = []
+    startup_extra_hist: list[float] = []
     coverage_hist: list[float] = []
     truth_hist: list[list[float]] = []
     estimate_hist: list[list[float]] = []
     observed_mask_hist: list[list[float]] = []
     event_hist: list[int] = []
     prev_selected: list[str] = []
-    state_columns = getattr(env, "state_columns", [])
-    col_to_idx = {name: i for i, name in enumerate(state_columns)}
 
     while True:
         state = estimator.get_rl_state_features()
         state["event"] = current_event
         raw_action = scheduler.act({**state, "t": env.get_time_index()}) if greedy else scheduler.act(state)
-        selected, action_id = _resolve_action(raw_action, action_space)
+        selected, action_id = _resolve_action(raw_action, selector, prev_selected=prev_selected, scheduler_name=scheduler_name)
         if action_id is not None:
             action_ids.append(action_id)
 
+        power_info = selector.power_metrics(selected, prev_selected=prev_selected)
         step = env.step(selected)
         estimator.predict()
         estimator.update(step["available_observations"])
 
         observed_sensor_ids = [str(obs["sensor_id"]) for obs in step["available_observations"] if obs.get("available", False)]
-        power_cost = float(step.get("info", {}).get("power_cost", 0.0))
-        power_ratio = power_cost / max(action_space.per_step_budget, 1e-6)
+        power_cost = float(power_info["steady_power"])
+        power_ratio = power_cost / max(float(getattr(selector, "per_step_budget", power_cost or 1.0)), 1e-6)
         estimator.on_step(
             selected_sensor_ids=selected,
             power_ratio=power_ratio,
@@ -428,7 +595,14 @@ def _rollout_scheduler(
             state_columns=state_columns,
             reward_target_indices=reward_target_indices,
         )
-        forecast_error = _forecast_reward_loss(env, reward_oracle, estimate_history)
+        mask = np.zeros(len(state_columns), dtype=float)
+        for obs in step["available_observations"]:
+            for var_name in obs.get("variables", []):
+                idx = col_to_idx.get(var_name)
+                if idx is not None:
+                    mask[idx] = 1.0
+        observed_mask_history.append(mask.copy())
+        forecast_error = _forecast_reward_loss(env, reward_oracle, estimate_history, observed_mask_history)
         cost = compute_step_cost(
             uncertainty_summary=unc_summary,
             power_cost=power_cost,
@@ -444,18 +618,14 @@ def _rollout_scheduler(
         uncertainty_hist.append(float(unc_summary.get(str(cost_cfg.get("uncertainty_metric", "trace_P")), trace_p)))
         forecast_hist.append(float(forecast_error))
         power_hist.append(power_cost)
+        peak_power_hist.append(float(power_info["peak_power"]))
+        startup_extra_hist.append(float(power_info["startup_extra_power"]))
         cov = next_state.get("coverage_ratio", [])
         coverage_hist.append(float(np.mean(cov)) if cov else 0.0)
 
         if collect_series:
             truth_hist.append([float(step["latent_state"][col]) for col in state_columns])
             estimate_hist.append([float(v) for v in estimator.get_state_estimate().tolist()])
-            mask = np.zeros(len(state_columns), dtype=float)
-            for obs in step["available_observations"]:
-                for var_name in obs.get("variables", []):
-                    idx = col_to_idx.get(var_name)
-                    if idx is not None:
-                        mask[idx] = 1.0
             observed_mask_hist.append(mask.tolist())
             event_hist.append(1 if bool(step.get("event_flags", {}).get("event", False)) else 0)
 
@@ -469,6 +639,8 @@ def _rollout_scheduler(
         "uncertainty_hist": uncertainty_hist,
         "forecast_hist": forecast_hist,
         "power_hist": power_hist,
+        "peak_power_hist": peak_power_hist,
+        "startup_extra_hist": startup_extra_hist,
         "coverage_hist": coverage_hist,
         "action_ids": action_ids,
         "truth_hist": truth_hist,
@@ -492,7 +664,7 @@ def pretrain_reward_predictor(
     run_id: str,
 ) -> dict:
     seed = base_cfg_seed()
-    env, estimator, action_space, meta = _build_truth_stack(
+    env, estimator, selector, meta = _build_truth_stack(
         truth_csv=truth_csv,
         env_cfg_path=env_cfg_path,
         sensor_cfg_path=sensor_cfg_path,
@@ -509,12 +681,13 @@ def pretrain_reward_predictor(
         env,
         estimator,
         scheduler,
-        action_space,
+        selector,
         cost_cfg=meta["cost_cfg"],
         reward_target_indices=list(meta.get("reward_target_indices", [])),
         reward_oracle=None,
         greedy=True,
         collect_series=True,
+        scheduler_name="full_open",
     )
     if not rollout["estimate_hist"] or not rollout["truth_hist"]:
         raise ValueError("Reward predictor pretraining rollout produced empty series")
@@ -525,19 +698,16 @@ def pretrain_reward_predictor(
     target_columns = [str(col) for col in reward_cfg.get("target_columns", meta.get("reward_target_columns", []))]
     if not target_columns:
         target_columns = list(meta.get("reward_target_columns", []))
-    target_indices = [state_columns.index(col) for col in target_columns if col in state_columns]
-    if not target_indices:
-        raise ValueError("Reward predictor target_columns did not match any state columns")
-    target_series = truth_series[:, target_indices]
 
     artifact_path = run_dir / "reward_predictor.pt"
     reward_out = train_reward_oracle_from_series(
         input_series=input_series,
-        target_series=target_series,
+        target_series=truth_series,
         input_columns=state_columns,
         target_columns=target_columns,
         reward_cfg=reward_cfg,
         artifact_path=artifact_path,
+        observed_mask=np.asarray(rollout["observed_mask_hist"], dtype=float),
     )
     summary = {
         "run_id": run_id,
@@ -564,7 +734,7 @@ def run_scheduler_training(
     reward_artifact: str | None = None,
 ) -> dict:
     seed = base_cfg_seed()
-    env, estimator, action_space, meta = _build_truth_stack(
+    env, estimator, selector, meta = _build_truth_stack(
         truth_csv=truth_csv,
         env_cfg_path=env_cfg_path,
         sensor_cfg_path=sensor_cfg_path,
@@ -575,7 +745,7 @@ def run_scheduler_training(
     )
     base_cfg = meta["base_cfg"]
     scheduler_cfg = load_yaml(scheduler_cfg_path)
-    scheduler, name = _make_scheduler(scheduler_cfg, action_space, meta["sensor_cfg"], meta["state_columns"])
+    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta["sensor_cfg"], meta["state_columns"])
     run_dir = _build_run_dir(run_id)
     save_yaml(
         {
@@ -590,43 +760,67 @@ def run_scheduler_training(
     )
 
     run_cfg = base_cfg.get("run", {})
+    constraints_cfg = base_cfg.get("constraints", {})
+    constraint_budgets = _resolve_constraint_budgets(constraints_cfg, scheduler_cfg)
     cost_cfg = {
         **base_cfg.get("cost", {}),
-        "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
+        "min_coverage_ratio": float(constraints_cfg.get("min_coverage_ratio", 0.0)),
     }
+    task_cost_cfg = _task_cost_cfg(cost_cfg, name, scheduler_cfg)
     reward_target_indices = list(meta.get("reward_target_indices", []))
     reward_cfg = base_cfg.get("forecast_reward", {})
     reward_oracle = None
     if bool(reward_cfg.get("enabled", False)) and reward_artifact:
         reward_oracle = load_reward_oracle(reward_artifact)
 
-    if name != "dqn":
+    if not _is_rl_scheduler(name):
         episodes = int(run_cfg.get("eval_episodes", 10))
         rewards = []
         traces = []
         uncertainties = []
         forecasts = []
         powers = []
+        peaks = []
+        startup_extras = []
         coverages = []
+        total_energies = []
+        peak_violation_rates = []
+        avg_power_violation_hist = []
+        energy_violation_hist = []
         all_actions = []
         for _ in range(episodes):
             out = _rollout_scheduler(
                 env,
                 estimator,
                 scheduler,
-                action_space,
-                cost_cfg,
+                selector,
+                task_cost_cfg,
                 reward_target_indices=reward_target_indices,
                 reward_oracle=reward_oracle,
                 greedy=True,
+                scheduler_name=name,
             )
             rewards.append(out["episode_reward"])
             traces.append(float(np.mean(out["trace_hist"])))
             uncertainties.append(float(np.mean(out["uncertainty_hist"])))
             forecasts.append(float(np.mean(out["forecast_hist"])))
-            powers.append(float(np.mean(out["power_hist"])))
             coverages.append(float(np.mean(out["coverage_hist"])))
             all_actions.extend(out["action_ids"])
+            constraint_metrics = summarize_constraint_metrics(
+                steady_power_hist=out["power_hist"],
+                peak_power_hist=out["peak_power_hist"],
+                startup_extra_hist=out["startup_extra_hist"],
+                average_power_budget=constraint_budgets["average_power_budget"],
+                episode_energy_budget=constraint_budgets["episode_energy_budget"],
+                peak_power_budget=constraint_budgets["peak_power_budget"],
+            )
+            powers.append(float(constraint_metrics["power_mean"]))
+            peaks.append(float(constraint_metrics["peak_power_max"]))
+            startup_extras.append(float(constraint_metrics["startup_extra_power_mean"]))
+            total_energies.append(float(constraint_metrics["total_energy"]))
+            peak_violation_rates.append(float(constraint_metrics["peak_violation_rate"]))
+            avg_power_violation_hist.append(float(constraint_metrics["avg_power_violation"]))
+            energy_violation_hist.append(float(constraint_metrics["energy_violation"]))
 
         metrics = {
             "scheduler": name,
@@ -635,6 +829,12 @@ def run_scheduler_training(
             "uncertainty_mean": float(np.mean(uncertainties)),
             "forecast_reward_mean": float(np.mean(forecasts)),
             "power_mean": float(np.mean(powers)),
+            "peak_power_max_mean": float(np.mean(peaks)),
+            "startup_extra_power_mean": float(np.mean(startup_extras)),
+            "total_energy_mean": float(np.mean(total_energies)),
+            "peak_violation_rate_mean": float(np.mean(peak_violation_rates)) if peak_violation_rates else 0.0,
+            "avg_power_violation_mean": float(np.mean(avg_power_violation_hist)) if avg_power_violation_hist else 0.0,
+            "energy_violation_mean": float(np.mean(energy_violation_hist)) if energy_violation_hist else 0.0,
             "coverage_mean": float(np.mean(coverages)),
         }
         pd.DataFrame([metrics]).to_csv(run_dir / "metrics_estimation.csv", index=False)
@@ -643,8 +843,7 @@ def run_scheduler_training(
         return {"run_dir": str(run_dir), "metrics": metrics, "scheduler": name}
 
     state_dim = len(flatten_rl_state({**estimator.get_rl_state_features(), "event": False}))
-    action_dim = action_space.size()
-    agent = DQNAgent(state_dim=state_dim, action_dim=action_dim, cfg=scheduler_cfg)
+    agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector)
 
     num_episodes = int(run_cfg.get("num_episodes", 80))
     rewards = []
@@ -653,33 +852,45 @@ def run_scheduler_training(
     uncertainty_means = []
     forecast_means = []
     power_means = []
+    peak_means = []
+    total_energies = []
+    peak_violation_rates = []
     coverage_means = []
+    lambda_avg_hist = []
+    lambda_energy_hist = []
+    avg_power_violation_hist = []
+    energy_violation_hist = []
     for _ in range(num_episodes):
         reset_out = env.reset()
         estimator.reset()
         current_event = bool(reset_out.get("event_flags", {}).get("event", False))
         estimate_history: list[np.ndarray] = [estimator.get_state_estimate().copy()]
+        observed_mask_history: list[np.ndarray] = [np.ones(len(meta["state_columns"]), dtype=float)]
+        col_to_idx = {name: i for i, name in enumerate(meta["state_columns"])}
         ep_reward = 0.0
         ep_losses = []
         ep_trace = []
         ep_uncertainty = []
         ep_forecast = []
         ep_power = []
+        ep_peak = []
+        ep_startup_extra = []
         ep_cov = []
         prev_selected: list[str] = []
         while True:
             state = estimator.get_rl_state_features()
             state["event"] = current_event
             state_vec = np.asarray(flatten_rl_state(state), dtype=np.float32)
-            aid = agent.act(state_vec)
-            selected, _ = _resolve_action(aid, action_space)
+            raw_action = _agent_act(agent, state_vec, selector, prev_selected, greedy=False)
+            selected, aid = _resolve_action(raw_action, selector, prev_selected=prev_selected, scheduler_name=name)
 
+            power_info = selector.power_metrics(selected, prev_selected=prev_selected)
             step = env.step(selected)
             estimator.predict()
             estimator.update(step["available_observations"])
             observed_sensor_ids = [str(obs["sensor_id"]) for obs in step["available_observations"] if obs.get("available", False)]
-            power_cost = float(step.get("info", {}).get("power_cost", 0.0))
-            power_ratio = power_cost / max(action_space.per_step_budget, 1e-6)
+            power_cost = float(power_info["steady_power"])
+            power_ratio = power_cost / max(float(getattr(selector, "per_step_budget", power_cost or 1.0)), 1e-6)
             estimator.on_step(
                 selected_sensor_ids=selected,
                 power_ratio=power_ratio,
@@ -700,24 +911,48 @@ def run_scheduler_training(
                 state_columns=meta["state_columns"],
                 reward_target_indices=reward_target_indices,
             )
-            forecast_error = _forecast_reward_loss(env, reward_oracle, estimate_history)
-            cost = compute_step_cost(
+            mask = np.zeros(len(meta["state_columns"]), dtype=float)
+            for obs in step["available_observations"]:
+                for var_name in obs.get("variables", []):
+                    idx = col_to_idx.get(var_name)
+                    if idx is not None:
+                        mask[idx] = 1.0
+            observed_mask_history.append(mask)
+            forecast_error = _forecast_reward_loss(
+                env,
+                reward_oracle,
+                estimate_history,
+                observed_mask_history,
+            )
+            task_cost = compute_step_cost(
                 uncertainty_summary=unc_summary,
                 power_cost=power_cost,
                 switch_count=_switch_count(prev_selected, selected),
                 coverage_ratio=next_state.get("coverage_ratio", []),
-                cost_cfg=cost_cfg,
+                cost_cfg=task_cost_cfg,
                 prediction_error=pred_error,
             )
-            cost += float(cost_cfg.get("beta_forecast", 0.0)) * forecast_error
-            reward = -cost
-            info = agent.observe(state_vec, aid, reward, next_vec, bool(step["done"]))
+            task_cost += float(task_cost_cfg.get("beta_forecast", 0.0)) * forecast_error
+            task_reward = -task_cost
+            if isinstance(agent, (ConstrainedDQNAgent, ConstrainedScoreDQNAgent)):
+                reward = float(agent.shape_reward(task_reward=task_reward, steady_power=power_cost))
+            else:
+                reward = float(task_reward)
+
+            if isinstance(agent, (ScoreDQNAgent, ConstrainedScoreDQNAgent)):
+                info = agent.observe(state_vec, selected, reward, next_vec, bool(step["done"]))
+            else:
+                if aid is None:
+                    raise ValueError("Discrete RL agent requires a resolved action id")
+                info = agent.observe(state_vec, int(aid), reward, next_vec, bool(step["done"]))
 
             ep_reward += reward
             ep_trace.append(trace_p)
             ep_uncertainty.append(float(unc_summary.get(str(cost_cfg.get("uncertainty_metric", "trace_P")), trace_p)))
             ep_forecast.append(float(forecast_error))
             ep_power.append(power_cost)
+            ep_peak.append(float(power_info["peak_power"]))
+            ep_startup_extra.append(float(power_info["startup_extra_power"]))
             cov = next_state.get("coverage_ratio", [])
             ep_cov.append(float(np.mean(cov)) if cov else 0.0)
             loss_value = info.get("loss")
@@ -728,23 +963,58 @@ def run_scheduler_training(
             if step["done"]:
                 break
 
+        constraint_metrics = summarize_constraint_metrics(
+            steady_power_hist=ep_power,
+            peak_power_hist=ep_peak,
+            startup_extra_hist=ep_startup_extra,
+            average_power_budget=constraint_budgets["average_power_budget"],
+            episode_energy_budget=constraint_budgets["episode_energy_budget"],
+            peak_power_budget=constraint_budgets["peak_power_budget"],
+        )
+        if isinstance(agent, (ConstrainedDQNAgent, ConstrainedScoreDQNAgent)):
+            dual_metrics = agent.end_episode(
+                mean_power=float(constraint_metrics["power_mean"]),
+                total_energy=float(constraint_metrics["total_energy"]),
+            )
+        else:
+            dual_metrics = {
+                "lambda_avg": 0.0,
+                "lambda_energy": 0.0,
+                "avg_power_violation": float(constraint_metrics["avg_power_violation"]),
+                "energy_violation": float(constraint_metrics["energy_violation"]),
+            }
+
         rewards.append(ep_reward)
         trace_means.append(float(np.mean(ep_trace)))
         uncertainty_means.append(float(np.mean(ep_uncertainty)))
         forecast_means.append(float(np.mean(ep_forecast)))
-        power_means.append(float(np.mean(ep_power)))
+        power_means.append(float(constraint_metrics["power_mean"]))
+        peak_means.append(float(constraint_metrics["peak_power_max"]))
+        total_energies.append(float(constraint_metrics["total_energy"]))
+        peak_violation_rates.append(float(constraint_metrics["peak_violation_rate"]))
         coverage_means.append(float(np.mean(ep_cov)))
+        lambda_avg_hist.append(float(dual_metrics.get("lambda_avg", 0.0)))
+        lambda_energy_hist.append(float(dual_metrics.get("lambda_energy", 0.0)))
+        avg_power_violation_hist.append(float(dual_metrics.get("avg_power_violation", 0.0)))
+        energy_violation_hist.append(float(dual_metrics.get("energy_violation", 0.0)))
         if ep_losses:
             losses.append(float(np.mean(ep_losses)))
 
     metrics = {
-        "scheduler": "dqn",
+        "scheduler": name,
         "reward_mean": float(np.mean(rewards)),
         "trace_P_mean": float(np.mean(trace_means)),
         "uncertainty_mean": float(np.mean(uncertainty_means)),
         "forecast_reward_mean": float(np.mean(forecast_means)),
         "power_mean": float(np.mean(power_means)),
+        "peak_power_max_mean": float(np.mean(peak_means)),
+        "total_energy_mean": float(np.mean(total_energies)),
+        "peak_violation_rate_mean": float(np.mean(peak_violation_rates)),
         "coverage_mean": float(np.mean(coverage_means)),
+        "lambda_avg_final": float(lambda_avg_hist[-1]) if lambda_avg_hist else 0.0,
+        "lambda_energy_final": float(lambda_energy_hist[-1]) if lambda_energy_hist else 0.0,
+        "avg_power_violation_mean": float(np.mean(avg_power_violation_hist)),
+        "energy_violation_mean": float(np.mean(energy_violation_hist)),
     }
     pd.DataFrame([metrics]).to_csv(run_dir / "metrics_estimation.csv", index=False)
     pd.DataFrame(
@@ -754,14 +1024,21 @@ def run_scheduler_training(
             "uncertainty": uncertainty_means,
             "forecast_reward": forecast_means,
             "power": power_means,
+            "peak_power_max": peak_means,
+            "total_energy": total_energies,
+            "peak_violation_rate": peak_violation_rates,
             "coverage": coverage_means,
+            "lambda_avg": lambda_avg_hist,
+            "lambda_energy": lambda_energy_hist,
+            "avg_power_violation": avg_power_violation_hist,
+            "energy_violation": energy_violation_hist,
         }
     ).to_csv(run_dir / "training_log.csv", index=False)
-    ckpt = run_dir / "scheduler_dqn.pt"
+    ckpt = run_dir / _checkpoint_name(name)
     agent.save(str(ckpt))
     plot_training_curves(rewards, losses, run_dir / "fig_training_curves.png")
     plot_trace_power(trace_means, power_means, run_dir / "fig_trace_power.png")
-    return {"run_dir": str(run_dir), "metrics": metrics, "scheduler": "dqn", "checkpoint": str(ckpt)}
+    return {"run_dir": str(run_dir), "metrics": metrics, "scheduler": name, "checkpoint": str(ckpt)}
 
 
 def evaluate_scheduler(
@@ -775,7 +1052,7 @@ def evaluate_scheduler(
     reward_artifact: str | None = None,
 ) -> dict:
     seed = base_cfg_seed()
-    env, estimator, action_space, meta = _build_truth_stack(
+    env, estimator, selector, meta = _build_truth_stack(
         truth_csv=truth_csv,
         env_cfg_path=env_cfg_path,
         sensor_cfg_path=sensor_cfg_path,
@@ -787,13 +1064,13 @@ def evaluate_scheduler(
     )
     base_cfg = meta["base_cfg"]
     scheduler_cfg = load_yaml(scheduler_cfg_path)
-    scheduler, name = _make_scheduler(scheduler_cfg, action_space, meta["sensor_cfg"], meta["state_columns"])
+    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta["sensor_cfg"], meta["state_columns"])
     run_dir = _build_run_dir(run_id)
 
-    if name == "dqn":
+    if _is_rl_scheduler(name):
         state_dim = len(flatten_rl_state({**estimator.get_rl_state_features(), "event": False}))
-        agent = DQNAgent(state_dim, action_space.size(), scheduler_cfg)
-        ckpt = checkpoint or (run_dir / "scheduler_dqn.pt")
+        agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector)
+        ckpt = checkpoint or (run_dir / _checkpoint_name(name))
         agent.load(str(ckpt))
 
         class _Greedy:
@@ -802,14 +1079,18 @@ def evaluate_scheduler(
 
             def act(self, state):
                 vec = np.asarray(flatten_rl_state(state), dtype=np.float32)
-                return agent.act(vec, greedy=True)
+                prev_selected = _prev_selected_from_state(state, selector)
+                return _agent_act(agent, vec, selector, prev_selected, greedy=True)
 
         scheduler = _Greedy()
 
+    constraints_cfg = base_cfg.get("constraints", {})
+    constraint_budgets = _resolve_constraint_budgets(constraints_cfg, scheduler_cfg)
     cost_cfg = {
         **base_cfg.get("cost", {}),
-        "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
+        "min_coverage_ratio": float(constraints_cfg.get("min_coverage_ratio", 0.0)),
     }
+    task_cost_cfg = _task_cost_cfg(cost_cfg, name, scheduler_cfg)
     reward_cfg = base_cfg.get("forecast_reward", {})
     reward_oracle = None
     if bool(reward_cfg.get("enabled", False)) and reward_artifact:
@@ -818,11 +1099,20 @@ def evaluate_scheduler(
         env,
         estimator,
         scheduler,
-        action_space,
-        cost_cfg,
+        selector,
+        task_cost_cfg,
         reward_target_indices=list(meta.get("reward_target_indices", [])),
         reward_oracle=reward_oracle,
         greedy=True,
+        scheduler_name=name,
+    )
+    constraint_metrics = summarize_constraint_metrics(
+        steady_power_hist=out["power_hist"],
+        peak_power_hist=out["peak_power_hist"],
+        startup_extra_hist=out["startup_extra_hist"],
+        average_power_budget=constraint_budgets["average_power_budget"],
+        episode_energy_budget=constraint_budgets["episode_energy_budget"],
+        peak_power_budget=constraint_budgets["peak_power_budget"],
     )
     summary = {
         "scheduler": name,
@@ -830,7 +1120,13 @@ def evaluate_scheduler(
         "trace_P_mean": float(np.mean(out["trace_hist"])) if out["trace_hist"] else float("nan"),
         "uncertainty_mean": float(np.mean(out["uncertainty_hist"])) if out["uncertainty_hist"] else float("nan"),
         "forecast_reward_mean": float(np.mean(out["forecast_hist"])) if out["forecast_hist"] else float("nan"),
-        "power_mean": float(np.mean(out["power_hist"])) if out["power_hist"] else float("nan"),
+        "power_mean": float(constraint_metrics["power_mean"]),
+        "peak_power_max": float(constraint_metrics["peak_power_max"]),
+        "startup_extra_power_mean": float(constraint_metrics["startup_extra_power_mean"]),
+        "total_energy": float(constraint_metrics["total_energy"]),
+        "peak_violation_rate": float(constraint_metrics["peak_violation_rate"]),
+        "avg_power_violation": float(constraint_metrics["avg_power_violation"]),
+        "energy_violation": float(constraint_metrics["energy_violation"]),
         "coverage_mean": float(np.mean(out["coverage_hist"])) if out["coverage_hist"] else float("nan"),
     }
     pd.DataFrame([summary]).to_csv(run_dir / "metrics_estimation_eval.csv", index=False)
@@ -862,7 +1158,7 @@ def build_scheduler_dataset(
     checkpoint: str | None = None,
 ) -> dict:
     seed = base_cfg_seed()
-    env, estimator, action_space, meta = _build_truth_stack(
+    env, estimator, selector, meta = _build_truth_stack(
         truth_csv=truth_csv,
         env_cfg_path=env_cfg_path,
         sensor_cfg_path=sensor_cfg_path,
@@ -873,13 +1169,13 @@ def build_scheduler_dataset(
         episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="task_all"),
     )
     scheduler_cfg = load_yaml(scheduler_cfg_path)
-    scheduler, name = _make_scheduler(scheduler_cfg, action_space, meta["sensor_cfg"], meta["state_columns"])
+    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta["sensor_cfg"], meta["state_columns"])
     run_dir = _build_run_dir(run_id)
 
-    if name == "dqn":
+    if _is_rl_scheduler(name):
         state_dim = len(flatten_rl_state({**estimator.get_rl_state_features(), "event": False}))
-        agent = DQNAgent(state_dim, action_space.size(), scheduler_cfg)
-        ckpt = checkpoint or (Path("reports/runs") / run_id / "scheduler_dqn.pt")
+        agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector)
+        ckpt = checkpoint or (Path("reports/runs") / run_id / _checkpoint_name(name))
         agent.load(str(ckpt))
 
         class _Greedy:
@@ -888,25 +1184,30 @@ def build_scheduler_dataset(
 
             def act(self, state):
                 vec = np.asarray(flatten_rl_state(state), dtype=np.float32)
-                return agent.act(vec, greedy=True)
+                prev_selected = _prev_selected_from_state(state, selector)
+                return _agent_act(agent, vec, selector, prev_selected, greedy=True)
 
         scheduler = _Greedy()
 
     base_cfg = meta["base_cfg"]
+    constraints_cfg = base_cfg.get("constraints", {})
+    constraint_budgets = _resolve_constraint_budgets(constraints_cfg, scheduler_cfg)
     cost_cfg = {
         **base_cfg.get("cost", {}),
-        "min_coverage_ratio": float(base_cfg.get("constraints", {}).get("min_coverage_ratio", 0.0)),
+        "min_coverage_ratio": float(constraints_cfg.get("min_coverage_ratio", 0.0)),
     }
+    task_cost_cfg = _task_cost_cfg(cost_cfg, name, scheduler_cfg)
     rollout = _rollout_scheduler(
         env,
         estimator,
         scheduler,
-        action_space,
-        cost_cfg=cost_cfg,
+        selector,
+        cost_cfg=task_cost_cfg,
         reward_target_indices=list(meta.get("reward_target_indices", [])),
         reward_oracle=None,
         greedy=True,
         collect_series=True,
+        scheduler_name=name,
     )
 
     truth_series = np.asarray(rollout["truth_hist"], dtype=float)
@@ -914,6 +1215,7 @@ def build_scheduler_dataset(
     observed_mask = np.asarray(rollout["observed_mask_hist"], dtype=float)
     event_flags = np.asarray(rollout["event_hist"], dtype=int)
     power = np.asarray(rollout["power_hist"], dtype=float)
+    peak_power = np.asarray(rollout["peak_power_hist"], dtype=float)
     trace_p = np.asarray(rollout["trace_hist"], dtype=float)
 
     out_path = Path(out_npz)
@@ -925,11 +1227,20 @@ def build_scheduler_dataset(
         observed_mask=observed_mask,
         event_flags=event_flags,
         power=power,
+        peak_power=peak_power,
         trace_p=trace_p,
         feature_names=np.asarray(meta["state_columns"]),
     )
 
     total_full_power = sum(float(s.get("power_cost", 1.0)) for s in meta["sensor_cfg"].get("sensors", []))
+    constraint_metrics = summarize_constraint_metrics(
+        steady_power_hist=rollout["power_hist"],
+        peak_power_hist=rollout["peak_power_hist"],
+        startup_extra_hist=rollout["startup_extra_hist"],
+        average_power_budget=constraint_budgets["average_power_budget"],
+        episode_energy_budget=constraint_budgets["episode_energy_budget"],
+        peak_power_budget=constraint_budgets["peak_power_budget"],
+    )
     dataset_meta = {
         "run_id": run_id,
         "scheduler_name": name,
@@ -937,13 +1248,19 @@ def build_scheduler_dataset(
         "feature_names": meta["state_columns"],
         "n_steps": int(input_series.shape[0]),
         "reward_target_columns": list(meta.get("reward_target_columns", [])),
-        "avg_power": float(np.mean(power)) if power.size else 0.0,
-        "total_power": float(np.sum(power)),
+        "forecast_target_columns": list(meta.get("forecast_target_columns", [])),
+        "avg_power": float(constraint_metrics["power_mean"]),
+        "total_power": float(constraint_metrics["total_energy"]),
+        "peak_power_max": float(constraint_metrics["peak_power_max"]),
+        "peak_violation_rate": float(constraint_metrics["peak_violation_rate"]),
         "coverage_mean": float(np.mean(rollout["coverage_hist"])) if rollout["coverage_hist"] else 0.0,
         "trace_P_mean": float(np.mean(trace_p)) if trace_p.size else float("nan"),
         "uncertainty_mean": float(np.mean(rollout["uncertainty_hist"])) if rollout["uncertainty_hist"] else float("nan"),
         "full_open_power": float(total_full_power),
         "budget_per_step": float(base_cfg.get("constraints", {}).get("per_step_budget", 0.0)),
+        "startup_peak_budget": constraint_budgets["peak_power_budget"],
+        "average_power_budget": constraint_budgets["average_power_budget"],
+        "episode_energy_budget": constraint_budgets["episode_energy_budget"],
         "max_active": int(base_cfg.get("constraints", {}).get("max_active", 0)),
     }
     save_yaml(dataset_meta, out_path.with_suffix(".meta.yaml"))

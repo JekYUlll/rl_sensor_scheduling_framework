@@ -16,6 +16,19 @@ state_columns:
 event_column: event_flag
 event_source_column: snow_mass_flux_kg_m2_s
 event_quantile: 0.9
+selector_mode: online_projector
+reward_target_columns:
+  - air_temperature_c
+  - snow_surface_temperature_c
+  - wind_speed_ms
+forecast_target_columns:
+  - air_temperature_c
+  - snow_surface_temperature_c
+  - wind_speed_ms
+  - wind_dir_sin
+  - wind_dir_cos
+  - snow_mass_flux_kg_m2_s
+  - snow_particle_mean_velocity_ms
 storm_transition:
   p01: 0.02
   p10: 0.04

@@ -14,6 +14,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from evaluation.sequence_metrics import dtw_distance_1d, pearson_1d, smape_1d
+
 MetricRecord = dict[str, Any]
 
 
@@ -49,6 +51,10 @@ def _resolve_target_index(feature_names: list[str], target: str) -> int:
 
 def _rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
+
+
+def _mae(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    return float(np.mean(np.abs(y_true - y_pred)))
 
 
 def _load_comparison_table(run_tag: str) -> pd.DataFrame:
@@ -221,17 +227,37 @@ def main() -> None:
         metrics_rows = []
         metrics_map_model: dict[str, MetricRecord] = {}
         full_open_rmse = None
+        full_open_dtw = None
+        full_open_pearson = None
         if "full_open" in preds:
             full_open_rmse = _rmse(reference_true, preds["full_open"])
+            full_open_dtw = dtw_distance_1d(reference_true, preds["full_open"])
+            full_open_pearson = pearson_1d(reference_true, preds["full_open"])
         for scheduler, series in preds.items():
             metrics = metrics_map_all.get((model_name, scheduler), {})
             selected_rmse = _rmse(reference_true, series)
+            selected_mae = _mae(reference_true, series)
+            selected_smape = smape_1d(reference_true, series)
+            selected_pearson = pearson_1d(reference_true, series)
+            selected_dtw = dtw_distance_1d(reference_true, series)
             selected_delta = float("nan")
+            selected_dtw_delta = float("nan")
+            selected_pearson_delta = float("nan")
             if full_open_rmse is not None and np.isfinite(full_open_rmse) and full_open_rmse > 1e-12:
                 selected_delta = 100.0 * (selected_rmse - full_open_rmse) / full_open_rmse
+            if full_open_dtw is not None and np.isfinite(full_open_dtw) and full_open_dtw > 1e-12:
+                selected_dtw_delta = 100.0 * (selected_dtw - full_open_dtw) / full_open_dtw
+            if full_open_pearson is not None and np.isfinite(full_open_pearson):
+                selected_pearson_delta = selected_pearson - full_open_pearson
             metrics_local = dict(metrics)
             metrics_local["rmse_selected_target"] = selected_rmse
             metrics_local["rmse_selected_target_increase_pct_vs_full_open"] = selected_delta
+            metrics_local["mae_selected_target"] = selected_mae
+            metrics_local["smape_selected_target"] = selected_smape
+            metrics_local["pearson_selected_target"] = selected_pearson
+            metrics_local["dtw_selected_target"] = selected_dtw
+            metrics_local["dtw_selected_target_increase_pct_vs_full_open"] = selected_dtw_delta
+            metrics_local["pearson_selected_target_delta_vs_full_open"] = selected_pearson_delta
             metrics_map_model[scheduler] = metrics_local
             metrics_rows.append(
                 {
@@ -241,7 +267,15 @@ def main() -> None:
                     "horizon": args.horizon,
                     "rmse_selected_target": selected_rmse,
                     "rmse_selected_target_increase_pct_vs_full_open": selected_delta,
+                    "mae_selected_target": selected_mae,
+                    "smape_selected_target": selected_smape,
+                    "pearson_selected_target": selected_pearson,
+                    "pearson_selected_target_delta_vs_full_open": selected_pearson_delta,
+                    "dtw_selected_target": selected_dtw,
+                    "dtw_selected_target_increase_pct_vs_full_open": selected_dtw_delta,
                     "rmse_increase_pct_vs_full_open_all_features": metrics.get("rmse_increase_pct_vs_full_open", float("nan")),
+                    "dtw_h1_increase_pct_vs_full_open_all_features": metrics.get("dtw_h1_increase_pct_vs_full_open", float("nan")),
+                    "pearson_h1_delta_vs_full_open_all_features": metrics.get("pearson_h1_delta_vs_full_open", float("nan")),
                     "power_saving_pct_vs_full_open": metrics.get("power_saving_pct_vs_full_open", float("nan")),
                 }
             )

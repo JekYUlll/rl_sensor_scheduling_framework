@@ -18,7 +18,8 @@ cost:
   eta_switch: 0.005
   rho_coverage: 2.0
   uncertainty_metric: weighted_trace_P_norm
-  reward_target_columns: [snow_mass_flux_kg_m2_s]
+  reward_target_columns:
+  - snow_mass_flux_kg_m2_s
   min_relevance_weight: 0.25
   relevance_power: 1.0
 forecast_reward:
@@ -27,5 +28,9 @@ constraints:
   max_active: 5
   per_step_budget: 2.2
   min_coverage_ratio: 0.25
+  startup_peak_budget: 2.3
+  power_safety_margin: 0.05
+  average_power_budget: 1.6
+  episode_energy_budget: 640.0
 logging:
   level: INFO

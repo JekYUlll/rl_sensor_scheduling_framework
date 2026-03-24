@@ -23,9 +23,21 @@ class RoundRobinScheduler(BaseScheduler):
             self.hold -= 1
             return self.cached_action
         chosen = []
-        for i in range(self.max_active):
+        limit = self.max_active
+        step_stride = self.max_active
+        if hasattr(self.action_space, "project_ranked") and not hasattr(self.action_space, "decode"):
+            limit = len(self.sensor_ids)
+            # In projector mode we rotate a full ranking over all sensors.
+            # Advancing by max_active would stall whenever max_active == len(sensor_ids).
+            step_stride = 1
+        for i in range(limit):
             chosen.append(self.sensor_ids[(self.ptr + i) % len(self.sensor_ids)])
-        self.ptr = (self.ptr + self.max_active) % len(self.sensor_ids)
-        self.cached_action = self.action_space.nearest_feasible(chosen)
+        self.ptr = (self.ptr + step_stride) % len(self.sensor_ids)
+        if hasattr(self.action_space, "project_ranked") and not hasattr(self.action_space, "decode"):
+            prev_mask = state.get("previous_action", [])
+            prev_selected = [sid for sid, flag in zip(self.sensor_ids, prev_mask) if float(flag) > 0.5]
+            self.cached_action = self.action_space.project_ranked(chosen, prev_selected=prev_selected)
+        else:
+            self.cached_action = self.action_space.nearest_feasible(chosen)
         self.hold = self.min_on_steps - 1
         return self.cached_action

@@ -17,9 +17,12 @@ class ReplayBuffer:
     def sample(self, batch_size: int):
         batch = random.sample(self.buffer, batch_size)
         s, a, r, ns, d = zip(*batch)
+        actions = np.asarray(a)
+        if actions.dtype == object:
+            actions = np.stack([np.asarray(item) for item in a], axis=0)
         return (
             np.asarray(s, dtype=np.float32),
-            np.asarray(a, dtype=np.int64),
+            actions,
             np.asarray(r, dtype=np.float32),
             np.asarray(ns, dtype=np.float32),
             np.asarray(d, dtype=np.float32),

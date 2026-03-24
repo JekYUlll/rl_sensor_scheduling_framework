@@ -1,31 +1,67 @@
 sensors:
-  - sensor_id: s0
-    variables: [x0]
-    C: [1.0, 0.0, 0.0, 0.0]
-    R_diag: [0.03]
-    refresh_interval: 1
-    power_cost: 1.0
-  - sensor_id: s1
-    variables: [x1]
-    C: [0.0, 1.0, 0.0, 0.0]
-    R_diag: [0.03]
-    refresh_interval: 1
-    power_cost: 1.0
-  - sensor_id: s2
-    variables: [x2]
-    C: [0.0, 0.0, 1.0, 0.0]
-    R_diag: [0.05]
-    refresh_interval: 2
-    power_cost: 0.8
-  - sensor_id: s3
-    variables: [x3]
-    C: [0.0, 0.0, 0.0, 1.0]
-    R_diag: [0.05]
-    refresh_interval: 2
-    power_cost: 0.8
-  - sensor_id: s01
-    variables: [x0, x1]
-    C: [0.7, 0.7, 0.0, 0.0]
-    R_diag: [0.04]
-    refresh_interval: 1
-    power_cost: 1.2
+- sensor_id: s0
+  variables:
+  - x0
+  C:
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  R_diag:
+  - 0.03
+  refresh_interval: 1
+  power_cost: 1.0
+  startup_peak_power: 1.1
+- sensor_id: s1
+  variables:
+  - x1
+  C:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  R_diag:
+  - 0.03
+  refresh_interval: 1
+  power_cost: 1.0
+  startup_peak_power: 1.1
+- sensor_id: s2
+  variables:
+  - x2
+  C:
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.0
+  R_diag:
+  - 0.05
+  refresh_interval: 2
+  power_cost: 0.8
+  startup_peak_power: 0.9
+- sensor_id: s3
+  variables:
+  - x3
+  C:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  R_diag:
+  - 0.05
+  refresh_interval: 2
+  power_cost: 0.8
+  startup_peak_power: 0.9
+- sensor_id: s01
+  variables:
+  - x0
+  - x1
+  C:
+  - 0.7
+  - 0.7
+  - 0.0
+  - 0.0
+  R_diag:
+  - 0.04
+  refresh_interval: 1
+  power_cost: 1.2
+  startup_peak_power: 1.35

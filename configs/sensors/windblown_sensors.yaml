@@ -1,40 +1,51 @@
 sensors:
-  - sensor_id: met_station
-    variables: [wind_speed_ms, wind_direction_deg, air_temperature_c, relative_humidity, air_pressure_pa]
-    refresh_interval: 1
-    power_cost: 0.12
-    noise_std:
-      wind_speed_ms: 0.2
-      wind_direction_deg: 2.0
-      air_temperature_c: 0.2
-      relative_humidity: 1.0
-      air_pressure_pa: 15.0
-
-  - sensor_id: radiation
-    variables: [solar_radiation_wm2]
-    refresh_interval: 1
-    power_cost: 0.05
-    noise_std:
-      solar_radiation_wm2: 8.0
-
-  - sensor_id: surface_temp_ir
-    variables: [snow_surface_temperature_c]
-    refresh_interval: 1
-    power_cost: 0.05
-    noise_std:
-      snow_surface_temperature_c: 0.2
-
-  - sensor_id: laser_disdrometer
-    variables: [snow_particle_mean_diameter_mm, snow_particle_mean_velocity_ms]
-    refresh_interval: 1
-    power_cost: 1.35
-    noise_std:
-      snow_particle_mean_diameter_mm: 0.05
-      snow_particle_mean_velocity_ms: 0.15
-
-  - sensor_id: fc4_flux
-    variables: [snow_mass_flux_kg_m2_s]
-    refresh_interval: 1
-    power_cost: 1.55
-    noise_std:
-      snow_mass_flux_kg_m2_s: 1.0e-5
+- sensor_id: met_station
+  variables:
+  - wind_speed_ms
+  - wind_direction_deg
+  - air_temperature_c
+  - relative_humidity
+  - air_pressure_pa
+  refresh_interval: 1
+  power_cost: 0.12
+  noise_std:
+    wind_speed_ms: 0.2
+    wind_direction_deg: 2.0
+    air_temperature_c: 0.2
+    relative_humidity: 1.0
+    air_pressure_pa: 15.0
+  startup_peak_power: 0.16
+- sensor_id: radiation
+  variables:
+  - solar_radiation_wm2
+  refresh_interval: 1
+  power_cost: 0.05
+  noise_std:
+    solar_radiation_wm2: 8.0
+  startup_peak_power: 0.07
+- sensor_id: surface_temp_ir
+  variables:
+  - snow_surface_temperature_c
+  refresh_interval: 1
+  power_cost: 0.05
+  noise_std:
+    snow_surface_temperature_c: 0.2
+  startup_peak_power: 0.08
+- sensor_id: laser_disdrometer
+  variables:
+  - snow_particle_mean_diameter_mm
+  - snow_particle_mean_velocity_ms
+  refresh_interval: 1
+  power_cost: 1.35
+  noise_std:
+    snow_particle_mean_diameter_mm: 0.05
+    snow_particle_mean_velocity_ms: 0.15
+  startup_peak_power: 1.75
+- sensor_id: fc4_flux
+  variables:
+  - snow_mass_flux_kg_m2_s
+  refresh_interval: 1
+  power_cost: 1.55
+  noise_std:
+    snow_mass_flux_kg_m2_s: 1.0e-05
+  startup_peak_power: 1.95
