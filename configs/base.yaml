@@ -24,7 +24,7 @@ cost:
 forecast_reward:
   enabled: true
 constraints:
-  max_active: 2
+  max_active: 5
   per_step_budget: 2.2
   min_coverage_ratio: 0.25
 logging:
