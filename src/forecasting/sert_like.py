@@ -1,0 +1,108 @@
+from __future__ import annotations
+
+from typing import Any
+
+import numpy as np
+import torch
+from torch import nn
+
+from forecasting.base_predictor import BasePredictor
+from forecasting.torch_utils import train_regressor
+from forecasting.transformer import _PositionalEncoding
+
+
+class _SERTLikeEncoder(nn.Module):
+    def __init__(self, in_dim: int, d_model: int, nhead: int, num_layers: int, out_dim: int) -> None:
+        super().__init__()
+        self.value_proj = nn.Linear(in_dim, d_model)
+        self.gate_proj = nn.Sequential(
+            nn.Linear(in_dim, d_model),
+            nn.Sigmoid(),
+        )
+        self.pos_enc = _PositionalEncoding(d_model)
+        enc_layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=nhead,
+            dim_feedforward=4 * d_model,
+            dropout=0.1,
+            batch_first=True,
+        )
+        self.encoder = nn.TransformerEncoder(enc_layer, num_layers=num_layers)
+        self.head = nn.Sequential(
+            nn.LayerNorm(d_model),
+            nn.Linear(d_model, out_dim),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        z = self.value_proj(x)
+        z = z * self.gate_proj(x)
+        z = self.pos_enc(z)
+        z = self.encoder(z)
+        return self.head(z[:, -1, :])
+
+
+class SERTLikePredictor(BasePredictor):
+    """Missing-aware transformer baseline inspired by SERT-style designs.
+
+    This is a scoped baseline, not a paper-faithful reimplementation.
+    It expects the caller to append mask / delta channels to the input.
+    """
+
+    def __init__(
+        self,
+        d_model: int = 64,
+        nhead: int = 4,
+        num_layers: int = 2,
+        epochs: int = 10,
+        lr: float = 1e-3,
+        batch_size: int = 128,
+        device: str | None = None,
+    ) -> None:
+        self.d_model = d_model
+        self.nhead = nhead
+        self.num_layers = num_layers
+        self.epochs = epochs
+        self.lr = lr
+        self.batch_size = batch_size
+        self.device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
+        self.model: _SERTLikeEncoder | None = None
+        self.horizon: int | None = None
+        self.target_dim: int | None = None
+        self.history: dict[str, list[float]] | None = None
+
+    def fit(self, train_data: Any, val_data: Any = None) -> None:
+        X, Y = train_data.X, train_data.Y
+        n, _, f = X.shape
+        h = Y.shape[1]
+        target_dim = Y.shape[2]
+        self.horizon = h
+        self.target_dim = target_dim
+        self.model = _SERTLikeEncoder(f, self.d_model, self.nhead, self.num_layers, h * target_dim).to(self.device)
+        x_t = torch.as_tensor(X, dtype=torch.float32, device=self.device)
+        y_t = torch.as_tensor(Y.reshape(n, -1), dtype=torch.float32, device=self.device)
+        x_val = y_val = None
+        if val_data is not None and val_data.X.shape[0] > 0:
+            x_val = torch.as_tensor(val_data.X, dtype=torch.float32, device=self.device)
+            y_val = torch.as_tensor(val_data.Y.reshape(val_data.Y.shape[0], -1), dtype=torch.float32, device=self.device)
+        self.history = train_regressor(
+            self.model,
+            x_t,
+            y_t,
+            x_val=x_val,
+            y_val=y_val,
+            epochs=self.epochs,
+            lr=self.lr,
+            batch_size=self.batch_size,
+        )
+
+    def predict(self, test_data: Any) -> np.ndarray:
+        X = test_data.X
+        n = X.shape[0]
+        x_t = torch.as_tensor(X, dtype=torch.float32, device=self.device)
+        assert self.model is not None
+        assert self.horizon is not None
+        assert self.target_dim is not None
+        self.model.eval()
+        with torch.no_grad():
+            y = self.model(x_t).cpu().numpy()
+        return y.reshape(n, self.horizon, self.target_dim)

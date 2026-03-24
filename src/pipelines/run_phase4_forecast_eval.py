@@ -26,7 +26,7 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     rows = []
-    for cfg_name in ["naive", "mlp", "lstm", "transformer", "informer", "tcn", "pinn"]:
+    for cfg_name in ["naive", "mlp", "lstm", "transformer", "informer", "tcn", "pinn", "sert_like", "s4m_like"]:
         cfg = load_yaml(f"configs/predictor/{cfg_name}.yaml")
         model = build_predictor(cfg)
         model.fit(train, val)

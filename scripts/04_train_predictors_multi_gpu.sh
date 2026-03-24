@@ -6,7 +6,7 @@ LOOKBACK=20
 HORIZON=3
 GPUS=""
 SKIP_EXISTING=1
-MODELS="naive,mlp,lstm,transformer,informer,tcn,pinn"
+MODELS="naive,mlp,lstm,transformer,informer,tcn,pinn,sert_like,s4m_like"
 SCHEDULERS="full_open,random,periodic,round_robin,info_priority,dqn"
 
 cleanup_children() {

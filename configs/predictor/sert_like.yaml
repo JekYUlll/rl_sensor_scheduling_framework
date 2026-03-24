@@ -1,0 +1,9 @@
+predictor_name: sert_like
+d_model: 64
+nhead: 4
+num_layers: 2
+epochs: 10
+lr: 0.001
+batch_size: 128
+use_observed_mask: true
+use_time_delta: true

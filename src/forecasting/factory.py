@@ -5,6 +5,8 @@ from forecasting.informer import InformerPredictor
 from forecasting.lstm import LSTMPredictor
 from forecasting.mlp import MLPPredictor
 from forecasting.pinn import PINNPredictor
+from forecasting.s4m_like import S4MLikePredictor
+from forecasting.sert_like import SERTLikePredictor
 from forecasting.tcn import TCNPredictor
 from forecasting.transformer import TransformerPredictor
 
@@ -47,6 +49,24 @@ def build_predictor(cfg: dict):
             d_model=int(cfg.get("d_model", 64)),
             nhead=int(cfg.get("nhead", 4)),
             num_layers=int(cfg.get("num_layers", 2)),
+            epochs=int(cfg.get("epochs", 10)),
+            lr=float(cfg.get("lr", 1e-3)),
+            batch_size=batch_size,
+            device=device,
+        )
+    if name == "sert_like":
+        return SERTLikePredictor(
+            d_model=int(cfg.get("d_model", 64)),
+            nhead=int(cfg.get("nhead", 4)),
+            num_layers=int(cfg.get("num_layers", 2)),
+            epochs=int(cfg.get("epochs", 10)),
+            lr=float(cfg.get("lr", 1e-3)),
+            batch_size=batch_size,
+            device=device,
+        )
+    if name == "s4m_like":
+        return S4MLikePredictor(
+            state_dim=int(cfg.get("state_dim", 96)),
             epochs=int(cfg.get("epochs", 10)),
             lr=float(cfg.get("lr", 1e-3)),
             batch_size=batch_size,

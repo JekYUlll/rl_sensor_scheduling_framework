@@ -16,6 +16,7 @@ from core.config import load_yaml
 from evaluation.forecast_metrics import compute_forecast_metrics
 from forecasting.dataset_builder import ForecastDataset, build_window_dataset, split_dataset
 from forecasting.factory import build_predictor
+from forecasting.input_augmentation import augment_input_series
 
 
 def _normalize_split(train: ForecastDataset, val: ForecastDataset, test: ForecastDataset):
@@ -76,6 +77,17 @@ def main() -> None:
     input_series = data["input_series"] if "input_series" in data else data["series"]
     raw_target_series = data["target_series"] if "target_series" in data else input_series
     input_feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
+    observed_mask = data["observed_mask"] if "observed_mask" in data else None
+    cfg = load_yaml(args.predictor_cfg)
+    use_observed_mask = bool(cfg.get("use_observed_mask", False))
+    use_time_delta = bool(cfg.get("use_time_delta", False))
+    input_series, input_feature_names = augment_input_series(
+        input_series=np.asarray(input_series, dtype=float),
+        observed_mask=None if observed_mask is None else np.asarray(observed_mask, dtype=float),
+        feature_names=[str(name) for name in input_feature_names],
+        use_observed_mask=use_observed_mask,
+        use_time_delta=use_time_delta,
+    )
     meta = _load_dataset_meta(args.series_npz)
     target_series, target_feature_names, target_indices = _select_target_columns(raw_target_series, list(input_feature_names), meta)
 
@@ -89,7 +101,6 @@ def main() -> None:
     train, val, test = split_dataset(ds)
     train_norm, val_norm, test_norm, stats = _normalize_split(train, val, test)
 
-    cfg = load_yaml(args.predictor_cfg)
     if args.device:
         cfg["device"] = args.device
     predictor = build_predictor(cfg)
