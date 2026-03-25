@@ -180,6 +180,10 @@ python scripts/10_posthoc_task_focus.py \
   --env-cfg configs/env/windblown_case.yaml \
   | tee "reports/logs/${RUN_TAG}_10_posthoc_task_focus.log"
 
+python scripts/11_plot_rl_training_diagnostics.py \
+  --run-tag "${RUN_TAG}" \
+  | tee "reports/logs/${RUN_TAG}_11_rl_training_plots.log"
+
 echo "DONE: ${RUN_TAG}"
 echo "Logs: reports/logs/"
 echo "Aggregate metrics: reports/aggregate/metrics_forecast_all_${RUN_TAG}.csv"

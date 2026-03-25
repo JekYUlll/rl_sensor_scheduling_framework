@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import textwrap
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -50,6 +51,10 @@ def _infer_sensor_timelines(
     return sensor_names, np.vstack(activation)
 
 
+def _format_axis_label(label: str, width: int = 14) -> str:
+    return textwrap.fill(label.replace("_", " "), width=width)
+
+
 def _plot_timeline(
     scheduler_name: str,
     sensor_names: list[str],
@@ -79,12 +84,12 @@ def _plot_timeline(
         title += f" | model={model_label}"
 
     axes[0].plot(x, target_series[start:end], color="black", linewidth=1.6)
-    axes[0].set_ylabel(target_name)
+    axes[0].set_ylabel(_format_axis_label(target_name), rotation=0, ha="right", va="center", labelpad=34)
     axes[0].set_title(title)
     axes[0].grid(alpha=0.25)
 
     axes[1].plot(x, power[start:end], color="tab:orange", linewidth=1.4)
-    axes[1].set_ylabel("power")
+    axes[1].set_ylabel("power", rotation=0, ha="right", va="center", labelpad=34)
     axes[1].grid(alpha=0.25)
 
     for row_idx, sensor_name in enumerate(sensor_names):
@@ -96,7 +101,13 @@ def _plot_timeline(
         ax.set_yticks([0, 1])
         ax.set_yticklabels(["off", "on"])
         duty = float(np.mean(series)) if len(series) else float("nan")
-        ax.set_ylabel(sensor_name)
+        ax.set_ylabel(
+            _format_axis_label(sensor_name),
+            rotation=0,
+            ha="right",
+            va="center",
+            labelpad=34,
+        )
         ax.text(
             0.995,
             0.82,
@@ -110,7 +121,7 @@ def _plot_timeline(
         ax.grid(alpha=0.2, axis="x")
 
     axes[-1].set_xlabel("time index")
-    fig.tight_layout()
+    fig.tight_layout(rect=(0.16, 0.02, 1.0, 1.0))
     fig.savefig(out_path, dpi=160)
     plt.close(fig)
 
