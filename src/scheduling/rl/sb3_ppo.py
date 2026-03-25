@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Any, Callable
 
 import gymnasium as gym
 import numpy as np
@@ -262,14 +262,25 @@ class PPOTrainingCallback(BaseCallback):
         for _ in range(self.eval_episodes):
             obs, _ = eval_env.reset()
             terminated = False
+            info: dict[str, Any] = {}
             while not terminated:
                 action, _ = self.model.predict(obs, deterministic=True)
                 obs, _, terminated, _, info = eval_env.step(action)
-            summary = info["episode_summary"]
+            summary = dict(info.get("episode_summary", {}))
+            if not summary:
+                continue
             rewards.append(float(summary["reward"]))
             powers.append(float(summary["power"]))
             forecasts.append(float(summary["forecast_reward"]))
             peaks.append(float(summary["peak_violation_rate"]))
+        if not rewards:
+            return {
+                "val_objective": float("-inf"),
+                "val_reward": float("nan"),
+                "val_forecast_reward": float("nan"),
+                "val_power": float("nan"),
+                "val_peak_violation_rate": float("nan"),
+            }
         return {
             "val_objective": float(np.mean(rewards)),
             "val_reward": float(np.mean(rewards)),
@@ -315,7 +326,11 @@ class PPOTrainingCallback(BaseCallback):
         return True
 
     def export_training_log(self) -> pd.DataFrame:
-        df = pd.DataFrame(self.episode_rows, columns=DEFAULT_TRAINING_LOG_COLUMNS)
+        df = pd.DataFrame.from_records(self.episode_rows)
+        if df.empty:
+            df = pd.DataFrame({col: pd.Series(dtype=float) for col in DEFAULT_TRAINING_LOG_COLUMNS})
+        else:
+            df = df.reindex(columns=DEFAULT_TRAINING_LOG_COLUMNS)
         path = self.run_dir / "training_log.csv"
         df.to_csv(path, index=False)
         return df

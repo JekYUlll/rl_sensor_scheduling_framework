@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 
-DEFAULT_SCHEDULERS = ("dqn", "cmdp_dqn")
+DEFAULT_SCHEDULERS = ("dqn", "cmdp_dqn", "ppo")
 
 
 def _rolling_stats(values: pd.Series, window: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -100,7 +100,7 @@ def _plot_compare(run_tag: str, logs: dict[str, pd.DataFrame], out_dir: Path, wi
     colors = {
         "dqn": "tab:blue",
         "cmdp_dqn": "tab:orange",
-        "score_dqn": "tab:green",
+        "ppo": "tab:green",
     }
     fig, axes = plt.subplots(2, 2, figsize=(12, 7), sharex=True)
     axes = axes.reshape(-1)

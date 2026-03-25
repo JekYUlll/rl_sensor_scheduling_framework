@@ -27,6 +27,7 @@ from scheduling.baselines.random_scheduler import RandomScheduler
 from scheduling.baselines.round_robin_scheduler import RoundRobinScheduler
 from scheduling.rl.constrained_dqn_agent import ConstrainedDQNAgent
 from scheduling.rl.dqn_agent import DQNAgent
+from scheduling.rl.sb3_ppo import PPOPolicyAdapter, PPOTrainingCallback, WindblownSubsetGymEnv, build_ppo_model
 from scheduling.rl.score_dqn_agent import ConstrainedScoreDQNAgent, ScoreDQNAgent
 from sensors.base_sensor import SensorSpec
 from sensors.dataset_sensor import DatasetSensor
@@ -295,13 +296,13 @@ def _make_scheduler(
         ), name
     if name == "full_open":
         return FullOpenScheduler(sensor_ids), name
-    if name in {"dqn", "cmdp_dqn"}:
+    if name in {"dqn", "cmdp_dqn", "ppo"}:
         return None, name
     raise ValueError(f"Unknown scheduler_name: {name}")
 
 
 def _is_rl_scheduler(name: str) -> bool:
-    return name in {"dqn", "cmdp_dqn"}
+    return name in {"dqn", "cmdp_dqn", "ppo"}
 
 
 def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector, episode_len: int | None = None):
@@ -321,6 +322,12 @@ def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector, ep
                 projector=selector,
                 device=str(scheduler_cfg.get("device", "auto")),
                 episode_len=episode_len,
+            )
+        if name == "ppo":
+            return PPOPolicyAdapter(
+                sensor_ids=list(selector.sensor_ids),
+                cfg=scheduler_cfg,
+                selector=selector,
             )
     action_dim = selector.size()
     if name == "dqn":
@@ -362,11 +369,13 @@ def _task_cost_cfg(cost_cfg: dict, scheduler_name: str, scheduler_cfg: dict) -> 
 
 
 def _checkpoint_name(name: str) -> str:
+    if name == "ppo":
+        return f"scheduler_{name}.zip"
     return f"scheduler_{name}.pt"
 
 
 def _is_score_agent(agent) -> bool:
-    return isinstance(agent, (ScoreDQNAgent, ConstrainedScoreDQNAgent))
+    return isinstance(agent, (ScoreDQNAgent, ConstrainedScoreDQNAgent, PPOPolicyAdapter))
 
 
 def _is_constrained_agent(agent) -> bool:
@@ -850,6 +859,131 @@ def pretrain_reward_predictor(
     return {"run_dir": str(run_dir), "summary": summary}
 
 
+def _train_ppo_scheduler(
+    *,
+    truth_csv: str,
+    env_cfg_path: str,
+    sensor_cfg_path: str,
+    estimator_cfg_path: str,
+    scheduler_cfg_path: str,
+    run_dir: Path,
+    selector,
+    scheduler_cfg: dict,
+    task_cost_cfg: dict,
+    reward_target_indices: list[int],
+    reward_artifact: str | None,
+    base_seed: int,
+    episode_len: int,
+) -> dict:
+    if not isinstance(selector, OnlineSubsetProjector):
+        raise TypeError("PPO baseline currently supports only the windblown online-subset projector path")
+    projector = selector
+    base_cfg = load_yaml("configs/base.yaml")
+    reward_cfg = base_cfg.get("forecast_reward", {})
+    reward_oracle = None
+    if bool(reward_cfg.get("enabled", False)) and reward_artifact:
+        reward_oracle = load_reward_oracle(reward_artifact)
+
+    constraint_budgets = _resolve_constraint_budgets(base_cfg.get("constraints", {}), scheduler_cfg)
+    env_train, estimator_train, selector_train, meta_train = _build_truth_stack(
+        truth_csv=truth_csv,
+        env_cfg_path=env_cfg_path,
+        sensor_cfg_path=sensor_cfg_path,
+        estimator_cfg_path=estimator_cfg_path,
+        split_name="rl_train",
+        seed=base_seed,
+        random_reset=True,
+    )
+    train_env = WindblownSubsetGymEnv(
+        env=env_train,
+        estimator=estimator_train,
+        selector=projector,
+        task_cost_cfg=task_cost_cfg,
+        state_columns=list(meta_train["state_columns"]),
+        reward_target_indices=list(reward_target_indices),
+        constraint_budgets=constraint_budgets,
+        reward_oracle=reward_oracle,
+    )
+
+    eval_interval = int(scheduler_cfg.get("ppo", {}).get("eval_interval_episodes", 5))
+    eval_episodes = int(scheduler_cfg.get("ppo", {}).get("eval_episodes", 3))
+    total_timesteps = int(
+        scheduler_cfg.get("ppo", {}).get(
+            "total_timesteps",
+            int(base_cfg.get("run", {}).get("num_episodes", 80)) * max(episode_len, 1),
+        )
+    )
+
+    def _eval_env_factory() -> WindblownSubsetGymEnv:
+        env_val, estimator_val, _, meta_val = _build_truth_stack(
+            truth_csv=truth_csv,
+            env_cfg_path=env_cfg_path,
+            sensor_cfg_path=sensor_cfg_path,
+            estimator_cfg_path=estimator_cfg_path,
+            split_name="rl_val",
+            seed=base_seed,
+            random_reset=False,
+            episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="rl_val"),
+        )
+        return WindblownSubsetGymEnv(
+            env=env_val,
+            estimator=estimator_val,
+            selector=projector,
+            task_cost_cfg=task_cost_cfg,
+            state_columns=list(meta_val["state_columns"]),
+            reward_target_indices=list(meta_val.get("reward_target_indices", [])),
+            constraint_budgets=constraint_budgets,
+            reward_oracle=reward_oracle,
+        )
+
+    best_ckpt = run_dir / _checkpoint_name("ppo")
+    last_ckpt = run_dir / "scheduler_ppo_last.zip"
+    model = build_ppo_model(scheduler_cfg, train_env, device=str(scheduler_cfg.get("device", "auto")))
+    callback = PPOTrainingCallback(
+        run_dir=run_dir,
+        eval_env_factory=_eval_env_factory,
+        eval_interval_episodes=eval_interval,
+        eval_episodes=eval_episodes,
+        best_model_path=best_ckpt,
+    )
+    model.learn(total_timesteps=total_timesteps, callback=callback, progress_bar=False)
+    model.save(str(last_ckpt))
+    callback.export_training_log()
+    if not best_ckpt.exists():
+        model.save(str(best_ckpt))
+    adapter = PPOPolicyAdapter(sensor_ids=list(projector.sensor_ids), cfg=scheduler_cfg, selector=projector)
+    adapter.load(str(best_ckpt))
+    val_summary = _evaluate_agent_on_split(
+        truth_csv=truth_csv,
+        env_cfg_path=env_cfg_path,
+        sensor_cfg_path=sensor_cfg_path,
+        estimator_cfg_path=estimator_cfg_path,
+        scheduler_cfg_path=scheduler_cfg_path,
+        split_name="rl_val",
+        agent=adapter,
+        reward_artifact=reward_artifact,
+    )
+    metrics = {
+        "scheduler": "ppo",
+        "reward_mean": float(val_summary["reward_mean"]),
+        "trace_P_mean": float(val_summary["trace_P_mean"]),
+        "uncertainty_mean": float(val_summary["uncertainty_mean"]),
+        "forecast_reward_mean": float(val_summary["forecast_reward_mean"]),
+        "power_mean": float(val_summary["power_mean"]),
+        "peak_power_max_mean": float(val_summary["peak_power_max"]),
+        "total_energy_mean": float(val_summary["total_energy"]),
+        "peak_violation_rate_mean": float(val_summary["peak_violation_rate"]),
+        "avg_power_violation_mean": float(val_summary["avg_power_violation"]),
+        "energy_violation_mean": float(val_summary["energy_violation"]),
+        "coverage_mean": float(val_summary["coverage_mean"]),
+    }
+    pd.DataFrame([metrics]).to_csv(run_dir / "metrics_estimation.csv", index=False)
+    return {
+        "metrics": metrics,
+        "checkpoint": str(best_ckpt),
+    }
+
+
 def run_scheduler_training(
     truth_csv: str,
     env_cfg_path: str,
@@ -898,6 +1032,27 @@ def run_scheduler_training(
     reward_oracle = None
     if bool(reward_cfg.get("enabled", False)) and reward_artifact:
         reward_oracle = load_reward_oracle(reward_artifact)
+
+    if name == "ppo":
+        ppo_out = _train_ppo_scheduler(
+            truth_csv=truth_csv,
+            env_cfg_path=env_cfg_path,
+            sensor_cfg_path=sensor_cfg_path,
+            estimator_cfg_path=estimator_cfg_path,
+            scheduler_cfg_path=scheduler_cfg_path,
+            run_dir=run_dir,
+            selector=selector,
+            scheduler_cfg=scheduler_cfg,
+            task_cost_cfg=task_cost_cfg,
+            reward_target_indices=reward_target_indices,
+            reward_artifact=reward_artifact,
+            base_seed=seed,
+            episode_len=int(run_cfg.get("episode_len", 400)),
+        )
+        metrics = ppo_out["metrics"]
+        return {"run_dir": str(run_dir), "metrics": metrics, "scheduler": name, "checkpoint": ppo_out["checkpoint"]}
+
+    assert name != "ppo"
 
     if not _is_rl_scheduler(name):
         episodes = int(run_cfg.get("eval_episodes", 10))
@@ -970,6 +1125,8 @@ def run_scheduler_training(
 
     state_dim = len(flatten_rl_state({**estimator.get_rl_state_features(), "event": False}))
     agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector, episode_len=int(run_cfg.get("episode_len", 0)) or None)
+    if isinstance(agent, PPOPolicyAdapter):
+        raise RuntimeError("PPO should have been handled before the generic DQN training loop")
 
     num_episodes = int(run_cfg.get("num_episodes", 80))
     save_every = max(1, int(run_cfg.get("save_every", 10)))

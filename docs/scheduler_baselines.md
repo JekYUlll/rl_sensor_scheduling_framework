@@ -247,6 +247,30 @@
 - 表示更符合 AWS 供电场景的 constrained RL 方案；
 - 重点不是一定比 `dqn` 更准，而是要在不违反供电约束的前提下获得更合理的功率—精度折中。
 
+### 4.8 `ppo`
+
+配置：
+
+- `configs/scheduler/ppo.yaml`
+
+实现：
+
+- `src/scheduling/rl/sb3_ppo.py`
+- `src/scheduling/online_projector.py`
+
+逻辑：
+
+- 使用 Stable-Baselines3 的 `PPO` 作为现成开源 baseline；
+- policy 不直接输出传感器子集，而是输出每个传感器的连续 score；
+- `OnlineSubsetProjector` 再把 score 排序投影成满足硬功率约束的可执行子集；
+- 因此 `ppo` 与当前 `windblown` 架构兼容，同时避免回到静态 `action-id` 设计。
+
+作用：
+
+- 提供一个来自成熟开源 RL 框架的对照基线；
+- 用于和本地自定义的 `dqn / cmdp_dqn` 做实现层面对照；
+- 若后续在 `cmdp_dqn` 上做创新，`ppo` 可以作为“通用现成 RL baseline”保留。
+
 ## 5. 当前论文里应如何分层使用
 
 建议分三层：
@@ -266,6 +290,7 @@
 
 - `dqn`
 - `cmdp_dqn`
+- `ppo`
 
 当前最关键的比较对象不是 `random`，而是：
 

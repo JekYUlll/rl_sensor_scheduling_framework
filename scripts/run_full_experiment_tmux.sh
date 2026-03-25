@@ -80,10 +80,15 @@ declare -A SCHED_CFG=(
   [info_priority]="configs/scheduler/info_priority.yaml"
   [dqn]="configs/scheduler/dqn.yaml"
   [cmdp_dqn]="configs/scheduler/cmdp_dqn.yaml"
+  [ppo]="configs/scheduler/ppo.yaml"
 )
 
-for sched_name in full_open random periodic round_robin info_priority dqn cmdp_dqn; do
+for sched_name in full_open random periodic round_robin info_priority dqn cmdp_dqn ppo; do
   RUN_ID="${RUN_TAG}_${sched_name}"
+  CHECKPOINT_PATH="reports/runs/${RUN_ID}/scheduler_${sched_name}.pt"
+  if [[ "${sched_name}" == "ppo" ]]; then
+    CHECKPOINT_PATH="reports/runs/${RUN_ID}/scheduler_${sched_name}.zip"
+  fi
 
   python scripts/01_train_rl_scheduler.py \
     --truth_csv data/generated/windblown_truth.csv \
@@ -95,7 +100,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
     --reward_artifact "${REWARD_ARTIFACT}" \
     | tee "reports/logs/${RUN_ID}_train.log"
 
-  if [[ "${sched_name}" == "dqn" || "${sched_name}" == "cmdp_dqn" ]]; then
+  if [[ "${sched_name}" == "dqn" || "${sched_name}" == "cmdp_dqn" || "${sched_name}" == "ppo" ]]; then
     python scripts/02_evaluate_scheduler.py \
       --truth_csv data/generated/windblown_truth.csv \
       --env_cfg configs/env/windblown_case.yaml \
@@ -103,7 +108,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
       --estimator_cfg configs/estimator/kalman.yaml \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
-      --checkpoint "reports/runs/${RUN_ID}/scheduler_${sched_name}.pt" \
+      --checkpoint "${CHECKPOINT_PATH}" \
       --reward_artifact "${REWARD_ARTIFACT}" \
       | tee "reports/logs/${RUN_ID}_eval.log"
 
@@ -114,7 +119,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
       --estimator_cfg configs/estimator/kalman.yaml \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
-      --checkpoint "reports/runs/${RUN_ID}/scheduler_${sched_name}.pt" \
+      --checkpoint "${CHECKPOINT_PATH}" \
       --out_npz "data/processed/${RUN_ID}.npz" \
       | tee "reports/logs/${RUN_ID}_dataset.log"
   else
