@@ -1,11 +1,17 @@
-predictor_cfg: configs/predictor/lstm.yaml
+predictor_cfg: configs/predictor/lstm_reward.yaml
 pretrain_split: reward_pretrain
 lookback: 20
-horizon: 1
+horizon: 3
 loss: huber
 loss_delta: 1.0
-history_source: full_open_estimate
+history_source: scheduler_mix
 input_columns: all_state_columns
 target_columns: [air_temperature_c, snow_surface_temperature_c, wind_speed_ms]
+pretrain_schedulers:
+  - full_open
+  - periodic
+  - round_robin
+  - info_priority
+  - random
 train_ratio_within_pretrain: 0.8
 val_ratio_within_pretrain: 0.1

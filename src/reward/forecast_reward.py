@@ -130,6 +130,16 @@ def _normalize_split(train: ForecastDataset, val: ForecastDataset, test: Forecas
     return _apply(train), _apply(val), _apply(test), stats
 
 
+def _concat_datasets(datasets: list[ForecastDataset]) -> ForecastDataset:
+    valid = [ds for ds in datasets if ds.X.shape[0] > 0]
+    if not valid:
+        raise ValueError("No non-empty datasets to concatenate")
+    target_indices = valid[0].target_indices
+    x = np.concatenate([ds.X for ds in valid], axis=0)
+    y = np.concatenate([ds.Y for ds in valid], axis=0)
+    return ForecastDataset(X=x, Y=y, target_indices=target_indices)
+
+
 def _build_model_for_payload(predictor: Any, payload: dict) -> Any:
     name = str(payload["predictor_cfg"].get("predictor_name", "naive"))
     n_features = int(payload["n_features"])
@@ -265,6 +275,89 @@ def train_reward_oracle_from_series(
         horizon=horizon,
         target_series=np.asarray(target_series_prepared, dtype=float),
     )
+    train, val, test = split_dataset(ds, train_ratio=train_ratio, val_ratio=val_ratio)
+    train_norm, val_norm, test_norm, stats = _normalize_split(train, val, test)
+
+    predictor = build_predictor(predictor_cfg)
+    predictor.fit(train_norm, val_norm)
+    pred_norm = np.asarray(predictor.predict(test_norm), dtype=float)
+    pred = pred_norm * stats["y_std"] + stats["y_mean"]
+    metrics = compute_forecast_metrics(test.Y, pred)
+    artifact = save_reward_oracle_artifact(
+        predictor=predictor,
+        predictor_cfg=predictor_cfg,
+        stats=stats,
+        lookback=lookback,
+        horizon=horizon,
+        base_feature_names=[str(name) for name in input_columns],
+        input_columns=input_columns_prepared,
+        target_columns=target_columns_prepared,
+        loss_name=str(reward_cfg.get("loss", "huber")),
+        loss_delta=float(reward_cfg.get("loss_delta", 1.0)),
+        metrics=metrics,
+        artifact_path=artifact_path,
+    )
+    return {
+        "artifact_path": artifact,
+        "metrics": {k: float(v) for k, v in metrics.items()},
+        "lookback": lookback,
+        "horizon": horizon,
+        "predictor_name": str(predictor_cfg.get("predictor_name", "unknown")),
+        "target_columns": list(target_columns_prepared),
+    }
+
+
+def train_reward_oracle_from_rollouts(
+    rollouts: list[dict[str, np.ndarray]],
+    input_columns: list[str],
+    target_columns: list[str],
+    reward_cfg: dict,
+    artifact_path: str | Path,
+) -> dict:
+    if not rollouts:
+        raise ValueError("rollouts must be non-empty")
+    lookback = int(reward_cfg.get("lookback", 20))
+    horizon = int(reward_cfg.get("horizon", 1))
+    train_ratio = float(reward_cfg.get("train_ratio_within_pretrain", 0.8))
+    val_ratio = float(reward_cfg.get("val_ratio_within_pretrain", 0.1))
+    predictor_cfg_path = str(reward_cfg["predictor_cfg"])
+    predictor_cfg = load_yaml(predictor_cfg_path)
+    use_observed_mask = bool(predictor_cfg.get("use_observed_mask", False))
+    use_time_delta = bool(predictor_cfg.get("use_time_delta", False))
+
+    datasets: list[ForecastDataset] = []
+    input_columns_prepared: list[str] | None = None
+    target_columns_prepared: list[str] | None = None
+    for rollout in rollouts:
+        input_series_prepared, rollout_input_names, target_series_prepared, rollout_target_names, target_indices = prepare_input_and_targets(
+            input_series=np.asarray(rollout["input_series"], dtype=float),
+            target_series=np.asarray(rollout["target_series"], dtype=float),
+            feature_names=[str(name) for name in input_columns],
+            observed_mask=None if rollout.get("observed_mask") is None else np.asarray(rollout["observed_mask"], dtype=float),
+            use_observed_mask=use_observed_mask,
+            use_time_delta=use_time_delta,
+            target_columns=target_columns,
+        )
+        ds = build_window_dataset(
+            series=np.asarray(input_series_prepared, dtype=float),
+            lookback=lookback,
+            horizon=horizon,
+            target_series=np.asarray(target_series_prepared, dtype=float),
+            target_indices=target_indices,
+        )
+        datasets.append(ds)
+        if input_columns_prepared is None:
+            input_columns_prepared = list(rollout_input_names)
+            target_columns_prepared = list(rollout_target_names)
+        else:
+            if list(rollout_input_names) != input_columns_prepared:
+                raise ValueError("Reward rollout input feature names are inconsistent across pretraining rollouts")
+            if list(rollout_target_names) != target_columns_prepared:
+                raise ValueError("Reward rollout target names are inconsistent across pretraining rollouts")
+
+    assert input_columns_prepared is not None
+    assert target_columns_prepared is not None
+    ds = _concat_datasets(datasets)
     train, val, test = split_dataset(ds, train_ratio=train_ratio, val_ratio=val_ratio)
     train_norm, val_norm, test_norm, stats = _normalize_split(train, val, test)
 

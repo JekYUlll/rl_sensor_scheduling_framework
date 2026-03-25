@@ -17,7 +17,7 @@ from estimators.linear_gaussian_fit import fit_linear_gaussian_dynamics, safe_fe
 from estimators.state_summary import flatten_rl_state
 from evaluation.constraint_metrics import summarize_constraint_metrics
 from evaluation.cost_metrics import compute_step_cost
-from reward.forecast_reward import FrozenForecastRewardOracle, load_reward_oracle, train_reward_oracle_from_series
+from reward.forecast_reward import FrozenForecastRewardOracle, load_reward_oracle, train_reward_oracle_from_rollouts
 from scheduling.action_space import DiscreteActionSpace
 from scheduling.baselines.full_open_scheduler import FullOpenScheduler
 from scheduling.baselines.info_priority_scheduler import InfoPriorityScheduler
@@ -304,7 +304,7 @@ def _is_rl_scheduler(name: str) -> bool:
     return name in {"dqn", "cmdp_dqn"}
 
 
-def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector):
+def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector, episode_len: int | None = None):
     if isinstance(selector, OnlineSubsetProjector):
         if name == "dqn":
             return ScoreDQNAgent(
@@ -319,6 +319,8 @@ def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector):
                 sensor_ids=list(selector.sensor_ids),
                 cfg=scheduler_cfg,
                 projector=selector,
+                device=str(scheduler_cfg.get("device", "auto")),
+                episode_len=episode_len,
             )
     action_dim = selector.size()
     if name == "dqn":
@@ -329,6 +331,7 @@ def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector):
             action_dim=action_dim,
             cfg=scheduler_cfg,
             steady_power_limit=selector.per_step_budget,
+            episode_len=episode_len,
         )
     raise ValueError(f"Unsupported RL scheduler: {name}")
 
@@ -650,6 +653,97 @@ def _rollout_scheduler(
     }
 
 
+def _make_greedy_agent_scheduler(agent, selector, scheduler_name: str):
+    class _GreedyPolicy:
+        def reset(self):
+            return None
+
+        def act(self, state):
+            vec = np.asarray(flatten_rl_state(state), dtype=np.float32)
+            prev_selected = _prev_selected_from_state(state, selector)
+            return _agent_act(agent, vec, selector, prev_selected, greedy=True)
+
+    return _GreedyPolicy()
+
+
+def _validation_objective(summary: dict, constrained: bool) -> float:
+    objective = float(summary["reward_mean"])
+    if constrained:
+        objective -= 1.0e4 * max(float(summary.get("avg_power_violation", 0.0)), 0.0)
+        objective -= 1.0e4 * max(float(summary.get("peak_violation_rate", 0.0)), 0.0)
+    return objective
+
+
+def _evaluate_agent_on_split(
+    truth_csv: str,
+    env_cfg_path: str,
+    sensor_cfg_path: str,
+    estimator_cfg_path: str,
+    scheduler_cfg_path: str,
+    split_name: str,
+    agent,
+    reward_artifact: str | None,
+) -> dict[str, float]:
+    seed = base_cfg_seed()
+    env, estimator, selector, meta = _build_truth_stack(
+        truth_csv=truth_csv,
+        env_cfg_path=env_cfg_path,
+        sensor_cfg_path=sensor_cfg_path,
+        estimator_cfg_path=estimator_cfg_path,
+        split_name=split_name,
+        seed=seed,
+        random_reset=False,
+        episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name=split_name),
+    )
+    scheduler_cfg = load_yaml(scheduler_cfg_path)
+    _, name = _make_scheduler(scheduler_cfg, selector, meta["sensor_cfg"], meta["state_columns"])
+    base_cfg = meta["base_cfg"]
+    constraints_cfg = base_cfg.get("constraints", {})
+    constraint_budgets = _resolve_constraint_budgets(constraints_cfg, scheduler_cfg)
+    cost_cfg = {
+        **base_cfg.get("cost", {}),
+        "min_coverage_ratio": float(constraints_cfg.get("min_coverage_ratio", 0.0)),
+    }
+    task_cost_cfg = _task_cost_cfg(cost_cfg, name, scheduler_cfg)
+    reward_cfg = base_cfg.get("forecast_reward", {})
+    reward_oracle = None
+    if bool(reward_cfg.get("enabled", False)) and reward_artifact:
+        reward_oracle = load_reward_oracle(reward_artifact)
+    scheduler = _make_greedy_agent_scheduler(agent, selector, name)
+    out = _rollout_scheduler(
+        env,
+        estimator,
+        scheduler,
+        selector,
+        task_cost_cfg,
+        reward_target_indices=list(meta.get("reward_target_indices", [])),
+        reward_oracle=reward_oracle,
+        greedy=True,
+        scheduler_name=name,
+    )
+    constraint_metrics = summarize_constraint_metrics(
+        steady_power_hist=out["power_hist"],
+        peak_power_hist=out["peak_power_hist"],
+        startup_extra_hist=out["startup_extra_hist"],
+        average_power_budget=constraint_budgets["average_power_budget"],
+        episode_energy_budget=constraint_budgets["episode_energy_budget"],
+        peak_power_budget=constraint_budgets["peak_power_budget"],
+    )
+    return {
+        "reward_mean": float(out["episode_reward"]),
+        "trace_P_mean": float(np.mean(out["trace_hist"])) if out["trace_hist"] else float("nan"),
+        "uncertainty_mean": float(np.mean(out["uncertainty_hist"])) if out["uncertainty_hist"] else float("nan"),
+        "forecast_reward_mean": float(np.mean(out["forecast_hist"])) if out["forecast_hist"] else float("nan"),
+        "power_mean": float(constraint_metrics["power_mean"]),
+        "peak_power_max": float(constraint_metrics["peak_power_max"]),
+        "total_energy": float(constraint_metrics["total_energy"]),
+        "peak_violation_rate": float(constraint_metrics["peak_violation_rate"]),
+        "avg_power_violation": float(constraint_metrics["avg_power_violation"]),
+        "energy_violation": float(constraint_metrics["energy_violation"]),
+        "coverage_mean": float(np.mean(out["coverage_hist"])) if out["coverage_hist"] else float("nan"),
+    }
+
+
 def base_cfg_seed() -> int:
     base = load_yaml("configs/base.yaml")
     return int(base.get("seed", 42))
@@ -676,38 +770,67 @@ def pretrain_reward_predictor(
     )
     reward_cfg = load_yaml(reward_cfg_path)
     run_dir = _build_run_dir(run_id)
-    scheduler = FullOpenScheduler([str(s["sensor_id"]) for s in meta["sensor_cfg"].get("sensors", [])])
-    rollout = _rollout_scheduler(
-        env,
-        estimator,
-        scheduler,
-        selector,
-        cost_cfg=meta["cost_cfg"],
-        reward_target_indices=list(meta.get("reward_target_indices", [])),
-        reward_oracle=None,
-        greedy=True,
-        collect_series=True,
-        scheduler_name="full_open",
-    )
-    if not rollout["estimate_hist"] or not rollout["truth_hist"]:
-        raise ValueError("Reward predictor pretraining rollout produced empty series")
+    scheduler_names = [str(name) for name in reward_cfg.get("pretrain_schedulers", ["full_open"])]
+    reward_rollouts: list[dict[str, np.ndarray]] = []
+    rollout_meta: list[dict[str, float | str]] = []
+    for sched_idx, sched_name in enumerate(scheduler_names):
+        scheduler_cfg = load_yaml(f"configs/scheduler/{sched_name}.yaml")
+        scheduler, resolved_name = _make_scheduler(
+            scheduler_cfg,
+            selector,
+            meta["sensor_cfg"],
+            meta["state_columns"],
+        )
+        if scheduler is None:
+            raise ValueError(f"Reward pretraining does not support RL scheduler '{sched_name}'")
+        np.random.seed(seed + sched_idx)
+        rollout = _rollout_scheduler(
+            env,
+            estimator,
+            scheduler,
+            selector,
+            cost_cfg=meta["cost_cfg"],
+            reward_target_indices=list(meta.get("reward_target_indices", [])),
+            reward_oracle=None,
+            greedy=True,
+            collect_series=True,
+            scheduler_name=resolved_name,
+        )
+        if not rollout["estimate_hist"] or not rollout["truth_hist"]:
+            raise ValueError(f"Reward predictor pretraining rollout produced empty series for scheduler '{resolved_name}'")
+        estimate_arr = np.asarray(rollout["estimate_hist"], dtype=float)
+        truth_arr = np.asarray(rollout["truth_hist"], dtype=float)
+        mask_arr = np.asarray(rollout["observed_mask_hist"], dtype=float)
+        reward_rollouts.append(
+            {
+                "input_series": estimate_arr,
+                "target_series": truth_arr,
+                "observed_mask": mask_arr,
+            }
+        )
+        rollout_meta.append(
+            {
+                "scheduler": resolved_name,
+                "num_steps": float(estimate_arr.shape[0]),
+                "coverage_mean": float(np.mean(rollout["coverage_hist"])) if rollout["coverage_hist"] else float("nan"),
+                "power_mean": float(np.mean(rollout["power_hist"])) if rollout["power_hist"] else float("nan"),
+            }
+        )
 
-    input_series = np.asarray(rollout["estimate_hist"], dtype=float)
-    truth_series = np.asarray(rollout["truth_hist"], dtype=float)
+    if not reward_rollouts:
+        raise ValueError("Reward predictor pretraining produced no rollout data")
     state_columns = list(meta["state_columns"])
     target_columns = [str(col) for col in reward_cfg.get("target_columns", meta.get("reward_target_columns", []))]
     if not target_columns:
         target_columns = list(meta.get("reward_target_columns", []))
 
     artifact_path = run_dir / "reward_predictor.pt"
-    reward_out = train_reward_oracle_from_series(
-        input_series=input_series,
-        target_series=truth_series,
+    reward_out = train_reward_oracle_from_rollouts(
+        rollouts=reward_rollouts,
         input_columns=state_columns,
         target_columns=target_columns,
         reward_cfg=reward_cfg,
         artifact_path=artifact_path,
-        observed_mask=np.asarray(rollout["observed_mask_hist"], dtype=float),
     )
     summary = {
         "run_id": run_id,
@@ -717,10 +840,13 @@ def pretrain_reward_predictor(
         "lookback": reward_out["lookback"],
         "horizon": reward_out["horizon"],
         "target_columns": reward_out["target_columns"],
+        "pretrain_schedulers": scheduler_names,
+        "num_rollout_steps": int(sum(int(item["input_series"].shape[0]) for item in reward_rollouts)),
         **reward_out["metrics"],
     }
     save_yaml(summary, run_dir / "reward_predictor_meta.yaml")
     pd.DataFrame([summary]).to_csv(run_dir / "reward_predictor_metrics.csv", index=False)
+    pd.DataFrame(rollout_meta).to_csv(run_dir / "reward_pretrain_rollouts.csv", index=False)
     return {"run_dir": str(run_dir), "summary": summary}
 
 
@@ -843,9 +969,10 @@ def run_scheduler_training(
         return {"run_dir": str(run_dir), "metrics": metrics, "scheduler": name}
 
     state_dim = len(flatten_rl_state({**estimator.get_rl_state_features(), "event": False}))
-    agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector)
+    agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector, episode_len=int(run_cfg.get("episode_len", 0)) or None)
 
     num_episodes = int(run_cfg.get("num_episodes", 80))
+    save_every = max(1, int(run_cfg.get("save_every", 10)))
     rewards = []
     losses = []
     trace_means = []
@@ -860,6 +987,15 @@ def run_scheduler_training(
     lambda_energy_hist = []
     avg_power_violation_hist = []
     energy_violation_hist = []
+    val_objective_hist: list[float] = []
+    val_reward_hist: list[float] = []
+    val_forecast_hist: list[float] = []
+    val_power_hist: list[float] = []
+    val_peak_violation_hist: list[float] = []
+    best_val_objective = float("-inf")
+    best_val_summary: dict[str, float] | None = None
+    last_ckpt = run_dir / f"{_checkpoint_name(name).removesuffix('.pt')}_last.pt"
+    best_ckpt = run_dir / _checkpoint_name(name)
     for _ in range(num_episodes):
         reset_out = env.reset()
         estimator.reset()
@@ -940,11 +1076,31 @@ def run_scheduler_training(
                 reward = float(task_reward)
 
             if isinstance(agent, (ScoreDQNAgent, ConstrainedScoreDQNAgent)):
-                info = agent.observe(state_vec, selected, reward, next_vec, bool(step["done"]))
+                if isinstance(agent, ConstrainedScoreDQNAgent):
+                    info = agent.observe(
+                        state_vec,
+                        selected,
+                        task_reward,
+                        next_vec,
+                        bool(step["done"]),
+                        constraint_cost=power_cost,
+                    )
+                else:
+                    info = agent.observe(state_vec, selected, reward, next_vec, bool(step["done"]))
             else:
                 if aid is None:
                     raise ValueError("Discrete RL agent requires a resolved action id")
-                info = agent.observe(state_vec, int(aid), reward, next_vec, bool(step["done"]))
+                if isinstance(agent, ConstrainedDQNAgent):
+                    info = agent.observe(
+                        state_vec,
+                        int(aid),
+                        task_reward,
+                        next_vec,
+                        bool(step["done"]),
+                        constraint_cost=power_cost,
+                    )
+                else:
+                    info = agent.observe(state_vec, int(aid), reward, next_vec, bool(step["done"]))
 
             ep_reward += reward
             ep_trace.append(trace_p)
@@ -999,6 +1155,37 @@ def run_scheduler_training(
         energy_violation_hist.append(float(dual_metrics.get("energy_violation", 0.0)))
         if ep_losses:
             losses.append(float(np.mean(ep_losses)))
+        val_objective_hist.append(float("nan"))
+        val_reward_hist.append(float("nan"))
+        val_forecast_hist.append(float("nan"))
+        val_power_hist.append(float("nan"))
+        val_peak_violation_hist.append(float("nan"))
+
+        if len(rewards) % save_every == 0 or len(rewards) == num_episodes:
+            val_summary = _evaluate_agent_on_split(
+                truth_csv=truth_csv,
+                env_cfg_path=env_cfg_path,
+                sensor_cfg_path=sensor_cfg_path,
+                estimator_cfg_path=estimator_cfg_path,
+                scheduler_cfg_path=scheduler_cfg_path,
+                split_name="rl_val",
+                agent=agent,
+                reward_artifact=reward_artifact,
+            )
+            val_objective = _validation_objective(
+                val_summary,
+                constrained=isinstance(agent, (ConstrainedDQNAgent, ConstrainedScoreDQNAgent)),
+            )
+            val_objective_hist[-1] = float(val_objective)
+            val_reward_hist[-1] = float(val_summary["reward_mean"])
+            val_forecast_hist[-1] = float(val_summary["forecast_reward_mean"])
+            val_power_hist[-1] = float(val_summary["power_mean"])
+            val_peak_violation_hist[-1] = float(val_summary["peak_violation_rate"])
+            agent.save(str(last_ckpt))
+            if val_objective > best_val_objective:
+                best_val_objective = float(val_objective)
+                best_val_summary = dict(val_summary)
+                agent.save(str(best_ckpt))
 
     metrics = {
         "scheduler": name,
@@ -1015,7 +1202,17 @@ def run_scheduler_training(
         "lambda_energy_final": float(lambda_energy_hist[-1]) if lambda_energy_hist else 0.0,
         "avg_power_violation_mean": float(np.mean(avg_power_violation_hist)),
         "energy_violation_mean": float(np.mean(energy_violation_hist)),
+        "best_val_objective": float(best_val_objective) if best_val_objective > float("-inf") else float("nan"),
     }
+    if best_val_summary is not None:
+        metrics.update(
+            {
+                "best_val_reward": float(best_val_summary["reward_mean"]),
+                "best_val_forecast_reward": float(best_val_summary["forecast_reward_mean"]),
+                "best_val_power_mean": float(best_val_summary["power_mean"]),
+                "best_val_peak_violation_rate": float(best_val_summary["peak_violation_rate"]),
+            }
+        )
     pd.DataFrame([metrics]).to_csv(run_dir / "metrics_estimation.csv", index=False)
     pd.DataFrame(
         {
@@ -1032,10 +1229,19 @@ def run_scheduler_training(
             "lambda_energy": lambda_energy_hist,
             "avg_power_violation": avg_power_violation_hist,
             "energy_violation": energy_violation_hist,
+            "val_objective": val_objective_hist,
+            "val_reward": val_reward_hist,
+            "val_forecast_reward": val_forecast_hist,
+            "val_power": val_power_hist,
+            "val_peak_violation_rate": val_peak_violation_hist,
         }
     ).to_csv(run_dir / "training_log.csv", index=False)
-    ckpt = run_dir / _checkpoint_name(name)
-    agent.save(str(ckpt))
+    if best_ckpt.exists():
+        agent.load(str(best_ckpt))
+        ckpt = best_ckpt
+    else:
+        ckpt = run_dir / _checkpoint_name(name)
+        agent.save(str(ckpt))
     plot_training_curves(rewards, losses, run_dir / "fig_training_curves.png")
     plot_trace_power(trace_means, power_means, run_dir / "fig_trace_power.png")
     return {"run_dir": str(run_dir), "metrics": metrics, "scheduler": name, "checkpoint": str(ckpt)}
@@ -1069,7 +1275,13 @@ def evaluate_scheduler(
 
     if _is_rl_scheduler(name):
         state_dim = len(flatten_rl_state({**estimator.get_rl_state_features(), "event": False}))
-        agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector)
+        agent = _build_rl_agent(
+            name,
+            state_dim,
+            scheduler_cfg,
+            selector,
+            episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="rl_test"),
+        )
         ckpt = checkpoint or (run_dir / _checkpoint_name(name))
         agent.load(str(ckpt))
 

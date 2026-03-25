@@ -11,9 +11,9 @@ run:
   max_steps: 400
   save_every: 10
 cost:
-  alpha_estimation: 0.02
-  beta_prediction: 0.0
-  beta_forecast: 5.0
+  alpha_estimation: 0.0
+  beta_prediction: 5.0
+  beta_forecast: 0.0
   lambda_power: 0.0
   eta_switch: 0.005
   rho_coverage: 2.0
@@ -23,7 +23,7 @@ cost:
   min_relevance_weight: 0.25
   relevance_power: 1.0
 forecast_reward:
-  enabled: true
+  enabled: false
 constraints:
   max_active: 5
   per_step_budget: 2.2
