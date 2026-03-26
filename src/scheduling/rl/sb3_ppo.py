@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Sequence, cast
 
 import gymnasium as gym
 import numpy as np
@@ -10,7 +10,7 @@ import pandas as pd
 from gymnasium import spaces
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import BaseCallback
-from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize, VecEnv, sync_envs_normalization
 
 from estimators.state_summary import flatten_rl_state
 from evaluation.constraint_metrics import summarize_constraint_metrics
@@ -53,14 +53,27 @@ class PPOPolicyAdapter:
     cfg: dict
     selector: OnlineSubsetProjector
     model: PPO | None = None
+    obs_mean: np.ndarray | None = None
+    obs_var: np.ndarray | None = None
+    obs_epsilon: float = 1.0e-8
+    clip_obs: float = 10.0
 
     def __post_init__(self) -> None:
         self.device = str(self.cfg.get("device", "auto"))
 
+    def _normalize_obs(self, state_vec: np.ndarray) -> np.ndarray:
+        obs = np.asarray(state_vec, dtype=np.float32)
+        if self.obs_mean is None or self.obs_var is None:
+            return obs
+        denom = np.sqrt(np.maximum(self.obs_var, 0.0) + float(self.obs_epsilon))
+        norm = (obs - self.obs_mean.astype(np.float32)) / denom.astype(np.float32)
+        return np.clip(norm, -float(self.clip_obs), float(self.clip_obs)).astype(np.float32)
+
     def act(self, state_vec: np.ndarray, greedy: bool = False, prev_selected: list[str] | None = None) -> list[str]:
         if self.model is None:
             raise RuntimeError("PPO model is not loaded")
-        action, _ = self.model.predict(np.asarray(state_vec, dtype=np.float32), deterministic=bool(greedy))
+        obs = self._normalize_obs(np.asarray(state_vec, dtype=np.float32))
+        action, _ = self.model.predict(obs, deterministic=bool(greedy))
         return _score_ranking(np.asarray(action, dtype=float), self.sensor_ids)
 
     def save(self, path: str) -> None:
@@ -70,6 +83,47 @@ class PPOPolicyAdapter:
 
     def load(self, path: str) -> None:
         self.model = PPO.load(path, device=self.device)
+        stats_path = Path(path).with_suffix(".norm.npz")
+        if stats_path.exists():
+            stats = np.load(stats_path)
+            self.obs_mean = np.asarray(stats["mean"], dtype=np.float32)
+            self.obs_var = np.asarray(stats["var"], dtype=np.float32)
+            self.obs_epsilon = float(stats["epsilon"])
+            self.clip_obs = float(stats["clip_obs"])
+
+
+def save_obs_normalization_stats(vec_env: VecNormalize, path: Path) -> None:
+    if vec_env.obs_rms is None:
+        return
+    obs_rms = cast(Any, vec_env.obs_rms)
+    np.savez(
+        path,
+        mean=np.asarray(obs_rms.mean, dtype=np.float32),
+        var=np.asarray(obs_rms.var, dtype=np.float32),
+        epsilon=np.asarray([float(vec_env.epsilon)], dtype=np.float32),
+        clip_obs=np.asarray([float(vec_env.clip_obs)], dtype=np.float32),
+    )
+
+
+def make_vecnormalize(
+    vec_env: DummyVecEnv,
+    *,
+    gamma: float,
+    norm_obs: bool,
+    norm_reward: bool,
+    clip_obs: float,
+    clip_reward: float,
+    training: bool = True,
+) -> VecNormalize:
+    return VecNormalize(
+        vec_env,
+        training=training,
+        norm_obs=norm_obs,
+        norm_reward=norm_reward,
+        clip_obs=clip_obs,
+        clip_reward=clip_reward,
+        gamma=gamma,
+    )
 
 
 class WindblownSubsetGymEnv(gym.Env):
@@ -238,7 +292,7 @@ class PPOTrainingCallback(BaseCallback):
         self,
         *,
         run_dir: Path,
-        eval_env_factory: Callable[[], WindblownSubsetGymEnv],
+        eval_env_factory: Callable[[], VecNormalize],
         eval_interval_episodes: int,
         eval_episodes: int,
         best_model_path: Path,
@@ -259,13 +313,19 @@ class PPOTrainingCallback(BaseCallback):
         forecasts: list[float] = []
         peaks: list[float] = []
         eval_env = self.eval_env_factory()
+        train_env = self.model.get_env()
+        if train_env is None:
+            raise RuntimeError("PPO model is missing its training environment")
+        sync_envs_normalization(train_env, eval_env)
         for _ in range(self.eval_episodes):
-            obs, _ = eval_env.reset()
-            terminated = False
+            obs = cast(np.ndarray, eval_env.reset())
+            done = False
             info: dict[str, Any] = {}
-            while not terminated:
-                action, _ = self.model.predict(obs, deterministic=True)
-                obs, _, terminated, _, info = eval_env.step(action)
+            while not done:
+                action, _ = self.model.predict(cast(np.ndarray, obs), deterministic=True)
+                obs, _, dones, infos = eval_env.step(action)
+                done = bool(dones[0])
+                info = infos[0] if infos else {}
             summary = dict(info.get("episode_summary", {}))
             if not summary:
                 continue
@@ -273,6 +333,7 @@ class PPOTrainingCallback(BaseCallback):
             powers.append(float(summary["power"]))
             forecasts.append(float(summary["forecast_reward"]))
             peaks.append(float(summary["peak_violation_rate"]))
+        eval_env.close()
         if not rewards:
             return {
                 "val_objective": float("-inf"),
@@ -336,11 +397,27 @@ class PPOTrainingCallback(BaseCallback):
         return df
 
 
-def build_ppo_model(cfg: dict, env: WindblownSubsetGymEnv, device: str = "auto") -> PPO:
+def build_ppo_model(cfg: dict, env_fns: Sequence[Callable[[], WindblownSubsetGymEnv]], device: str = "auto") -> PPO:
     ppo_cfg = dict(cfg.get("ppo", {}))
     hidden_dims = list(ppo_cfg.get("policy_hidden_dims", cfg.get("network", {}).get("hidden_dims", [128, 128])))
     policy_kwargs = {"net_arch": dict(pi=hidden_dims, vf=hidden_dims)}
-    vec_env = DummyVecEnv([lambda: env])
+    if not env_fns:
+        raise ValueError("PPO requires at least one environment factory")
+    vec_env = DummyVecEnv(list(env_fns))
+    gamma = float(ppo_cfg.get("gamma", 0.99))
+    norm_obs = bool(ppo_cfg.get("normalize_observations", True))
+    norm_reward = bool(ppo_cfg.get("normalize_reward", True))
+    clip_obs = float(ppo_cfg.get("clip_obs", 10.0))
+    clip_reward = float(ppo_cfg.get("clip_reward", 10.0))
+    vec_env = make_vecnormalize(
+        vec_env,
+        gamma=gamma,
+        norm_obs=norm_obs,
+        norm_reward=norm_reward,
+        clip_obs=clip_obs,
+        clip_reward=clip_reward,
+        training=True,
+    )
     return PPO(
         policy="MlpPolicy",
         env=vec_env,
@@ -348,12 +425,14 @@ def build_ppo_model(cfg: dict, env: WindblownSubsetGymEnv, device: str = "auto")
         n_steps=int(ppo_cfg.get("n_steps", 256)),
         batch_size=int(ppo_cfg.get("batch_size", 64)),
         n_epochs=int(ppo_cfg.get("n_epochs", 10)),
-        gamma=float(ppo_cfg.get("gamma", 0.99)),
+        gamma=gamma,
         gae_lambda=float(ppo_cfg.get("gae_lambda", 0.95)),
         clip_range=float(ppo_cfg.get("clip_range", 0.2)),
         ent_coef=float(ppo_cfg.get("ent_coef", 0.01)),
         vf_coef=float(ppo_cfg.get("vf_coef", 0.5)),
         max_grad_norm=float(ppo_cfg.get("max_grad_norm", 0.5)),
+        use_sde=bool(ppo_cfg.get("use_sde", True)),
+        sde_sample_freq=int(ppo_cfg.get("sde_sample_freq", 4)),
         policy_kwargs=policy_kwargs,
         device=device,
         verbose=int(ppo_cfg.get("verbose", 0)),

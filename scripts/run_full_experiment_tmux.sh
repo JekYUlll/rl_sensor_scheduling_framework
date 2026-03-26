@@ -189,6 +189,12 @@ python scripts/11_plot_rl_training_diagnostics.py \
   --run-tag "${RUN_TAG}" \
   | tee "reports/logs/${RUN_TAG}_11_rl_training_plots.log"
 
+python scripts/13_plot_legacy_style_summaries.py \
+  --run-tag "${RUN_TAG}" \
+  --env-cfg configs/env/windblown_case.yaml \
+  --model informer \
+  | tee "reports/logs/${RUN_TAG}_13_legacy_style_plots.log"
+
 echo "DONE: ${RUN_TAG}"
 echo "Logs: reports/logs/"
 echo "Aggregate metrics: reports/aggregate/metrics_forecast_all_${RUN_TAG}.csv"

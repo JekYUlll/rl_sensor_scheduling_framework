@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import pandas as pd
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
 from core.config import load_yaml, save_yaml
 from core.seed import set_seed
@@ -27,7 +29,14 @@ from scheduling.baselines.random_scheduler import RandomScheduler
 from scheduling.baselines.round_robin_scheduler import RoundRobinScheduler
 from scheduling.rl.constrained_dqn_agent import ConstrainedDQNAgent
 from scheduling.rl.dqn_agent import DQNAgent
-from scheduling.rl.sb3_ppo import PPOPolicyAdapter, PPOTrainingCallback, WindblownSubsetGymEnv, build_ppo_model
+from scheduling.rl.sb3_ppo import (
+    PPOPolicyAdapter,
+    PPOTrainingCallback,
+    WindblownSubsetGymEnv,
+    build_ppo_model,
+    make_vecnormalize,
+    save_obs_normalization_stats,
+)
 from scheduling.rl.score_dqn_agent import ConstrainedScoreDQNAgent, ScoreDQNAgent
 from sensors.base_sensor import SensorSpec
 from sensors.dataset_sensor import DatasetSensor
@@ -885,25 +894,28 @@ def _train_ppo_scheduler(
         reward_oracle = load_reward_oracle(reward_artifact)
 
     constraint_budgets = _resolve_constraint_budgets(base_cfg.get("constraints", {}), scheduler_cfg)
-    env_train, estimator_train, selector_train, meta_train = _build_truth_stack(
-        truth_csv=truth_csv,
-        env_cfg_path=env_cfg_path,
-        sensor_cfg_path=sensor_cfg_path,
-        estimator_cfg_path=estimator_cfg_path,
-        split_name="rl_train",
-        seed=base_seed,
-        random_reset=True,
-    )
-    train_env = WindblownSubsetGymEnv(
-        env=env_train,
-        estimator=estimator_train,
-        selector=projector,
-        task_cost_cfg=task_cost_cfg,
-        state_columns=list(meta_train["state_columns"]),
-        reward_target_indices=list(reward_target_indices),
-        constraint_budgets=constraint_budgets,
-        reward_oracle=reward_oracle,
-    )
+    def _make_train_env(seed_offset: int) -> WindblownSubsetGymEnv:
+        env_train, estimator_train, _, meta_train = _build_truth_stack(
+            truth_csv=truth_csv,
+            env_cfg_path=env_cfg_path,
+            sensor_cfg_path=sensor_cfg_path,
+            estimator_cfg_path=estimator_cfg_path,
+            split_name="rl_train",
+            seed=base_seed + seed_offset,
+            random_reset=True,
+        )
+        return WindblownSubsetGymEnv(
+            env=env_train,
+            estimator=estimator_train,
+            selector=projector,
+            task_cost_cfg=task_cost_cfg,
+            state_columns=list(meta_train["state_columns"]),
+            reward_target_indices=list(reward_target_indices),
+            constraint_budgets=constraint_budgets,
+            reward_oracle=reward_oracle,
+        )
+
+    train_template_env = _make_train_env(0)
 
     eval_interval = int(scheduler_cfg.get("ppo", {}).get("eval_interval_episodes", 5))
     eval_episodes = int(scheduler_cfg.get("ppo", {}).get("eval_episodes", 3))
@@ -914,7 +926,7 @@ def _train_ppo_scheduler(
         )
     )
 
-    def _eval_env_factory() -> WindblownSubsetGymEnv:
+    def _eval_env_factory():
         env_val, estimator_val, _, meta_val = _build_truth_stack(
             truth_csv=truth_csv,
             env_cfg_path=env_cfg_path,
@@ -925,7 +937,7 @@ def _train_ppo_scheduler(
             random_reset=False,
             episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name="rl_val"),
         )
-        return WindblownSubsetGymEnv(
+        raw_env = WindblownSubsetGymEnv(
             env=env_val,
             estimator=estimator_val,
             selector=projector,
@@ -935,10 +947,25 @@ def _train_ppo_scheduler(
             constraint_budgets=constraint_budgets,
             reward_oracle=reward_oracle,
         )
+        ppo_cfg = dict(scheduler_cfg.get("ppo", {}))
+        gamma = float(ppo_cfg.get("gamma", 0.99))
+        return make_vecnormalize(
+            DummyVecEnv([lambda env=raw_env: env]),
+            gamma=gamma,
+            norm_obs=bool(ppo_cfg.get("normalize_observations", True)),
+            norm_reward=False,
+            clip_obs=float(ppo_cfg.get("clip_obs", 10.0)),
+            clip_reward=float(ppo_cfg.get("clip_reward", 10.0)),
+            training=False,
+        )
 
     best_ckpt = run_dir / _checkpoint_name("ppo")
     last_ckpt = run_dir / "scheduler_ppo_last.zip"
-    model = build_ppo_model(scheduler_cfg, train_env, device=str(scheduler_cfg.get("device", "auto")))
+    norm_stats_path = best_ckpt.with_suffix(".norm.npz")
+    ppo_cfg = dict(scheduler_cfg.get("ppo", {}))
+    n_envs = max(1, int(ppo_cfg.get("n_envs", 4)))
+    env_fns = [lambda seed_offset=i: _make_train_env(seed_offset) for i in range(n_envs)]
+    model = build_ppo_model(scheduler_cfg, env_fns, device=str(scheduler_cfg.get("device", "auto")))
     callback = PPOTrainingCallback(
         run_dir=run_dir,
         eval_env_factory=_eval_env_factory,
@@ -948,9 +975,17 @@ def _train_ppo_scheduler(
     )
     model.learn(total_timesteps=total_timesteps, callback=callback, progress_bar=False)
     model.save(str(last_ckpt))
+    train_vec_env = model.get_env()
+    if train_vec_env is None:
+        raise RuntimeError("PPO model did not retain its vectorized environment")
+    train_norm = cast(VecNormalize, train_vec_env)
+    save_obs_normalization_stats(train_norm, last_ckpt.with_suffix(".norm.npz"))
     callback.export_training_log()
     if not best_ckpt.exists():
         model.save(str(best_ckpt))
+        save_obs_normalization_stats(train_norm, norm_stats_path)
+    elif not norm_stats_path.exists():
+        save_obs_normalization_stats(train_norm, norm_stats_path)
     adapter = PPOPolicyAdapter(sensor_ids=list(projector.sensor_ids), cfg=scheduler_cfg, selector=projector)
     adapter.load(str(best_ckpt))
     val_summary = _evaluate_agent_on_split(

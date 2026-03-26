@@ -24,6 +24,22 @@ def _discover_scheduler_npz(run_tag: str, scheduler: str | None) -> list[tuple[s
         if scheduler is not None and scheduler_name != scheduler:
             continue
         discovered.append((scheduler_name, path))
+    if discovered:
+        return discovered
+    exact = processed_dir / f"{run_tag}.npz"
+    if exact.exists():
+        scheduler_name = scheduler or "scheduler"
+        stats_path = ROOT / "reports" / "runs" / run_tag / "dataset_stats.csv"
+        if stats_path.exists():
+            try:
+                import pandas as pd
+
+                stats = pd.read_csv(stats_path)
+                if "scheduler_name" in stats.columns and not stats.empty:
+                    scheduler_name = str(stats.loc[0, "scheduler_name"])
+            except Exception:
+                pass
+        discovered.append((scheduler_name, exact))
     return discovered
 
 
