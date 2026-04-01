@@ -65,6 +65,7 @@ def main() -> None:
     raw_target_series = data["target_series"] if "target_series" in data else input_series
     base_feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
     observed_mask = data["observed_mask"] if "observed_mask" in data else None
+    time_index = data["time_index"] if "time_index" in data else None
     meta = _load_dataset_meta(args.series_npz)
     cfg = load_yaml(args.predictor_cfg)
     use_observed_mask = bool(cfg.get("use_observed_mask", False))
@@ -78,6 +79,8 @@ def main() -> None:
         use_observed_mask=use_observed_mask,
         use_time_delta=use_time_delta,
         target_columns=target_columns,
+        time_index=None if time_index is None else np.asarray(time_index, dtype=int),
+        base_freq_s=int(meta.get("base_freq_s", 1)),
     )
 
     ds = build_window_dataset(

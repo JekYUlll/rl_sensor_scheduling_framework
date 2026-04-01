@@ -1,6 +1,7 @@
-predictor_name: lstm
-hidden_dim: 64
-num_layers: 1
+predictor_name: transformer
+d_model: 64
+nhead: 4
+num_layers: 2
 epochs: 40
 lr: 0.001
 batch_size: 128

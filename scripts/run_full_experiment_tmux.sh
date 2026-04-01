@@ -53,10 +53,20 @@ fi
 mkdir -p reports/logs
 echo "RUN_TAG=${RUN_TAG}"
 
+TRUTH_STEPS="$(
+python - <<'PY'
+import yaml
+from pathlib import Path
+cfg = yaml.safe_load(Path('configs/base.yaml').read_text())
+print(int(cfg.get('data', {}).get('truth_steps', 1209600)))
+PY
+)"
+echo "TRUTH_STEPS=${TRUTH_STEPS}"
+
 python scripts/00_generate_business_data.py \
   --env_cfg configs/env/windblown_case.yaml \
   --sensor_cfg configs/sensors/windblown_sensors.yaml \
-  --steps 10000 \
+  --steps "${TRUTH_STEPS}" \
   --out data/generated/windblown_truth.csv \
   | tee "reports/logs/${RUN_TAG}_00_generate.log"
 
@@ -70,7 +80,7 @@ python scripts/00b_pretrain_reward_predictor.py \
   --run_id "${REWARD_RUN_ID}" \
   | tee "reports/logs/${RUN_TAG}_00b_reward_pretrain.log"
 
-REWARD_ARTIFACT="reports/runs/${REWARD_RUN_ID}/reward_predictor.pt"
+REWARD_ARTIFACT="reports/runs/${REWARD_RUN_ID}/reward_oracles.yaml"
 
 declare -A SCHED_CFG=(
   [full_open]="configs/scheduler/full_open.yaml"
@@ -120,6 +130,7 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
       --checkpoint "${CHECKPOINT_PATH}" \
+      --split final_test \
       --out_npz "data/processed/${RUN_ID}.npz" \
       | tee "reports/logs/${RUN_ID}_dataset.log"
   else
@@ -140,17 +151,18 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
       --estimator_cfg configs/estimator/kalman.yaml \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
+      --split final_test \
       --out_npz "data/processed/${RUN_ID}.npz" \
       | tee "reports/logs/${RUN_ID}_dataset.log"
   fi
 
 done
 
-PREDICTOR_CMD=(bash scripts/04_train_predictors_multi_gpu.sh --run-tag "${RUN_TAG}")
+PREDICTOR_CMD=(bash scripts/04_eval_frozen_predictors_multi_gpu.sh --run-tag "${RUN_TAG}" --reward-artifact "${REWARD_ARTIFACT}")
 if [[ -n "${PREDICTOR_GPUS}" ]]; then
   PREDICTOR_CMD+=(--gpus "${PREDICTOR_GPUS}")
 fi
-"${PREDICTOR_CMD[@]}" | tee "reports/logs/${RUN_TAG}_04_train_predictors_multi_gpu.log"
+"${PREDICTOR_CMD[@]}" | tee "reports/logs/${RUN_TAG}_04_eval_frozen_predictors_multi_gpu.log"
 
 python scripts/05_evaluate_forecasts.py \
   --reports_dir reports/runs \
@@ -192,7 +204,7 @@ python scripts/11_plot_rl_training_diagnostics.py \
 python scripts/13_plot_legacy_style_summaries.py \
   --run-tag "${RUN_TAG}" \
   --env-cfg configs/env/windblown_case.yaml \
-  --model informer \
+  --model transformer \
   | tee "reports/logs/${RUN_TAG}_13_legacy_style_plots.log"
 
 echo "DONE: ${RUN_TAG}"
