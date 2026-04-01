@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1040" viewBox="0 0 1700 1040">
+  <defs>
+    <style>
+      .title { font: 700 34px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 17px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #334155; }
+      .section { font: 700 19px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
+      .label { font: 600 14px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
+      .small { font: 500 13px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #1e293b; }
+      .tiny { font: 500 12px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #334155; }
+      .box { rx: 18; ry: 18; stroke-width: 2.2; }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .arrow2 { stroke: #64748b; stroke-width: 2.3; fill: none; marker-end: url(#arrowhead2); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569" />
+    </marker>
+    <marker id="arrowhead2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#94a3b8" flood-opacity="0.24"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1700" height="1040" fill="#f8fafc"/>
+  <text x="65" y="68" class="title">风吹雪传感器调度：预测器冻结奖励主线（唯一流程）</text>
+  <text x="65" y="100" class="subtitle">核心目标：在硬功率约束下，直接优化未来多步 forecasting performance，而不是当前状态跟踪误差</text>
+
+  <!-- Row 1 -->
+  <rect x="60" y="145" width="360" height="195" class="box" fill="#eef6ff" stroke="#3b82f6" filter="url(#shadow)"/>
+  <text x="92" y="178" class="section">1. 共享真值环境 + 传感器定义</text>
+  <text x="92" y="210" class="label">输入</text>
+  <text x="92" y="232" class="small">`00_generate_business_data.py` 生成统一 truth 序列</text>
+  <text x="92" y="252" class="small">风速/温湿压/辐射/雪表温度/粒径/粒速/通量</text>
+  <text x="92" y="282" class="label">约束元数据</text>
+  <text x="92" y="304" class="small">稳态功率、启动峰值、平均功率、总能量预算</text>
+
+  <rect x="460" y="145" width="360" height="195" class="box" fill="#effcf5" stroke="#22c55e" filter="url(#shadow)"/>
+  <text x="492" y="178" class="section">2. 时间轴四段切分（防泄漏）</text>
+  <text x="492" y="212" class="small">S0: predictor_pretrain</text>
+  <text x="492" y="234" class="small">S1: rl_train</text>
+  <text x="492" y="256" class="small">S2: rl_val</text>
+  <text x="492" y="278" class="small">S3: final_test</text>
+  <text x="492" y="310" class="tiny">强约束：S3 结果不回流训练，S0/S1/S2/S3 互不重叠</text>
+
+  <rect x="860" y="145" width="360" height="195" class="box" fill="#fff7ed" stroke="#f59e0b" filter="url(#shadow)"/>
+  <text x="892" y="178" class="section">3. S0 训练并冻结预测器</text>
+  <rect x="892" y="202" width="90" height="34" rx="11" fill="#fde68a" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="922" y="224" class="small">TCN</text>
+  <rect x="992" y="202" width="90" height="34" rx="11" fill="#fde68a" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="1022" y="224" class="small">LSTM</text>
+  <rect x="1092" y="202" width="110" height="34" rx="11" fill="#fde68a" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="1108" y="224" class="small">Transformer</text>
+  <text x="892" y="258" class="small">只在 S0 训练和选模，随后参数冻结</text>
+  <text x="892" y="280" class="small">保存：模型参数、归一化统计、窗口长度、目标列</text>
+  <text x="892" y="310" class="tiny">这些冻结模型将成为 RL 奖励 oracle（主项）</text>
+
+  <rect x="1260" y="145" width="380" height="195" class="box" fill="#f4f0ff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="1292" y="178" class="section">4. 预测奖励聚合器（主奖励源）</text>
+  <text x="1292" y="210" class="small">每个时刻 t：冻结模型预测未来 H 步</text>
+  <text x="1292" y="232" class="small">L_model(t) = Σ_h w_h * loss(y_{t+h}, ŷ_{t+h|t})</text>
+  <text x="1292" y="254" class="small">L_forecast(t) = Σ_m α_m * L_model_m(t)</text>
+  <text x="1292" y="286" class="small">默认：三模型等权，可按实验调 α_m / w_h</text>
+  <text x="1292" y="310" class="tiny">此处优化的是 forecasting，非 latent vs estimator 误差</text>
+
+  <!-- Row 2 -->
+  <rect x="80" y="410" width="520" height="250" class="box" fill="#ecfeff" stroke="#0891b2" filter="url(#shadow)"/>
+  <text x="112" y="444" class="section">5. S1/S2 调度训练环境闭环</text>
+  <text x="112" y="478" class="label">状态输入</text>
+  <text x="112" y="500" class="small">估计状态、协方差摘要、新鲜度、覆盖率、上一步动作、预算比</text>
+  <text x="112" y="530" class="label">观测生成</text>
+  <text x="112" y="552" class="small">按当前开关子集回放观测，经过估计器更新得到下一状态</text>
+  <text x="112" y="582" class="label">动作策略</text>
+  <text x="112" y="604" class="small">DQN / CMDP-DQN / PPO 统一输出“传感器打分”</text>
+  <text x="112" y="634" class="tiny">在线执行，不预枚举全动作表；每步都重新生成可行子集</text>
+
+  <rect x="640" y="410" width="500" height="250" class="box" fill="#eef2ff" stroke="#6366f1" filter="url(#shadow)"/>
+  <text x="672" y="444" class="section">6. OnlineSubsetProjector（硬约束前置）</text>
+  <text x="672" y="478" class="small">输入：传感器得分 + 上一步开关 + 约束阈值</text>
+  <text x="672" y="500" class="small">硬约束：瞬时功率、启动峰值、安全裕度</text>
+  <text x="672" y="522" class="small">输出：当前时刻可执行的传感器开关子集</text>
+  <text x="672" y="554" class="label">奖励计算</text>
+  <text x="672" y="576" class="small">r_t = -L_forecast - λ_switch*切换 - λ_cov*覆盖 - λ_violation*违约</text>
+  <text x="672" y="598" class="small">主项固定为 L_forecast；功率更多通过可行域控制</text>
+  <text x="672" y="630" class="tiny">CMDP 额外跟踪平均功率/总能量，控制长期约束违约率</text>
+
+  <rect x="1180" y="410" width="460" height="250" class="box" fill="#fff1f2" stroke="#ef4444" filter="url(#shadow)"/>
+  <text x="1212" y="444" class="section">7. S2 验证选模与训练监控</text>
+  <text x="1212" y="478" class="small">验证指标：forecast loss、约束违约率、回报稳定性</text>
+  <text x="1212" y="500" class="small">排除：全开/全关伪策略、长期不调度策略</text>
+  <text x="1212" y="522" class="small">选出最终调度策略参数（checkpoint）</text>
+  <text x="1212" y="554" class="label">训练曲线输出</text>
+  <text x="1212" y="576" class="small">episode 回报均值 + 置信阴影、违约率、功率轨迹</text>
+  <text x="1212" y="608" class="tiny">目标：收敛到“约束内 forecasting 最优”的稳定策略</text>
+
+  <!-- Row 3 -->
+  <rect x="80" y="730" width="530" height="220" class="box" fill="#eef6ff" stroke="#2563eb" filter="url(#shadow)"/>
+  <text x="112" y="764" class="section">8. S3 独立测试回放</text>
+  <text x="112" y="796" class="small">固定调度器，在 final_test 段回放得到统一测试轨迹</text>
+  <text x="112" y="818" class="small">生成每个调度器对应的数据包：input / target / mask / power</text>
+  <text x="112" y="840" class="small">同时保存传感器开关时间线与功率时间线</text>
+  <text x="112" y="872" class="tiny">测试段仅用于最终报告，不参与训练与调参</text>
+
+  <rect x="650" y="730" width="510" height="220" class="box" fill="#f0fdf4" stroke="#16a34a" filter="url(#shadow)"/>
+  <text x="682" y="764" class="section">9. 统一评估（aggregate + task focus）</text>
+  <text x="682" y="796" class="small">误差：RMSE / MAE / sMAPE</text>
+  <text x="682" y="818" class="small">形状：DTW / Pearson</text>
+  <text x="682" y="840" class="small">资源：节电率、平均功率、峰值违约率、总能量</text>
+  <text x="682" y="862" class="small">对比：相对 full_open 的误差增幅与性能保留率</text>
+  <text x="682" y="894" class="tiny">主口径：在同等约束下谁的 forecasting 更好，在同等误差下谁更省电</text>
+
+  <rect x="1200" y="730" width="440" height="220" class="box" fill="#fefce8" stroke="#ca8a04" filter="url(#shadow)"/>
+  <text x="1232" y="764" class="section">10. 图表与结论输出</text>
+  <text x="1232" y="796" class="small">预测曲线 Overlay + Zoom（多模型、多调度器）</text>
+  <text x="1232" y="818" class="small">传感器激活时间线（on/off + 功率）</text>
+  <text x="1232" y="840" class="small">RMSE increase 箱线图、DTW increase 箱线图</text>
+  <text x="1232" y="862" class="small">功率-误差权衡图、排名相关热图</text>
+  <text x="1232" y="894" class="tiny">论文结论以 S3 测试集结果为准，避免训练段偏差</text>
+
+  <!-- Main arrows row1 -->
+  <path d="M420 242 L460 242" class="arrow"/>
+  <path d="M820 242 L860 242" class="arrow"/>
+  <path d="M1220 242 L1260 242" class="arrow"/>
+
+  <!-- down to row2 -->
+  <path d="M1450 340 L1450 375 L340 375 L340 410" class="arrow"/>
+  <path d="M600 535 L640 535" class="arrow"/>
+  <path d="M1140 535 L1180 535" class="arrow"/>
+
+  <!-- to row3 -->
+  <path d="M1410 660 L1410 695 L345 695 L345 730" class="arrow"/>
+  <path d="M610 840 L650 840" class="arrow"/>
+  <path d="M1160 840 L1200 840" class="arrow"/>
+
+  <!-- side feedback arrows -->
+  <path d="M260 730 L260 690 L980 690 L980 660" class="arrow2"/>
+  <text x="275" y="712" class="tiny">S3 不回流训练；仅用于最终评估</text>
+
+  <path d="M930 410 L930 355 L1080 355 L1080 340" class="arrow2"/>
+  <text x="944" y="392" class="tiny">冻结预测器只提供奖励打分，不更新参数</text>
+
+  <!-- bottom principle -->
+  <rect x="60" y="975" width="1580" height="42" rx="12" fill="#e2e8f0"/>
+  <text x="86" y="1001" class="small">主线原则：先冻结预测器，再训练调度器；奖励直接对应未来预测误差；最终只看独立测试段 S3 的 forecasting 与约束表现。</text>
+</svg>
