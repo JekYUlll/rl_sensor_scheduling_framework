@@ -39,6 +39,10 @@ class TruthReplayEnvironment(BaseEnvironment):
         self._local_t = 0
         self._values = self.truth_df[self.state_columns].to_numpy(dtype=float)
         self._event_flags = self.truth_df[cfg.event_column].astype(bool).to_numpy() if cfg.event_column in self.truth_df.columns else np.zeros(len(self.truth_df), dtype=bool)
+        if "time_idx" in self.truth_df.columns:
+            self._absolute_time_idx = self.truth_df["time_idx"].to_numpy(dtype=int)
+        else:
+            self._absolute_time_idx = np.arange(len(self.truth_df), dtype=int)
 
     def _reset_sensors(self) -> None:
         for sensor in self.sensors.values():
@@ -102,6 +106,9 @@ class TruthReplayEnvironment(BaseEnvironment):
 
     def get_time_index(self) -> int:
         return self._local_t
+
+    def get_absolute_time_index(self) -> int:
+        return int(self._absolute_time_idx[self._current_idx])
 
     def peek_future_targets(self, horizon: int, target_columns: list[str]) -> np.ndarray:
         start = self._current_idx + 1

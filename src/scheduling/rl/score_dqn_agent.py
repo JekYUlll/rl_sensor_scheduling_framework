@@ -65,7 +65,10 @@ class ScoreDQNAgent:
         cached = self._subset_mask_cache.get(key)
         if cached is not None:
             return cached
-        feasible = [tuple(str(sid) for sid in subset) for subset in self.projector.feasible_subsets(prev_selected)]
+        feasible = [
+            tuple(str(sid) for sid in subset)
+            for subset in self.projector.feasible_subsets(prev_selected, allow_empty=False)
+        ]
         if not feasible:
             feasible = [tuple()]
         masks = np.zeros((len(feasible), len(self.sensor_ids)), dtype=np.float32)

@@ -1,29 +1,33 @@
 seed: 42
+
 data:
-  reward_pretrain_ratio: 0.2
-  rl_train_ratio: 0.5
-  rl_val_ratio: 0.15
-  rl_test_ratio: 0.15
+  truth_steps: 1209600
+  predictor_pretrain_ratio: 0.35
+  rl_train_ratio: 0.50
+  rl_val_ratio: 0.075
+  final_test_ratio: 0.075
+  estimator_fit_split: predictor_pretrain
+
 run:
-  episode_len: 400
-  num_episodes: 80
+  episode_len: 512
+  num_episodes: 120
   eval_episodes: 10
-  max_steps: 400
+  max_steps: 512
   save_every: 10
-cost:
-  alpha_estimation: 0.0
-  beta_prediction: 5.0
-  beta_forecast: 0.0
-  lambda_power: 0.0
-  eta_switch: 0.005
-  rho_coverage: 2.0
-  uncertainty_metric: weighted_trace_P_norm
-  reward_target_columns:
-  - snow_mass_flux_kg_m2_s
+
+reward:
+  lambda_forecast: 1.0
+  lambda_switch: 0.005
+  lambda_coverage: 0.25
+  lambda_violation: 10.0
+  lambda_state_tracking: 0.0
+  min_coverage_ratio: 0.25
   min_relevance_weight: 0.25
   relevance_power: 1.0
+
 forecast_reward:
-  enabled: false
+  enabled: true
+
 constraints:
   max_active: 5
   per_step_budget: 2.2
@@ -31,6 +35,7 @@ constraints:
   startup_peak_budget: 2.3
   power_safety_margin: 0.05
   average_power_budget: 1.6
-  episode_energy_budget: 640.0
+  episode_energy_budget: 819.2
+
 logging:
   level: INFO
