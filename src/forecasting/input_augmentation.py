@@ -48,7 +48,7 @@ def _append_time_of_day_features(
     _append_feature(parts, names_out, masks_out, np.cos(theta), 'time_of_day_cos', None)
 
 def augment_physical_state_series(series: np.ndarray, feature_names: list[str], observed_mask: np.ndarray | None=None, *, time_index: np.ndarray | None=None, base_freq_s: int=1) -> tuple[np.ndarray, list[str], np.ndarray | None]:
-    values = np.asarray(series, dtype=float)
+    values = np.array(series, dtype=float, copy=True)
     if values.ndim != 2:
         raise ValueError(f'series must be 2D, got shape={values.shape}')
     mask = None if observed_mask is None else np.asarray(observed_mask, dtype=float)

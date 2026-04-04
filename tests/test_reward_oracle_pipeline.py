@@ -107,3 +107,17 @@ def test_augment_physical_state_series_adds_time_of_day_features() -> None:
     assert np.isclose(out[0, cos_idx], 1.0, atol=1e-6)
     assert np.isclose(out[1, sin_idx], 1.0, atol=1e-6)
     assert np.isclose(out[2, cos_idx], -1.0, atol=1e-6)
+
+
+def test_augment_physical_state_series_accepts_read_only_input() -> None:
+    names = ["wind_speed_ms", "wind_direction_deg", "relative_humidity"]
+    series = np.asarray([[1.0, -30.0, 120.0], [2.0, 390.0, -5.0]], dtype=float)
+    series.setflags(write=False)
+
+    out, out_names, _ = augment_physical_state_series(series, names)
+
+    idx = {name: out_names.index(name) for name in names}
+    assert out[0, idx["wind_direction_deg"]] == 330.0
+    assert out[1, idx["wind_direction_deg"]] == 30.0
+    assert out[0, idx["relative_humidity"]] == 100.0
+    assert out[1, idx["relative_humidity"]] == 0.0
