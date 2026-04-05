@@ -23,21 +23,42 @@ def smape_1d(y_true: np.ndarray, y_pred: np.ndarray, eps: float = 1e-6) -> float
     return float(np.mean(2.0 * np.abs(b - a) / denom) * 100.0)
 
 
+def _resample_1d(values: np.ndarray, target_len: int) -> np.ndarray:
+    arr = np.asarray(values, dtype=float).reshape(-1)
+    if arr.size <= target_len:
+        return arr
+    src_x = np.arange(arr.size, dtype=float)
+    dst_x = np.linspace(0.0, float(arr.size - 1), num=target_len, dtype=float)
+    if np.isfinite(arr).all():
+        return np.interp(dst_x, src_x, arr).astype(float, copy=False)
+    dst_idx = np.clip(np.rint(dst_x).astype(int), 0, arr.size - 1)
+    return arr[dst_idx]
+
+
 def dtw_distance_1d(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     window: int | None = None,
     normalize: bool = True,
+    max_points: int | None = 1024,
 ) -> float:
     a = np.asarray(y_true, dtype=float).reshape(-1)
     b = np.asarray(y_pred, dtype=float).reshape(-1)
     if a.size == 0 or b.size == 0:
         return float("nan")
+    orig_n = a.size
+    orig_m = b.size
+    if max_points is not None and max_points > 1:
+        a = _resample_1d(a, int(max_points))
+        b = _resample_1d(b, int(max_points))
     n = a.size
     m = b.size
     if window is None:
         window = max(5, abs(n - m), int(0.1 * max(n, m)))
     else:
+        if max_points is not None and max_points > 1 and (orig_n != n or orig_m != m):
+            scale = max(float(n) / max(float(orig_n), 1.0), float(m) / max(float(orig_m), 1.0))
+            window = max(1, int(round(float(window) * scale)))
         window = max(int(window), abs(n - m))
 
     inf = float("inf")
@@ -58,4 +79,3 @@ def dtw_distance_1d(
     if normalize:
         dist /= float(max(n, m))
     return dist
-
