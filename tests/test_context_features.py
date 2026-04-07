@@ -109,15 +109,27 @@ def test_reward_oracle_score_consumes_context_features() -> None:
     np.testing.assert_allclose(predictor.last_x[0, :, 2], [0.0, 1.0])
 
 
-def test_manifest_artifact_path_falls_back_to_local_copy() -> None:
+def test_manifest_artifact_path_falls_back_to_local_copy(monkeypatch) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         manifest_dir = Path(tmpdir)
         local_artifact = manifest_dir / "reward_predictor_tcn.pt"
         local_artifact.write_bytes(b"placeholder")
+        inaccessible = Path(
+            "/root/autodl-tmp/microclimate_demo/rl_sensor_scheduling_framework/reports/runs/demo/reward_predictor_tcn.pt"
+        )
+
+        original_exists = Path.exists
+
+        def guarded_exists(path: Path) -> bool:
+            if path == inaccessible:
+                raise PermissionError("permission denied for remote artifact path")
+            return original_exists(path)
+
+        monkeypatch.setattr(Path, "exists", guarded_exists)
 
         resolved = _resolve_manifest_artifact_path(
             manifest_dir,
-            "/root/autodl-tmp/microclimate_demo/rl_sensor_scheduling_framework/reports/runs/demo/reward_predictor_tcn.pt",
+            str(inaccessible),
         )
 
         assert resolved == local_artifact

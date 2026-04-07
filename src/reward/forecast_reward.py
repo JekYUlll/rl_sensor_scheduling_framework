@@ -327,8 +327,11 @@ def _resolve_manifest_artifact_path(manifest_dir: Path, artifact_value: str) -> 
         candidates.append((manifest_dir / raw_path).resolve())
         candidates.append((manifest_dir / raw_path.name).resolve())
     for candidate in candidates:
-        if candidate.exists():
-            return candidate
+        try:
+            if candidate.exists():
+                return candidate
+        except OSError:
+            continue
     raise FileNotFoundError(
         f"Reward oracle artifact not found. Tried: {[str(path) for path in candidates]}"
     )
