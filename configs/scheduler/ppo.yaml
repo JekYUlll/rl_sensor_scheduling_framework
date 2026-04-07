@@ -1,5 +1,5 @@
 scheduler_name: ppo
-device: cpu
+device: auto
 network:
   hidden_dims: [128, 128]
 ppo:

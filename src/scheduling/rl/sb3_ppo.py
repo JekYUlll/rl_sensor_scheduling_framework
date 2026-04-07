@@ -115,6 +115,10 @@ class WindblownSubsetGymEnv(gym.Env):
         self.estimate_history: list[np.ndarray] = []
         self.observed_mask_history: list[np.ndarray] = []
         self.time_index_history: list[int] = []
+        self.trace_context_history: list[float] = []
+        self.power_context_history: list[float] = []
+        self.peak_power_context_history: list[float] = []
+        self.event_context_history: list[int] = []
         self.total_reward = 0.0
         self.trace_hist: list[float] = []
         self.uncertainty_hist: list[float] = []
@@ -151,7 +155,19 @@ class WindblownSubsetGymEnv(gym.Env):
         history = np.asarray(self.estimate_history[-oracle.lookback:], dtype=float)
         mask_history = np.asarray(self.observed_mask_history[-oracle.lookback:], dtype=float)
         time_history = np.asarray(self.time_index_history[-oracle.lookback:], dtype=int)
-        return oracle.score(history, future_truth, mask_history, time_history)
+        context_window = {
+            'trace_p': np.asarray(self.trace_context_history[-oracle.lookback:], dtype=float),
+            'power': np.asarray(self.power_context_history[-oracle.lookback:], dtype=float),
+            'peak_power': np.asarray(self.peak_power_context_history[-oracle.lookback:], dtype=float),
+            'event_flags': np.asarray(self.event_context_history[-oracle.lookback:], dtype=float),
+        }
+        return oracle.score(
+            history,
+            future_truth,
+            mask_history,
+            time_history,
+            context_series_window=context_window,
+        )
 
     def reset(self, *, seed: int | None=None, options: dict | None=None):
         super().reset(seed=seed)
@@ -162,6 +178,11 @@ class WindblownSubsetGymEnv(gym.Env):
         self.estimate_history = [self.estimator.get_state_estimate().copy()]
         self.observed_mask_history = [np.ones(len(self.state_columns), dtype=float)]
         self.time_index_history = [int(self.env.get_absolute_time_index()) if hasattr(self.env, 'get_absolute_time_index') else int(self.env.get_time_index())]
+        initial_trace = float(self.estimator.get_uncertainty_summary()['trace_P'])
+        self.trace_context_history = [initial_trace]
+        self.power_context_history = [0.0]
+        self.peak_power_context_history = [0.0]
+        self.event_context_history = [1 if self.current_event else 0]
         self.total_reward = 0.0
         self.trace_hist = []
         self.uncertainty_hist = []
@@ -200,6 +221,10 @@ class WindblownSubsetGymEnv(gym.Env):
                     mask[idx] = 1.0
         self.observed_mask_history.append(mask)
         self.time_index_history.append(int(self.env.get_absolute_time_index()) if hasattr(self.env, 'get_absolute_time_index') else int(self.env.get_time_index()))
+        self.trace_context_history.append(trace_p)
+        self.power_context_history.append(power_cost)
+        self.peak_power_context_history.append(float(power_info['peak_power']))
+        self.event_context_history.append(1 if self.current_event else 0)
         state_tracking_loss = 0.0
         if float(self.task_reward_cfg.get('lambda_state_tracking', 0.0)) > 0.0:
             state_tracking_loss = self._state_tracking_loss(step['latent_state'])

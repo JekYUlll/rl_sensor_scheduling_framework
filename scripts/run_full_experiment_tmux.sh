@@ -4,6 +4,7 @@ set -euo pipefail
 CONDA_ENV_NAME="darts"
 RUN_TAG=""
 PREDICTOR_GPUS=""
+REWARD_CFG="configs/reward/lstm_aux.yaml"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -17,6 +18,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --gpus)
       PREDICTOR_GPUS="$2"
+      shift 2
+      ;;
+    --reward-cfg)
+      REWARD_CFG="$2"
       shift 2
       ;;
     *)
@@ -76,7 +81,7 @@ python scripts/00b_pretrain_reward_predictor.py \
   --env_cfg configs/env/windblown_case.yaml \
   --sensor_cfg configs/sensors/windblown_sensors.yaml \
   --estimator_cfg configs/estimator/kalman.yaml \
-  --reward_cfg configs/reward/lstm_aux.yaml \
+  --reward_cfg "${REWARD_CFG}" \
   --run_id "${REWARD_RUN_ID}" \
   | tee "reports/logs/${RUN_TAG}_00b_reward_pretrain.log"
 

@@ -10,8 +10,3 @@ use_time_delta: true
 context_features:
   - trace_p
   - log_trace_p
-  - power
-  - peak_power
-  - startup_extra_power
-  - event_flag
-  - event_transition
