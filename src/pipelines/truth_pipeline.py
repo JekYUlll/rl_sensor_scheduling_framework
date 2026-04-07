@@ -364,7 +364,17 @@ def _load_active_reward_oracle(base_cfg: dict, reward_artifact: str | None) -> R
         raise FileNotFoundError(f'Reward oracle artifact not found: {artifact_path}')
     return load_reward_oracle(artifact_path)
 
-def _forecast_reward_loss(env: TruthReplayEnvironment, oracle: RewardOracleType | None, estimate_history: list[np.ndarray], observed_mask_history: list[np.ndarray] | None=None, time_index_history: list[int] | None=None) -> float:
+def _forecast_reward_loss(
+    env: TruthReplayEnvironment,
+    oracle: RewardOracleType | None,
+    estimate_history: list[np.ndarray],
+    observed_mask_history: list[np.ndarray] | None = None,
+    time_index_history: list[int] | None = None,
+    trace_history: list[float] | None = None,
+    power_history: list[float] | None = None,
+    peak_power_history: list[float] | None = None,
+    event_history: list[int] | None = None,
+) -> float:
     if oracle is None:
         return 0.0
     future_truth = env.peek_future_targets(oracle.horizon, list(env.state_columns))
@@ -377,7 +387,22 @@ def _forecast_reward_loss(env: TruthReplayEnvironment, oracle: RewardOracleType 
     time_history = None
     if time_index_history:
         time_history = np.asarray(time_index_history[-oracle.lookback:], dtype=int)
-    return oracle.score(history, future_truth, mask_history, time_history)
+    context_history: dict[str, np.ndarray] = {}
+    if trace_history:
+        context_history['trace_p'] = np.asarray(trace_history[-oracle.lookback:], dtype=float)
+    if power_history:
+        context_history['power'] = np.asarray(power_history[-oracle.lookback:], dtype=float)
+    if peak_power_history:
+        context_history['peak_power'] = np.asarray(peak_power_history[-oracle.lookback:], dtype=float)
+    if event_history:
+        context_history['event_flags'] = np.asarray(event_history[-oracle.lookback:], dtype=float)
+    return oracle.score(
+        history,
+        future_truth,
+        mask_history,
+        time_history,
+        context_history or None,
+    )
 
 def _build_truth_stack(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, split_name: str, seed: int, random_reset: bool, episode_len: int | None=None):
     set_seed(seed)
@@ -421,6 +446,11 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
     estimate_history: list[np.ndarray] = [estimator.get_state_estimate().copy()]
     observed_mask_history: list[np.ndarray] = [np.ones(len(state_columns), dtype=float)]
     time_index_history: list[int] = [int(env.get_absolute_time_index()) if hasattr(env, 'get_absolute_time_index') else int(env.get_time_index())]
+    initial_trace = float(estimator.get_uncertainty_summary()['trace_P'])
+    trace_context_history: list[float] = [initial_trace]
+    power_context_history: list[float] = [0.0]
+    peak_power_context_history: list[float] = [0.0]
+    event_context_history: list[int] = [1 if current_event else 0]
     total_reward = 0.0
     action_ids: list[int] = []
     trace_hist: list[float] = []
@@ -471,7 +501,11 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
                     mask[idx] = 1.0
         observed_mask_history.append(mask.copy())
         time_index_history.append(int(env.get_absolute_time_index()) if hasattr(env, 'get_absolute_time_index') else int(env.get_time_index()))
-        forecast_loss = _forecast_reward_loss(env, reward_oracle, estimate_history, observed_mask_history, time_index_history)
+        trace_context_history.append(trace_p)
+        power_context_history.append(power_cost)
+        peak_power_context_history.append(float(power_info['peak_power']))
+        event_context_history.append(1 if current_event else 0)
+        forecast_loss = _forecast_reward_loss(env, reward_oracle, estimate_history, observed_mask_history, time_index_history, trace_context_history, power_context_history, peak_power_context_history, event_context_history)
         reward_terms = compute_forecast_task_terms(
             forecast_loss=forecast_loss,
             switch_count=_switch_count(prev_selected, selected),
@@ -587,6 +621,10 @@ def _append_reward_pretrain_rollout(
             'input_series': estimate_arr,
             'target_series': truth_arr,
             'observed_mask': mask_arr,
+            'trace_p': np.asarray(rollout['trace_hist'], dtype=float),
+            'power': np.asarray(rollout['power_hist'], dtype=float),
+            'peak_power': np.asarray(rollout['peak_power_hist'], dtype=float),
+            'event_flags': np.asarray(rollout['event_hist'], dtype=int),
             'time_index': time_index_arr,
         }
     )
@@ -877,6 +915,11 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
         estimate_history: list[np.ndarray] = [estimator.get_state_estimate().copy()]
         observed_mask_history: list[np.ndarray] = [np.ones(len(meta['state_columns']), dtype=float)]
         time_index_history: list[int] = [int(env.get_absolute_time_index()) if hasattr(env, 'get_absolute_time_index') else int(env.get_time_index())]
+        initial_trace = float(estimator.get_uncertainty_summary()['trace_P'])
+        trace_context_history: list[float] = [initial_trace]
+        power_context_history: list[float] = [0.0]
+        peak_power_context_history: list[float] = [0.0]
+        event_context_history: list[int] = [1 if current_event else 0]
         col_to_idx = {name: i for i, name in enumerate(meta['state_columns'])}
         ep_reward = 0.0
         ep_task_reward = 0.0
@@ -924,7 +967,11 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
                         mask[idx] = 1.0
             observed_mask_history.append(mask)
             time_index_history.append(int(env.get_absolute_time_index()) if hasattr(env, 'get_absolute_time_index') else int(env.get_time_index()))
-            forecast_loss = _forecast_reward_loss(env, reward_oracle, estimate_history, observed_mask_history, time_index_history)
+            trace_context_history.append(trace_p)
+            power_context_history.append(power_cost)
+            peak_power_context_history.append(float(power_info['peak_power']))
+            event_context_history.append(1 if current_event else 0)
+            forecast_loss = _forecast_reward_loss(env, reward_oracle, estimate_history, observed_mask_history, time_index_history, trace_context_history, power_context_history, peak_power_context_history, event_context_history)
             reward_terms = compute_forecast_task_terms(
                 forecast_loss=forecast_loss,
                 switch_count=_switch_count(prev_selected, selected),

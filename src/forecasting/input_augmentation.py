@@ -47,6 +47,62 @@ def _append_time_of_day_features(
     _append_feature(parts, names_out, masks_out, np.sin(theta), 'time_of_day_sin', None)
     _append_feature(parts, names_out, masks_out, np.cos(theta), 'time_of_day_cos', None)
 
+
+def _build_context_feature_matrix(
+    *,
+    n_steps: int,
+    context_series: dict[str, np.ndarray] | None,
+    context_features: list[str] | None,
+) -> tuple[np.ndarray | None, list[str]]:
+    requested = [str(name) for name in (context_features or [])]
+    if not requested:
+        return (None, [])
+
+    available: dict[str, np.ndarray] = {}
+    for key, values in (context_series or {}).items():
+        arr = np.asarray(values, dtype=float).reshape(-1)
+        if arr.shape[0] != n_steps:
+            raise ValueError(
+                f"context series '{key}' length {arr.shape[0]} does not match input length {n_steps}"
+            )
+        available[str(key)] = arr
+
+    def _require(key: str) -> np.ndarray:
+        if key not in available:
+            raise ValueError(
+                f"context feature requires '{key}', but available keys are {sorted(available)}"
+            )
+        return available[key]
+
+    parts: list[np.ndarray] = []
+    names: list[str] = []
+    for name in requested:
+        if name == "trace_p":
+            values = _require("trace_p")
+        elif name == "log_trace_p":
+            values = np.log1p(np.maximum(_require("trace_p"), 0.0))
+        elif name == "power":
+            values = _require("power")
+        elif name == "peak_power":
+            values = _require("peak_power")
+        elif name == "startup_extra_power":
+            values = np.maximum(_require("peak_power") - _require("power"), 0.0)
+        elif name == "event_flag":
+            values = _require("event_flags")
+        elif name == "event_transition":
+            event_flags = _require("event_flags")
+            values = np.abs(np.diff(event_flags, prepend=event_flags[0]))
+        else:
+            raise ValueError(
+                f"Unsupported context feature '{name}'. "
+                "Supported features are: trace_p, log_trace_p, power, peak_power, "
+                "startup_extra_power, event_flag, event_transition"
+            )
+        parts.append(np.asarray(values, dtype=float).reshape(-1, 1))
+        names.append(name)
+
+    return (np.concatenate(parts, axis=1), names)
+
 def augment_physical_state_series(series: np.ndarray, feature_names: list[str], observed_mask: np.ndarray | None=None, *, time_index: np.ndarray | None=None, base_freq_s: int=1) -> tuple[np.ndarray, list[str], np.ndarray | None]:
     values = np.array(series, dtype=float, copy=True)
     if values.ndim != 2:
@@ -115,17 +171,37 @@ def augment_physical_state_series(series: np.ndarray, feature_names: list[str], 
     mask_out = None if masks_out is None else np.concatenate(masks_out, axis=1)
     return (series_out, names_out, mask_out)
 
-def augment_input_series(input_series: np.ndarray, observed_mask: np.ndarray | None, feature_names: list[str], *, use_observed_mask: bool, use_time_delta: bool, time_index: np.ndarray | None=None, base_freq_s: int=1) -> tuple[np.ndarray, list[str]]:
+def augment_input_series(
+    input_series: np.ndarray,
+    observed_mask: np.ndarray | None,
+    feature_names: list[str],
+    *,
+    use_observed_mask: bool,
+    use_time_delta: bool,
+    time_index: np.ndarray | None = None,
+    base_freq_s: int = 1,
+    context_series: dict[str, np.ndarray] | None = None,
+    context_features: list[str] | None = None,
+) -> tuple[np.ndarray, list[str]]:
     series, names, mask = augment_physical_state_series(np.asarray(input_series, dtype=float), list(feature_names), None if observed_mask is None else np.asarray(observed_mask, dtype=float), time_index=None if time_index is None else np.asarray(time_index, dtype=float), base_freq_s=int(base_freq_s))
     parts = [series]
+    mask_feature_names = list(names)
+    context_matrix, context_names = _build_context_feature_matrix(
+        n_steps=series.shape[0],
+        context_series=context_series,
+        context_features=context_features,
+    )
+    if context_matrix is not None:
+        parts.append(context_matrix)
+        names.extend(context_names)
     if use_observed_mask or use_time_delta:
         if mask is None:
             raise ValueError('observed_mask is required for missing-aware input augmentation')
         if use_observed_mask:
             parts.append(mask)
-            names.extend([f'is_observed_{name}' for name in names[:mask.shape[1]]])
+            names.extend([f'is_observed_{name}' for name in mask_feature_names])
         if use_time_delta:
             delta = compute_time_since_observed(mask)
             parts.append(delta)
-            names.extend([f'delta_{name}' for name in names[:delta.shape[1]]])
+            names.extend([f'delta_{name}' for name in mask_feature_names])
     return (np.concatenate(parts, axis=1), names)

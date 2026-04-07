@@ -1,8 +1,33 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 import numpy as np
 
 from forecasting.input_augmentation import augment_input_series, augment_physical_state_series
+
+
+SUPPORTED_CONTEXT_SERIES_KEYS = ("trace_p", "power", "peak_power", "event_flags")
+
+
+def extract_context_series(source: Mapping[str, object] | object | None) -> dict[str, np.ndarray]:
+    if source is None:
+        return {}
+    context: dict[str, np.ndarray] = {}
+    for key in SUPPORTED_CONTEXT_SERIES_KEYS:
+        value = None
+        if isinstance(source, Mapping):
+            value = source.get(key)
+        else:
+            try:
+                if key in source:
+                    value = source[key]
+            except Exception:
+                value = getattr(source, key, None)
+        if value is None:
+            continue
+        context[key] = np.asarray(value, dtype=float).reshape(-1)
+    return context
 
 
 def select_target_columns(
@@ -41,6 +66,8 @@ def prepare_input_and_targets(
     target_columns: list[str] | None,
     time_index: np.ndarray | None = None,
     base_freq_s: int = 1,
+    context_series: dict[str, np.ndarray] | None = None,
+    context_features: list[str] | None = None,
 ) -> tuple[np.ndarray, list[str], np.ndarray, list[str], np.ndarray | None]:
     input_aug, input_names = augment_input_series(
         input_series=np.asarray(input_series, dtype=float),
@@ -50,6 +77,8 @@ def prepare_input_and_targets(
         use_time_delta=use_time_delta,
         time_index=None if time_index is None else np.asarray(time_index, dtype=float),
         base_freq_s=int(base_freq_s),
+        context_series=None if context_series is None else extract_context_series(context_series),
+        context_features=None if context_features is None else [str(name) for name in context_features],
     )
     target_sel, target_names, target_indices = select_target_columns(
         target_series=np.asarray(target_series, dtype=float),

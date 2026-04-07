@@ -16,7 +16,7 @@ from core.config import load_yaml
 from evaluation.forecast_metrics import compute_forecast_metrics
 from forecasting.dataset_builder import ForecastDataset, build_window_dataset, split_dataset
 from forecasting.factory import build_predictor
-from forecasting.series_preparation import prepare_input_and_targets
+from forecasting.series_preparation import extract_context_series, prepare_input_and_targets
 
 
 def _normalize_split(train: ForecastDataset, val: ForecastDataset, test: ForecastDataset):
@@ -66,10 +66,12 @@ def main() -> None:
     base_feature_names = data["feature_names"].tolist() if "feature_names" in data else [f"f{i}" for i in range(input_series.shape[1])]
     observed_mask = data["observed_mask"] if "observed_mask" in data else None
     time_index = data["time_index"] if "time_index" in data else None
+    context_series = extract_context_series(data)
     meta = _load_dataset_meta(args.series_npz)
     cfg = load_yaml(args.predictor_cfg)
     use_observed_mask = bool(cfg.get("use_observed_mask", False))
     use_time_delta = bool(cfg.get("use_time_delta", False))
+    context_features = [str(name) for name in cfg.get("context_features", [])]
     target_columns = [str(name) for name in meta.get("forecast_target_columns", meta.get("reward_target_columns", []))]
     input_series, input_feature_names, target_series, target_feature_names, target_indices = prepare_input_and_targets(
         input_series=np.asarray(input_series, dtype=float),
@@ -81,6 +83,8 @@ def main() -> None:
         target_columns=target_columns,
         time_index=None if time_index is None else np.asarray(time_index, dtype=int),
         base_freq_s=int(meta.get("base_freq_s", 1)),
+        context_series=context_series,
+        context_features=context_features,
     )
 
     ds = build_window_dataset(
@@ -128,6 +132,7 @@ def main() -> None:
         "n_targets": int(len(target_feature_names)),
         "device": str(cfg.get("device", "auto")),
         "target_columns": json.dumps(target_feature_names, ensure_ascii=False),
+        "context_features": json.dumps(context_features, ensure_ascii=False),
         "avg_power": float(meta.get("avg_power", float("nan"))),
         "total_power": float(meta.get("total_power", float("nan"))),
         "coverage_mean": float(meta.get("coverage_mean", float("nan"))),
