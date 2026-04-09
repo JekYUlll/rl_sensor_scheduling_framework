@@ -15,6 +15,7 @@ from pipelines.truth_pipeline import pretrain_reward_predictor
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--truth_csv", default="data/generated/windblown_truth.csv")
+    parser.add_argument("--base_cfg", default="configs/base.yaml")
     parser.add_argument("--env_cfg", default="configs/env/windblown_case.yaml")
     parser.add_argument("--sensor_cfg", default="configs/sensors/windblown_sensors.yaml")
     parser.add_argument("--estimator_cfg", default="configs/estimator/kalman.yaml")
@@ -29,6 +30,7 @@ def main() -> None:
         estimator_cfg_path=args.estimator_cfg,
         reward_cfg_path=args.reward_cfg,
         run_id=args.run_id,
+        base_cfg_path=args.base_cfg,
     )
     print(json.dumps(out, ensure_ascii=False, indent=2))
 

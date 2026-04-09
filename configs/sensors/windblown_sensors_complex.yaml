@@ -1,0 +1,96 @@
+sensors:
+  # Backbone weather station. Still a strong default choice, but no longer almost free.
+  - sensor_id: met_station_core
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+      - air_temperature_c
+      - relative_humidity
+      - air_pressure_pa
+    refresh_interval: 1
+    power_cost: 0.22
+    startup_peak_power: 0.30
+    noise_std:
+      wind_speed_ms: 0.20
+      wind_direction_deg: 2.00
+      air_temperature_c: 0.20
+      relative_humidity: 1.00
+      air_pressure_pa: 15.0
+
+  # Low-power daytime forcing sensor.
+  - sensor_id: radiometer_basic
+    variables:
+      - solar_radiation_wm2
+    refresh_interval: 1
+    power_cost: 0.14
+    startup_peak_power: 0.20
+    noise_std:
+      solar_radiation_wm2: 8.0
+
+  # Low-power surface temperature sensing.
+  - sensor_id: surface_temp_ir
+    variables:
+      - snow_surface_temperature_c
+    refresh_interval: 1
+    power_cost: 0.16
+    startup_peak_power: 0.24
+    noise_std:
+      snow_surface_temperature_c: 0.20
+
+  # More accurate wind instrument with higher cost and startup spike.
+  - sensor_id: ultrasonic_anemometer_hd
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+    refresh_interval: 1
+    power_cost: 0.52
+    startup_peak_power: 0.72
+    noise_std:
+      wind_speed_ms: 0.08
+      wind_direction_deg: 0.80
+
+  # Shielded thermo-hygrometer. Lower noise than the core station but slower refresh.
+  - sensor_id: shielded_thermo_hygro
+    variables:
+      - air_temperature_c
+      - relative_humidity
+    refresh_interval: 2
+    power_cost: 0.44
+    startup_peak_power: 0.60
+    noise_std:
+      air_temperature_c: 0.08
+      relative_humidity: 0.40
+
+  # Mid-cost snow particle sensor with faster refresh than the heavy disdrometer.
+  - sensor_id: snow_particle_counter
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+    refresh_interval: 2
+    power_cost: 0.78
+    startup_peak_power: 1.02
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.08
+      snow_particle_mean_velocity_ms: 0.20
+
+  # High-precision but slow-to-refresh particle instrument.
+  - sensor_id: laser_disdrometer
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+    refresh_interval: 4
+    power_cost: 1.24
+    startup_peak_power: 1.72
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.04
+      snow_particle_mean_velocity_ms: 0.10
+
+  # Dedicated mass-flux sensor. High value during transport events, expensive to activate.
+  - sensor_id: fc4_flux
+    variables:
+      - snow_mass_flux_kg_m2_s
+    refresh_interval: 4
+    power_cost: 1.46
+    startup_peak_power: 2.02
+    noise_std:
+      snow_mass_flux_kg_m2_s: 1.0e-05

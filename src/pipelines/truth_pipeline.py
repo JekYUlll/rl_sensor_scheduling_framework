@@ -37,6 +37,7 @@ def _build_run_dir(run_id: str) -> Path:
     root.mkdir(parents=True, exist_ok=True)
     return root
 RewardOracleType = FrozenForecastRewardOracle | FrozenForecastRewardEnsemble
+DEFAULT_BASE_CFG_PATH = 'configs/base.yaml'
 
 
 class _ConstantSubsetScheduler:
@@ -404,12 +405,12 @@ def _forecast_reward_loss(
         context_history or None,
     )
 
-def _build_truth_stack(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, split_name: str, seed: int, random_reset: bool, episode_len: int | None=None):
+def _build_truth_stack(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, split_name: str, seed: int, random_reset: bool, episode_len: int | None=None, base_cfg_path: str=DEFAULT_BASE_CFG_PATH):
     set_seed(seed)
     env_cfg = load_yaml(env_cfg_path)
     sensor_cfg = load_yaml(sensor_cfg_path)
     estimator_cfg = load_yaml(estimator_cfg_path)
-    base_cfg = load_yaml('configs/base.yaml')
+    base_cfg = load_yaml(base_cfg_path)
     truth_df = pd.read_csv(truth_csv)
     truth_df, event_col = _ensure_event_column(truth_df, env_cfg)
     state_columns = _infer_state_columns(truth_df, env_cfg)
@@ -563,9 +564,9 @@ def _validation_objective(summary: dict, constrained: bool) -> float:
         objective -= 10000.0 * max(float(summary.get('peak_violation_rate', 0.0)), 0.0)
     return objective
 
-def _evaluate_agent_on_split(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, split_name: str, agent, reward_artifact: str | None) -> dict[str, float]:
-    seed = base_cfg_seed()
-    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name=split_name, seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name=split_name))
+def _evaluate_agent_on_split(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, split_name: str, agent, reward_artifact: str | None, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict[str, float]:
+    seed = base_cfg_seed(base_cfg_path)
+    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name=split_name, seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name=split_name, base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
     scheduler_cfg = load_yaml(scheduler_cfg_path)
     _, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
     base_cfg = meta['base_cfg']
@@ -578,8 +579,8 @@ def _evaluate_agent_on_split(truth_csv: str, env_cfg_path: str, sensor_cfg_path:
     constraint_metrics = summarize_constraint_metrics(steady_power_hist=out['power_hist'], peak_power_hist=out['peak_power_hist'], startup_extra_hist=out['startup_extra_hist'], average_power_budget=constraint_budgets['average_power_budget'], episode_energy_budget=constraint_budgets['episode_energy_budget'], peak_power_budget=constraint_budgets['peak_power_budget'])
     return {'reward_mean': float(out['episode_reward']), 'task_reward_mean': float(out['episode_reward']), 'task_loss_mean': float(np.mean(out['task_loss_hist'])) if out['task_loss_hist'] else float('nan'), 'trace_P_mean': float(np.mean(out['trace_hist'])) if out['trace_hist'] else float('nan'), 'uncertainty_mean': float(np.mean(out['uncertainty_hist'])) if out['uncertainty_hist'] else float('nan'), 'forecast_loss_mean': float(np.mean(out['forecast_hist'])) if out['forecast_hist'] else float('nan'), 'switch_penalty_mean': float(np.mean(out['switch_penalty_hist'])) if out['switch_penalty_hist'] else float('nan'), 'coverage_penalty_mean': float(np.mean(out['coverage_penalty_hist'])) if out['coverage_penalty_hist'] else float('nan'), 'constraint_violation_mean': float(np.mean(out['violation_penalty_hist'])) if out['violation_penalty_hist'] else float('nan'), 'state_tracking_loss_mean': float(np.mean(out['state_tracking_hist'])) if out['state_tracking_hist'] else float('nan'), 'power_mean': float(constraint_metrics['power_mean']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'total_energy': float(constraint_metrics['total_energy']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'avg_power_violation': float(constraint_metrics['avg_power_violation']), 'energy_violation': float(constraint_metrics['energy_violation']), 'coverage_mean': float(np.mean(out['coverage_hist'])) if out['coverage_hist'] else float('nan')}
 
-def base_cfg_seed() -> int:
-    base = load_yaml('configs/base.yaml')
+def base_cfg_seed(base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> int:
+    base = load_yaml(base_cfg_path)
     return int(base.get('seed', 42))
 
 
@@ -638,8 +639,8 @@ def _append_reward_pretrain_rollout(
         }
     )
 
-def pretrain_reward_predictor(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, reward_cfg_path: str, run_id: str) -> dict:
-    seed = base_cfg_seed()
+def pretrain_reward_predictor(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, reward_cfg_path: str, run_id: str, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict:
+    seed = base_cfg_seed(base_cfg_path)
     reward_cfg = load_yaml(reward_cfg_path)
     pretrain_split = str(reward_cfg.get('pretrain_split', 'predictor_pretrain'))
     if pretrain_split != 'predictor_pretrain':
@@ -654,9 +655,9 @@ def pretrain_reward_predictor(truth_csv: str, env_cfg_path: str, sensor_cfg_path
     all_feasible_subset_rollouts = bool(reward_cfg.get('pretrain_all_feasible_subsets', False))
     max_feasible_constant_rollouts = max(1, int(reward_cfg.get('pretrain_max_feasible_constant_rollouts', 64)))
     random_reset = bool(reward_cfg.get('pretrain_random_reset', pretrain_rollouts_per_scheduler > 1))
-    split_len = meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='predictor_pretrain')
+    split_len = meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='predictor_pretrain', base_cfg_path=base_cfg_path)
     pretrain_episode_len = split_len if pretrain_episode_len_cfg is None else min(int(pretrain_episode_len_cfg), split_len)
-    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='predictor_pretrain', seed=seed, random_reset=random_reset, episode_len=pretrain_episode_len)
+    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='predictor_pretrain', seed=seed, random_reset=random_reset, episode_len=pretrain_episode_len, base_cfg_path=base_cfg_path)
     reward_cfg['base_freq_s'] = int(meta['env_cfg'].get('base_freq_s', 1))
     run_dir = _build_run_dir(run_id)
     scheduler_names = [str(name) for name in reward_cfg.get('pretrain_schedulers', ['full_open'])]
@@ -758,16 +759,16 @@ def pretrain_reward_predictor(truth_csv: str, env_cfg_path: str, sensor_cfg_path
     pd.DataFrame(rollout_meta).to_csv(run_dir / 'reward_pretrain_rollouts.csv', index=False)
     return {'run_dir': str(run_dir), 'summary': summary}
 
-def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_dir: Path, selector, scheduler_cfg: dict, task_reward_cfg: dict, reward_target_indices: list[int], reward_artifact: str | None, base_seed: int, episode_len: int) -> dict:
+def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_dir: Path, selector, scheduler_cfg: dict, task_reward_cfg: dict, reward_target_indices: list[int], reward_artifact: str | None, base_seed: int, episode_len: int, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict:
     if not isinstance(selector, OnlineSubsetProjector):
         raise TypeError('PPO baseline currently supports only the windblown online-subset projector path')
     projector = selector
-    base_cfg = load_yaml('configs/base.yaml')
+    base_cfg = load_yaml(base_cfg_path)
     reward_oracle = _load_active_reward_oracle(base_cfg, reward_artifact)
     constraint_budgets = _resolve_constraint_budgets(base_cfg.get('constraints', {}), scheduler_cfg)
 
     def _make_train_env(seed_offset: int) -> WindblownSubsetGymEnv:
-        env_train, estimator_train, _, meta_train = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_train', seed=base_seed + seed_offset, random_reset=True)
+        env_train, estimator_train, _, meta_train = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_train', seed=base_seed + seed_offset, random_reset=True, base_cfg_path=base_cfg_path)
         return WindblownSubsetGymEnv(env=env_train, estimator=estimator_train, selector=projector, task_reward_cfg=task_reward_cfg, state_columns=list(meta_train['state_columns']), reward_target_indices=list(reward_target_indices), constraint_budgets=constraint_budgets, reward_oracle=reward_oracle)
     train_template_env = _make_train_env(0)
     eval_interval = int(scheduler_cfg.get('ppo', {}).get('eval_interval_episodes', 5))
@@ -775,7 +776,7 @@ def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     total_timesteps = int(scheduler_cfg.get('ppo', {}).get('total_timesteps', int(base_cfg.get('run', {}).get('num_episodes', 80)) * max(episode_len, 1)))
 
     def _eval_env_factory():
-        env_val, estimator_val, _, meta_val = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_val', seed=base_seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='rl_val'))
+        env_val, estimator_val, _, meta_val = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_val', seed=base_seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='rl_val', base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
         raw_env = WindblownSubsetGymEnv(env=env_val, estimator=estimator_val, selector=projector, task_reward_cfg=task_reward_cfg, state_columns=list(meta_val['state_columns']), reward_target_indices=list(meta_val.get('reward_target_indices', [])), constraint_budgets=constraint_budgets, reward_oracle=reward_oracle)
         ppo_cfg = dict(scheduler_cfg.get('ppo', {}))
         gamma = float(ppo_cfg.get('gamma', 0.99))
@@ -803,19 +804,19 @@ def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
         save_obs_normalization_stats(train_norm, norm_stats_path)
     adapter = PPOPolicyAdapter(sensor_ids=list(projector.sensor_ids), cfg=scheduler_cfg, selector=projector)
     adapter.load(str(best_ckpt))
-    val_summary = _evaluate_agent_on_split(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, split_name='rl_val', agent=adapter, reward_artifact=reward_artifact)
+    val_summary = _evaluate_agent_on_split(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, split_name='rl_val', agent=adapter, reward_artifact=reward_artifact, base_cfg_path=base_cfg_path)
     metrics = {'scheduler': 'ppo', 'reward_mean': float(val_summary['reward_mean']), 'task_reward_mean': float(val_summary['task_reward_mean']), 'task_loss_mean': float(val_summary['task_loss_mean']), 'trace_P_mean': float(val_summary['trace_P_mean']), 'uncertainty_mean': float(val_summary['uncertainty_mean']), 'forecast_loss_mean': float(val_summary['forecast_loss_mean']), 'switch_penalty_mean': float(val_summary['switch_penalty_mean']), 'coverage_penalty_mean': float(val_summary['coverage_penalty_mean']), 'constraint_violation_mean': float(val_summary['constraint_violation_mean']), 'state_tracking_loss_mean': float(val_summary['state_tracking_loss_mean']), 'power_mean': float(val_summary['power_mean']), 'peak_power_max_mean': float(val_summary['peak_power_max']), 'total_energy_mean': float(val_summary['total_energy']), 'peak_violation_rate_mean': float(val_summary['peak_violation_rate']), 'avg_power_violation_mean': float(val_summary['avg_power_violation']), 'energy_violation_mean': float(val_summary['energy_violation']), 'coverage_mean': float(val_summary['coverage_mean'])}
     pd.DataFrame([metrics]).to_csv(run_dir / 'metrics_estimation.csv', index=False)
     return {'metrics': metrics, 'checkpoint': str(best_ckpt)}
 
-def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_id: str, reward_artifact: str | None=None) -> dict:
-    seed = base_cfg_seed()
-    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_train', seed=seed, random_reset=True)
+def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_id: str, reward_artifact: str | None=None, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict:
+    seed = base_cfg_seed(base_cfg_path)
+    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_train', seed=seed, random_reset=True, base_cfg_path=base_cfg_path)
     base_cfg = meta['base_cfg']
     scheduler_cfg = load_yaml(scheduler_cfg_path)
     scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
     run_dir = _build_run_dir(run_id)
-    save_yaml({'truth_csv': truth_csv, 'env_cfg': env_cfg_path, 'sensor_cfg': sensor_cfg_path, 'estimator_cfg': estimator_cfg_path, 'scheduler_cfg': scheduler_cfg_path, 'reward_artifact': reward_artifact}, run_dir / 'config_used.yaml')
+    save_yaml({'truth_csv': truth_csv, 'base_cfg': base_cfg_path, 'env_cfg': env_cfg_path, 'sensor_cfg': sensor_cfg_path, 'estimator_cfg': estimator_cfg_path, 'scheduler_cfg': scheduler_cfg_path, 'reward_artifact': reward_artifact}, run_dir / 'config_used.yaml')
     run_cfg = base_cfg.get('run', {})
     constraints_cfg = base_cfg.get('constraints', {})
     constraint_budgets = _resolve_constraint_budgets(constraints_cfg, scheduler_cfg)
@@ -823,7 +824,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
     reward_target_indices = list(meta.get('reward_target_indices', []))
     reward_oracle = _load_active_reward_oracle(base_cfg, reward_artifact)
     if name == 'ppo':
-        ppo_out = _train_ppo_scheduler(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, run_dir=run_dir, selector=selector, scheduler_cfg=scheduler_cfg, task_reward_cfg=task_reward_cfg, reward_target_indices=reward_target_indices, reward_artifact=reward_artifact, base_seed=seed, episode_len=int(run_cfg.get('episode_len', 400)))
+        ppo_out = _train_ppo_scheduler(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, run_dir=run_dir, selector=selector, scheduler_cfg=scheduler_cfg, task_reward_cfg=task_reward_cfg, reward_target_indices=reward_target_indices, reward_artifact=reward_artifact, base_seed=seed, episode_len=int(run_cfg.get('episode_len', 400)), base_cfg_path=base_cfg_path)
         metrics = ppo_out['metrics']
         return {'run_dir': str(run_dir), 'metrics': metrics, 'scheduler': name, 'checkpoint': ppo_out['checkpoint']}
     assert name != 'ppo'
@@ -1053,7 +1054,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
         val_power_hist.append(float('nan'))
         val_peak_violation_hist.append(float('nan'))
         if len(rewards) % save_every == 0 or len(rewards) == num_episodes:
-            val_summary = _evaluate_agent_on_split(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, split_name='rl_val', agent=agent, reward_artifact=reward_artifact)
+            val_summary = _evaluate_agent_on_split(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, split_name='rl_val', agent=agent, reward_artifact=reward_artifact, base_cfg_path=base_cfg_path)
             val_objective = _validation_objective(val_summary, constrained=isinstance(agent, (ConstrainedDQNAgent, ConstrainedScoreDQNAgent)))
             val_objective_hist[-1] = float(val_objective)
             val_reward_hist[-1] = float(val_summary['task_reward_mean'])
@@ -1080,16 +1081,16 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
     plot_trace_power(trace_means, power_means, run_dir / 'fig_trace_power.png')
     return {'run_dir': str(run_dir), 'metrics': metrics, 'scheduler': name, 'checkpoint': str(ckpt)}
 
-def evaluate_scheduler(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_id: str, checkpoint: str | None=None, reward_artifact: str | None=None) -> dict:
-    seed = base_cfg_seed()
-    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='final_test', seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='final_test'))
+def evaluate_scheduler(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_id: str, checkpoint: str | None=None, reward_artifact: str | None=None, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict:
+    seed = base_cfg_seed(base_cfg_path)
+    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='final_test', seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='final_test', base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
     base_cfg = meta['base_cfg']
     scheduler_cfg = load_yaml(scheduler_cfg_path)
     scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
     run_dir = _build_run_dir(run_id)
     if _is_rl_scheduler(name):
         state_dim = len(flatten_rl_state(_current_rl_state(env, estimator, current_event=False)))
-        agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='final_test'))
+        agent = _build_rl_agent(name, state_dim, scheduler_cfg, selector, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='final_test', base_cfg_path=base_cfg_path))
         ckpt = checkpoint or run_dir / _checkpoint_name(name)
         agent.load(str(ckpt))
 
@@ -1117,18 +1118,18 @@ def evaluate_scheduler(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, 
     plot_trace_power(out['trace_hist'], out['power_hist'], run_dir / 'fig_trace_power_eval.png')
     return {'run_dir': str(run_dir), 'summary': summary}
 
-def meta_length_from_truth_csv(truth_csv: str, env_cfg_path: str, split_name: str) -> int:
+def meta_length_from_truth_csv(truth_csv: str, env_cfg_path: str, split_name: str, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> int:
     truth_df = pd.read_csv(truth_csv)
     env_cfg = load_yaml(env_cfg_path)
     truth_df, _ = _ensure_event_column(truth_df, env_cfg)
-    base_cfg = load_yaml('configs/base.yaml')
+    base_cfg = load_yaml(base_cfg_path)
     bounds = _split_bounds(n_rows=len(truth_df), split_cfg=base_cfg.get('data', {}))
     start, end = bounds[split_name]
     return max(end - start, 1)
 
-def build_scheduler_dataset(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_id: str, out_npz: str, checkpoint: str | None=None, split_name: str='final_test') -> dict:
-    seed = base_cfg_seed()
-    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name=split_name, seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name=split_name))
+def build_scheduler_dataset(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_id: str, out_npz: str, checkpoint: str | None=None, split_name: str='final_test', base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict:
+    seed = base_cfg_seed(base_cfg_path)
+    env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name=split_name, seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name=split_name, base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
     scheduler_cfg = load_yaml(scheduler_cfg_path)
     scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
     run_dir = _build_run_dir(run_id)

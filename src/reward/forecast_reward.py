@@ -39,6 +39,7 @@ class FrozenForecastRewardOracle:
     use_time_delta: bool
     horizon_weights: np.ndarray
     context_features: list[str] = field(default_factory=list)
+    input_filter_cfg: dict[str, object] | None = None
     base_freq_s: int = 1
     score_scale: float = 1.0
     score_clip: float = 50.0
@@ -81,6 +82,7 @@ class FrozenForecastRewardOracle:
             base_freq_s=int(self.base_freq_s),
             context_series=context_series_window,
             context_features=list(self.context_features),
+            input_filter_cfg=self.input_filter_cfg,
         )
         future_time = None
         if time_window is not None and time_window.size > 0:
@@ -296,10 +298,11 @@ def save_reward_oracle_artifact(
     *,
     base_freq_s: int,
     context_features: list[str] | None = None,
+    input_filter_cfg: dict[str, object] | None = None,
 ) -> str:
     path = Path(artifact_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    payload = {'predictor_cfg': predictor_cfg, 'lookback': int(lookback), 'horizon': int(horizon), 'n_features': int(len(input_columns)), 'target_dim': int(len(target_columns)), 'base_feature_names': list(base_feature_names), 'input_columns': list(input_columns), 'target_columns': list(target_columns), 'loss_name': str(loss_name), 'loss_delta': float(loss_delta), 'score_scale': float(score_scale), 'score_clip': float(score_clip), 'horizon_weights': np.asarray(stats['horizon_weights'], dtype=np.float32), 'base_freq_s': int(base_freq_s), 'context_features': [str(name) for name in (context_features or [])], 'x_mean': np.asarray(stats['x_mean'], dtype=np.float32), 'x_std': np.asarray(stats['x_std'], dtype=np.float32), 'y_mean': np.asarray(stats['y_mean'], dtype=np.float32), 'y_std': np.asarray(stats['y_std'], dtype=np.float32), 'use_observed_mask': bool(predictor_cfg.get('use_observed_mask', False)), 'use_time_delta': bool(predictor_cfg.get('use_time_delta', False)), 'metrics': {k: float(v) for k, v in metrics.items()}, 'model_state_dict': None}
+    payload = {'predictor_cfg': predictor_cfg, 'lookback': int(lookback), 'horizon': int(horizon), 'n_features': int(len(input_columns)), 'target_dim': int(len(target_columns)), 'base_feature_names': list(base_feature_names), 'input_columns': list(input_columns), 'target_columns': list(target_columns), 'loss_name': str(loss_name), 'loss_delta': float(loss_delta), 'score_scale': float(score_scale), 'score_clip': float(score_clip), 'horizon_weights': np.asarray(stats['horizon_weights'], dtype=np.float32), 'base_freq_s': int(base_freq_s), 'context_features': [str(name) for name in (context_features or [])], 'input_filter_cfg': None if input_filter_cfg is None else dict(input_filter_cfg), 'x_mean': np.asarray(stats['x_mean'], dtype=np.float32), 'x_std': np.asarray(stats['x_std'], dtype=np.float32), 'y_mean': np.asarray(stats['y_mean'], dtype=np.float32), 'y_std': np.asarray(stats['y_std'], dtype=np.float32), 'use_observed_mask': bool(predictor_cfg.get('use_observed_mask', False)), 'use_time_delta': bool(predictor_cfg.get('use_time_delta', False)), 'metrics': {k: float(v) for k, v in metrics.items()}, 'model_state_dict': None}
     if hasattr(predictor, 'model') and getattr(predictor, 'model') is not None:
         payload['model_state_dict'] = getattr(predictor, 'model').state_dict()
     torch.save(payload, path)
@@ -314,7 +317,10 @@ def _load_single_reward_oracle(artifact_path: str | Path) -> FrozenForecastRewar
     weights = np.asarray(payload.get('horizon_weights', np.ones(horizon, dtype=np.float32)), dtype=np.float32).reshape(-1)
     if weights.shape[0] != horizon:
         weights = np.ones(horizon, dtype=np.float32)
-    return FrozenForecastRewardOracle(predictor=predictor, lookback=int(payload['lookback']), horizon=horizon, base_feature_names=[str(v) for v in payload.get('base_feature_names', payload['input_columns'])], input_columns=[str(v) for v in payload['input_columns']], target_columns=[str(v) for v in payload['target_columns']], x_mean=np.asarray(payload['x_mean'], dtype=np.float32), x_std=np.asarray(payload['x_std'], dtype=np.float32), y_mean=np.asarray(payload['y_mean'], dtype=np.float32), y_std=np.asarray(payload['y_std'], dtype=np.float32), loss_name=str(payload.get('loss_name', 'huber')), loss_delta=float(payload.get('loss_delta', 1.0)), use_observed_mask=bool(payload.get('use_observed_mask', False)), use_time_delta=bool(payload.get('use_time_delta', False)), horizon_weights=weights, context_features=[str(v) for v in payload.get('context_features', [])], base_freq_s=int(payload.get('base_freq_s', 1)), score_scale=float(payload.get('score_scale', 1.0)), score_clip=float(payload.get('score_clip', 50.0)))
+    input_filter_cfg = payload.get('input_filter_cfg')
+    if input_filter_cfg is None:
+        input_filter_cfg = dict(payload.get('predictor_cfg', {}).get('input_filter', {}) or {}) or None
+    return FrozenForecastRewardOracle(predictor=predictor, lookback=int(payload['lookback']), horizon=horizon, base_feature_names=[str(v) for v in payload.get('base_feature_names', payload['input_columns'])], input_columns=[str(v) for v in payload['input_columns']], target_columns=[str(v) for v in payload['target_columns']], x_mean=np.asarray(payload['x_mean'], dtype=np.float32), x_std=np.asarray(payload['x_std'], dtype=np.float32), y_mean=np.asarray(payload['y_mean'], dtype=np.float32), y_std=np.asarray(payload['y_std'], dtype=np.float32), loss_name=str(payload.get('loss_name', 'huber')), loss_delta=float(payload.get('loss_delta', 1.0)), use_observed_mask=bool(payload.get('use_observed_mask', False)), use_time_delta=bool(payload.get('use_time_delta', False)), horizon_weights=weights, context_features=[str(v) for v in payload.get('context_features', [])], input_filter_cfg=None if input_filter_cfg is None else dict(input_filter_cfg), base_freq_s=int(payload.get('base_freq_s', 1)), score_scale=float(payload.get('score_scale', 1.0)), score_clip=float(payload.get('score_clip', 50.0)))
 
 
 def _resolve_manifest_artifact_path(manifest_dir: Path, artifact_value: str) -> Path:
@@ -366,7 +372,8 @@ def train_reward_oracle_from_series(input_series: np.ndarray, target_series: np.
     use_observed_mask = bool(predictor_cfg.get('use_observed_mask', False))
     use_time_delta = bool(predictor_cfg.get('use_time_delta', False))
     context_features = [str(name) for name in predictor_cfg.get('context_features', [])]
-    input_series_prepared, input_columns_prepared, target_series_prepared, target_columns_prepared, _ = prepare_input_and_targets(input_series=np.asarray(input_series, dtype=float), target_series=np.asarray(target_series, dtype=float), feature_names=[str(name) for name in input_columns], observed_mask=None if observed_mask is None else np.asarray(observed_mask, dtype=float), use_observed_mask=use_observed_mask, use_time_delta=use_time_delta, target_columns=target_columns, time_index=None if time_index is None else np.asarray(time_index, dtype=int), base_freq_s=base_freq_s, context_series=extract_context_series(context_series), context_features=context_features)
+    input_filter_cfg = dict(predictor_cfg.get('input_filter', {}) or {}) or None
+    input_series_prepared, input_columns_prepared, target_series_prepared, target_columns_prepared, _ = prepare_input_and_targets(input_series=np.asarray(input_series, dtype=float), target_series=np.asarray(target_series, dtype=float), feature_names=[str(name) for name in input_columns], observed_mask=None if observed_mask is None else np.asarray(observed_mask, dtype=float), use_observed_mask=use_observed_mask, use_time_delta=use_time_delta, target_columns=target_columns, time_index=None if time_index is None else np.asarray(time_index, dtype=int), base_freq_s=base_freq_s, context_series=extract_context_series(context_series), context_features=context_features, input_filter_cfg=input_filter_cfg)
     ds = build_window_dataset(series=np.asarray(input_series_prepared, dtype=float), lookback=lookback, horizon=horizon, target_series=np.asarray(target_series_prepared, dtype=float))
     train, val, test = split_dataset(ds, train_ratio=train_ratio, val_ratio=val_ratio)
     train_norm, val_norm, test_norm, stats = _normalize_split(train, val, test)
@@ -379,7 +386,7 @@ def train_reward_oracle_from_series(input_series: np.ndarray, target_series: np.
     metrics_norm = compute_forecast_metrics(test_norm.Y, pred_norm)
     score_scale = max(float(metrics_norm.get('rmse', 1.0)), 0.001)
     score_clip = float(reward_cfg.get('score_clip', 50.0))
-    artifact = save_reward_oracle_artifact(predictor=predictor, predictor_cfg=predictor_cfg, stats=stats, lookback=lookback, horizon=horizon, base_feature_names=[str(name) for name in input_columns], input_columns=input_columns_prepared, target_columns=target_columns_prepared, loss_name=str(reward_cfg.get('loss', 'huber')), loss_delta=float(reward_cfg.get('loss_delta', 1.0)), score_scale=score_scale, score_clip=score_clip, metrics=metrics, artifact_path=artifact_path, base_freq_s=base_freq_s, context_features=context_features)
+    artifact = save_reward_oracle_artifact(predictor=predictor, predictor_cfg=predictor_cfg, stats=stats, lookback=lookback, horizon=horizon, base_feature_names=[str(name) for name in input_columns], input_columns=input_columns_prepared, target_columns=target_columns_prepared, loss_name=str(reward_cfg.get('loss', 'huber')), loss_delta=float(reward_cfg.get('loss_delta', 1.0)), score_scale=score_scale, score_clip=score_clip, metrics=metrics, artifact_path=artifact_path, base_freq_s=base_freq_s, context_features=context_features, input_filter_cfg=input_filter_cfg)
     return {'artifact_path': artifact, 'metrics': {k: float(v) for k, v in metrics.items()}, 'metrics_norm': {k: float(v) for k, v in metrics_norm.items()}, 'lookback': lookback, 'horizon': horizon, 'predictor_name': str(predictor_cfg.get('predictor_name', 'unknown')), 'target_columns': list(target_columns_prepared), 'score_scale': score_scale, 'score_clip': score_clip}
 
 def train_reward_oracle_from_rollouts(rollouts: list[dict[str, np.ndarray]], input_columns: list[str], target_columns: list[str], reward_cfg: dict, artifact_path: str | Path) -> dict:
@@ -396,11 +403,12 @@ def train_reward_oracle_from_rollouts(rollouts: list[dict[str, np.ndarray]], inp
     use_observed_mask = bool(predictor_cfg.get('use_observed_mask', False))
     use_time_delta = bool(predictor_cfg.get('use_time_delta', False))
     context_features = [str(name) for name in predictor_cfg.get('context_features', [])]
+    input_filter_cfg = dict(predictor_cfg.get('input_filter', {}) or {}) or None
     datasets: list[ForecastDataset] = []
     input_columns_prepared: list[str] | None = None
     target_columns_prepared: list[str] | None = None
     for rollout in rollouts:
-        input_series_prepared, rollout_input_names, target_series_prepared, rollout_target_names, target_indices = prepare_input_and_targets(input_series=np.asarray(rollout['input_series'], dtype=float), target_series=np.asarray(rollout['target_series'], dtype=float), feature_names=[str(name) for name in input_columns], observed_mask=None if rollout.get('observed_mask') is None else np.asarray(rollout['observed_mask'], dtype=float), use_observed_mask=use_observed_mask, use_time_delta=use_time_delta, target_columns=target_columns, time_index=None if rollout.get('time_index') is None else np.asarray(rollout['time_index'], dtype=int), base_freq_s=base_freq_s, context_series=extract_context_series(rollout), context_features=context_features)
+        input_series_prepared, rollout_input_names, target_series_prepared, rollout_target_names, target_indices = prepare_input_and_targets(input_series=np.asarray(rollout['input_series'], dtype=float), target_series=np.asarray(rollout['target_series'], dtype=float), feature_names=[str(name) for name in input_columns], observed_mask=None if rollout.get('observed_mask') is None else np.asarray(rollout['observed_mask'], dtype=float), use_observed_mask=use_observed_mask, use_time_delta=use_time_delta, target_columns=target_columns, time_index=None if rollout.get('time_index') is None else np.asarray(rollout['time_index'], dtype=int), base_freq_s=base_freq_s, context_series=extract_context_series(rollout), context_features=context_features, input_filter_cfg=input_filter_cfg)
         ds = build_window_dataset(series=np.asarray(input_series_prepared, dtype=float), lookback=lookback, horizon=horizon, target_series=np.asarray(target_series_prepared, dtype=float), target_indices=target_indices)
         datasets.append(ds)
         if input_columns_prepared is None:
@@ -424,7 +432,7 @@ def train_reward_oracle_from_rollouts(rollouts: list[dict[str, np.ndarray]], inp
     metrics_norm = compute_forecast_metrics(test_norm.Y, pred_norm)
     score_scale = max(float(metrics_norm.get('rmse', 1.0)), 0.001)
     score_clip = float(reward_cfg.get('score_clip', 50.0))
-    artifact = save_reward_oracle_artifact(predictor=predictor, predictor_cfg=predictor_cfg, stats=stats, lookback=lookback, horizon=horizon, base_feature_names=[str(name) for name in input_columns], input_columns=input_columns_prepared, target_columns=target_columns_prepared, loss_name=str(reward_cfg.get('loss', 'huber')), loss_delta=float(reward_cfg.get('loss_delta', 1.0)), score_scale=score_scale, score_clip=score_clip, metrics=metrics, artifact_path=artifact_path, base_freq_s=base_freq_s, context_features=context_features)
+    artifact = save_reward_oracle_artifact(predictor=predictor, predictor_cfg=predictor_cfg, stats=stats, lookback=lookback, horizon=horizon, base_feature_names=[str(name) for name in input_columns], input_columns=input_columns_prepared, target_columns=target_columns_prepared, loss_name=str(reward_cfg.get('loss', 'huber')), loss_delta=float(reward_cfg.get('loss_delta', 1.0)), score_scale=score_scale, score_clip=score_clip, metrics=metrics, artifact_path=artifact_path, base_freq_s=base_freq_s, context_features=context_features, input_filter_cfg=input_filter_cfg)
     return {'artifact_path': artifact, 'metrics': {k: float(v) for k, v in metrics.items()}, 'metrics_norm': {k: float(v) for k, v in metrics_norm.items()}, 'lookback': lookback, 'horizon': horizon, 'predictor_name': str(predictor_cfg.get('predictor_name', 'unknown')), 'target_columns': list(target_columns_prepared), 'score_scale': score_scale, 'score_clip': score_clip}
 
 def _sanitize_name(value: str) -> str:

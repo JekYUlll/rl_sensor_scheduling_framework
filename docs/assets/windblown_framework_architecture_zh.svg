@@ -1,145 +1,266 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1040" viewBox="0 0 1700 1040">
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1600" viewBox="0 0 2200 1600">
   <defs>
     <style>
-      .title { font: 700 34px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
+      .title { font: 700 36px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
       .subtitle { font: 500 17px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #334155; }
-      .section { font: 700 19px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
-      .label { font: 600 14px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
-      .small { font: 500 13px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #1e293b; }
-      .tiny { font: 500 12px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #334155; }
-      .box { rx: 18; ry: 18; stroke-width: 2.2; }
+      .laneTitle { font: 700 18px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
+      .section { font: 700 18px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
+      .body { font: 500 13px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #1e293b; }
+      .small { font: 500 12px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #334155; }
+      .mono { font: 600 12px 'JetBrains Mono', 'Consolas', monospace; fill: #334155; }
+      .chip { font: 700 12px 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; fill: #0f172a; }
+      .box { rx: 20; ry: 20; stroke-width: 2.1; }
+      .lane { rx: 26; ry: 26; stroke-width: 1.2; }
       .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
-      .arrow2 { stroke: #64748b; stroke-width: 2.3; fill: none; marker-end: url(#arrowhead2); }
+      .arrowSoft { stroke: #64748b; stroke-width: 2.2; fill: none; marker-end: url(#arrowheadSoft); }
     </style>
     <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#475569" />
     </marker>
-    <marker id="arrowhead2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <marker id="arrowheadSoft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
       <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
     </marker>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#94a3b8" flood-opacity="0.24"/>
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#94a3b8" flood-opacity="0.20"/>
     </filter>
   </defs>
 
-  <rect x="0" y="0" width="1700" height="1040" fill="#f8fafc"/>
-  <text x="65" y="68" class="title">风吹雪传感器调度：预测器冻结奖励主线（唯一流程）</text>
-  <text x="65" y="100" class="subtitle">核心目标：在硬功率约束下，直接优化未来多步 forecasting performance，而不是当前状态跟踪误差</text>
+  <rect x="0" y="0" width="2200" height="1600" fill="#f8fafc"/>
+  <rect x="0" y="0" width="2200" height="145" fill="#eef2ff"/>
+  <text x="60" y="64" class="title">风吹雪传感器调度主线图：Route A 当前完整实验框架（context-aware 奖励版本）</text>
+  <text x="60" y="96" class="subtitle">唯一主线：先生成共享真值，再在 predictor_pretrain 段预训练并冻结预测奖励模型；随后在 rl_train / rl_val 上训练与选模调度器，最后只在 final_test 上统一评估与出图。</text>
+  <text x="60" y="122" class="subtitle">当前默认长实验入口：scripts/run_full_experiment_tmux.sh --reward-cfg configs/reward/lstm_aux_context.yaml</text>
 
-  <!-- Row 1 -->
-  <rect x="60" y="145" width="360" height="195" class="box" fill="#eef6ff" stroke="#3b82f6" filter="url(#shadow)"/>
-  <text x="92" y="178" class="section">1. 共享真值环境 + 传感器定义</text>
-  <text x="92" y="210" class="label">输入</text>
-  <text x="92" y="232" class="small">`00_generate_business_data.py` 生成统一 truth 序列</text>
-  <text x="92" y="252" class="small">风速/温湿压/辐射/雪表温度/粒径/粒速/通量</text>
-  <text x="92" y="282" class="label">约束元数据</text>
-  <text x="92" y="304" class="small">稳态功率、启动峰值、平均功率、总能量预算</text>
+  <rect x="1640" y="30" width="150" height="34" rx="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="1674" y="52" class="chip">蓝色：数据与配置</text>
+  <rect x="1810" y="30" width="150" height="34" rx="12" fill="#fff7ed" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="1844" y="52" class="chip">橙色：冻结奖励</text>
+  <rect x="1980" y="30" width="150" height="34" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="2014" y="52" class="chip">紫色：调度学习</text>
 
-  <rect x="460" y="145" width="360" height="195" class="box" fill="#effcf5" stroke="#22c55e" filter="url(#shadow)"/>
-  <text x="492" y="178" class="section">2. 时间轴四段切分（防泄漏）</text>
-  <text x="492" y="212" class="small">S0: predictor_pretrain</text>
-  <text x="492" y="234" class="small">S1: rl_train</text>
-  <text x="492" y="256" class="small">S2: rl_val</text>
-  <text x="492" y="278" class="small">S3: final_test</text>
-  <text x="492" y="310" class="tiny">强约束：S3 结果不回流训练，S0/S1/S2/S3 互不重叠</text>
+  <rect x="40" y="160" width="2120" height="280" class="lane" fill="#f9fbff" stroke="#cbd5e1"/>
+  <text x="65" y="188" class="laneTitle">A. 数据、物理环境与约束定义</text>
 
-  <rect x="860" y="145" width="360" height="195" class="box" fill="#fff7ed" stroke="#f59e0b" filter="url(#shadow)"/>
-  <text x="892" y="178" class="section">3. S0 训练并冻结预测器</text>
-  <rect x="892" y="202" width="90" height="34" rx="11" fill="#fde68a" stroke="#f59e0b" stroke-width="1.6"/>
-  <text x="922" y="224" class="small">TCN</text>
-  <rect x="992" y="202" width="90" height="34" rx="11" fill="#fde68a" stroke="#f59e0b" stroke-width="1.6"/>
-  <text x="1022" y="224" class="small">LSTM</text>
-  <rect x="1092" y="202" width="110" height="34" rx="11" fill="#fde68a" stroke="#f59e0b" stroke-width="1.6"/>
-  <text x="1108" y="224" class="small">Transformer</text>
-  <text x="892" y="258" class="small">只在 S0 训练和选模，随后参数冻结</text>
-  <text x="892" y="280" class="small">保存：模型参数、归一化统计、窗口长度、目标列</text>
-  <text x="892" y="310" class="tiny">这些冻结模型将成为 RL 奖励 oracle（主项）</text>
+  <rect x="60" y="200" width="490" height="210" class="box" fill="#eef6ff" stroke="#3b82f6" filter="url(#shadow)"/>
+  <text x="86" y="228" class="section">1. 共享真值环境生成</text>
+  <text x="86" y="252" class="mono">脚本：00_generate_business_data.py</text>
+  <text x="86" y="276" class="body">
+    <tspan x="86" dy="0">时间分辨率：1 Hz；总长度：1,209,600 步 = 14 天。</tspan>
+    <tspan x="86" dy="20">状态维度共 10 个：风速、风向、气温、相对湿度、气压、辐射、</tspan>
+    <tspan x="86" dy="20">雪表温度、雪粒粒径、雪粒速度、雪通量。</tspan>
+    <tspan x="86" dy="20">事件定义：雪通量高于 0.9 分位数时标记为事件时段。</tspan>
+    <tspan x="86" dy="20">输出文件：data/generated/windblown_truth.csv</tspan>
+  </text>
 
-  <rect x="1260" y="145" width="380" height="195" class="box" fill="#f4f0ff" stroke="#8b5cf6" filter="url(#shadow)"/>
-  <text x="1292" y="178" class="section">4. 预测奖励聚合器（主奖励源）</text>
-  <text x="1292" y="210" class="small">每个时刻 t：冻结模型预测未来 H 步</text>
-  <text x="1292" y="232" class="small">L_model(t) = Σ_h w_h * loss(y_{t+h}, ŷ_{t+h|t})</text>
-  <text x="1292" y="254" class="small">L_forecast(t) = Σ_m α_m * L_model_m(t)</text>
-  <text x="1292" y="286" class="small">默认：三模型等权，可按实验调 α_m / w_h</text>
-  <text x="1292" y="310" class="tiny">此处优化的是 forecasting，非 latent vs estimator 误差</text>
+  <rect x="580" y="200" width="490" height="210" class="box" fill="#eefcf5" stroke="#22c55e" filter="url(#shadow)"/>
+  <text x="606" y="228" class="section">2. 传感器层与功率成本</text>
+  <text x="606" y="252" class="body">
+    <tspan x="606" dy="0">met_station：风速/风向/气温/湿度/气压，稳态 0.12，启动峰值 0.16</tspan>
+    <tspan x="606" dy="20">radiation：辐射，稳态 0.05，启动峰值 0.07</tspan>
+    <tspan x="606" dy="20">surface_temp_ir：雪表温度，稳态 0.05，启动峰值 0.08</tspan>
+    <tspan x="606" dy="20">laser_disdrometer：粒径/粒速，稳态 1.35，启动峰值 1.75</tspan>
+    <tspan x="606" dy="20">fc4_flux：雪通量，稳态 1.55，启动峰值 1.95</tspan>
+    <tspan x="606" dy="20">所有传感器刷新间隔均为 1 秒，并带各自观测噪声。</tspan>
+  </text>
 
-  <!-- Row 2 -->
-  <rect x="80" y="410" width="520" height="250" class="box" fill="#ecfeff" stroke="#0891b2" filter="url(#shadow)"/>
-  <text x="112" y="444" class="section">5. S1/S2 调度训练环境闭环</text>
-  <text x="112" y="478" class="label">状态输入</text>
-  <text x="112" y="500" class="small">估计状态、协方差摘要、新鲜度、覆盖率、上一步动作、预算比</text>
-  <text x="112" y="530" class="label">观测生成</text>
-  <text x="112" y="552" class="small">按当前开关子集回放观测，经过估计器更新得到下一状态</text>
-  <text x="112" y="582" class="label">动作策略</text>
-  <text x="112" y="604" class="small">DQN / CMDP-DQN / PPO 统一输出“传感器打分”</text>
-  <text x="112" y="634" class="tiny">在线执行，不预枚举全动作表；每步都重新生成可行子集</text>
+  <rect x="1100" y="200" width="490" height="210" class="box" fill="#f4f9ff" stroke="#0ea5e9" filter="url(#shadow)"/>
+  <text x="1126" y="228" class="section">3. 时间切分与防泄漏规则</text>
+  <text x="1126" y="252" class="body">
+    <tspan x="1126" dy="0">predictor_pretrain：35% = 423,360 步，约 4.9 天</tspan>
+    <tspan x="1126" dy="20">rl_train：50% = 604,800 步，约 7.0 天</tspan>
+    <tspan x="1126" dy="20">rl_val：7.5% = 90,720 步，约 1.05 天</tspan>
+    <tspan x="1126" dy="20">final_test：7.5% = 90,720 步，约 1.05 天</tspan>
+    <tspan x="1126" dy="20">估计器统计量仅在 predictor_pretrain 段拟合；四段严格不重叠。</tspan>
+    <tspan x="1126" dy="20">final_test 只用于最终报告，不回流训练和选模。</tspan>
+  </text>
 
-  <rect x="640" y="410" width="500" height="250" class="box" fill="#eef2ff" stroke="#6366f1" filter="url(#shadow)"/>
-  <text x="672" y="444" class="section">6. OnlineSubsetProjector（硬约束前置）</text>
-  <text x="672" y="478" class="small">输入：传感器得分 + 上一步开关 + 约束阈值</text>
-  <text x="672" y="500" class="small">硬约束：瞬时功率、启动峰值、安全裕度</text>
-  <text x="672" y="522" class="small">输出：当前时刻可执行的传感器开关子集</text>
-  <text x="672" y="554" class="label">奖励计算</text>
-  <text x="672" y="576" class="small">r_t = -L_forecast - λ_switch*切换 - λ_cov*覆盖 - λ_violation*违约</text>
-  <text x="672" y="598" class="small">主项固定为 L_forecast；功率更多通过可行域控制</text>
-  <text x="672" y="630" class="tiny">CMDP 额外跟踪平均功率/总能量，控制长期约束违约率</text>
+  <rect x="1620" y="200" width="520" height="210" class="box" fill="#fdf4ff" stroke="#a855f7" filter="url(#shadow)"/>
+  <text x="1646" y="228" class="section">4. 当前调度候选与统一约束口径</text>
+  <text x="1646" y="252" class="body">
+    <tspan x="1646" dy="0">规则基线：full_open、random、periodic、round_robin、info_priority</tspan>
+    <tspan x="1646" dy="20">学习型：dqn、cmdp_dqn、ppo</tspan>
+    <tspan x="1646" dy="20">统一动作语义：先输出每个传感器的重要性排序，再由可行子集投影器执行。</tspan>
+    <tspan x="1646" dy="20">瞬时稳态功率预算：2.2；启动峰值预算：2.3；安全裕度：0.05</tspan>
+    <tspan x="1646" dy="20">长期约束：平均功率预算 1.6；单 episode 能量预算 819.2</tspan>
+    <tspan x="1646" dy="20">最大激活传感器数：5</tspan>
+  </text>
 
-  <rect x="1180" y="410" width="460" height="250" class="box" fill="#fff1f2" stroke="#ef4444" filter="url(#shadow)"/>
-  <text x="1212" y="444" class="section">7. S2 验证选模与训练监控</text>
-  <text x="1212" y="478" class="small">验证指标：forecast loss、约束违约率、回报稳定性</text>
-  <text x="1212" y="500" class="small">排除：全开/全关伪策略、长期不调度策略</text>
-  <text x="1212" y="522" class="small">选出最终调度策略参数（checkpoint）</text>
-  <text x="1212" y="554" class="label">训练曲线输出</text>
-  <text x="1212" y="576" class="small">episode 回报均值 + 置信阴影、违约率、功率轨迹</text>
-  <text x="1212" y="608" class="tiny">目标：收敛到“约束内 forecasting 最优”的稳定策略</text>
+  <rect x="40" y="470" width="2120" height="300" class="lane" fill="#fffdf8" stroke="#cbd5e1"/>
+  <text x="65" y="498" class="laneTitle">B. predictor_pretrain 段上的冻结预测奖励模型预训练</text>
 
-  <!-- Row 3 -->
-  <rect x="80" y="730" width="530" height="220" class="box" fill="#eef6ff" stroke="#2563eb" filter="url(#shadow)"/>
-  <text x="112" y="764" class="section">8. S3 独立测试回放</text>
-  <text x="112" y="796" class="small">固定调度器，在 final_test 段回放得到统一测试轨迹</text>
-  <text x="112" y="818" class="small">生成每个调度器对应的数据包：input / target / mask / power</text>
-  <text x="112" y="840" class="small">同时保存传感器开关时间线与功率时间线</text>
-  <text x="112" y="872" class="tiny">测试段仅用于最终报告，不参与训练与调参</text>
+  <rect x="60" y="510" width="490" height="230" class="box" fill="#fff7ed" stroke="#f59e0b" filter="url(#shadow)"/>
+  <text x="86" y="538" class="section">5. 奖励模型预训练数据收集</text>
+  <text x="86" y="562" class="mono">脚本：00b_pretrain_reward_predictor.py</text>
+  <text x="86" y="586" class="body">
+    <tspan x="86" dy="0">只允许使用 predictor_pretrain 段，避免和 RL 训练/验证/测试混用。</tspan>
+    <tspan x="86" dy="20">调度器混合来源：full_open、periodic、round_robin、info_priority、random。</tspan>
+    <tspan x="86" dy="20">每个预训练调度器采样 16 条 rollout；每条 rollout 长度 4096 步。</tspan>
+    <tspan x="86" dy="20">额外加入最多 64 个常量可行子集 rollout，与 32 个随机切换子集 rollout。</tspan>
+    <tspan x="86" dy="20">随机切换保持时长范围：1 到 8 步；允许随机 reset，提高覆盖度。</tspan>
+  </text>
 
-  <rect x="650" y="730" width="510" height="220" class="box" fill="#f0fdf4" stroke="#16a34a" filter="url(#shadow)"/>
-  <text x="682" y="764" class="section">9. 统一评估（aggregate + task focus）</text>
-  <text x="682" y="796" class="small">误差：RMSE / MAE / sMAPE</text>
-  <text x="682" y="818" class="small">形状：DTW / Pearson</text>
-  <text x="682" y="840" class="small">资源：节电率、平均功率、峰值违约率、总能量</text>
-  <text x="682" y="862" class="small">对比：相对 full_open 的误差增幅与性能保留率</text>
-  <text x="682" y="894" class="tiny">主口径：在同等约束下谁的 forecasting 更好，在同等误差下谁更省电</text>
+  <rect x="580" y="510" width="490" height="230" class="box" fill="#fffaf0" stroke="#fb923c" filter="url(#shadow)"/>
+  <text x="606" y="538" class="section">6. 统一时序输入构造</text>
+  <text x="606" y="562" class="mono">模块：forecasting/input_augmentation.py</text>
+  <text x="606" y="586" class="body">
+    <tspan x="606" dy="0">基础输入：估计器输出的 10 维状态序列。</tspan>
+    <tspan x="606" dy="20">物理派生特征：风向正余弦、风矢量 u/v、表面-空气温差、</tspan>
+    <tspan x="606" dy="20">粒子动能代理、粒径-粒速交互项、输运超阈值、昼夜相位正余弦。</tspan>
+    <tspan x="606" dy="20">缺测感知特征：每个变量的“本步是否观测到”与“距离上次观测的步数”。</tspan>
+    <tspan x="606" dy="20">当前 context-aware 额外特征：总不确定度 trace_p 及其 log(1+trace_p)。</tspan>
+    <tspan x="606" dy="20">当前版本不再把功率或峰值功率直接喂给预测器。</tspan>
+  </text>
 
-  <rect x="1200" y="730" width="440" height="220" class="box" fill="#fefce8" stroke="#ca8a04" filter="url(#shadow)"/>
-  <text x="1232" y="764" class="section">10. 图表与结论输出</text>
-  <text x="1232" y="796" class="small">预测曲线 Overlay + Zoom（多模型、多调度器）</text>
-  <text x="1232" y="818" class="small">传感器激活时间线（on/off + 功率）</text>
-  <text x="1232" y="840" class="small">RMSE increase 箱线图、DTW increase 箱线图</text>
-  <text x="1232" y="862" class="small">功率-误差权衡图、排名相关热图</text>
-  <text x="1232" y="894" class="tiny">论文结论以 S3 测试集结果为准，避免训练段偏差</text>
+  <rect x="1100" y="510" width="490" height="230" class="box" fill="#fff8eb" stroke="#d97706" filter="url(#shadow)"/>
+  <text x="1126" y="538" class="section">7. 冻结预测奖励模型集成</text>
+  <text x="1126" y="562" class="mono">配置：configs/reward/lstm_aux_context.yaml</text>
+  <text x="1126" y="586" class="body">
+    <tspan x="1126" dy="0">模型族：TCN、LSTM、Transformer；权重分别为 0.3333、0.3333、0.3334。</tspan>
+    <tspan x="1126" dy="20">历史窗口长度：20 步；预测 horizon：3 步。</tspan>
+    <tspan x="1126" dy="20">三个 horizon 的加权系数：1.0、0.8、0.6。</tspan>
+    <tspan x="1126" dy="20">损失函数：Huber，delta = 1.0。</tspan>
+    <tspan x="1126" dy="20">目标变量共 7 个：气温、雪表温度、风速、风向正余弦、雪通量、雪粒速度。</tspan>
+    <tspan x="1126" dy="20">输出工件：reports/runs/&lt;run_tag&gt;_reward_model/reward_oracles.yaml 及三个 .pt 文件。</tspan>
+  </text>
 
-  <!-- Main arrows row1 -->
-  <path d="M420 242 L460 242" class="arrow"/>
-  <path d="M820 242 L860 242" class="arrow"/>
-  <path d="M1220 242 L1260 242" class="arrow"/>
+  <rect x="1620" y="510" width="520" height="230" class="box" fill="#fff7f0" stroke="#ea580c" filter="url(#shadow)"/>
+  <text x="1646" y="538" class="section">8. 奖励如何进入 RL</text>
+  <text x="1646" y="562" class="body">
+    <tspan x="1646" dy="0">每一步都用最近 20 步估计状态窗口，预测未来 3 步目标变量。</tspan>
+    <tspan x="1646" dy="20">输入给奖励模型的不只是估计状态，还包括观测掩码、绝对时间索引、</tspan>
+    <tspan x="1646" dy="20">以及上面提到的 uncertainty-only context 特征。</tspan>
+    <tspan x="1646" dy="20">奖励主项是“未来预测误差的相反数”；奖励模型参数在 RL 中完全冻结。</tspan>
+    <tspan x="1646" dy="20">当前主线不做 scheduler 与 predictor 的联动重训练，也不是 bilevel 优化。</tspan>
+    <tspan x="1646" dy="20">冻结模型只负责打分，不负责在 RL 阶段更新参数。</tspan>
+  </text>
 
-  <!-- down to row2 -->
-  <path d="M1450 340 L1450 375 L340 375 L340 410" class="arrow"/>
-  <path d="M600 535 L640 535" class="arrow"/>
-  <path d="M1140 535 L1180 535" class="arrow"/>
+  <rect x="40" y="780" width="2120" height="300" class="lane" fill="#fbf9ff" stroke="#cbd5e1"/>
+  <text x="65" y="808" class="laneTitle">C. rl_train / rl_val 段上的调度学习、验证与 checkpoint 选择</text>
 
-  <!-- to row3 -->
-  <path d="M1410 660 L1410 695 L345 695 L345 730" class="arrow"/>
-  <path d="M610 840 L650 840" class="arrow"/>
-  <path d="M1160 840 L1200 840" class="arrow"/>
+  <rect x="60" y="820" width="490" height="230" class="box" fill="#f5f3ff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="86" y="848" class="section">9. 训练环境闭环</text>
+  <text x="86" y="872" class="mono">核心：truth_replay_env + dataset_sensor + kalman_filter</text>
+  <text x="86" y="896" class="body">
+    <tspan x="86" dy="0">环境从共享真值轨迹回放带噪观测；估计器先预测，再用当前可用观测更新。</tspan>
+    <tspan x="86" dy="20">RL 状态包括：当前估计状态、协方差对角线、总不确定度、传感器新鲜度、</tspan>
+    <tspan x="86" dy="20">覆盖率、预算比、上一步动作、事件标记、昼夜相位。</tspan>
+    <tspan x="86" dy="20">reward_target_columns 当前用于状态相关摘要的权重口径。</tspan>
+    <tspan x="86" dy="20">forecast_target_columns 才是最终预测任务真正评估的目标集。</tspan>
+  </text>
 
-  <!-- side feedback arrows -->
-  <path d="M260 730 L260 690 L980 690 L980 660" class="arrow2"/>
-  <text x="275" y="712" class="tiny">S3 不回流训练；仅用于最终评估</text>
+  <rect x="580" y="820" width="490" height="230" class="box" fill="#f5f3ff" stroke="#7c3aed" filter="url(#shadow)"/>
+  <text x="606" y="848" class="section">10. 可行子集投影与即时奖励</text>
+  <text x="606" y="872" class="mono">核心：OnlineSubsetProjector + mainline_reward.py</text>
+  <text x="606" y="896" class="body">
+    <tspan x="606" dy="0">所有策略先输出每个传感器的排序或打分，再投影成当前可执行子集。</tspan>
+    <tspan x="606" dy="20">投影阶段强制满足：瞬时稳态功率、启动峰值功率、安全裕度、最大激活数。</tspan>
+    <tspan x="606" dy="20">即时奖励由四部分组成：未来预测误差主项、切换代价、覆盖率不足惩罚、</tspan>
+    <tspan x="606" dy="20">约束违约惩罚。</tspan>
+    <tspan x="606" dy="20">状态跟踪误差项当前关闭：lambda_state_tracking = 0.0。</tspan>
+  </text>
 
-  <path d="M930 410 L930 355 L1080 355 L1080 340" class="arrow2"/>
-  <text x="944" y="392" class="tiny">冻结预测器只提供奖励打分，不更新参数</text>
+  <rect x="1100" y="820" width="490" height="230" class="box" fill="#f5f3ff" stroke="#6d28d9" filter="url(#shadow)"/>
+  <text x="1126" y="848" class="section">11. 调度器训练与验证</text>
+  <text x="1126" y="872" class="body">
+    <tspan x="1126" dy="0">规则基线只做 rollout 统计，不更新参数。</tspan>
+    <tspan x="1126" dy="20">DQN / CMDP-DQN：默认 120 个 episode，每个 episode 512 步，每 10 个 episode 保存一次。</tspan>
+    <tspan x="1126" dy="20">CMDP-DQN 额外追踪平均功率和总能量的长期约束。</tspan>
+    <tspan x="1126" dy="20">PPO：输出连续传感器得分；当前版本也走同一条 context-aware 奖励路径；设备为 auto。</tspan>
+    <tspan x="1126" dy="20">rl_train 用于学习；rl_val 用于 checkpoint 选择；checkpoint 不从 final_test 反推。</tspan>
+  </text>
 
-  <!-- bottom principle -->
-  <rect x="60" y="975" width="1580" height="42" rx="12" fill="#e2e8f0"/>
-  <text x="86" y="1001" class="small">主线原则：先冻结预测器，再训练调度器；奖励直接对应未来预测误差；最终只看独立测试段 S3 的 forecasting 与约束表现。</text>
+  <rect x="1620" y="820" width="520" height="230" class="box" fill="#faf5ff" stroke="#9333ea" filter="url(#shadow)"/>
+  <text x="1646" y="848" class="section">12. 每个调度器的直接产物</text>
+  <text x="1646" y="872" class="body">
+    <tspan x="1646" dy="0">目录：reports/runs/&lt;run_tag&gt;_&lt;scheduler&gt;/</tspan>
+    <tspan x="1646" dy="20">规则基线：metrics_estimation.csv、metrics_estimation_eval.csv、dataset_stats.csv</tspan>
+    <tspan x="1646" dy="20">DQN / CMDP-DQN：scheduler_*.pt、scheduler_*_last.pt、training_log.csv</tspan>
+    <tspan x="1646" dy="20">PPO：scheduler_ppo.zip、scheduler_ppo_last.zip、归一化统计、training_log.csv</tspan>
+    <tspan x="1646" dy="20">所有调度器都会继续进入 final_test 回放与统一 forecasting 评估。</tspan>
+    <tspan x="1646" dy="20">当前长实验通过 tmux 启动，避免前台中断。</tspan>
+  </text>
+
+  <rect x="40" y="1090" width="2120" height="300" class="lane" fill="#f7fcf8" stroke="#cbd5e1"/>
+  <text x="65" y="1118" class="laneTitle">D. final_test 回放、统一 frozen predictor 评估、聚合与论文图表</text>
+
+  <rect x="60" y="1130" width="490" height="230" class="box" fill="#eefbf3" stroke="#16a34a" filter="url(#shadow)"/>
+  <text x="86" y="1158" class="section">13. final_test 回放与数据集导出</text>
+  <text x="86" y="1182" class="mono">脚本：02_evaluate_scheduler.py + 03_build_forecast_dataset.py</text>
+  <text x="86" y="1206" class="body">
+    <tspan x="86" dy="0">固定训练完成的调度器，只在 final_test 段回放一次。</tspan>
+    <tspan x="86" dy="20">导出的 NPZ 包含：估计状态序列、真值目标序列、观测掩码、事件标记、</tspan>
+    <tspan x="86" dy="20">稳态功率、峰值功率、总不确定度轨迹、绝对时间索引、特征名。</tspan>
+    <tspan x="86" dy="20">数据路径：data/processed/&lt;run_tag&gt;_&lt;scheduler&gt;.npz</tspan>
+    <tspan x="86" dy="20">这些数据集是后续所有 forecasting 评估、时间线图和曲线图的统一输入。</tspan>
+  </text>
+
+  <rect x="580" y="1130" width="490" height="230" class="box" fill="#f0fdf4" stroke="#15803d" filter="url(#shadow)"/>
+  <text x="606" y="1158" class="section">14. 统一 frozen predictor 评估</text>
+  <text x="606" y="1182" class="mono">脚本：04_eval_frozen_predictors.py / 04_eval_frozen_predictors_multi_gpu.sh</text>
+  <text x="606" y="1206" class="body">
+    <tspan x="606" dy="0">对每个调度器数据集，统一加载同一套 frozen predictor family。</tspan>
+    <tspan x="606" dy="20">默认矩阵：8 个调度器 × 3 个模型 = 24 个组合。</tspan>
+    <tspan x="606" dy="20">输出每个组合的 metrics_forecast.csv 和 forecast_predictions.npz。</tspan>
+    <tspan x="606" dy="20">当前主线是“统一冻结评估”，不是“为每个调度器分别重训 predictor”。</tspan>
+    <tspan x="606" dy="20">这一步是比较调度策略的公共评价器，而不是二次训练流程。</tspan>
+  </text>
+
+  <rect x="1100" y="1130" width="490" height="230" class="box" fill="#ecfdf5" stroke="#22c55e" filter="url(#shadow)"/>
+  <text x="1126" y="1158" class="section">15. 聚合指标、相对 full_open 对比、任务聚焦分析</text>
+  <text x="1126" y="1182" class="mono">脚本：05_evaluate_forecasts.py + 06_posthoc_analysis.py + 10_posthoc_task_focus.py</text>
+  <text x="1126" y="1206" class="body">
+    <tspan x="1126" dy="0">基础误差：RMSE、MAE、MAPE、sMAPE。</tspan>
+    <tspan x="1126" dy="20">形状与相关性：DTW(H=1)、Pearson(H=1)。</tspan>
+    <tspan x="1126" dy="20">资源指标：平均功率、总能量、峰值违约率、相对 full_open 的节电率。</tspan>
+    <tspan x="1126" dy="20">聚合表：metrics_forecast_all_&lt;run_tag&gt;.csv、comparison.csv、scheduler_summary.csv。</tspan>
+    <tspan x="1126" dy="20">任务聚焦版本只统计环境配置中定义的主任务目标变量。</tspan>
+  </text>
+
+  <rect x="1620" y="1130" width="520" height="230" class="box" fill="#fefce8" stroke="#ca8a04" filter="url(#shadow)"/>
+  <text x="1646" y="1158" class="section">16. 最终图表与工件落盘</text>
+  <text x="1646" y="1182" class="mono">脚本：09_generate_all_plots.py + 11_plot_rl_training_diagnostics.py + 13_plot_legacy_style_summaries.py</text>
+  <text x="1646" y="1206" class="body">
+    <tspan x="1646" dy="0">输出图：预测曲线叠加图、传感器激活时间线、功率-误差权衡图、</tspan>
+    <tspan x="1646" dy="20">RMSE / DTW 对比热图、排名相关图、RL 训练诊断图、legacy 风格汇总图。</tspan>
+    <tspan x="1646" dy="20">聚合目录：reports/aggregate/posthoc_&lt;run_tag&gt;/</tspan>
+    <tspan x="1646" dy="20">最终报告口径：只引用 final_test 段的 forecasting 表现和约束表现。</tspan>
+    <tspan x="1646" dy="20">训练段和验证段只能解释学习过程，不能作为论文最终效果表格。</tspan>
+  </text>
+
+  <path d="M550 305 L580 305" class="arrow"/>
+  <path d="M1070 305 L1100 305" class="arrow"/>
+  <path d="M1590 305 L1620 305" class="arrow"/>
+
+  <path d="M2140 305 L2160 305 L2160 455 L305 455 L305 510" class="arrow"/>
+
+  <path d="M550 625 L580 625" class="arrow"/>
+  <path d="M1070 625 L1100 625" class="arrow"/>
+  <path d="M1590 625 L1620 625" class="arrow"/>
+
+  <path d="M2140 625 L2160 625 L2160 775 L305 775 L305 820" class="arrow"/>
+
+  <path d="M550 935 L580 935" class="arrow"/>
+  <path d="M1070 935 L1100 935" class="arrow"/>
+  <path d="M1590 935 L1620 935" class="arrow"/>
+
+  <path d="M2140 935 L2160 935 L2160 1085 L305 1085 L305 1130" class="arrow"/>
+
+  <path d="M550 1245 L580 1245" class="arrow"/>
+  <path d="M1070 1245 L1100 1245" class="arrow"/>
+  <path d="M1590 1245 L1620 1245" class="arrow"/>
+
+  <path d="M860 742 L860 770 L1350 770 L1350 742" class="arrowSoft"/>
+  <text x="886" y="758" class="small">冻结奖励模型只提供打分，不在调度训练中回传参数更新。</text>
+
+  <path d="M300 1130 L300 1090 L1470 1090 L1470 1058" class="arrowSoft"/>
+  <text x="326" y="1112" class="small">final_test 产物仅用于最终统一评估，不回流到 rl_train 或 rl_val。</text>
+
+  <rect x="40" y="1435" width="2120" height="110" rx="18" fill="#e2e8f0"/>
+  <text x="68" y="1470" class="section">主线原则与当前解释边界</text>
+  <text x="68" y="1498" class="body">
+    <tspan x="68" dy="0">1. 先冻结奖励模型，再训练调度器；调度器优化的是未来 3 步预测误差，而不是即时状态跟踪误差。</tspan>
+    <tspan x="68" dy="20">2. 所有 scheduler 都在同一条共享真值轨迹上训练、验证、测试；唯一允许引用最终效果的分段是 final_test。</tspan>
+    <tspan x="68" dy="20">3. 当前 context-aware 版本只把“总不确定度及其对数变换”作为额外上下文输入，不把功率值直接注入预测器。</tspan>
+    <tspan x="68" dy="20">4. full_open 是统一比较基线，但在当前 frozen predictor 评估口径下，不自动等于理论最优上界；结果解释必须结合防泄漏设计与模型泛化边界。</tspan>
+  </text>
 </svg>

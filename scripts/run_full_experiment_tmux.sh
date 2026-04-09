@@ -5,6 +5,10 @@ CONDA_ENV_NAME="darts"
 RUN_TAG=""
 PREDICTOR_GPUS=""
 REWARD_CFG="configs/reward/lstm_aux.yaml"
+BASE_CFG="configs/base.yaml"
+ENV_CFG="configs/env/windblown_case.yaml"
+SENSOR_CFG="configs/sensors/windblown_sensors.yaml"
+ESTIMATOR_CFG="configs/estimator/kalman.yaml"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -22,6 +26,22 @@ while [[ $# -gt 0 ]]; do
       ;;
     --reward-cfg)
       REWARD_CFG="$2"
+      shift 2
+      ;;
+    --base-cfg)
+      BASE_CFG="$2"
+      shift 2
+      ;;
+    --env-cfg)
+      ENV_CFG="$2"
+      shift 2
+      ;;
+    --sensor-cfg)
+      SENSOR_CFG="$2"
+      shift 2
+      ;;
+    --estimator-cfg)
+      ESTIMATOR_CFG="$2"
       shift 2
       ;;
     *)
@@ -59,18 +79,20 @@ mkdir -p reports/logs
 echo "RUN_TAG=${RUN_TAG}"
 
 TRUTH_STEPS="$(
-python - <<'PY'
+python - "${BASE_CFG}" <<'PY'
 import yaml
+import sys
 from pathlib import Path
-cfg = yaml.safe_load(Path('configs/base.yaml').read_text())
+cfg = yaml.safe_load(Path(sys.argv[1]).read_text())
 print(int(cfg.get('data', {}).get('truth_steps', 1209600)))
 PY
 )"
 echo "TRUTH_STEPS=${TRUTH_STEPS}"
 
 python scripts/00_generate_business_data.py \
-  --env_cfg configs/env/windblown_case.yaml \
-  --sensor_cfg configs/sensors/windblown_sensors.yaml \
+  --base_cfg "${BASE_CFG}" \
+  --env_cfg "${ENV_CFG}" \
+  --sensor_cfg "${SENSOR_CFG}" \
   --steps "${TRUTH_STEPS}" \
   --out data/generated/windblown_truth.csv \
   | tee "reports/logs/${RUN_TAG}_00_generate.log"
@@ -78,9 +100,10 @@ python scripts/00_generate_business_data.py \
 REWARD_RUN_ID="${RUN_TAG}_reward_model"
 python scripts/00b_pretrain_reward_predictor.py \
   --truth_csv data/generated/windblown_truth.csv \
-  --env_cfg configs/env/windblown_case.yaml \
-  --sensor_cfg configs/sensors/windblown_sensors.yaml \
-  --estimator_cfg configs/estimator/kalman.yaml \
+  --base_cfg "${BASE_CFG}" \
+  --env_cfg "${ENV_CFG}" \
+  --sensor_cfg "${SENSOR_CFG}" \
+  --estimator_cfg "${ESTIMATOR_CFG}" \
   --reward_cfg "${REWARD_CFG}" \
   --run_id "${REWARD_RUN_ID}" \
   | tee "reports/logs/${RUN_TAG}_00b_reward_pretrain.log"
@@ -107,9 +130,10 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
 
   python scripts/01_train_rl_scheduler.py \
     --truth_csv data/generated/windblown_truth.csv \
-    --env_cfg configs/env/windblown_case.yaml \
-    --sensor_cfg configs/sensors/windblown_sensors.yaml \
-    --estimator_cfg configs/estimator/kalman.yaml \
+    --base_cfg "${BASE_CFG}" \
+    --env_cfg "${ENV_CFG}" \
+    --sensor_cfg "${SENSOR_CFG}" \
+    --estimator_cfg "${ESTIMATOR_CFG}" \
     --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
     --run_id "${RUN_ID}" \
     --reward_artifact "${REWARD_ARTIFACT}" \
@@ -118,9 +142,10 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
   if [[ "${sched_name}" == "dqn" || "${sched_name}" == "cmdp_dqn" || "${sched_name}" == "ppo" ]]; then
     python scripts/02_evaluate_scheduler.py \
       --truth_csv data/generated/windblown_truth.csv \
-      --env_cfg configs/env/windblown_case.yaml \
-      --sensor_cfg configs/sensors/windblown_sensors.yaml \
-      --estimator_cfg configs/estimator/kalman.yaml \
+      --base_cfg "${BASE_CFG}" \
+      --env_cfg "${ENV_CFG}" \
+      --sensor_cfg "${SENSOR_CFG}" \
+      --estimator_cfg "${ESTIMATOR_CFG}" \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
       --checkpoint "${CHECKPOINT_PATH}" \
@@ -129,9 +154,10 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
 
     python scripts/03_build_forecast_dataset.py \
       --truth_csv data/generated/windblown_truth.csv \
-      --env_cfg configs/env/windblown_case.yaml \
-      --sensor_cfg configs/sensors/windblown_sensors.yaml \
-      --estimator_cfg configs/estimator/kalman.yaml \
+      --base_cfg "${BASE_CFG}" \
+      --env_cfg "${ENV_CFG}" \
+      --sensor_cfg "${SENSOR_CFG}" \
+      --estimator_cfg "${ESTIMATOR_CFG}" \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
       --checkpoint "${CHECKPOINT_PATH}" \
@@ -141,9 +167,10 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
   else
     python scripts/02_evaluate_scheduler.py \
       --truth_csv data/generated/windblown_truth.csv \
-      --env_cfg configs/env/windblown_case.yaml \
-      --sensor_cfg configs/sensors/windblown_sensors.yaml \
-      --estimator_cfg configs/estimator/kalman.yaml \
+      --base_cfg "${BASE_CFG}" \
+      --env_cfg "${ENV_CFG}" \
+      --sensor_cfg "${SENSOR_CFG}" \
+      --estimator_cfg "${ESTIMATOR_CFG}" \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
       --reward_artifact "${REWARD_ARTIFACT}" \
@@ -151,9 +178,10 @@ for sched_name in full_open random periodic round_robin info_priority dqn cmdp_d
 
     python scripts/03_build_forecast_dataset.py \
       --truth_csv data/generated/windblown_truth.csv \
-      --env_cfg configs/env/windblown_case.yaml \
-      --sensor_cfg configs/sensors/windblown_sensors.yaml \
-      --estimator_cfg configs/estimator/kalman.yaml \
+      --base_cfg "${BASE_CFG}" \
+      --env_cfg "${ENV_CFG}" \
+      --sensor_cfg "${SENSOR_CFG}" \
+      --estimator_cfg "${ESTIMATOR_CFG}" \
       --scheduler_cfg "${SCHED_CFG[$sched_name]}" \
       --run_id "${RUN_ID}" \
       --split final_test \
@@ -183,6 +211,8 @@ python scripts/06_posthoc_analysis.py \
 python scripts/09_generate_all_plots.py \
   --run-tag "${RUN_TAG}" \
   --target-set primary \
+  --env-cfg "${ENV_CFG}" \
+  --sensor-cfg "${SENSOR_CFG}" \
   --max-points 300 \
   --timeline-start 0 \
   --timeline-end 300 \
@@ -192,6 +222,8 @@ python scripts/09_generate_all_plots.py \
   --run-tag "${RUN_TAG}" \
   --target snow_mass_flux_kg_m2_s \
   --target-set single \
+  --env-cfg "${ENV_CFG}" \
+  --sensor-cfg "${SENSOR_CFG}" \
   --max-points 300 \
   --timeline-start 0 \
   --timeline-end 300 \
@@ -199,7 +231,7 @@ python scripts/09_generate_all_plots.py \
 
 python scripts/10_posthoc_task_focus.py \
   --run-tag "${RUN_TAG}" \
-  --env-cfg configs/env/windblown_case.yaml \
+  --env-cfg "${ENV_CFG}" \
   | tee "reports/logs/${RUN_TAG}_10_posthoc_task_focus.log"
 
 python scripts/11_plot_rl_training_diagnostics.py \
@@ -208,7 +240,7 @@ python scripts/11_plot_rl_training_diagnostics.py \
 
 python scripts/13_plot_legacy_style_summaries.py \
   --run-tag "${RUN_TAG}" \
-  --env-cfg configs/env/windblown_case.yaml \
+  --env-cfg "${ENV_CFG}" \
   --model transformer \
   | tee "reports/logs/${RUN_TAG}_13_legacy_style_plots.log"
 

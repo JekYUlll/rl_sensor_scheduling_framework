@@ -10,3 +10,12 @@ use_time_delta: true
 context_features:
   - trace_p
   - log_trace_p
+input_filter:
+  type: causal_moving_average
+  window: 3
+  columns:
+    - air_temperature_c
+    - snow_surface_temperature_c
+    - wind_speed_ms
+    - snow_mass_flux_kg_m2_s
+    - snow_particle_mean_velocity_ms

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+from typing import TypedDict, cast
 
 import numpy as np
 
@@ -8,6 +9,13 @@ from forecasting.input_augmentation import augment_input_series, augment_physica
 
 
 SUPPORTED_CONTEXT_SERIES_KEYS = ("trace_p", "power", "peak_power", "event_flags")
+SUPPORTED_INPUT_FILTER_TYPES = ("causal_moving_average",)
+
+
+class InputFilterConfig(TypedDict):
+    type: str
+    columns: list[str]
+    window: int
 
 
 def extract_context_series(source: Mapping[str, object] | object | None) -> dict[str, np.ndarray]:
@@ -15,19 +23,88 @@ def extract_context_series(source: Mapping[str, object] | object | None) -> dict
         return {}
     context: dict[str, np.ndarray] = {}
     for key in SUPPORTED_CONTEXT_SERIES_KEYS:
-        value = None
+        value: object | None = None
         if isinstance(source, Mapping):
             value = source.get(key)
         else:
-            try:
-                if key in source:
-                    value = source[key]
-            except Exception:
-                value = getattr(source, key, None)
+            value = getattr(source, key, None)
         if value is None:
             continue
         context[key] = np.asarray(value, dtype=float).reshape(-1)
     return context
+
+
+def normalize_input_filter_cfg(input_filter_cfg: Mapping[str, object] | None) -> InputFilterConfig | None:
+    if not input_filter_cfg:
+        return None
+    cfg = dict(input_filter_cfg)
+    if not bool(cfg.get("enabled", True)):
+        return None
+    filter_type = str(cfg.get("type", "")).strip()
+    if not filter_type:
+        return None
+    if filter_type not in SUPPORTED_INPUT_FILTER_TYPES:
+        raise ValueError(
+            f"Unsupported input filter type '{filter_type}'. "
+            f"Supported types: {SUPPORTED_INPUT_FILTER_TYPES}"
+        )
+    raw_columns = cfg.get("columns", [])
+    if isinstance(raw_columns, (str, bytes)) or not isinstance(raw_columns, Sequence):
+        raise ValueError("input_filter.columns must be a sequence of feature names")
+    columns = [str(name) for name in raw_columns]
+    if not columns:
+        return None
+    if filter_type == "causal_moving_average":
+        raw_window = cfg.get("window", 1)
+        if not isinstance(raw_window, (int, float, str)):
+            raise ValueError("input_filter.window must be an int-like value")
+        window = int(raw_window)
+        if window <= 1:
+            return None
+        return {
+            "type": filter_type,
+            "columns": columns,
+            "window": window,
+        }
+    raise AssertionError(f"Unhandled input filter type: {filter_type}")
+
+
+def _causal_moving_average_1d(values: np.ndarray, window: int) -> np.ndarray:
+    arr = np.asarray(values, dtype=float).reshape(-1)
+    if window <= 1 or arr.size == 0:
+        return np.array(arr, copy=True)
+    cumsum = np.cumsum(arr, dtype=float)
+    out = np.empty_like(arr, dtype=float)
+    for idx in range(arr.shape[0]):
+        start = max(0, idx - window + 1)
+        total = cumsum[idx] - (cumsum[start - 1] if start > 0 else 0.0)
+        count = idx - start + 1
+        out[idx] = total / float(count)
+    return out
+
+
+def apply_input_filter(
+    input_series: np.ndarray,
+    feature_names: list[str],
+    input_filter_cfg: Mapping[str, object] | None,
+) -> np.ndarray:
+    cfg = normalize_input_filter_cfg(input_filter_cfg)
+    values = np.array(input_series, dtype=float, copy=True)
+    if cfg is None:
+        return values
+    if values.ndim != 2:
+        raise ValueError(f"input_series must be 2D, got shape={values.shape}")
+    name_to_idx = {str(name): idx for idx, name in enumerate(feature_names)}
+    filter_type = cfg["type"]
+    if filter_type == "causal_moving_average":
+        window = cfg["window"]
+        for column in cast(list[str], cfg["columns"]):
+            idx = name_to_idx.get(str(column))
+            if idx is None:
+                continue
+            values[:, idx] = _causal_moving_average_1d(values[:, idx], window=window)
+        return values
+    raise AssertionError(f"Unhandled input filter type: {filter_type}")
 
 
 def select_target_columns(
@@ -68,9 +145,15 @@ def prepare_input_and_targets(
     base_freq_s: int = 1,
     context_series: dict[str, np.ndarray] | None = None,
     context_features: list[str] | None = None,
+    input_filter_cfg: Mapping[str, object] | None = None,
 ) -> tuple[np.ndarray, list[str], np.ndarray, list[str], np.ndarray | None]:
+    input_filtered = apply_input_filter(
+        np.asarray(input_series, dtype=float),
+        [str(name) for name in feature_names],
+        input_filter_cfg,
+    )
     input_aug, input_names = augment_input_series(
-        input_series=np.asarray(input_series, dtype=float),
+        input_series=input_filtered,
         observed_mask=None if observed_mask is None else np.asarray(observed_mask, dtype=float),
         feature_names=[str(name) for name in feature_names],
         use_observed_mask=use_observed_mask,

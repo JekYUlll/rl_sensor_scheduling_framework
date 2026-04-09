@@ -72,6 +72,7 @@ def main() -> None:
     use_observed_mask = bool(cfg.get("use_observed_mask", False))
     use_time_delta = bool(cfg.get("use_time_delta", False))
     context_features = [str(name) for name in cfg.get("context_features", [])]
+    input_filter_cfg = dict(cfg.get("input_filter", {}) or {}) or None
     target_columns = [str(name) for name in meta.get("forecast_target_columns", meta.get("reward_target_columns", []))]
     input_series, input_feature_names, target_series, target_feature_names, target_indices = prepare_input_and_targets(
         input_series=np.asarray(input_series, dtype=float),
@@ -85,6 +86,7 @@ def main() -> None:
         base_freq_s=int(meta.get("base_freq_s", 1)),
         context_series=context_series,
         context_features=context_features,
+        input_filter_cfg=input_filter_cfg,
     )
 
     ds = build_window_dataset(
@@ -133,6 +135,7 @@ def main() -> None:
         "device": str(cfg.get("device", "auto")),
         "target_columns": json.dumps(target_feature_names, ensure_ascii=False),
         "context_features": json.dumps(context_features, ensure_ascii=False),
+        "input_filter_cfg": json.dumps(input_filter_cfg or {}, ensure_ascii=False),
         "avg_power": float(meta.get("avg_power", float("nan"))),
         "total_power": float(meta.get("total_power", float("nan"))),
         "coverage_mean": float(meta.get("coverage_mean", float("nan"))),

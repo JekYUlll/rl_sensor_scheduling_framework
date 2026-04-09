@@ -36,6 +36,7 @@ def main() -> None:
     parser.add_argument("--target", default="snow_mass_flux_kg_m2_s")
     parser.add_argument("--target-set", choices=["single", "primary", "forecast"], default="single")
     parser.add_argument("--env-cfg", default="configs/env/windblown_case.yaml")
+    parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors.yaml")
     parser.add_argument("--max-points", type=int, default=300)
     parser.add_argument("--timeline-start", type=int, default=0)
     parser.add_argument("--timeline-end", type=int, default=300)
@@ -72,6 +73,8 @@ def main() -> None:
                 args.run_tag,
                 "--target",
                 target,
+                "--sensor-cfg",
+                args.sensor_cfg,
                 "--start",
                 str(args.timeline_start),
                 "--end",
