@@ -115,13 +115,29 @@ declare -A SCHED_CFG=(
   [random]="configs/scheduler/random.yaml"
   [periodic]="configs/scheduler/periodic.yaml"
   [round_robin]="configs/scheduler/round_robin.yaml"
+  [warmup_round_robin]="configs/scheduler/warmup_round_robin.yaml"
   [info_priority]="configs/scheduler/info_priority.yaml"
   [dqn]="configs/scheduler/dqn.yaml"
   [cmdp_dqn]="configs/scheduler/cmdp_dqn.yaml"
   [ppo]="configs/scheduler/ppo.yaml"
 )
 
-for sched_name in full_open random periodic round_robin info_priority dqn cmdp_dqn ppo; do
+HAS_SENSOR_WARMUP="$(
+python - "${SENSOR_CFG}" <<'PY'
+import sys
+import yaml
+from pathlib import Path
+cfg = yaml.safe_load(Path(sys.argv[1]).read_text())
+print(1 if any(int(item.get("warmup_steps", 0)) > 0 for item in cfg.get("sensors", [])) else 0)
+PY
+)"
+
+SCHED_ORDER=(full_open random periodic round_robin info_priority dqn cmdp_dqn ppo)
+if [[ "${HAS_SENSOR_WARMUP}" == "1" && -f "configs/scheduler/warmup_round_robin.yaml" ]]; then
+  SCHED_ORDER=(full_open random periodic round_robin warmup_round_robin info_priority dqn cmdp_dqn ppo)
+fi
+
+for sched_name in "${SCHED_ORDER[@]}"; do
   RUN_ID="${RUN_TAG}_${sched_name}"
   CHECKPOINT_PATH="reports/runs/${RUN_ID}/scheduler_${sched_name}.pt"
   if [[ "${sched_name}" == "ppo" ]]; then

@@ -21,6 +21,7 @@ from scheduling.online_projector import OnlineSubsetProjector
 from scheduling.baselines.periodic_scheduler import PeriodicScheduler
 from scheduling.baselines.random_scheduler import RandomScheduler
 from scheduling.baselines.round_robin_scheduler import RoundRobinScheduler
+from scheduling.baselines.warmup_round_robin_scheduler import WarmupAwareRoundRobinScheduler
 from scheduling.rl.constrained_dqn_agent import ConstrainedDQNAgent
 from scheduling.rl.dqn_agent import DQNAgent
 from scheduling.rl.score_dqn_agent import ConstrainedScoreDQNAgent, ScoreDQNAgent
@@ -274,6 +275,16 @@ def _make_scheduler(scheduler_cfg: dict, selector, sensor_cfg: dict, state_colum
         return (PeriodicScheduler(selector, period=int(scheduler_cfg.get('period', 1))), name)
     if name == 'round_robin':
         return (RoundRobinScheduler(selector, sensor_ids=sensor_ids, max_active=max_active, min_on_steps=int(scheduler_cfg.get('min_on_steps', 1))), name)
+    if name == 'warmup_round_robin':
+        return (
+            WarmupAwareRoundRobinScheduler(
+                selector,
+                sensor_ids=sensor_ids,
+                max_active=max_active,
+                ready_hold_steps=int(scheduler_cfg.get('ready_hold_steps', 2)),
+            ),
+            name,
+        )
     if name == 'info_priority':
         return (InfoPriorityScheduler(selector, sensor_ids=sensor_ids, sensor_to_dims=_sensor_to_dims(sensor_cfg, state_columns), max_active=max_active, weights=scheduler_cfg.get('weights', {})), name)
     if name == 'full_open':
@@ -323,6 +334,24 @@ def _estimator_relevance_cfg(base_cfg: dict) -> dict[str, float]:
 
 def _task_reward_cfg(base_cfg: dict) -> dict[str, float]:
     return load_training_reward_cfg(base_cfg)
+
+
+def _max_sensor_warmup_steps(sensor_cfg: dict) -> int:
+    return max((int(item.get("warmup_steps", 0)) for item in sensor_cfg.get("sensors", [])), default=0)
+
+
+def _validate_reward_horizon_for_warmup(sensor_cfg: dict, reward_cfg: dict) -> None:
+    max_warmup_steps = _max_sensor_warmup_steps(sensor_cfg)
+    if max_warmup_steps <= 0:
+        return
+    horizon = int(reward_cfg.get("horizon", 1))
+    min_required_horizon = max_warmup_steps + 1
+    if horizon < min_required_horizon:
+        raise ValueError(
+            "Warm-up-aware experiments require reward horizon to cover delayed sensor utility: "
+            f"configured horizon={horizon}, max warmup_steps={max_warmup_steps}, "
+            f"required horizon>={min_required_horizon}."
+        )
 
 def _checkpoint_name(name: str) -> str:
     if name == 'ppo':
@@ -695,6 +724,8 @@ def _append_reward_pretrain_rollout(
 def pretrain_reward_predictor(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, reward_cfg_path: str, run_id: str, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict:
     seed = base_cfg_seed(base_cfg_path)
     reward_cfg = load_yaml(reward_cfg_path)
+    sensor_cfg = load_yaml(sensor_cfg_path)
+    _validate_reward_horizon_for_warmup(sensor_cfg, reward_cfg)
     pretrain_split = str(reward_cfg.get('pretrain_split', 'predictor_pretrain'))
     if pretrain_split != 'predictor_pretrain':
         raise ValueError(

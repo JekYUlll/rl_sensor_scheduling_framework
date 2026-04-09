@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from pipelines.truth_pipeline import _RandomSubsetReplayScheduler, _split_bounds
+from pipelines.truth_pipeline import _RandomSubsetReplayScheduler, _split_bounds, _validate_reward_horizon_for_warmup
 from scheduling.online_projector import OnlineSubsetProjector
 
 
@@ -53,3 +53,16 @@ def test_random_subset_replay_scheduler_produces_feasible_non_empty_actions() ->
         assert selector.steady_power(subset) <= selector.per_step_budget + 1e-9
         seen.add(subset)
     assert len(seen) >= 2
+
+
+def test_reward_horizon_validation_rejects_warmup_longer_than_horizon() -> None:
+    with pytest.raises(ValueError, match="required horizon>=6"):
+        _validate_reward_horizon_for_warmup(
+            {
+                "sensors": [
+                    {"sensor_id": "a", "warmup_steps": 0},
+                    {"sensor_id": "b", "warmup_steps": 5},
+                ]
+            },
+            {"horizon": 3},
+        )

@@ -1,0 +1,43 @@
+predictor_cfgs:
+  - predictor_cfg: configs/predictor/tcn_reward.yaml
+    model_name: tcn
+    weight: 0.3333
+  - predictor_cfg: configs/predictor/lstm_reward.yaml
+    model_name: lstm
+    weight: 0.3333
+  - predictor_cfg: configs/predictor/transformer_reward.yaml
+    model_name: transformer
+    weight: 0.3334
+pretrain_split: predictor_pretrain
+lookback: 20
+horizon: 6
+horizon_weights: [1.0, 0.9, 0.8, 0.7, 0.6, 0.5]
+loss: huber
+loss_delta: 1.0
+history_source: scheduler_mix
+input_columns: all_state_columns
+target_columns:
+  - air_temperature_c
+  - snow_surface_temperature_c
+  - wind_speed_ms
+  - wind_dir_sin
+  - wind_dir_cos
+  - snow_mass_flux_kg_m2_s
+  - snow_particle_mean_velocity_ms
+pretrain_schedulers:
+  - full_open
+  - periodic
+  - round_robin
+  - warmup_round_robin
+  - info_priority
+  - random
+pretrain_rollouts_per_scheduler: 16
+pretrain_episode_len: 4096
+pretrain_random_reset: true
+pretrain_all_feasible_subsets: true
+pretrain_max_feasible_constant_rollouts: 64
+pretrain_random_subset_rollouts: 32
+pretrain_random_subset_hold_min: 2
+pretrain_random_subset_hold_max: 16
+train_ratio_within_pretrain: 0.85
+val_ratio_within_pretrain: 0.05
