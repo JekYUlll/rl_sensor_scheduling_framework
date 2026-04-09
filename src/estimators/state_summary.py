@@ -15,6 +15,9 @@ def flatten_rl_state(rl_state: dict[str, Any]) -> list[float]:
     values.extend(float(v) for v in rl_state.get("coverage_ratio", []))
     values.append(float(rl_state.get("budget_ratio", 1.0)))
     values.extend(float(v) for v in rl_state.get("previous_action", []))
+    values.extend(float(v) for v in rl_state.get("warming_mask", []))
+    values.extend(float(v) for v in rl_state.get("ready_mask", []))
+    values.extend(float(v) for v in rl_state.get("warm_remaining_norm", []))
     values.append(1.0 if bool(rl_state.get("event", False)) else 0.0)
     if "time_of_day_sin" in rl_state:
         values.append(float(rl_state["time_of_day_sin"]))

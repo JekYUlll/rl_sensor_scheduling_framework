@@ -43,11 +43,34 @@ def _discover_scheduler_npz(run_tag: str, scheduler: str | None) -> list[tuple[s
     return discovered
 
 
+def _default_sensor_names(sensor_cfg: dict) -> list[str]:
+    return [str(spec["sensor_id"]) for spec in sensor_cfg.get("sensors", [])]
+
+
 def _infer_sensor_timelines(
-    observed_mask: np.ndarray,
+    data: np.lib.npyio.NpzFile,
     feature_names: list[str],
     sensor_cfg: dict,
 ) -> tuple[list[str], np.ndarray]:
+    if {"powered_mask", "warming_mask", "ready_mask"}.issubset(data.files):
+        sensor_names = _default_sensor_names(sensor_cfg)
+        if "sensor_ids" in data.files:
+            sensor_names = [str(name) for name in data["sensor_ids"].tolist()]
+        powered_mask = np.asarray(data["powered_mask"], dtype=float)
+        warming_mask = np.asarray(data["warming_mask"], dtype=float)
+        ready_mask = np.asarray(data["ready_mask"], dtype=float)
+        if powered_mask.ndim != 2 or warming_mask.shape != powered_mask.shape or ready_mask.shape != powered_mask.shape:
+            raise ValueError("Warmup masks must all be 2D and share the same shape")
+        if len(sensor_names) != powered_mask.shape[1]:
+            raise ValueError(
+                f"sensor_names length {len(sensor_names)} does not match warmup mask width {powered_mask.shape[1]}"
+            )
+        mode = np.zeros_like(powered_mask, dtype=float)
+        mode[warming_mask > 0.5] = 1.0
+        mode[ready_mask > 0.5] = 2.0
+        return sensor_names, mode.T
+
+    observed_mask = np.asarray(data["observed_mask"], dtype=float)
     feature_to_idx = {name: idx for idx, name in enumerate(feature_names)}
     sensor_names: list[str] = []
     activation: list[np.ndarray] = []
@@ -58,8 +81,7 @@ def _infer_sensor_timelines(
         if not idxs:
             continue
         sensor_mask = observed_mask[:, idxs]
-        # A sensor is considered on when all variables provided by that sensor are observed.
-        active = np.all(sensor_mask > 0.5, axis=1).astype(float)
+        active = 2.0 * np.all(sensor_mask > 0.5, axis=1).astype(float)
         sensor_names.append(sensor_id)
         activation.append(active)
     if not activation:
@@ -111,12 +133,16 @@ def _plot_timeline(
     for row_idx, sensor_name in enumerate(sensor_names):
         ax = axes[2 + row_idx]
         series = activation[row_idx, start:end]
-        ax.step(x, series, where="post", linewidth=1.6, color="tab:blue")
-        ax.fill_between(x, 0.0, series, step="post", alpha=0.25, color="tab:blue")
-        ax.set_ylim(-0.1, 1.1)
-        ax.set_yticks([0, 1])
-        ax.set_yticklabels(["off", "on"])
-        duty = float(np.mean(series)) if len(series) else float("nan")
+        warm_series = (series > 0.5).astype(float)
+        ready_series = (series > 1.5).astype(float) * 2.0
+        ax.step(x, series, where="post", linewidth=1.4, color="#334155")
+        ax.fill_between(x, 0.0, warm_series, where=warm_series > 0.0, step="post", alpha=0.32, color="#f59e0b")
+        ax.fill_between(x, 0.0, ready_series, where=ready_series > 0.0, step="post", alpha=0.28, color="#10b981")
+        ax.set_ylim(-0.1, 2.1)
+        ax.set_yticks([0, 1, 2])
+        ax.set_yticklabels(["off", "warm", "ready"])
+        duty = float(np.mean(series > 0.5)) if len(series) else float("nan")
+        ready_ratio = float(np.mean(series > 1.5)) if len(series) else float("nan")
         ax.set_ylabel(
             _format_axis_label(sensor_name),
             rotation=0,
@@ -127,7 +153,7 @@ def _plot_timeline(
         ax.text(
             0.995,
             0.82,
-            f"duty={duty:.2f}",
+            f"on={duty:.2f} ready={ready_ratio:.2f}",
             ha="right",
             va="top",
             transform=ax.transAxes,
@@ -167,9 +193,8 @@ def main() -> None:
             raise ValueError(f"target {args.target!r} not found in feature_names of {npz_path.name}")
         target_idx = feature_names.index(args.target)
         target_series = np.asarray(data["target_series"][:, target_idx], dtype=float)
-        observed_mask = np.asarray(data["observed_mask"], dtype=float)
         power = np.asarray(data["power"], dtype=float)
-        sensor_names, activation = _infer_sensor_timelines(observed_mask, feature_names, sensor_cfg)
+        sensor_names, activation = _infer_sensor_timelines(data, feature_names, sensor_cfg)
         max_end = len(target_series)
         start = max(0, int(args.start))
         end = min(max_end, int(args.end))

@@ -14,6 +14,7 @@ class LinearSensor(AbstractSensor):
     def observe(self, latent_state: np.ndarray, t: int | None = None) -> dict:
         if t is None:
             raise ValueError("LinearSensor.observe requires time index t")
+        self._ensure_legacy_direct_observe_ready()
         if not self.can_sample(t):
             return {"sensor_id": self.sensor_id, "available": False}
         clean = (self.c_vec @ latent_state.reshape(-1, 1)).reshape(-1)

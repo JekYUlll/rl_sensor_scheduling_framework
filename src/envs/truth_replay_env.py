@@ -79,6 +79,21 @@ class TruthReplayEnvironment(BaseEnvironment):
         latent_state = self._row_to_state(self._current_idx)
         observations = []
         total_power = 0.0
+        selected_set = {str(sensor_id) for sensor_id in action}
+        sensor_status: dict[str, dict[str, float | int | bool | str]] = {}
+        powered_sensor_ids: list[str] = []
+        warming_sensor_ids: list[str] = []
+        ready_sensor_ids: list[str] = []
+        for sensor_id, sensor in self.sensors.items():
+            status = sensor.begin_step(sensor_id in selected_set, t=self._local_t)
+            sensor_status[sensor_id] = status
+            if bool(status.get("powered", False)):
+                powered_sensor_ids.append(sensor_id)
+                total_power += float(status.get("power_cost", 0.0))
+            if bool(status.get("warming", False)):
+                warming_sensor_ids.append(sensor_id)
+            if bool(status.get("ready", False)):
+                ready_sensor_ids.append(sensor_id)
         for sensor_id in action:
             sensor = self.sensors.get(sensor_id)
             if sensor is None:
@@ -86,12 +101,15 @@ class TruthReplayEnvironment(BaseEnvironment):
             obs = sensor.observe(latent_state, t=self._local_t)
             if obs.get("available", False):
                 observations.append(obs)
-                total_power += float(obs.get("power_cost", 0.0))
 
         done = self._current_idx >= (self._episode_end_idx - 1)
         return {
             "latent_state": latent_state,
             "available_observations": observations,
+            "sensor_status": sensor_status,
+            "powered_sensor_ids": powered_sensor_ids,
+            "warming_sensor_ids": warming_sensor_ids,
+            "ready_sensor_ids": ready_sensor_ids,
             "event_flags": {"event": bool(self._event_flags[self._current_idx])},
             "done": done,
             "info": {

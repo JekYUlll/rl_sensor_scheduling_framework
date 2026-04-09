@@ -1,10 +1,9 @@
 from __future__ import annotations
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 import math
 import numpy as np
 import pandas as pd
-from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from core.config import load_yaml, save_yaml
 from core.seed import set_seed
 from business_cases.windblown_case.predictor_targets import default_forecast_target_columns, default_reward_target_columns
@@ -24,7 +23,6 @@ from scheduling.baselines.random_scheduler import RandomScheduler
 from scheduling.baselines.round_robin_scheduler import RoundRobinScheduler
 from scheduling.rl.constrained_dqn_agent import ConstrainedDQNAgent
 from scheduling.rl.dqn_agent import DQNAgent
-from scheduling.rl.sb3_ppo import PPOPolicyAdapter, PPOTrainingCallback, WindblownSubsetGymEnv, build_ppo_model, make_vecnormalize, save_obs_normalization_stats
 from scheduling.rl.score_dqn_agent import ConstrainedScoreDQNAgent, ScoreDQNAgent
 from sensors.base_sensor import SensorSpec
 from sensors.dataset_sensor import DatasetSensor
@@ -32,12 +30,53 @@ from visualization.estimation_plots import plot_trace_power
 from visualization.policy_plots import plot_action_hist
 from visualization.training_curves import plot_training_curves
 
+try:
+    from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+    from scheduling.rl.sb3_ppo import (
+        PPOPolicyAdapter,
+        PPOTrainingCallback,
+        WindblownSubsetGymEnv,
+        build_ppo_model,
+        make_vecnormalize,
+        save_obs_normalization_stats,
+    )
+    _PPO_IMPORT_ERROR: ModuleNotFoundError | None = None
+except ModuleNotFoundError as exc:
+    DummyVecEnv = Any  # type: ignore[assignment]
+    VecNormalize = Any  # type: ignore[assignment]
+    _PPO_IMPORT_ERROR = exc
+
+    class PPOPolicyAdapter:  # type: ignore[no-redef]
+        pass
+
+    class PPOTrainingCallback:  # type: ignore[no-redef]
+        pass
+
+    class WindblownSubsetGymEnv:  # type: ignore[no-redef]
+        pass
+
+    def build_ppo_model(*args, **kwargs):  # type: ignore[no-redef]
+        raise ModuleNotFoundError("stable_baselines3 is required for PPO support") from _PPO_IMPORT_ERROR
+
+    def make_vecnormalize(*args, **kwargs):  # type: ignore[no-redef]
+        raise ModuleNotFoundError("stable_baselines3 is required for PPO support") from _PPO_IMPORT_ERROR
+
+    def save_obs_normalization_stats(*args, **kwargs):  # type: ignore[no-redef]
+        raise ModuleNotFoundError("stable_baselines3 is required for PPO support") from _PPO_IMPORT_ERROR
+
 def _build_run_dir(run_id: str) -> Path:
     root = Path('reports/runs') / run_id
     root.mkdir(parents=True, exist_ok=True)
     return root
 RewardOracleType = FrozenForecastRewardOracle | FrozenForecastRewardEnsemble
 DEFAULT_BASE_CFG_PATH = 'configs/base.yaml'
+
+
+def _require_ppo_support() -> None:
+    if _PPO_IMPORT_ERROR is not None:
+        raise ModuleNotFoundError(
+            "stable_baselines3 is required for PPO scheduler support in truth_pipeline"
+        ) from _PPO_IMPORT_ERROR
 
 
 class _ConstantSubsetScheduler:
@@ -160,7 +199,7 @@ def _build_sensors(sensor_cfg: dict, state_columns: list[str]) -> list[DatasetSe
             obs_dim = len(variables)
         if obs_dim != len(variables):
             raise ValueError(f"Sensor {item['sensor_id']} has {len(variables)} variables but observation dimension {obs_dim}")
-        spec = SensorSpec(sensor_id=str(item['sensor_id']), obs_dim=obs_dim, variables=variables, refresh_interval=int(item.get('refresh_interval', 1)), power_cost=float(item.get('power_cost', 1.0)), startup_delay=int(item.get('startup_delay', 0)), startup_peak_power=None if item.get('startup_peak_power') is None else float(item.get('startup_peak_power')), required=bool(item.get('required', False)), noise_std=noise_std)
+        spec = SensorSpec(sensor_id=str(item['sensor_id']), obs_dim=obs_dim, variables=variables, refresh_interval=int(item.get('refresh_interval', 1)), power_cost=float(item.get('power_cost', 1.0)), startup_delay=int(item.get('startup_delay', 0)), warmup_steps=int(item.get('warmup_steps', 0)), startup_peak_power=None if item.get('startup_peak_power') is None else float(item.get('startup_peak_power')), required=bool(item.get('required', False)), warmup_observation_mode=str(item.get('warmup_observation_mode', 'none')), warmup_noise_scale=float(item.get('warmup_noise_scale', 1.0)), noise_std=noise_std)
         sensors.append(DatasetSensor(spec=spec, state_columns=state_columns))
     return sensors
 
@@ -220,9 +259,10 @@ def _build_estimator(truth_df: pd.DataFrame, state_columns: list[str], estimator
     else:
         p0 = np.diag(np.asarray(p0_diag, dtype=float))
     sensor_ids = [str(s['sensor_id']) for s in sensor_cfg.get('sensors', [])]
+    sensor_warmup_steps = {str(s['sensor_id']): int(s.get('warmup_steps', 0)) for s in sensor_cfg.get('sensors', [])}
     state_scale = safe_feature_scale(values, min_scale=float(estimator_cfg.get('min_scale', 1e-06)))
     uncertainty_weights = target_relevance_weights(values, state_columns=state_columns, target_columns=reward_target_columns, min_weight=float(relevance_cfg.get('min_relevance_weight', 0.25)), power=float(relevance_cfg.get('relevance_power', 1.0)))
-    return KalmanFilterEstimator(A=a_mat, Q=q_mat, x0=values[0] if x0 is None else np.asarray(x0, dtype=float), P0=p0, sensor_ids=sensor_ids, b=b_vec, state_scale=state_scale, uncertainty_weights=uncertainty_weights, normalize_rl_state=bool(estimator_cfg.get('normalize_rl_state', True)), use_logdet=bool(estimator_cfg.get('use_logdet', False)))
+    return KalmanFilterEstimator(A=a_mat, Q=q_mat, x0=values[0] if x0 is None else np.asarray(x0, dtype=float), P0=p0, sensor_ids=sensor_ids, b=b_vec, state_scale=state_scale, uncertainty_weights=uncertainty_weights, sensor_warmup_steps=sensor_warmup_steps, normalize_rl_state=bool(estimator_cfg.get('normalize_rl_state', True)), use_logdet=bool(estimator_cfg.get('use_logdet', False)))
 
 def _make_scheduler(scheduler_cfg: dict, selector, sensor_cfg: dict, state_columns: list[str]):
     name = str(scheduler_cfg.get('scheduler_name', 'random'))
@@ -252,6 +292,7 @@ def _build_rl_agent(name: str, state_dim: int, scheduler_cfg: dict, selector, ep
         if name == 'cmdp_dqn':
             return ConstrainedScoreDQNAgent(state_dim=state_dim, sensor_ids=list(selector.sensor_ids), cfg=scheduler_cfg, projector=selector, device=str(scheduler_cfg.get('device', 'auto')), episode_len=episode_len)
         if name == 'ppo':
+            _require_ppo_support()
             return PPOPolicyAdapter(sensor_ids=list(selector.sensor_ids), cfg=scheduler_cfg, selector=selector)
     action_dim = selector.size()
     if name == 'dqn':
@@ -469,6 +510,10 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
     truth_hist: list[list[float]] = []
     estimate_hist: list[list[float]] = []
     observed_mask_hist: list[list[float]] = []
+    powered_mask_hist: list[list[float]] = []
+    warming_mask_hist: list[list[float]] = []
+    ready_mask_hist: list[list[float]] = []
+    warm_remaining_hist: list[list[float]] = []
     event_hist: list[int] = []
     time_index_hist: list[int] = []
     prev_selected: list[str] = []
@@ -485,7 +530,7 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
         observed_sensor_ids = [str(obs['sensor_id']) for obs in step['available_observations'] if obs.get('available', False)]
         power_cost = float(power_info['steady_power'])
         power_ratio = power_cost / max(float(getattr(selector, 'per_step_budget', power_cost or 1.0)), 1e-06)
-        estimator.on_step(selected_sensor_ids=selected, power_ratio=power_ratio, observed_sensor_ids=observed_sensor_ids)
+        estimator.on_step(selected_sensor_ids=selected, power_ratio=power_ratio, observed_sensor_ids=observed_sensor_ids, sensor_status=step.get('sensor_status'))
         current_event = bool(step.get('event_flags', {}).get('event', False))
         next_state = _current_rl_state(env, estimator, current_event=current_event)
         unc_summary = estimator.get_uncertainty_summary()
@@ -537,12 +582,16 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
             truth_hist.append([float(step['latent_state'][col]) for col in state_columns])
             estimate_hist.append([float(v) for v in estimator.get_state_estimate().tolist()])
             observed_mask_hist.append(mask.tolist())
+            powered_mask_hist.append([float(v) for v in next_state.get('powered_mask', [])])
+            warming_mask_hist.append([float(v) for v in next_state.get('warming_mask', [])])
+            ready_mask_hist.append([float(v) for v in next_state.get('ready_mask', [])])
+            warm_remaining_hist.append([float(v) for v in next_state.get('warm_remaining', [])])
             event_hist.append(1 if bool(step.get('event_flags', {}).get('event', False)) else 0)
             time_index_hist.append(time_index_history[-1])
         prev_selected = list(selected)
         if step['done']:
             break
-    return {'episode_reward': total_reward, 'trace_hist': trace_hist, 'uncertainty_hist': uncertainty_hist, 'forecast_hist': forecast_hist, 'task_loss_hist': task_loss_hist, 'switch_penalty_hist': switch_penalty_hist, 'coverage_penalty_hist': coverage_penalty_hist, 'violation_penalty_hist': violation_penalty_hist, 'state_tracking_hist': state_tracking_hist, 'power_hist': power_hist, 'peak_power_hist': peak_power_hist, 'startup_extra_hist': startup_extra_hist, 'coverage_hist': coverage_hist, 'action_ids': action_ids, 'truth_hist': truth_hist, 'estimate_hist': estimate_hist, 'observed_mask_hist': observed_mask_hist, 'event_hist': event_hist, 'time_index_hist': time_index_hist}
+    return {'episode_reward': total_reward, 'trace_hist': trace_hist, 'uncertainty_hist': uncertainty_hist, 'forecast_hist': forecast_hist, 'task_loss_hist': task_loss_hist, 'switch_penalty_hist': switch_penalty_hist, 'coverage_penalty_hist': coverage_penalty_hist, 'violation_penalty_hist': violation_penalty_hist, 'state_tracking_hist': state_tracking_hist, 'power_hist': power_hist, 'peak_power_hist': peak_power_hist, 'startup_extra_hist': startup_extra_hist, 'coverage_hist': coverage_hist, 'action_ids': action_ids, 'truth_hist': truth_hist, 'estimate_hist': estimate_hist, 'observed_mask_hist': observed_mask_hist, 'powered_mask_hist': powered_mask_hist, 'warming_mask_hist': warming_mask_hist, 'ready_mask_hist': ready_mask_hist, 'warm_remaining_hist': warm_remaining_hist, 'event_hist': event_hist, 'time_index_hist': time_index_hist}
 
 def _make_greedy_agent_scheduler(agent, selector, scheduler_name: str):
 
@@ -622,6 +671,10 @@ def _append_reward_pretrain_rollout(
             'input_series': estimate_arr,
             'target_series': truth_arr,
             'observed_mask': mask_arr,
+            'powered_mask': np.asarray(rollout['powered_mask_hist'], dtype=float),
+            'warming_mask': np.asarray(rollout['warming_mask_hist'], dtype=float),
+            'ready_mask': np.asarray(rollout['ready_mask_hist'], dtype=float),
+            'warm_remaining': np.asarray(rollout['warm_remaining_hist'], dtype=float),
             'trace_p': np.asarray(rollout['trace_hist'], dtype=float),
             'power': np.asarray(rollout['power_hist'], dtype=float),
             'peak_power': np.asarray(rollout['peak_power_hist'], dtype=float),
@@ -760,6 +813,7 @@ def pretrain_reward_predictor(truth_csv: str, env_cfg_path: str, sensor_cfg_path
     return {'run_dir': str(run_dir), 'summary': summary}
 
 def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, run_dir: Path, selector, scheduler_cfg: dict, task_reward_cfg: dict, reward_target_indices: list[int], reward_artifact: str | None, base_seed: int, episode_len: int, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict:
+    _require_ppo_support()
     if not isinstance(selector, OnlineSubsetProjector):
         raise TypeError('PPO baseline currently supports only the windblown online-subset projector path')
     projector = selector
@@ -950,7 +1004,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
             observed_sensor_ids = [str(obs['sensor_id']) for obs in step['available_observations'] if obs.get('available', False)]
             power_cost = float(power_info['steady_power'])
             power_ratio = power_cost / max(float(getattr(selector, 'per_step_budget', power_cost or 1.0)), 1e-06)
-            estimator.on_step(selected_sensor_ids=selected, power_ratio=power_ratio, observed_sensor_ids=observed_sensor_ids)
+            estimator.on_step(selected_sensor_ids=selected, power_ratio=power_ratio, observed_sensor_ids=observed_sensor_ids, sensor_status=step.get('sensor_status'))
             current_event = bool(step.get('event_flags', {}).get('event', False))
             next_state = _current_rl_state(env, estimator, current_event=current_event)
             next_vec = np.asarray(flatten_rl_state(next_state), dtype=np.float32)
@@ -1157,6 +1211,10 @@ def build_scheduler_dataset(truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     truth_series = np.asarray(rollout['truth_hist'], dtype=float)
     input_series = np.asarray(rollout['estimate_hist'], dtype=float)
     observed_mask = np.asarray(rollout['observed_mask_hist'], dtype=float)
+    powered_mask = np.asarray(rollout['powered_mask_hist'], dtype=float)
+    warming_mask = np.asarray(rollout['warming_mask_hist'], dtype=float)
+    ready_mask = np.asarray(rollout['ready_mask_hist'], dtype=float)
+    warm_remaining = np.asarray(rollout['warm_remaining_hist'], dtype=float)
     time_index = np.asarray(rollout['time_index_hist'], dtype=int)
     event_flags = np.asarray(rollout['event_hist'], dtype=int)
     power = np.asarray(rollout['power_hist'], dtype=float)
@@ -1164,7 +1222,7 @@ def build_scheduler_dataset(truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     trace_p = np.asarray(rollout['trace_hist'], dtype=float)
     out_path = Path(out_npz)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    np.savez(out_path, input_series=input_series, target_series=truth_series, observed_mask=observed_mask, event_flags=event_flags, power=power, peak_power=peak_power, trace_p=trace_p, time_index=time_index, feature_names=np.asarray(meta['state_columns']))
+    np.savez(out_path, input_series=input_series, target_series=truth_series, observed_mask=observed_mask, powered_mask=powered_mask, warming_mask=warming_mask, ready_mask=ready_mask, warm_remaining=warm_remaining, event_flags=event_flags, power=power, peak_power=peak_power, trace_p=trace_p, time_index=time_index, feature_names=np.asarray(meta['state_columns']), sensor_ids=np.asarray(list(getattr(selector, 'sensor_ids', []))))
     total_full_power = sum((float(s.get('power_cost', 1.0)) for s in meta['sensor_cfg'].get('sensors', [])))
     constraint_metrics = summarize_constraint_metrics(steady_power_hist=rollout['power_hist'], peak_power_hist=rollout['peak_power_hist'], startup_extra_hist=rollout['startup_extra_hist'], average_power_budget=constraint_budgets['average_power_budget'], episode_energy_budget=constraint_budgets['episode_energy_budget'], peak_power_budget=constraint_budgets['peak_power_budget'])
     dataset_meta = {'run_id': run_id, 'scheduler_name': name, 'truth_csv': truth_csv, 'feature_names': meta['state_columns'], 'n_steps': int(input_series.shape[0]), 'dataset_split': str(split_name), 'reward_target_columns': list(meta.get('reward_target_columns', [])), 'forecast_target_columns': list(meta.get('forecast_target_columns', [])), 'base_freq_s': int(meta['env_cfg'].get('base_freq_s', 1)), 'avg_power': float(constraint_metrics['power_mean']), 'total_power': float(constraint_metrics['total_energy']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'coverage_mean': float(np.mean(rollout['coverage_hist'])) if rollout['coverage_hist'] else 0.0, 'trace_P_mean': float(np.mean(trace_p)) if trace_p.size else float('nan'), 'uncertainty_mean': float(np.mean(rollout['uncertainty_hist'])) if rollout['uncertainty_hist'] else float('nan'), 'full_open_power': float(total_full_power), 'budget_per_step': float(base_cfg.get('constraints', {}).get('per_step_budget', 0.0)), 'startup_peak_budget': constraint_budgets['peak_power_budget'], 'average_power_budget': constraint_budgets['average_power_budget'], 'episode_energy_budget': constraint_budgets['episode_energy_budget'], 'max_active': int(base_cfg.get('constraints', {}).get('max_active', 0))}

@@ -30,6 +30,10 @@ class WindblownEnvironment(BaseEnvironment):
                 refresh_interval=int(item.get("refresh_interval", 1)),
                 power_cost=float(item.get("power_cost", 1.0)),
                 startup_delay=int(item.get("startup_delay", 0)),
+                warmup_steps=int(item.get("warmup_steps", 0)),
+                startup_peak_power=None if item.get("startup_peak_power") is None else float(item.get("startup_peak_power")),
+                warmup_observation_mode=str(item.get("warmup_observation_mode", "none")),
+                warmup_noise_scale=float(item.get("warmup_noise_scale", 1.0)),
                 noise_std=item.get("noise_std", 0.0),
             )
             sensors[spec.sensor_id] = WindblownSensor(spec)
@@ -142,6 +146,21 @@ class WindblownEnvironment(BaseEnvironment):
         self._step_latent()
         observations = []
         total_power = 0.0
+        selected_set = {str(sid) for sid in action}
+        sensor_status: dict[str, dict[str, float | int | bool | str]] = {}
+        powered_sensor_ids: list[str] = []
+        warming_sensor_ids: list[str] = []
+        ready_sensor_ids: list[str] = []
+        for sid, sensor in self.sensors.items():
+            status = sensor.begin_step(sid in selected_set, t=self._t)
+            sensor_status[sid] = status
+            if bool(status.get("powered", False)):
+                powered_sensor_ids.append(sid)
+                total_power += float(status.get("power_cost", 0.0))
+            if bool(status.get("warming", False)):
+                warming_sensor_ids.append(sid)
+            if bool(status.get("ready", False)):
+                ready_sensor_ids.append(sid)
         for sid in action:
             sensor = self.sensors.get(sid)
             if sensor is None:
@@ -149,11 +168,14 @@ class WindblownEnvironment(BaseEnvironment):
             obs = sensor.observe(self._latent, t=self._t)
             if obs.get("available", False):
                 observations.append(obs)
-                total_power += float(obs.get("power_cost", 0.0))
 
         return {
             "latent_state": dict(self._latent),
             "available_observations": observations,
+            "sensor_status": sensor_status,
+            "powered_sensor_ids": powered_sensor_ids,
+            "warming_sensor_ids": warming_sensor_ids,
+            "ready_sensor_ids": ready_sensor_ids,
             "event_flags": {"storm": bool(self._storm)},
             "done": self._t >= self._horizon,
             "info": {"t": self._t, "power_cost": total_power},

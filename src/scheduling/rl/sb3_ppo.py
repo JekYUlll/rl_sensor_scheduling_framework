@@ -208,7 +208,7 @@ class WindblownSubsetGymEnv(gym.Env):
         observed_sensor_ids = [str(obs['sensor_id']) for obs in step['available_observations'] if obs.get('available', False)]
         power_cost = float(power_info['steady_power'])
         power_ratio = power_cost / max(float(getattr(self.selector, 'per_step_budget', power_cost or 1.0)), 1e-06)
-        self.estimator.on_step(selected_sensor_ids=selected, power_ratio=power_ratio, observed_sensor_ids=observed_sensor_ids)
+        self.estimator.on_step(selected_sensor_ids=selected, power_ratio=power_ratio, observed_sensor_ids=observed_sensor_ids, sensor_status=step.get('sensor_status'))
         self.current_event = bool(step.get('event_flags', {}).get('event', False))
         unc_summary = self.estimator.get_uncertainty_summary()
         trace_p = float(unc_summary['trace_P'])
