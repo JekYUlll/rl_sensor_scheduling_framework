@@ -6,6 +6,7 @@ import pandas as pd
 from envs.truth_replay_env import TruthReplayConfig, TruthReplayEnvironment
 from estimators.kalman_filter import KalmanFilterEstimator
 from estimators.state_summary import flatten_rl_state
+from pipelines.truth_pipeline import _warmup_abort_count
 from sensors.base_sensor import SensorSpec
 from sensors.dataset_sensor import DatasetSensor
 
@@ -128,3 +129,12 @@ def test_kalman_rl_state_exposes_warmup_features() -> None:
 
     flat = flatten_rl_state(rl_state)
     assert flat[-4:-1] == [1.0, 0.0, 0.5]
+
+
+def test_warmup_abort_count_only_penalizes_deselected_warming_sensors() -> None:
+    state = {
+        "previous_action": [1.0, 1.0, 0.0],
+        "warming_mask": [1.0, 0.0, 0.0],
+    }
+    assert _warmup_abort_count(state, selected=["b"], sensor_ids=["a", "b", "c"]) == 1
+    assert _warmup_abort_count(state, selected=["a", "b"], sensor_ids=["a", "b", "c"]) == 0

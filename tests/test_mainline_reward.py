@@ -43,6 +43,7 @@ def test_mainline_reward_is_forecast_dominated_with_explicit_penalties() -> None
             "reward": {
                 "lambda_forecast": 1.0,
                 "lambda_switch": 0.5,
+                "lambda_warmup_abort": 0.25,
                 "lambda_coverage": 2.0,
                 "lambda_violation": 3.0,
                 "lambda_state_tracking": 0.0,
@@ -54,6 +55,7 @@ def test_mainline_reward_is_forecast_dominated_with_explicit_penalties() -> None
     terms = compute_forecast_task_terms(
         forecast_loss=2.0,
         switch_count=2,
+        warmup_abort_count=1,
         coverage_ratio=[0.5, 0.0],
         steady_power=2.4,
         peak_power=2.6,
@@ -63,7 +65,8 @@ def test_mainline_reward_is_forecast_dominated_with_explicit_penalties() -> None
     )
     expected_coverage = 0.5
     expected_violation = (0.4 / 2.0) + (0.1 / 2.5)
-    expected_loss = 2.0 + 0.5 * 2.0 + 2.0 * expected_coverage + 3.0 * expected_violation
+    expected_loss = 2.0 + 0.5 * 2.0 + 0.25 * 1.0 + 2.0 * expected_coverage + 3.0 * expected_violation
+    assert np.isclose(terms["warmup_abort_penalty_raw"], 1.0)
     assert np.isclose(terms["coverage_penalty_raw"], expected_coverage)
     assert np.isclose(terms["violation_penalty_raw"], expected_violation)
     assert np.isclose(terms["task_loss"], expected_loss)

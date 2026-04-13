@@ -18,6 +18,7 @@ run:
 reward:
   lambda_forecast: 1.0
   lambda_switch: 0.005
+  lambda_warmup_abort: 0.05
   lambda_coverage: 0.25
   lambda_violation: 10.0
   lambda_state_tracking: 0.0

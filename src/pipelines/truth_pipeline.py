@@ -400,6 +400,19 @@ def _resolve_action(action, selector, prev_selected: list[str] | None=None, sche
 def _switch_count(prev_selected: list[str], selected: list[str]) -> int:
     return len(set(prev_selected) ^ set(selected))
 
+def _warmup_abort_count(state: dict, selected: list[str], sensor_ids: list[str]) -> int:
+    selected_set = {str(sid) for sid in selected}
+    aborts = 0
+    for sid, was_selected, was_warming in zip(
+        sensor_ids,
+        state.get('previous_action', []),
+        state.get('warming_mask', []),
+        strict=False,
+    ):
+        if float(was_selected) > 0.5 and float(was_warming) > 0.5 and str(sid) not in selected_set:
+            aborts += 1
+    return aborts
+
 def _state_tracking_loss(estimator: KalmanFilterEstimator, latent_state: dict[str, float], state_columns: list[str], reward_target_indices: list[int]) -> float:
     if not reward_target_indices:
         return 0.0
@@ -529,6 +542,7 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
     forecast_hist: list[float] = []
     task_loss_hist: list[float] = []
     switch_penalty_hist: list[float] = []
+    warmup_abort_hist: list[float] = []
     coverage_penalty_hist: list[float] = []
     violation_penalty_hist: list[float] = []
     state_tracking_hist: list[float] = []
@@ -552,6 +566,7 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
         selected, action_id = _resolve_action(raw_action, selector, prev_selected=prev_selected, scheduler_name=scheduler_name)
         if action_id is not None:
             action_ids.append(action_id)
+        warmup_abort_count = _warmup_abort_count(state, selected, getattr(selector, 'sensor_ids', []))
         power_info = selector.power_metrics(selected, prev_selected=prev_selected)
         step = env.step(selected)
         estimator.predict()
@@ -584,6 +599,7 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
         reward_terms = compute_forecast_task_terms(
             forecast_loss=forecast_loss,
             switch_count=_switch_count(prev_selected, selected),
+            warmup_abort_count=warmup_abort_count,
             coverage_ratio=next_state.get('coverage_ratio', []),
             steady_power=power_cost,
             peak_power=float(power_info['peak_power']),
@@ -599,6 +615,7 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
         forecast_hist.append(float(forecast_loss))
         task_loss_hist.append(float(reward_terms['task_loss']))
         switch_penalty_hist.append(float(reward_terms['switch_penalty_raw']))
+        warmup_abort_hist.append(float(reward_terms['warmup_abort_penalty_raw']))
         coverage_penalty_hist.append(float(reward_terms['coverage_penalty_raw']))
         violation_penalty_hist.append(float(reward_terms['violation_penalty_raw']))
         state_tracking_hist.append(float(reward_terms['state_tracking_loss']))
@@ -620,7 +637,7 @@ def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, re
         prev_selected = list(selected)
         if step['done']:
             break
-    return {'episode_reward': total_reward, 'trace_hist': trace_hist, 'uncertainty_hist': uncertainty_hist, 'forecast_hist': forecast_hist, 'task_loss_hist': task_loss_hist, 'switch_penalty_hist': switch_penalty_hist, 'coverage_penalty_hist': coverage_penalty_hist, 'violation_penalty_hist': violation_penalty_hist, 'state_tracking_hist': state_tracking_hist, 'power_hist': power_hist, 'peak_power_hist': peak_power_hist, 'startup_extra_hist': startup_extra_hist, 'coverage_hist': coverage_hist, 'action_ids': action_ids, 'truth_hist': truth_hist, 'estimate_hist': estimate_hist, 'observed_mask_hist': observed_mask_hist, 'powered_mask_hist': powered_mask_hist, 'warming_mask_hist': warming_mask_hist, 'ready_mask_hist': ready_mask_hist, 'warm_remaining_hist': warm_remaining_hist, 'event_hist': event_hist, 'time_index_hist': time_index_hist}
+    return {'episode_reward': total_reward, 'trace_hist': trace_hist, 'uncertainty_hist': uncertainty_hist, 'forecast_hist': forecast_hist, 'task_loss_hist': task_loss_hist, 'switch_penalty_hist': switch_penalty_hist, 'warmup_abort_hist': warmup_abort_hist, 'coverage_penalty_hist': coverage_penalty_hist, 'violation_penalty_hist': violation_penalty_hist, 'state_tracking_hist': state_tracking_hist, 'power_hist': power_hist, 'peak_power_hist': peak_power_hist, 'startup_extra_hist': startup_extra_hist, 'coverage_hist': coverage_hist, 'action_ids': action_ids, 'truth_hist': truth_hist, 'estimate_hist': estimate_hist, 'observed_mask_hist': observed_mask_hist, 'powered_mask_hist': powered_mask_hist, 'warming_mask_hist': warming_mask_hist, 'ready_mask_hist': ready_mask_hist, 'warm_remaining_hist': warm_remaining_hist, 'event_hist': event_hist, 'time_index_hist': time_index_hist}
 
 def _make_greedy_agent_scheduler(agent, selector, scheduler_name: str):
 
@@ -655,7 +672,7 @@ def _evaluate_agent_on_split(truth_csv: str, env_cfg_path: str, sensor_cfg_path:
     scheduler = _make_greedy_agent_scheduler(agent, selector, name)
     out = _rollout_scheduler(env, estimator, scheduler, selector, task_reward_cfg, reward_target_indices=list(meta.get('reward_target_indices', [])), reward_oracle=reward_oracle, greedy=True, scheduler_name=name)
     constraint_metrics = summarize_constraint_metrics(steady_power_hist=out['power_hist'], peak_power_hist=out['peak_power_hist'], startup_extra_hist=out['startup_extra_hist'], average_power_budget=constraint_budgets['average_power_budget'], episode_energy_budget=constraint_budgets['episode_energy_budget'], peak_power_budget=constraint_budgets['peak_power_budget'])
-    return {'reward_mean': float(out['episode_reward']), 'task_reward_mean': float(out['episode_reward']), 'task_loss_mean': float(np.mean(out['task_loss_hist'])) if out['task_loss_hist'] else float('nan'), 'trace_P_mean': float(np.mean(out['trace_hist'])) if out['trace_hist'] else float('nan'), 'uncertainty_mean': float(np.mean(out['uncertainty_hist'])) if out['uncertainty_hist'] else float('nan'), 'forecast_loss_mean': float(np.mean(out['forecast_hist'])) if out['forecast_hist'] else float('nan'), 'switch_penalty_mean': float(np.mean(out['switch_penalty_hist'])) if out['switch_penalty_hist'] else float('nan'), 'coverage_penalty_mean': float(np.mean(out['coverage_penalty_hist'])) if out['coverage_penalty_hist'] else float('nan'), 'constraint_violation_mean': float(np.mean(out['violation_penalty_hist'])) if out['violation_penalty_hist'] else float('nan'), 'state_tracking_loss_mean': float(np.mean(out['state_tracking_hist'])) if out['state_tracking_hist'] else float('nan'), 'power_mean': float(constraint_metrics['power_mean']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'total_energy': float(constraint_metrics['total_energy']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'avg_power_violation': float(constraint_metrics['avg_power_violation']), 'energy_violation': float(constraint_metrics['energy_violation']), 'coverage_mean': float(np.mean(out['coverage_hist'])) if out['coverage_hist'] else float('nan')}
+    return {'reward_mean': float(out['episode_reward']), 'task_reward_mean': float(out['episode_reward']), 'task_loss_mean': float(np.mean(out['task_loss_hist'])) if out['task_loss_hist'] else float('nan'), 'trace_P_mean': float(np.mean(out['trace_hist'])) if out['trace_hist'] else float('nan'), 'uncertainty_mean': float(np.mean(out['uncertainty_hist'])) if out['uncertainty_hist'] else float('nan'), 'forecast_loss_mean': float(np.mean(out['forecast_hist'])) if out['forecast_hist'] else float('nan'), 'switch_penalty_mean': float(np.mean(out['switch_penalty_hist'])) if out['switch_penalty_hist'] else float('nan'), 'warmup_abort_penalty_mean': float(np.mean(out['warmup_abort_hist'])) if out['warmup_abort_hist'] else float('nan'), 'coverage_penalty_mean': float(np.mean(out['coverage_penalty_hist'])) if out['coverage_penalty_hist'] else float('nan'), 'constraint_violation_mean': float(np.mean(out['violation_penalty_hist'])) if out['violation_penalty_hist'] else float('nan'), 'state_tracking_loss_mean': float(np.mean(out['state_tracking_hist'])) if out['state_tracking_hist'] else float('nan'), 'power_mean': float(constraint_metrics['power_mean']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'total_energy': float(constraint_metrics['total_energy']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'avg_power_violation': float(constraint_metrics['avg_power_violation']), 'energy_violation': float(constraint_metrics['energy_violation']), 'coverage_mean': float(np.mean(out['coverage_hist'])) if out['coverage_hist'] else float('nan')}
 
 def base_cfg_seed(base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> int:
     base = load_yaml(base_cfg_path)
@@ -890,7 +907,7 @@ def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     adapter = PPOPolicyAdapter(sensor_ids=list(projector.sensor_ids), cfg=scheduler_cfg, selector=projector)
     adapter.load(str(best_ckpt))
     val_summary = _evaluate_agent_on_split(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, split_name='rl_val', agent=adapter, reward_artifact=reward_artifact, base_cfg_path=base_cfg_path)
-    metrics = {'scheduler': 'ppo', 'reward_mean': float(val_summary['reward_mean']), 'task_reward_mean': float(val_summary['task_reward_mean']), 'task_loss_mean': float(val_summary['task_loss_mean']), 'trace_P_mean': float(val_summary['trace_P_mean']), 'uncertainty_mean': float(val_summary['uncertainty_mean']), 'forecast_loss_mean': float(val_summary['forecast_loss_mean']), 'switch_penalty_mean': float(val_summary['switch_penalty_mean']), 'coverage_penalty_mean': float(val_summary['coverage_penalty_mean']), 'constraint_violation_mean': float(val_summary['constraint_violation_mean']), 'state_tracking_loss_mean': float(val_summary['state_tracking_loss_mean']), 'power_mean': float(val_summary['power_mean']), 'peak_power_max_mean': float(val_summary['peak_power_max']), 'total_energy_mean': float(val_summary['total_energy']), 'peak_violation_rate_mean': float(val_summary['peak_violation_rate']), 'avg_power_violation_mean': float(val_summary['avg_power_violation']), 'energy_violation_mean': float(val_summary['energy_violation']), 'coverage_mean': float(val_summary['coverage_mean'])}
+    metrics = {'scheduler': 'ppo', 'reward_mean': float(val_summary['reward_mean']), 'task_reward_mean': float(val_summary['task_reward_mean']), 'task_loss_mean': float(val_summary['task_loss_mean']), 'trace_P_mean': float(val_summary['trace_P_mean']), 'uncertainty_mean': float(val_summary['uncertainty_mean']), 'forecast_loss_mean': float(val_summary['forecast_loss_mean']), 'switch_penalty_mean': float(val_summary['switch_penalty_mean']), 'warmup_abort_penalty_mean': float(val_summary['warmup_abort_penalty_mean']), 'coverage_penalty_mean': float(val_summary['coverage_penalty_mean']), 'constraint_violation_mean': float(val_summary['constraint_violation_mean']), 'state_tracking_loss_mean': float(val_summary['state_tracking_loss_mean']), 'power_mean': float(val_summary['power_mean']), 'peak_power_max_mean': float(val_summary['peak_power_max']), 'total_energy_mean': float(val_summary['total_energy']), 'peak_violation_rate_mean': float(val_summary['peak_violation_rate']), 'avg_power_violation_mean': float(val_summary['avg_power_violation']), 'energy_violation_mean': float(val_summary['energy_violation']), 'coverage_mean': float(val_summary['coverage_mean'])}
     pd.DataFrame([metrics]).to_csv(run_dir / 'metrics_estimation.csv', index=False)
     return {'metrics': metrics, 'checkpoint': str(best_ckpt)}
 
@@ -929,6 +946,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
         energy_violation_hist = []
         task_losses = []
         switch_penalties = []
+        warmup_aborts = []
         coverage_penalties = []
         violation_penalties = []
         state_tracking_losses = []
@@ -941,6 +959,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
             forecasts.append(float(np.mean(out['forecast_hist'])))
             task_losses.append(float(np.mean(out['task_loss_hist'])))
             switch_penalties.append(float(np.mean(out['switch_penalty_hist'])))
+            warmup_aborts.append(float(np.mean(out['warmup_abort_hist'])))
             coverage_penalties.append(float(np.mean(out['coverage_penalty_hist'])))
             violation_penalties.append(float(np.mean(out['violation_penalty_hist'])))
             state_tracking_losses.append(float(np.mean(out['state_tracking_hist'])))
@@ -954,7 +973,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
             peak_violation_rates.append(float(constraint_metrics['peak_violation_rate']))
             avg_power_violation_hist.append(float(constraint_metrics['avg_power_violation']))
             energy_violation_hist.append(float(constraint_metrics['energy_violation']))
-        metrics = {'scheduler': name, 'reward_mean': float(np.mean(rewards)), 'task_reward_mean': float(np.mean(rewards)), 'task_loss_mean': float(np.mean(task_losses)), 'trace_P_mean': float(np.mean(traces)), 'uncertainty_mean': float(np.mean(uncertainties)), 'forecast_loss_mean': float(np.mean(forecasts)), 'switch_penalty_mean': float(np.mean(switch_penalties)), 'coverage_penalty_mean': float(np.mean(coverage_penalties)), 'constraint_violation_mean': float(np.mean(violation_penalties)), 'state_tracking_loss_mean': float(np.mean(state_tracking_losses)), 'power_mean': float(np.mean(powers)), 'peak_power_max_mean': float(np.mean(peaks)), 'startup_extra_power_mean': float(np.mean(startup_extras)), 'total_energy_mean': float(np.mean(total_energies)), 'peak_violation_rate_mean': float(np.mean(peak_violation_rates)) if peak_violation_rates else 0.0, 'avg_power_violation_mean': float(np.mean(avg_power_violation_hist)) if avg_power_violation_hist else 0.0, 'energy_violation_mean': float(np.mean(energy_violation_hist)) if energy_violation_hist else 0.0, 'coverage_mean': float(np.mean(coverages))}
+        metrics = {'scheduler': name, 'reward_mean': float(np.mean(rewards)), 'task_reward_mean': float(np.mean(rewards)), 'task_loss_mean': float(np.mean(task_losses)), 'trace_P_mean': float(np.mean(traces)), 'uncertainty_mean': float(np.mean(uncertainties)), 'forecast_loss_mean': float(np.mean(forecasts)), 'switch_penalty_mean': float(np.mean(switch_penalties)), 'warmup_abort_penalty_mean': float(np.mean(warmup_aborts)), 'coverage_penalty_mean': float(np.mean(coverage_penalties)), 'constraint_violation_mean': float(np.mean(violation_penalties)), 'state_tracking_loss_mean': float(np.mean(state_tracking_losses)), 'power_mean': float(np.mean(powers)), 'peak_power_max_mean': float(np.mean(peaks)), 'startup_extra_power_mean': float(np.mean(startup_extras)), 'total_energy_mean': float(np.mean(total_energies)), 'peak_violation_rate_mean': float(np.mean(peak_violation_rates)) if peak_violation_rates else 0.0, 'avg_power_violation_mean': float(np.mean(avg_power_violation_hist)) if avg_power_violation_hist else 0.0, 'energy_violation_mean': float(np.mean(energy_violation_hist)) if energy_violation_hist else 0.0, 'coverage_mean': float(np.mean(coverages))}
         pd.DataFrame([metrics]).to_csv(run_dir / 'metrics_estimation.csv', index=False)
         if all_actions:
             plot_action_hist(all_actions, run_dir / 'fig_action_hist.png')
@@ -973,6 +992,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
     uncertainty_means = []
     forecast_means = []
     switch_penalty_means = []
+    warmup_abort_means = []
     coverage_penalty_means = []
     violation_penalty_means = []
     state_tracking_means = []
@@ -1015,6 +1035,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
         ep_forecast = []
         ep_task_loss = []
         ep_switch_penalty = []
+        ep_warmup_abort = []
         ep_coverage_penalty = []
         ep_violation_penalty = []
         ep_state_tracking = []
@@ -1028,6 +1049,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
             state_vec = np.asarray(flatten_rl_state(state), dtype=np.float32)
             raw_action = _agent_act(agent, state_vec, selector, prev_selected, greedy=False)
             selected, aid = _resolve_action(raw_action, selector, prev_selected=prev_selected, scheduler_name=name)
+            warmup_abort_count = _warmup_abort_count(state, selected, getattr(selector, 'sensor_ids', []))
             power_info = selector.power_metrics(selected, prev_selected=prev_selected)
             step = env.step(selected)
             estimator.predict()
@@ -1061,6 +1083,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
             reward_terms = compute_forecast_task_terms(
                 forecast_loss=forecast_loss,
                 switch_count=_switch_count(prev_selected, selected),
+                warmup_abort_count=warmup_abort_count,
                 coverage_ratio=next_state.get('coverage_ratio', []),
                 steady_power=power_cost,
                 peak_power=float(power_info['peak_power']),
@@ -1093,6 +1116,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
             ep_forecast.append(float(forecast_loss))
             ep_task_loss.append(float(reward_terms['task_loss']))
             ep_switch_penalty.append(float(reward_terms['switch_penalty_raw']))
+            ep_warmup_abort.append(float(reward_terms['warmup_abort_penalty_raw']))
             ep_coverage_penalty.append(float(reward_terms['coverage_penalty_raw']))
             ep_violation_penalty.append(float(reward_terms['violation_penalty_raw']))
             ep_state_tracking.append(float(reward_terms['state_tracking_loss']))
@@ -1119,6 +1143,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
         uncertainty_means.append(float(np.mean(ep_uncertainty)))
         forecast_means.append(float(np.mean(ep_forecast)))
         switch_penalty_means.append(float(np.mean(ep_switch_penalty)))
+        warmup_abort_means.append(float(np.mean(ep_warmup_abort)))
         coverage_penalty_means.append(float(np.mean(ep_coverage_penalty)))
         violation_penalty_means.append(float(np.mean(ep_violation_penalty)))
         state_tracking_means.append(float(np.mean(ep_state_tracking)))
@@ -1151,11 +1176,11 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
                 best_val_objective = float(val_objective)
                 best_val_summary = dict(val_summary)
                 agent.save(str(best_ckpt))
-    metrics = {'scheduler': name, 'reward_mean': float(np.mean(rewards)), 'task_reward_mean': float(np.mean(task_rewards)), 'task_loss_mean': float(np.mean(task_losses)), 'trace_P_mean': float(np.mean(trace_means)), 'uncertainty_mean': float(np.mean(uncertainty_means)), 'forecast_loss_mean': float(np.mean(forecast_means)), 'switch_penalty_mean': float(np.mean(switch_penalty_means)), 'coverage_penalty_mean': float(np.mean(coverage_penalty_means)), 'constraint_violation_mean': float(np.mean(violation_penalty_means)), 'state_tracking_loss_mean': float(np.mean(state_tracking_means)), 'power_mean': float(np.mean(power_means)), 'peak_power_max_mean': float(np.mean(peak_means)), 'total_energy_mean': float(np.mean(total_energies)), 'peak_violation_rate_mean': float(np.mean(peak_violation_rates)), 'coverage_mean': float(np.mean(coverage_means)), 'lambda_avg_final': float(lambda_avg_hist[-1]) if lambda_avg_hist else 0.0, 'lambda_energy_final': float(lambda_energy_hist[-1]) if lambda_energy_hist else 0.0, 'avg_power_violation_mean': float(np.mean(avg_power_violation_hist)), 'energy_violation_mean': float(np.mean(energy_violation_hist)), 'best_val_objective': float(best_val_objective) if best_val_objective > float('-inf') else float('nan')}
+    metrics = {'scheduler': name, 'reward_mean': float(np.mean(rewards)), 'task_reward_mean': float(np.mean(task_rewards)), 'task_loss_mean': float(np.mean(task_losses)), 'trace_P_mean': float(np.mean(trace_means)), 'uncertainty_mean': float(np.mean(uncertainty_means)), 'forecast_loss_mean': float(np.mean(forecast_means)), 'switch_penalty_mean': float(np.mean(switch_penalty_means)), 'warmup_abort_penalty_mean': float(np.mean(warmup_abort_means)), 'coverage_penalty_mean': float(np.mean(coverage_penalty_means)), 'constraint_violation_mean': float(np.mean(violation_penalty_means)), 'state_tracking_loss_mean': float(np.mean(state_tracking_means)), 'power_mean': float(np.mean(power_means)), 'peak_power_max_mean': float(np.mean(peak_means)), 'total_energy_mean': float(np.mean(total_energies)), 'peak_violation_rate_mean': float(np.mean(peak_violation_rates)), 'coverage_mean': float(np.mean(coverage_means)), 'lambda_avg_final': float(lambda_avg_hist[-1]) if lambda_avg_hist else 0.0, 'lambda_energy_final': float(lambda_energy_hist[-1]) if lambda_energy_hist else 0.0, 'avg_power_violation_mean': float(np.mean(avg_power_violation_hist)), 'energy_violation_mean': float(np.mean(energy_violation_hist)), 'best_val_objective': float(best_val_objective) if best_val_objective > float('-inf') else float('nan')}
     if best_val_summary is not None:
         metrics.update({'best_val_reward': float(best_val_summary['task_reward_mean']), 'best_val_forecast_loss': float(best_val_summary['forecast_loss_mean']), 'best_val_power_mean': float(best_val_summary['power_mean']), 'best_val_peak_violation_rate': float(best_val_summary['peak_violation_rate'])})
     pd.DataFrame([metrics]).to_csv(run_dir / 'metrics_estimation.csv', index=False)
-    pd.DataFrame({'reward': rewards, 'task_reward': task_rewards, 'task_loss': task_losses, 'trace_P': trace_means, 'uncertainty': uncertainty_means, 'forecast_loss': forecast_means, 'switch_penalty': switch_penalty_means, 'coverage_penalty': coverage_penalty_means, 'constraint_violation': violation_penalty_means, 'state_tracking_loss': state_tracking_means, 'power': power_means, 'peak_power_max': peak_means, 'total_energy': total_energies, 'peak_violation_rate': peak_violation_rates, 'coverage': coverage_means, 'lambda_avg': lambda_avg_hist, 'lambda_energy': lambda_energy_hist, 'avg_power_violation': avg_power_violation_hist, 'energy_violation': energy_violation_hist, 'val_objective': val_objective_hist, 'val_reward': val_reward_hist, 'val_forecast_loss': val_forecast_hist, 'val_power': val_power_hist, 'val_peak_violation_rate': val_peak_violation_hist}).to_csv(run_dir / 'training_log.csv', index=False)
+    pd.DataFrame({'reward': rewards, 'task_reward': task_rewards, 'task_loss': task_losses, 'trace_P': trace_means, 'uncertainty': uncertainty_means, 'forecast_loss': forecast_means, 'switch_penalty': switch_penalty_means, 'warmup_abort_penalty': warmup_abort_means, 'coverage_penalty': coverage_penalty_means, 'constraint_violation': violation_penalty_means, 'state_tracking_loss': state_tracking_means, 'power': power_means, 'peak_power_max': peak_means, 'total_energy': total_energies, 'peak_violation_rate': peak_violation_rates, 'coverage': coverage_means, 'lambda_avg': lambda_avg_hist, 'lambda_energy': lambda_energy_hist, 'avg_power_violation': avg_power_violation_hist, 'energy_violation': energy_violation_hist, 'val_objective': val_objective_hist, 'val_reward': val_reward_hist, 'val_forecast_loss': val_forecast_hist, 'val_power': val_power_hist, 'val_peak_violation_rate': val_peak_violation_hist}).to_csv(run_dir / 'training_log.csv', index=False)
     if best_ckpt.exists():
         agent.load(str(best_ckpt))
         ckpt = best_ckpt
@@ -1195,7 +1220,7 @@ def evaluate_scheduler(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, 
     reward_oracle = _load_active_reward_oracle(base_cfg, reward_artifact)
     out = _rollout_scheduler(env, estimator, scheduler, selector, task_reward_cfg, reward_target_indices=list(meta.get('reward_target_indices', [])), reward_oracle=reward_oracle, greedy=True, scheduler_name=name)
     constraint_metrics = summarize_constraint_metrics(steady_power_hist=out['power_hist'], peak_power_hist=out['peak_power_hist'], startup_extra_hist=out['startup_extra_hist'], average_power_budget=constraint_budgets['average_power_budget'], episode_energy_budget=constraint_budgets['episode_energy_budget'], peak_power_budget=constraint_budgets['peak_power_budget'])
-    summary = {'scheduler': name, 'reward_mean': float(out['episode_reward']), 'task_reward_mean': float(out['episode_reward']), 'task_loss_mean': float(np.mean(out['task_loss_hist'])) if out['task_loss_hist'] else float('nan'), 'trace_P_mean': float(np.mean(out['trace_hist'])) if out['trace_hist'] else float('nan'), 'uncertainty_mean': float(np.mean(out['uncertainty_hist'])) if out['uncertainty_hist'] else float('nan'), 'forecast_loss_mean': float(np.mean(out['forecast_hist'])) if out['forecast_hist'] else float('nan'), 'switch_penalty_mean': float(np.mean(out['switch_penalty_hist'])) if out['switch_penalty_hist'] else float('nan'), 'coverage_penalty_mean': float(np.mean(out['coverage_penalty_hist'])) if out['coverage_penalty_hist'] else float('nan'), 'constraint_violation_mean': float(np.mean(out['violation_penalty_hist'])) if out['violation_penalty_hist'] else float('nan'), 'state_tracking_loss_mean': float(np.mean(out['state_tracking_hist'])) if out['state_tracking_hist'] else float('nan'), 'power_mean': float(constraint_metrics['power_mean']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'startup_extra_power_mean': float(constraint_metrics['startup_extra_power_mean']), 'total_energy': float(constraint_metrics['total_energy']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'avg_power_violation': float(constraint_metrics['avg_power_violation']), 'energy_violation': float(constraint_metrics['energy_violation']), 'coverage_mean': float(np.mean(out['coverage_hist'])) if out['coverage_hist'] else float('nan')}
+    summary = {'scheduler': name, 'reward_mean': float(out['episode_reward']), 'task_reward_mean': float(out['episode_reward']), 'task_loss_mean': float(np.mean(out['task_loss_hist'])) if out['task_loss_hist'] else float('nan'), 'trace_P_mean': float(np.mean(out['trace_hist'])) if out['trace_hist'] else float('nan'), 'uncertainty_mean': float(np.mean(out['uncertainty_hist'])) if out['uncertainty_hist'] else float('nan'), 'forecast_loss_mean': float(np.mean(out['forecast_hist'])) if out['forecast_hist'] else float('nan'), 'switch_penalty_mean': float(np.mean(out['switch_penalty_hist'])) if out['switch_penalty_hist'] else float('nan'), 'warmup_abort_penalty_mean': float(np.mean(out['warmup_abort_hist'])) if out['warmup_abort_hist'] else float('nan'), 'coverage_penalty_mean': float(np.mean(out['coverage_penalty_hist'])) if out['coverage_penalty_hist'] else float('nan'), 'constraint_violation_mean': float(np.mean(out['violation_penalty_hist'])) if out['violation_penalty_hist'] else float('nan'), 'state_tracking_loss_mean': float(np.mean(out['state_tracking_hist'])) if out['state_tracking_hist'] else float('nan'), 'power_mean': float(constraint_metrics['power_mean']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'startup_extra_power_mean': float(constraint_metrics['startup_extra_power_mean']), 'total_energy': float(constraint_metrics['total_energy']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'avg_power_violation': float(constraint_metrics['avg_power_violation']), 'energy_violation': float(constraint_metrics['energy_violation']), 'coverage_mean': float(np.mean(out['coverage_hist'])) if out['coverage_hist'] else float('nan')}
     pd.DataFrame([summary]).to_csv(run_dir / 'metrics_estimation_eval.csv', index=False)
     pd.DataFrame([summary]).to_csv(run_dir / 'metrics_estimation.csv', index=False)
     if out['action_ids']:

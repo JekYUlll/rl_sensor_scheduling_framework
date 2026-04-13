@@ -14,7 +14,7 @@ from evaluation.constraint_metrics import summarize_constraint_metrics
 from reward.forecast_reward import FrozenForecastRewardEnsemble, FrozenForecastRewardOracle
 from reward.mainline_reward import compute_forecast_task_terms
 from scheduling.online_projector import OnlineSubsetProjector
-DEFAULT_TRAINING_LOG_COLUMNS = ['reward', 'task_reward', 'task_loss', 'trace_P', 'uncertainty', 'forecast_loss', 'switch_penalty', 'coverage_penalty', 'constraint_violation', 'state_tracking_loss', 'power', 'peak_power_max', 'total_energy', 'peak_violation_rate', 'coverage', 'lambda_avg', 'lambda_energy', 'avg_power_violation', 'energy_violation', 'val_objective', 'val_reward', 'val_forecast_loss', 'val_power', 'val_peak_violation_rate']
+DEFAULT_TRAINING_LOG_COLUMNS = ['reward', 'task_reward', 'task_loss', 'trace_P', 'uncertainty', 'forecast_loss', 'switch_penalty', 'warmup_abort_penalty', 'coverage_penalty', 'constraint_violation', 'state_tracking_loss', 'power', 'peak_power_max', 'total_energy', 'peak_violation_rate', 'coverage', 'lambda_avg', 'lambda_energy', 'avg_power_violation', 'energy_violation', 'val_objective', 'val_reward', 'val_forecast_loss', 'val_power', 'val_peak_violation_rate']
 
 def _score_ranking(action: np.ndarray, sensor_ids: list[str]) -> list[str]:
     arr = np.asarray(action, dtype=float).reshape(-1)
@@ -31,6 +31,19 @@ def _temporal_features(env) -> dict[str, float]:
         'time_of_day_sin': float(np.sin(theta)),
         'time_of_day_cos': float(np.cos(theta)),
     }
+
+def _warmup_abort_count(state: dict[str, Any], selected: list[str], sensor_ids: list[str]) -> int:
+    selected_set = {str(sid) for sid in selected}
+    aborts = 0
+    for sid, was_selected, was_warming in zip(
+        sensor_ids,
+        state.get('previous_action', []),
+        state.get('warming_mask', []),
+        strict=False,
+    ):
+        if float(was_selected) > 0.5 and float(was_warming) > 0.5 and str(sid) not in selected_set:
+            aborts += 1
+    return aborts
 
 @dataclass
 class PPOPolicyAdapter:
@@ -125,6 +138,7 @@ class WindblownSubsetGymEnv(gym.Env):
         self.forecast_hist: list[float] = []
         self.task_loss_hist: list[float] = []
         self.switch_penalty_hist: list[float] = []
+        self.warmup_abort_hist: list[float] = []
         self.coverage_penalty_hist: list[float] = []
         self.violation_penalty_hist: list[float] = []
         self.state_tracking_hist: list[float] = []
@@ -189,6 +203,7 @@ class WindblownSubsetGymEnv(gym.Env):
         self.forecast_hist = []
         self.task_loss_hist = []
         self.switch_penalty_hist = []
+        self.warmup_abort_hist = []
         self.coverage_penalty_hist = []
         self.violation_penalty_hist = []
         self.state_tracking_hist = []
@@ -199,8 +214,12 @@ class WindblownSubsetGymEnv(gym.Env):
         return (self._current_obs(), {})
 
     def step(self, action: np.ndarray):
+        state_before = self.estimator.get_rl_state_features()
+        state_before['event'] = self.current_event
+        state_before.update(_temporal_features(self.env))
         ranked = _score_ranking(np.asarray(action, dtype=float), self.sensor_ids)
         selected = self.selector.project_ranked(ranked, prev_selected=self.prev_selected)
+        warmup_abort_count = _warmup_abort_count(state_before, selected, self.sensor_ids)
         power_info = self.selector.power_metrics(selected, prev_selected=self.prev_selected)
         step = self.env.step(selected)
         self.estimator.predict()
@@ -232,6 +251,7 @@ class WindblownSubsetGymEnv(gym.Env):
         reward_terms = compute_forecast_task_terms(
             forecast_loss=forecast_loss,
             switch_count=len(set(self.prev_selected) ^ set(selected)),
+            warmup_abort_count=warmup_abort_count,
             coverage_ratio=self.estimator.get_rl_state_features().get('coverage_ratio', []),
             steady_power=power_cost,
             peak_power=float(power_info['peak_power']),
@@ -247,6 +267,7 @@ class WindblownSubsetGymEnv(gym.Env):
         self.forecast_hist.append(float(forecast_loss))
         self.task_loss_hist.append(float(reward_terms['task_loss']))
         self.switch_penalty_hist.append(float(reward_terms['switch_penalty_raw']))
+        self.warmup_abort_hist.append(float(reward_terms['warmup_abort_penalty_raw']))
         self.coverage_penalty_hist.append(float(reward_terms['coverage_penalty_raw']))
         self.violation_penalty_hist.append(float(reward_terms['violation_penalty_raw']))
         self.state_tracking_hist.append(float(reward_terms['state_tracking_loss']))
@@ -260,7 +281,7 @@ class WindblownSubsetGymEnv(gym.Env):
         info: dict[str, float | dict] = {}
         if terminated:
             constraint_metrics = summarize_constraint_metrics(steady_power_hist=self.power_hist, peak_power_hist=self.peak_power_hist, startup_extra_hist=self.startup_extra_hist, average_power_budget=self.constraint_budgets.get('average_power_budget'), episode_energy_budget=self.constraint_budgets.get('episode_energy_budget'), peak_power_budget=self.constraint_budgets.get('peak_power_budget'))
-            info['episode_summary'] = {'reward': float(self.total_reward), 'task_reward': float(self.total_reward), 'task_loss': float(np.mean(self.task_loss_hist)) if self.task_loss_hist else float('nan'), 'trace_P': float(np.mean(self.trace_hist)) if self.trace_hist else float('nan'), 'uncertainty': float(np.mean(self.uncertainty_hist)) if self.uncertainty_hist else float('nan'), 'forecast_loss': float(np.mean(self.forecast_hist)) if self.forecast_hist else float('nan'), 'switch_penalty': float(np.mean(self.switch_penalty_hist)) if self.switch_penalty_hist else float('nan'), 'coverage_penalty': float(np.mean(self.coverage_penalty_hist)) if self.coverage_penalty_hist else float('nan'), 'constraint_violation': float(np.mean(self.violation_penalty_hist)) if self.violation_penalty_hist else float('nan'), 'state_tracking_loss': float(np.mean(self.state_tracking_hist)) if self.state_tracking_hist else float('nan'), 'power': float(constraint_metrics['power_mean']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'total_energy': float(constraint_metrics['total_energy']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'coverage': float(np.mean(self.coverage_hist)) if self.coverage_hist else float('nan'), 'avg_power_violation': float(constraint_metrics['avg_power_violation']), 'energy_violation': float(constraint_metrics['energy_violation'])}
+            info['episode_summary'] = {'reward': float(self.total_reward), 'task_reward': float(self.total_reward), 'task_loss': float(np.mean(self.task_loss_hist)) if self.task_loss_hist else float('nan'), 'trace_P': float(np.mean(self.trace_hist)) if self.trace_hist else float('nan'), 'uncertainty': float(np.mean(self.uncertainty_hist)) if self.uncertainty_hist else float('nan'), 'forecast_loss': float(np.mean(self.forecast_hist)) if self.forecast_hist else float('nan'), 'switch_penalty': float(np.mean(self.switch_penalty_hist)) if self.switch_penalty_hist else float('nan'), 'warmup_abort_penalty': float(np.mean(self.warmup_abort_hist)) if self.warmup_abort_hist else float('nan'), 'coverage_penalty': float(np.mean(self.coverage_penalty_hist)) if self.coverage_penalty_hist else float('nan'), 'constraint_violation': float(np.mean(self.violation_penalty_hist)) if self.violation_penalty_hist else float('nan'), 'state_tracking_loss': float(np.mean(self.state_tracking_hist)) if self.state_tracking_hist else float('nan'), 'power': float(constraint_metrics['power_mean']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'total_energy': float(constraint_metrics['total_energy']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'coverage': float(np.mean(self.coverage_hist)) if self.coverage_hist else float('nan'), 'avg_power_violation': float(constraint_metrics['avg_power_violation']), 'energy_violation': float(constraint_metrics['energy_violation'])}
         return (self._current_obs(), reward, terminated, False, info)
 
 class PPOTrainingCallback(BaseCallback):
@@ -316,7 +337,7 @@ class PPOTrainingCallback(BaseCallback):
             if not summary:
                 continue
             row = {key: float('nan') for key in DEFAULT_TRAINING_LOG_COLUMNS}
-            row.update({'reward': float(summary['reward']), 'task_reward': float(summary['task_reward']), 'task_loss': float(summary['task_loss']), 'trace_P': float(summary['trace_P']), 'uncertainty': float(summary['uncertainty']), 'forecast_loss': float(summary['forecast_loss']), 'switch_penalty': float(summary['switch_penalty']), 'coverage_penalty': float(summary['coverage_penalty']), 'constraint_violation': float(summary['constraint_violation']), 'state_tracking_loss': float(summary['state_tracking_loss']), 'power': float(summary['power']), 'peak_power_max': float(summary['peak_power_max']), 'total_energy': float(summary['total_energy']), 'peak_violation_rate': float(summary['peak_violation_rate']), 'coverage': float(summary['coverage']), 'avg_power_violation': float(summary['avg_power_violation']), 'energy_violation': float(summary['energy_violation']), 'lambda_avg': 0.0, 'lambda_energy': 0.0})
+            row.update({'reward': float(summary['reward']), 'task_reward': float(summary['task_reward']), 'task_loss': float(summary['task_loss']), 'trace_P': float(summary['trace_P']), 'uncertainty': float(summary['uncertainty']), 'forecast_loss': float(summary['forecast_loss']), 'switch_penalty': float(summary['switch_penalty']), 'warmup_abort_penalty': float(summary['warmup_abort_penalty']), 'coverage_penalty': float(summary['coverage_penalty']), 'constraint_violation': float(summary['constraint_violation']), 'state_tracking_loss': float(summary['state_tracking_loss']), 'power': float(summary['power']), 'peak_power_max': float(summary['peak_power_max']), 'total_energy': float(summary['total_energy']), 'peak_violation_rate': float(summary['peak_violation_rate']), 'coverage': float(summary['coverage']), 'avg_power_violation': float(summary['avg_power_violation']), 'energy_violation': float(summary['energy_violation']), 'lambda_avg': 0.0, 'lambda_energy': 0.0})
             self.episode_rows.append(row)
             if len(self.episode_rows) % self.eval_interval_episodes == 0:
                 eval_metrics = self._evaluate()
