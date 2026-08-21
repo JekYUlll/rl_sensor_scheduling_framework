@@ -410,6 +410,21 @@ def evaluate_run(
     if not validation_path.exists():
         raise FileNotFoundError(f"Missing validation static candidates: {validation_path}")
     validation_table = pd.read_csv(validation_path)
+    context_action_table = validation_table
+    context_score_columns = (
+        "oracle_loss_non_event",
+        "oracle_loss_subtype_particle",
+        "oracle_loss_subtype_flux",
+        "oracle_loss_subtype_thermal",
+    )
+    if any(
+        column not in context_action_table.columns
+        or not np.isfinite(pd.to_numeric(context_action_table[column], errors="coerce")).any()
+        for column in context_score_columns
+    ):
+        fallback_path = run_dir / "reward_staticnorm_fallback_candidates.csv"
+        if fallback_path.exists():
+            context_action_table = pd.read_csv(fallback_path)
     static_table_path = run_dir / replay_dir / "split_static_candidate_event_table.csv"
     static_table = pd.read_csv(static_table_path) if static_table_path.exists() else validation_table.copy()
     normalizers = subtype_static_normalizers(static_table)
@@ -417,7 +432,7 @@ def evaluate_run(
     policy_objects: list[Any] = []
     selected_action_rows: list[dict[str, Any]] = []
     if "context_bandit" in policies:
-        action_indices = build_context_action_indices(validation_table)
+        action_indices = build_context_action_indices(context_action_table)
         for threshold in context_thresholds:
             name = f"context_alert_bandit_t{str(threshold).replace('.', 'p')}"
             policy_objects.append(
@@ -435,7 +450,7 @@ def evaluate_run(
     if "event_label" in policies:
         if "event_subtype_id" not in truth.columns:
             raise ValueError("event-label reference requires event_subtype_id for offline replay")
-        action_indices = build_context_action_indices(validation_table)
+        action_indices = build_context_action_indices(context_action_table)
         lookahead = int(metadata.get("oracle_subtype_teacher_lookahead_steps", 0))
         policy_objects.append(
             gate.SubtypeMaskPolicy(
