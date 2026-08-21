@@ -799,3 +799,13 @@ tar -czf "$OUT…`
   `0.003651`, but lost the best dynamic macro by `0.009019`.
 - The next matched run uses strong BC only as initialization and disables AWBC
   during PPO, isolating whether continuing imitation causes prototype lock-in.
+
+### 2026-08-22 | Flexible-subset v6 BC-warm-start grouped-gradient pilot
+
+- Disabling AWBC after strong BC initialization produced the first broad-action
+  passing pilot: 19 of 24 feasible masks and all six channels at intermediate
+  duty.
+- PD-PPO beat selected static by `0.030085` mean and `0.106974` macro, and beat
+  the best conventional dynamic reference by `0.009414` and `0.014126`.
+- No feasibility or warm-up failure occurred. The configuration was frozen for
+  development replication on seeds 406 and 407.
