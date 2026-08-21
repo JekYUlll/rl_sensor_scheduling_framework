@@ -63,3 +63,15 @@ def test_split_protocol_reserves_non_overlapping_final_test_windows() -> None:
     assert len(final_starts) == 6
     assert min(final_starts) >= bounds["final_test"][0]
     assert max(final_starts) + 1024 + 8 < bounds["final_test"][1]
+
+
+def test_control_source_files_follow_reward_normalization_mode() -> None:
+    module = _load_script("25_v2_train_custom_ppo.py")
+
+    unnormalized = module.control_source_required_files("none")
+    staticnorm = module.control_source_required_files("staticnorm_subtype")
+
+    assert "reward_staticnorm_candidates.csv" not in unnormalized
+    assert "reward_staticnorm_normalizers.json" not in unnormalized
+    assert "reward_staticnorm_candidates.csv" in staticnorm
+    assert "reward_staticnorm_normalizers.json" in staticnorm

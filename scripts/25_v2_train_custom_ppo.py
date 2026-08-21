@@ -125,6 +125,24 @@ def load_json(path: str | Path) -> dict[str, object]:
     return value
 
 
+def control_source_required_files(reward_loss_normalization: str) -> tuple[str, ...]:
+    required = [
+        "truth_v31_split.csv",
+        "v2_ppo_metadata.json",
+        "split_protocol_manifest.json",
+        "custom_ppo.pt",
+        "validation_static_candidates.csv",
+    ]
+    if str(reward_loss_normalization) == "staticnorm_subtype":
+        required.extend(
+            [
+                "reward_staticnorm_candidates.csv",
+                "reward_staticnorm_normalizers.json",
+            ]
+        )
+    return tuple(required)
+
+
 def validate_control_source(
     *,
     source_dir: Path,
@@ -133,15 +151,7 @@ def validate_control_source(
     candidate_masks: np.ndarray,
     args: argparse.Namespace,
 ) -> tuple[dict[str, object], dict[str, object]]:
-    required = (
-        "truth_v31_split.csv",
-        "v2_ppo_metadata.json",
-        "split_protocol_manifest.json",
-        "custom_ppo.pt",
-        "reward_staticnorm_candidates.csv",
-        "reward_staticnorm_normalizers.json",
-        "validation_static_candidates.csv",
-    )
+    required = control_source_required_files(str(args.reward_loss_normalization))
     missing = [name for name in required if not (source_dir / name).is_file()]
     if missing:
         raise FileNotFoundError(f"control source {source_dir} is missing: {missing}")
