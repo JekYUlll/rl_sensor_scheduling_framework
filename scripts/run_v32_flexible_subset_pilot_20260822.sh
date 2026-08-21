@@ -14,6 +14,7 @@ STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
 BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
 AWBC_COEF="${AWBC_COEF:-0.15}"
 BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
+BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
 ENT_COEF="${ENT_COEF:-0.02}"
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
@@ -117,7 +118,7 @@ for seed in "${SEEDS[@]}"; do
     --awbc-coef "$AWBC_COEF" \
     --awbc-label-stride 4 \
     --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \
-    --bc-pretrain-epochs 4 \
+    --bc-pretrain-epochs "$BC_PRETRAIN_EPOCHS" \
     --bc-pretrain-batch-size 256 \
     --bc-pretrain-loss-coef "$BC_PRETRAIN_LOSS_COEF" \
     --subtype-aux-coef "$SUBTYPE_AUX_COEF" \

@@ -736,3 +736,14 @@ tar -czf "$OUT…`
   applies validation-static subtype normalization to the forecast-loss reward
   and uses physically specified subtype prototypes for auxiliary supervision.
   The prototypes do not constrain executable actions at training or evaluation.
+
+### 2026-08-22 | Flexible-subset v3 normalized physical-teacher pilot
+
+- Seed 405 beat selected static on mean loss (`+0.017557`) and macro loss
+  (`+0.045745`), used all six channels, and had no always-on or always-off count.
+- It still trailed the best conventional dynamic reference by `0.003114` in
+  mean loss and `0.047103` in macro loss, so v3 did not pass the full gate.
+- Particle scheduling followed the intended met-plus-laser prototype, but IR
+  duty reached only `0.287` during thermal windows even though the online
+  thermal alert was fully separable. The actor's BC pretraining accuracy was
+  only `0.110`; the next matched run changes only BC pretraining strength.
