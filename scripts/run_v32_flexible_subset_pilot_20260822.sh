@@ -20,6 +20,10 @@ BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
 ENT_COEF="${ENT_COEF:-0.02}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
+read -r -a TEACHER_CALM_SENSOR_ARGS <<< "${TEACHER_CALM_SENSORS:-met_station_core radiometer_basic shielded_thermo_hygro}"
+read -r -a TEACHER_PARTICLE_SENSOR_ARGS <<< "${TEACHER_PARTICLE_SENSORS:-met_station_core laser_disdrometer}"
+read -r -a TEACHER_FLUX_SENSOR_ARGS <<< "${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}"
+read -r -a TEACHER_THERMAL_SENSOR_ARGS <<< "${TEACHER_THERMAL_SENSORS:-radiometer_basic shielded_thermo_hygro surface_temp_ir}"
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
@@ -112,10 +116,10 @@ for seed in "${SEEDS[@]}"; do
     --oracle-candidate-mask-limit 0 \
     --oracle-subtype-teacher-repeat 4 \
     --oracle-subtype-teacher-lookahead-steps 8 \
-    --oracle-subtype-teacher-calm-sensors met_station_core radiometer_basic shielded_thermo_hygro \
-    --oracle-subtype-teacher-particle-sensors met_station_core laser_disdrometer \
-    --oracle-subtype-teacher-flux-sensors met_station_core fc4_flux \
-    --oracle-subtype-teacher-thermal-sensors radiometer_basic shielded_thermo_hygro surface_temp_ir \
+    --oracle-subtype-teacher-calm-sensors "${TEACHER_CALM_SENSOR_ARGS[@]}" \
+    --oracle-subtype-teacher-particle-sensors "${TEACHER_PARTICLE_SENSOR_ARGS[@]}" \
+    --oracle-subtype-teacher-flux-sensors "${TEACHER_FLUX_SENSOR_ARGS[@]}" \
+    --oracle-subtype-teacher-thermal-sensors "${TEACHER_THERMAL_SENSOR_ARGS[@]}" \
     --oracle-device auto \
     --oracle-inference-device cpu \
     --total-timesteps "$TOTAL_TIMESTEPS" \
@@ -137,10 +141,10 @@ for seed in "${SEEDS[@]}"; do
     --subtype-aux-lookahead-steps 8 \
     --no-subtype-router \
     --awbc-teacher-mode "$AWBC_TEACHER_MODE" \
-    --awbc-teacher-subtype-calm-sensors met_station_core radiometer_basic shielded_thermo_hygro \
-    --awbc-teacher-subtype-particle-sensors met_station_core laser_disdrometer \
-    --awbc-teacher-subtype-flux-sensors met_station_core fc4_flux \
-    --awbc-teacher-subtype-thermal-sensors radiometer_basic shielded_thermo_hygro surface_temp_ir \
+    --awbc-teacher-subtype-calm-sensors "${TEACHER_CALM_SENSOR_ARGS[@]}" \
+    --awbc-teacher-subtype-particle-sensors "${TEACHER_PARTICLE_SENSOR_ARGS[@]}" \
+    --awbc-teacher-subtype-flux-sensors "${TEACHER_FLUX_SENSOR_ARGS[@]}" \
+    --awbc-teacher-subtype-thermal-sensors "${TEACHER_THERMAL_SENSOR_ARGS[@]}" \
     --awbc-teacher-auto-score-mode staticnorm \
     --awbc-teacher-event-lookahead-steps 8 \
     --awbc-teacher-dwell-steps 6 \

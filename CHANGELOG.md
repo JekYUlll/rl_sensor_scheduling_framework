@@ -864,3 +864,16 @@ tar -czf "$OUT…`
   calibration/validation partition and restores the selected policy before
   independent test evaluation. The current final-update-only behavior can
   discard better intermediate PPO policies and amplify seed variance.
+
+### 2026-08-22 | Flexible-subset v10 calibration-checkpoint diagnostic
+
+- Calibration-only selection chose PPO updates 5 and 30 for seeds 406/407, but
+  average margins remained mixed: `-0.009463/+0.038832` against static and
+  `+0.000694/-0.001590` against the strongest dynamic reference.
+- Checkpoint selection is retained as an optional, methodologically valid
+  facility, but final-update selection is not the primary blocker.
+- Cost-geometry audit showed that three low-cost channels can run together at
+  `B=1.25`, recreating a compact static shortcut. The next scene calibration
+  increases only fixed per-epoch effective costs for low-power channels. It
+  keeps every single channel and most arbitrary pairs feasible, with no required
+  channel and no explicit cardinality cap.
