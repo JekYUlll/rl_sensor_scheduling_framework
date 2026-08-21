@@ -1,0 +1,119 @@
+{
+  "budget": 0.7,
+  "candidate_count": 40,
+  "truth_event_rate": 0.27013333333333334,
+  "eval_start_indices": [
+    13746,
+    26616,
+    20595,
+    6948
+  ],
+  "event_loss_min": 0.17729540388922121,
+  "non_event_loss_min": 0.15912757282080892,
+  "best_overall": {
+    "action_idx": 2,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter",
+    "oracle_loss_mean": 0.17165344072539787,
+    "power_mean": 0.5999999999999999,
+    "peak_max": 0.8
+  },
+  "best_event_laser": null,
+  "best_event_no_laser": {
+    "action_idx": 2,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter",
+    "oracle_loss_event": 0.17729540388922121,
+    "power_mean": 0.5999999999999999,
+    "peak_max": 0.8
+  },
+  "best_event_fc4": {
+    "action_idx": -2000,
+    "sensor_ids": "dynamic:diverse_top2_lead0_dwell16",
+    "oracle_loss_event": 0.18555275007477337,
+    "power_mean": 0.61,
+    "peak_max": 0.8
+  },
+  "best_event_no_fc4": {
+    "action_idx": 2,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter",
+    "oracle_loss_event": 0.17729540388922121,
+    "power_mean": 0.5999999999999999,
+    "peak_max": 0.8
+  },
+  "best_non_event_laser": null,
+  "best_non_event_no_laser": {
+    "action_idx": 2,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter",
+    "oracle_loss_non_event": 0.15912757282080892,
+    "power_mean": 0.5999999999999999,
+    "peak_max": 0.8
+  },
+  "laser_event_lift": NaN,
+  "fc4_event_lift": -0.008257346185552156,
+  "laser_non_event_lift": NaN,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v6_static_break.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_v6_cov_energy_tcn_20260607/truth_static_break_calibration.csv",
+  "oracle_type": "tcn",
+  "target_weights": [
+    0.1,
+    0.1,
+    0.25,
+    0.05,
+    0.05,
+    0.0,
+    10.0,
+    5.0,
+    5.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 0.7,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": [
+      {
+        "name": "weather",
+        "sensor_ids": [
+          "met_station_core",
+          "ultrasonic_anemometer_hd",
+          "shielded_thermo_hygro"
+        ]
+      },
+      {
+        "name": "surface_forcing",
+        "sensor_ids": [
+          "radiometer_basic",
+          "surface_temp_ir"
+        ]
+      },
+      {
+        "name": "snow_transport",
+        "sensor_ids": [
+          "snow_particle_counter",
+          "laser_disdrometer",
+          "fc4_flux"
+        ]
+      }
+    ]
+  },
+  "energy_account": {
+    "enabled": true,
+    "energy_capacity": 180.0,
+    "initial_energy": 180.0,
+    "harvest_per_step": 0.5,
+    "reserve_energy": 20.0,
+    "lambda_energy_deficit": 1.0
+  },
+  "eval_start_selection": "event_fraction",
+  "eval_selection_stride": 64
+}

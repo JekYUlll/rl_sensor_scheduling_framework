@@ -1,0 +1,95 @@
+{
+  "budget": 0.7,
+  "candidate_count": 134,
+  "truth_event_rate": 0.25475,
+  "eval_start_indices": [
+    3424,
+    5248,
+    10976
+  ],
+  "event_loss_min": 0.3187543096964912,
+  "non_event_loss_min": 0.2808875133692487,
+  "best_overall": {
+    "action_idx": -1038,
+    "sensor_ids": "dynamic:auto_non23_event15_lead4",
+    "oracle_loss_mean": 0.31444507931501703,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_event_laser": null,
+  "best_event_no_laser": {
+    "action_idx": -1038,
+    "sensor_ids": "dynamic:auto_non23_event15_lead4",
+    "oracle_loss_event": 0.3187543096964912,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_event_fc4": {
+    "action_idx": -1035,
+    "sensor_ids": "dynamic:auto_non87_event7_lead4",
+    "oracle_loss_event": 0.3217864790162213,
+    "power_mean": 0.33822916666666664,
+    "peak_max": 0.88
+  },
+  "best_event_no_fc4": {
+    "action_idx": -1038,
+    "sensor_ids": "dynamic:auto_non23_event15_lead4",
+    "oracle_loss_event": 0.3187543096964912,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_non_event_laser": null,
+  "best_non_event_no_laser": {
+    "action_idx": 20,
+    "sensor_ids": "surface_temp_ir|shielded_thermo_hygro",
+    "oracle_loss_non_event": 0.2808875133692487,
+    "power_mean": 0.16999999999999996,
+    "peak_max": 0.22
+  },
+  "laser_event_lift": NaN,
+  "fc4_event_lift": -0.0030321693197301047,
+  "laser_non_event_lift": NaN,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v6_static_break.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_eventrich_linear/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.1,
+    0.1,
+    0.25,
+    0.05,
+    0.05,
+    0.0,
+    10.0,
+    5.0,
+    5.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 0.7,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  },
+  "eval_start_selection": "event_transport_rich",
+  "eval_selection_stride": 32
+}
+reports/v31_static_break_calibration_eventrich_linear/snow_task_v6_b0p70_p1p60/oracle_lift_candidate_table.csv

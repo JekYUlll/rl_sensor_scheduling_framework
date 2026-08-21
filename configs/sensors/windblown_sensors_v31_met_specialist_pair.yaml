@@ -1,0 +1,151 @@
+sensors:
+  # Task-focused V3.1 geometry.
+  #
+  # Budget contract: B=0.75, startup peak=0.95, max_active=2.
+  # Event specialists are sized so met_station_core + one specialist is feasible,
+  # while any two event specialists remain infeasible. This avoids the previous
+  # failure mode where the only stable feasible pair was a fixed met+thermo
+  # context sensor, making dynamic subtype scheduling unnecessary.
+  - sensor_id: met_station_core
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+      - air_temperature_c
+      - relative_humidity
+      - air_pressure_pa
+    refresh_interval: 1
+    power_cost: 0.25
+    startup_peak_power: 0.30
+    warmup_steps: 0
+    noise_std:
+      wind_speed_ms: 0.18
+      wind_direction_deg: 1.80
+      air_temperature_c: 0.18
+      relative_humidity: 0.90
+      air_pressure_pa: 14.0
+
+  - sensor_id: radiometer_basic
+    variables:
+      - solar_radiation_wm2
+    refresh_interval: 1
+    power_cost: 0.08
+    startup_peak_power: 0.10
+    warmup_steps: 0
+    noise_std:
+      solar_radiation_wm2: 8.0
+
+  - sensor_id: shielded_thermo_hygro
+    variables:
+      - air_temperature_c
+      - relative_humidity
+    refresh_interval: 1
+    power_cost: 0.18
+    startup_peak_power: 0.22
+    warmup_steps: 0
+    noise_std:
+      air_temperature_c: 0.06
+      relative_humidity: 0.30
+
+  - sensor_id: surface_temp_ir
+    variables:
+      - snow_surface_temperature_c
+      - event_subtype_thermal_latent
+    refresh_interval: 1
+    power_cost: 0.49
+    startup_peak_power: 0.62
+    warmup_steps: 1
+    noise_std:
+      snow_surface_temperature_c: 0.20
+      event_subtype_thermal_latent: 0.20
+    calm_noise_std:
+      snow_surface_temperature_c: 1.40
+      event_subtype_thermal_latent: 1.20
+    calm_observation_probability:
+      snow_surface_temperature_c: 0.20
+      event_subtype_thermal_latent: 0.10
+    event_noise_std:
+      snow_surface_temperature_c: 1.60
+      event_subtype_thermal_latent: 1.20
+    event_observation_probability:
+      snow_surface_temperature_c: 0.25
+      event_subtype_thermal_latent: 0.18
+    event_subtype_noise_std:
+      thermal:
+        snow_surface_temperature_c: 0.07
+        event_subtype_thermal_latent: 0.03
+    event_subtype_observation_probability:
+      thermal:
+        snow_surface_temperature_c: 0.96
+        event_subtype_thermal_latent: 0.98
+
+  - sensor_id: laser_disdrometer
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+      - event_subtype_particle_latent
+    refresh_interval: 1
+    power_cost: 0.49
+    startup_peak_power: 0.62
+    warmup_steps: 2
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.16
+      snow_particle_mean_velocity_ms: 0.45
+      event_subtype_particle_latent: 0.20
+    calm_noise_std:
+      snow_particle_mean_diameter_mm: 1.20
+      snow_particle_mean_velocity_ms: 3.00
+      event_subtype_particle_latent: 1.50
+    calm_observation_probability:
+      snow_particle_mean_diameter_mm: 0.10
+      snow_particle_mean_velocity_ms: 0.10
+      event_subtype_particle_latent: 0.05
+    event_noise_std:
+      snow_particle_mean_diameter_mm: 0.90
+      snow_particle_mean_velocity_ms: 2.80
+      event_subtype_particle_latent: 1.20
+    event_observation_probability:
+      snow_particle_mean_diameter_mm: 0.18
+      snow_particle_mean_velocity_ms: 0.18
+      event_subtype_particle_latent: 0.12
+    event_subtype_noise_std:
+      particle:
+        snow_particle_mean_diameter_mm: 0.06
+        snow_particle_mean_velocity_ms: 0.16
+        event_subtype_particle_latent: 0.03
+    event_subtype_observation_probability:
+      particle:
+        snow_particle_mean_diameter_mm: 0.96
+        snow_particle_mean_velocity_ms: 0.96
+        event_subtype_particle_latent: 0.98
+
+  - sensor_id: fc4_flux
+    variables:
+      - snow_mass_flux_kg_m2_s
+      - event_subtype_flux_latent
+    refresh_interval: 1
+    power_cost: 0.49
+    startup_peak_power: 0.62
+    warmup_steps: 1
+    noise_std:
+      snow_mass_flux_kg_m2_s: 8.0e-07
+      event_subtype_flux_latent: 0.20
+    calm_noise_std:
+      snow_mass_flux_kg_m2_s: 5.0e-06
+      event_subtype_flux_latent: 1.50
+    calm_observation_probability:
+      snow_mass_flux_kg_m2_s: 0.10
+      event_subtype_flux_latent: 0.05
+    event_noise_std:
+      snow_mass_flux_kg_m2_s: 4.0e-06
+      event_subtype_flux_latent: 1.20
+    event_observation_probability:
+      snow_mass_flux_kg_m2_s: 0.18
+      event_subtype_flux_latent: 0.12
+    event_subtype_noise_std:
+      flux:
+        snow_mass_flux_kg_m2_s: 2.5e-07
+        event_subtype_flux_latent: 0.03
+    event_subtype_observation_probability:
+      flux:
+        snow_mass_flux_kg_m2_s: 0.96
+        event_subtype_flux_latent: 0.98

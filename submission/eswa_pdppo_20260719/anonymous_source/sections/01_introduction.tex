@@ -1,0 +1,99 @@
+\section{Introduction}
+
+Power constraints can prevent a multi-sensor system from operating all measurement channels simultaneously. The scheduler must therefore select channel subsets over time while satisfying the steady-state and startup-peak power limits and the minimum dwell-time constraint. Round-robin scheduling follows a predefined cycle. AoI- and uncertainty-based policies use measurement freshness or estimated uncertainty to guide channel selection. These decision criteria do not directly quantify how the observation sequence produced by a schedule affects multi-step forecast loss.
+
+The forecasting value of an optional channel varies with the operating condition. Particle measurements are most informative during particle events. Flux events favor snow mass flux measurements, and thermal events favor measurements of snow-surface temperature. A newly activated channel may not affect the forecast immediately. Some instruments require warm-up, and the forecaster uses a window of recent observations. The minimum dwell-time constraint also limits how soon the active subset can change. A decision based only on the current step may therefore fail to minimize forecast loss over the following time steps.
+
+This study presents Prediction-Driven Proximal Policy Optimization (PD-PPO). The
+PD-PPO scheduler denotes the complete scheduling method; the PD-PPO policy is its
+trainable categorical neural policy. The policy reward contains a training-loss
+term derived from multi-step forecast loss. Each candidate action index identifies
+an activation vector, and a feasible-action mask removes indices whose vectors
+violate either power limit. The policy selects a proposed action index and its
+associated vector. After an action change, the execution rule retains the previous
+executed vector for the minimum dwell time of $D_{\min}$ steps.
+
+\Cref{fig:pdppo_framework} summarizes the experimental timeline, the online
+constrained-scheduling loop, and the offline computations used for policy training.
+
+\begin{figure}[t]
+  \centering
+  \vspace{-1.2em}
+  \includegraphics[width=\linewidth]{figure_pdppo_framework_drawio.pdf}
+  \caption{Chronological data partitions and the PD-PPO scheduling loop. Panel A presents
+  the forecaster-training, policy-training, calibration/validation, and test partitions in
+  chronological order; training constants and the supervised-action mapping are
+  determined from calibration/validation data before policy optimization.
+  Panel B shows how the scheduler input is converted into a proposed channel
+  subset and then into the executed subset under the feasibility and minimum
+  dwell-time constraints. Panel C presents the frozen-primary-forecaster
+  computation of forecast loss, its conversion to training loss and policy
+  reward, and the PPO and supervised updates.}
+  \label{fig:pdppo_framework}
+\end{figure}
+
+At each time step, the scheduler input includes recent sample-and-hold values
+and observation masks together with channel-level runtime information. It also
+includes the previously executed channel subset, budget and time features, and
+simulated warning signals. The current condition label weights the training loss,
+while a future-condition supervision label constructs the supervised target
+action and trains the auxiliary future-condition classifier. Neither label is a
+deployment-time scheduler input. During evaluation, current condition labels group the
+reported results. The frozen primary forecaster remains fixed throughout policy
+training and evaluation. The policy
+selects a proposed channel subset, and the minimum dwell-time constraint
+determines whether it can be executed or the previous subset must remain active.
+
+The evaluation uses a controlled simulation of cold-region monitoring motivated
+by Antarctic blowing-snow sensing. The six-channel system keeps the meteorological core
+channel active and permits at most one of five optional channels to operate.
+Candidate actions are checked against the power and startup constraints. In this
+$q=1$ instantiation, every candidate action satisfies both limits, so the
+optional-channel cardinality and minimum dwell-time constraints provide the active
+restrictions. Particle, flux,
+and thermal events favor different optional channels. The primary comparison uses
+a fixed schedule selected on the calibration/validation partition; a warning-rule baseline
+using the same deployment-available simulated warnings is the practical adaptive
+comparator.
+
+The primary analysis covers 22 post-selection evaluation seeds. Across these 22
+seeds, the complete PD-PPO training configuration has lower macro-averaged
+normalized forecast loss than the validation-selected fixed-schedule baseline in
+every seed. The same configuration also has lower mean forecast loss than that
+baseline in every seed, with reductions of 8.0\% and 10.6\%, respectively. Both
+endpoints remain lower in every seed over the continuous 5,242-step scoreable test
+partition. The PD-PPO scheduler also has lower losses than the AoI-priority,
+round-robin, random-feasible, and privileged one-step look-ahead reference using
+next-step test targets in every seed. Its macro-averaged loss is lower than that of
+the Double DQN training configuration in all 22 seeds and lower than that of the
+ridge-forecaster-selected fixed schedule in 21. A separate 24-seed descriptive aggregate retains
+the two pilot/model-selection seeds and the previously reported 10.1\% and 7.9\%
+reductions. The confidence intervals for comparisons with the two alternative
+scalar-objective PPO training configurations and the warning-rule and privileged true-label baselines
+include zero. The
+true-label baseline uses current and future condition labels that are unavailable
+during deployment, so it does not define an upper bound for feasible sequential
+policies.
+
+The study makes three contributions.
+\begin{enumerate}[leftmargin=1.4em]
+  \item The study formulates sensor scheduling under power constraints as a
+  sequential decision problem. It gives sufficient conditions under which
+  condition-dependent channel selection improves on fixed policies that always
+  select one optional channel
+  and shows that forecast loss, AoI, and objectives based on covariance trace can rank feasible
+  schedules differently.
+
+  \item The PD-PPO scheduler uses a complete training configuration that combines
+  a forecast-loss policy reward, behavior cloning pretraining, continuing
+  advantage-weighted behavior cloning during PPO, and auxiliary future-condition
+  classification. A feasibility check enforces steady-state and startup power
+  limits, and the minimum dwell-time constraint
+  determines the executed subset.
+
+  \item The evaluation compares matched PPO training configurations with forecast-loss,
+  AoI, and bounded diagonal uncertainty-proxy objectives and includes a
+  Double DQN training-configuration comparison. Action-sequence analysis examines
+  policy behavior; full-partition and alternative-forecaster analyses assess
+  sensitivity to temporal support and forecaster choice.
+\end{enumerate}

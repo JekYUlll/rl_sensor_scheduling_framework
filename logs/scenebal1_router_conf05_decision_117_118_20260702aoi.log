@@ -1,0 +1,34 @@
+reports/aggregate/scenebal2_reward_aoi_117_118_decision_audit_20260702aoi.json
+reports/aggregate/scenebal2_reward_aoi_117_118_decision_audit_20260702aoi.md
+{
+  "decision": "upgrade_allseed_strict",
+  "rationale": "all pre-registered gates including strict true-static step pass",
+  "recommendation": {
+    "next_layer": "claim_update",
+    "next_action": "Upgrade the final specialist-budget claim only after confirming every pre-registered aggregate and artifact is present.",
+    "protocol_report": "reports/aggregate/pdppo_next_layer_pivot_designs_20260621.md"
+  },
+  "gates": {
+    "complete_seeds": 2,
+    "step_operational_gate_count": 2,
+    "macro_operational_gate_count": 2,
+    "replay_step_gate_count": 2,
+    "replay_macro_gate_count": 2,
+    "behavior_gate_count": 2,
+    "true_static_macro_gate_count": 2,
+    "true_static_step_strict_gate_count": 2,
+    "true_static_step_positive_count": 2,
+    "old_claim_step_gate_count": 2,
+    "old_claim_macro_gate_count": 2
+  },
+  "failures": {
+    "step_operational_fail_seeds": [],
+    "macro_operational_fail_seeds": [],
+    "replay_step_fail_seeds": [],
+    "replay_macro_fail_seeds": [],
+    "behavior_fail_seeds": [],
+    "true_static_step_sign_fail_seeds": [],
+    "true_static_step_strict_fail_seeds": [],
+    "true_static_macro_fail_seeds": []
+  }
+}

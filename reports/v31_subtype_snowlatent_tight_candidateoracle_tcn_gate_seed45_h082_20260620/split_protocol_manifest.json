@@ -1,0 +1,237 @@
+{
+  "protocol": "chronological_split_v31_retraining",
+  "truth_steps": 60000,
+  "seed": 45,
+  "budget": 0.95,
+  "target_weights": [
+    0.03,
+    2.0,
+    0.1,
+    0.01,
+    0.01,
+    0.0,
+    500.0,
+    180.0,
+    180.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "split_ratios": [
+    0.35,
+    0.5,
+    0.075,
+    0.075
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      21000
+    ],
+    "rl_train": [
+      21000,
+      51000
+    ],
+    "validation": [
+      51000,
+      55500
+    ],
+    "final_test": [
+      55500,
+      60000
+    ]
+  },
+  "truth_event_design": {
+    "event_coverage": 0.6,
+    "min_duration": 12,
+    "max_duration": 36,
+    "min_gap": 2,
+    "lead_steps": 6,
+    "wind_margin_ms": 1.2,
+    "cred_hysteresis_on": 0.6,
+    "cred_hysteresis_off": 0.3,
+    "flux_wind_exponent": 4.5,
+    "event_microstructure_sigma": 0.25,
+    "event_microstructure_alpha": 0.2,
+    "event_microstructure_diameter_scale": 0.03,
+    "event_microstructure_velocity_scale": 0.4,
+    "event_particle_microstructure_correlation": 0.0,
+    "event_subtypes_enabled": true,
+    "event_subtype_particle_prob": 0.45,
+    "event_subtype_flux_prob": 0.45,
+    "event_subtype_thermal_prob": 0.1,
+    "event_subtype_particle_flux_multiplier": 0.08,
+    "event_subtype_flux_multiplier": 10.0,
+    "event_subtype_thermal_flux_multiplier": 0.08,
+    "event_subtype_particle_diameter_shift_mm": 0.14,
+    "event_subtype_particle_velocity_boost_ms": 1.8,
+    "event_subtype_flux_diameter_shift_mm": 0.0,
+    "event_subtype_flux_velocity_boost_ms": 0.0,
+    "event_subtype_thermal_surface_drop_c": 2.0,
+    "event_subtype_particle_humidity_boost_pct": 24.0,
+    "event_subtype_flux_wind_boost_ms": 0.4,
+    "event_subtype_thermal_air_temp_drop_c": 1.0,
+    "event_subtype_latent_alpha": 0.12,
+    "event_subtype_particle_latent_diameter_scale_mm": 0.13,
+    "event_subtype_particle_latent_velocity_scale_ms": 3.0,
+    "event_subtype_flux_latent_sigma": 2.4,
+    "event_subtype_thermal_latent_surface_scale_c": 2.0
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      21000
+    ]
+  },
+  "rl_train": {
+    "range": [
+      21000,
+      51000
+    ],
+    "ppo_start_min": 21000,
+    "ppo_start_max": 50479,
+    "normalization_range": [
+      21000,
+      51000
+    ],
+    "candidate_prior_starts": [
+      26619,
+      32672,
+      38796,
+      44850
+    ],
+    "candidate_prior_steps": 512
+  },
+  "validation": {
+    "static_selection_starts": [
+      51449,
+      52501,
+      53467,
+      54492
+    ],
+    "static_selection_steps": 512
+  },
+  "final_test": {
+    "eval_starts": [
+      55500,
+      56012,
+      56524,
+      57036,
+      57548,
+      58060,
+      58956,
+      59479
+    ],
+    "eval_steps": 512,
+    "selection": "event_transport_rich",
+    "event_fraction": 0.8,
+    "selection_stride": 64,
+    "window_summary": {
+      "count": 8,
+      "event_rate_mean": 0.543212890625,
+      "event_rate_min": 0.025390625,
+      "event_rate_max": 0.87890625,
+      "flux_mean": 0.005774507066547625
+    },
+    "skip_rollout_evaluation": true
+  },
+  "operational_baselines": {
+    "eval_duty_constrained_baselines": false,
+    "baseline_duty_hard_low": null,
+    "baseline_duty_hard_high": null,
+    "baseline_duty_hard_score": null,
+    "baseline_duty_score_feedback": null
+  },
+  "reward_shaping": {
+    "lambda_warmup_abort": 1.0,
+    "lambda_switch": 0.002,
+    "event_reward_multiplier": 1.5,
+    "energy_account": true,
+    "energy_capacity": 80.0,
+    "initial_energy": 80.0,
+    "harvest_per_step": 0.52,
+    "reserve_energy": 10.0,
+    "lambda_energy_deficit": 2.0,
+    "soc_soft_penalty_buffer": 15.0,
+    "lambda_soc_soft_penalty": 0.06,
+    "lambda_duty_balance": 0.0,
+    "duty_balance_low": 0.05,
+    "duty_balance_high": 0.95,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 0.0,
+    "duty_score_target": 0.4,
+    "duty_hard_guard": false,
+    "duty_hard_low": 0.08,
+    "duty_hard_high": 0.92,
+    "duty_hard_score": 8.0,
+    "min_dwell_steps": 8,
+    "include_agent_cycle_phase": false,
+    "agent_cycle_period_steps": 0,
+    "agent_cycle_dwell_steps": 1,
+    "include_observable_regime_belief": true,
+    "regime_belief_lookback": 8
+  },
+  "ppo_controls": {
+    "ent_coef": 0.001,
+    "awbc_coef": 0.0,
+    "awbc_label_stride": 8,
+    "bc_pretrain_steps": 0,
+    "bc_pretrain_epochs": 4,
+    "bc_pretrain_batch_size": 128,
+    "bc_pretrain_loss_coef": 1.0,
+    "awbc_teacher_mode": "subtype_auto",
+    "subtype_aux_coef": 0.0,
+    "subtype_aux_classes": 4,
+    "subtype_aux_lookahead_steps": 0,
+    "subtype_router": false,
+    "subtype_router_min_confidence": 0.0,
+    "subtype_router_low_confidence_action": -1,
+    "awbc_teacher_calm_sensors": [],
+    "awbc_teacher_event_sensors": [],
+    "awbc_teacher_subtype_calm_sensors": [
+      "shielded_thermo_hygro"
+    ],
+    "awbc_teacher_subtype_particle_sensors": [
+      "shielded_thermo_hygro",
+      "laser_disdrometer"
+    ],
+    "awbc_teacher_subtype_flux_sensors": [
+      "shielded_thermo_hygro",
+      "fc4_flux"
+    ],
+    "awbc_teacher_subtype_thermal_sensors": [
+      "shielded_thermo_hygro",
+      "surface_temp_ir"
+    ],
+    "awbc_teacher_calm_pool_spec": "",
+    "awbc_teacher_event_pool_spec": "",
+    "awbc_teacher_event_lookahead_steps": 0,
+    "awbc_teacher_energy_mpc_horizon": 4,
+    "awbc_teacher_energy_mpc_soc_bins": 16,
+    "awbc_teacher_energy_mpc_low_soc_ratio": 0.25,
+    "awbc_teacher_energy_mpc_high_soc_ratio": 0.75,
+    "awbc_teacher_energy_mpc_terminal_soc_weight": 0.0,
+    "awbc_teacher_energy_mpc_max_actions": 0,
+    "awbc_teacher_energy_mpc_low_power_action": -1,
+    "awbc_teacher_dwell_steps": 1,
+    "prior_kl_coef": 0.0,
+    "greedy_lookahead_steps": 4,
+    "event_start_prob": 0.7,
+    "event_aware_critic": true,
+    "event_gated_actor": true,
+    "soc_aux_horizon": 0,
+    "soc_aux_coef": 0.0,
+    "use_candidate_prior": true,
+    "candidate_prior_scale": 0.5,
+    "oracle_candidate_mask_repeat": 1,
+    "oracle_candidate_mask_limit": 0
+  }
+}

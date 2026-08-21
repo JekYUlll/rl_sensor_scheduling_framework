@@ -1,0 +1,16 @@
+{
+  "active_tex_files": 26,
+  "active_script_files_scanned": 7,
+  "pdf_pages": 53,
+  "pdf_bytes": 2369716,
+  "pdf_sha256": "5349d66519f7ccfe765ccc584872f3077817302516e3598e1233e5fad5dcc1c6",
+  "source_hits": [],
+  "script_reader_facing_hits": [],
+  "pdf_hits": [],
+  "log_checks": {
+    "undefined_refs": false,
+    "fatal_errors": false,
+    "overfull_count": 1,
+    "underfull_count": 5
+  }
+}

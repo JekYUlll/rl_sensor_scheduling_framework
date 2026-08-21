@@ -1,0 +1,7 @@
+[split-grid] tasks=6 skipped=0 pending=6 workers=4
+[run] worker=0 budget0p60_seed41 -> reports/v31_static_break_v14_h75_gate_20260608/logs/budget0p60_seed41.log
+[run] worker=1 budget0p60_seed42 -> reports/v31_static_break_v14_h75_gate_20260608/logs/budget0p60_seed42.log
+[run] worker=2 budget0p60_seed43 -> reports/v31_static_break_v14_h75_gate_20260608/logs/budget0p60_seed43.log
+[run] worker=3 budget0p65_seed41 -> reports/v31_static_break_v14_h75_gate_20260608/logs/budget0p65_seed41.log
+[run] worker=2 budget0p65_seed42 -> reports/v31_static_break_v14_h75_gate_20260608/logs/budget0p65_seed42.log
+[run] worker=1 budget0p65_seed43 -> reports/v31_static_break_v14_h75_gate_20260608/logs/budget0p65_seed43.log

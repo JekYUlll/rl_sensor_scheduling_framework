@@ -59,3 +59,62 @@ def test_warmup_round_robin_holds_subset_while_selected_sensor_is_warming():
     }
     action1 = scheduler.act(state_warming)
     assert action1 == action0
+
+
+def test_info_priority_holds_subset_while_selected_sensor_is_warming():
+    projector = OnlineSubsetProjector(
+        sensor_ids=["a", "b", "c"],
+        power_costs={"a": 0.2, "b": 0.3, "c": 1.3},
+        startup_peak_costs={"a": 0.25, "b": 0.35, "c": 1.5},
+        max_active=2,
+        per_step_budget=0.8,
+        startup_peak_budget=0.9,
+    )
+    scheduler = InfoPriorityScheduler(
+        projector,
+        sensor_ids=["a", "b", "c"],
+        sensor_to_dims={"a": [0], "b": [1], "c": [2]},
+        max_active=2,
+    )
+    state = {
+        "diag_P": [1.0, 1.0, 1.0],
+        "freshness": [0.0, 0.0, 0.0],
+        "coverage_ratio": [0.0, 0.0, 0.0],
+        "previous_action": [1.0, 1.0, 0.0],
+        "warming_mask": [0.0, 1.0, 0.0],
+        "ready_mask": [1.0, 0.0, 0.0],
+        "event": False,
+    }
+    action = scheduler.act(state)
+    assert action == ["a", "b"]
+
+
+def test_info_priority_uses_quality_bonus_to_break_sensor_ties():
+    projector = OnlineSubsetProjector(
+        sensor_ids=["counter", "laser"],
+        power_costs={"counter": 0.8, "laser": 1.2},
+        startup_peak_costs={"counter": 1.0, "laser": 1.6},
+        max_active=1,
+        per_step_budget=1.3,
+        startup_peak_budget=1.8,
+    )
+    scheduler = InfoPriorityScheduler(
+        projector,
+        sensor_ids=["counter", "laser"],
+        sensor_to_dims={"counter": [0, 1], "laser": [0, 1]},
+        max_active=1,
+        sensor_quality={"counter": 0.0, "laser": 1.0},
+        sensor_target_relevance={"counter": 1.0, "laser": 1.0},
+        sensor_event_relevance={"counter": 1.0, "laser": 1.0},
+    )
+    state = {
+        "diag_P": [1.0, 1.0],
+        "freshness": [0.0, 0.0],
+        "coverage_ratio": [0.0, 0.0],
+        "previous_action": [0.0, 0.0],
+        "warming_mask": [0.0, 0.0],
+        "ready_mask": [0.0, 0.0],
+        "event": False,
+    }
+    action = scheduler.act(state)
+    assert action == ["laser"]

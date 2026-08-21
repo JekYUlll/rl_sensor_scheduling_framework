@@ -1,0 +1,13 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p15_seed42 -> reports/v31_static_break_v16_dual_flux_particle_dwell12_ppo_seed42_h082_soc_eventeval_20260609/logs/budget1p15_seed42.log
+complete_seeds=1/1
+reports/v31_static_break_v16_dual_flux_particle_dwell12_ppo_seed42_h082_soc_eventeval_20260609/v16_dual_flux_particle_b1p15_seed42_h082_soc_eventeval_summary.csv
+reports/v31_static_break_v16_dual_flux_particle_dwell12_ppo_seed42_h082_soc_eventeval_20260609/v16_dual_flux_particle_b1p15_seed42_h082_soc_eventeval_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                1                         0.003574                        0.003574                        0.003574
+               best_static  1                1                         0.000704                        0.000704                        0.000704
+           selected_static  1                1                         0.027923                        0.027923                        0.027923
+deployable_selected_static  1                1                         0.019633                        0.019633                        0.019633
+    best_deployable_static  1                1                         0.008337                        0.008337                        0.008337
+     best_original_dynamic  1                0                        -0.006601                       -0.006601                       -0.006601
+       best_duty_non_pdppo  1                1                         0.004033                        0.004033                        0.004033

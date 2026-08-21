@@ -1,0 +1,31 @@
+{
+  "source_dir": "reports/v31_s2_main",
+  "run_count": 30,
+  "runs_with_prior_eval_overlap": 21,
+  "runs_with_eval_internal_overlap": 21,
+  "runs_with_prior_internal_overlap": 9,
+  "by_budget": [
+    {
+      "budget": 1.65,
+      "run_count": 10,
+      "runs_with_prior_eval_overlap": 7,
+      "runs_with_eval_internal_overlap": 7,
+      "runs_with_prior_internal_overlap": 3
+    },
+    {
+      "budget": 1.7,
+      "run_count": 10,
+      "runs_with_prior_eval_overlap": 7,
+      "runs_with_eval_internal_overlap": 7,
+      "runs_with_prior_internal_overlap": 3
+    },
+    {
+      "budget": 1.75,
+      "run_count": 10,
+      "runs_with_prior_eval_overlap": 7,
+      "runs_with_eval_internal_overlap": 7,
+      "runs_with_prior_internal_overlap": 3
+    }
+  ],
+  "interpretation": "The stored S2 result does not implement independent/non-overlapping prior selection and policy evaluation windows. Any added replay on the existing windows is diagnostic only."
+}

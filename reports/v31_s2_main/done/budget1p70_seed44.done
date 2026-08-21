@@ -1,0 +1,5 @@
+label=budget1p70_seed44
+budget=1.700000
+seed=44
+eval_path=reports/v31_s2_main/raw/budget1p70_seed44/evaluation/v2_eval_overall.csv
+log_path=reports/v31_s2_main/logs/budget1p70_seed44.log

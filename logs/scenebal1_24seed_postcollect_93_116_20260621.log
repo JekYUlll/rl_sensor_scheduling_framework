@@ -1,0 +1,251 @@
+[2026-06-21T12:44:13+08:00] postcollect watch tick
+[2026-06-21T12:44:14+08:00] remote session still active; waiting
+[2026-06-21T12:53:36+08:00] postcollect watch tick
+[2026-06-21T12:53:38+08:00] remote session still active; waiting
+[2026-06-21T12:54:22+08:00] postcollect watch tick
+[2026-06-21T12:54:24+08:00] remote session still active; waiting
+[2026-06-21T13:03:38+08:00] postcollect watch tick
+[2026-06-21T13:03:39+08:00] remote session still active; waiting
+[2026-06-21T13:06:47+08:00] postcollect watch tick
+[2026-06-21T13:06:49+08:00] remote session still active; waiting
+[2026-06-21T13:16:49+08:00] postcollect watch tick
+[2026-06-21T13:16:50+08:00] remote session still active; waiting
+[2026-06-21T13:24:41+08:00] postcollect watch tick
+[2026-06-21T13:24:43+08:00] remote session still active; waiting
+[2026-06-21T13:30:15+08:00] postcollect watch tick
+[2026-06-21T13:30:17+08:00] remote session still active; waiting
+[2026-06-21T13:30:39+08:00] postcollect watch tick
+[2026-06-21T13:30:41+08:00] remote session still active; waiting
+[2026-06-21T13:40:41+08:00] postcollect watch tick
+[2026-06-21T13:40:43+08:00] remote session still active; waiting
+[2026-06-21T13:50:43+08:00] postcollect watch tick
+[2026-06-21T13:50:44+08:00] remote session still active; waiting
+[2026-06-21T13:52:36+08:00] postcollect watch tick
+[2026-06-21T13:52:37+08:00] remote session still active; waiting
+[2026-06-21T13:53:53+08:00] postcollect watch tick
+[2026-06-21T13:53:55+08:00] remote session still active; waiting
+[2026-06-21T14:03:55+08:00] postcollect watch tick
+[2026-06-21T14:03:56+08:00] remote session still active; waiting
+[2026-06-21T14:08:35+08:00] postcollect watch tick
+[2026-06-21T14:08:37+08:00] remote session still active; waiting
+[2026-06-21T14:18:37+08:00] postcollect watch tick
+[2026-06-21T14:18:39+08:00] remote session still active; waiting
+[2026-06-21T14:28:39+08:00] postcollect watch tick
+[2026-06-21T14:28:42+08:00] remote session ended; running 24-seed collect
+reports/aggregate/scenebal1_24seed_93_116_macro_20260621/metpair_seed_summary.csv
+reports/aggregate/scenebal1_24seed_93_116_macro_20260621/metpair_claim_summary.json
+{
+  "complete_seeds": 24,
+  "seed_gate_pass_count": 24,
+  "learned_gate_pass_count": 24,
+  "replay_gate_pass_count": 24,
+  "behavior_gate_pass_count": 24,
+  "learned_macro_positive_count": 24,
+  "replay_macro_positive_count": 24,
+  "macro_seed_positive_count": 24,
+  "learned_macro_gate_count": 24,
+  "replay_macro_gate_count": 24,
+  "macro_seed_gate_count": 24,
+  "mean_learned_margin_abs": 0.1334350319560921,
+  "median_learned_margin_abs": 0.09771294128222507,
+  "mean_replay_margin_abs_vs_static_reference": 0.10187899248753259,
+  "median_replay_margin_abs_vs_static_reference": 0.10102907109057924,
+  "mean_learned_macro_margin_abs": 0.09747339848621195,
+  "median_learned_macro_margin_abs": 0.09310850408024246,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.0798991684744227,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.08198080841921573,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.08622246686188466,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.08781504045971167,
+  "one_sided_sign_test_p_seed_gate": 5.960464477539063e-08,
+  "one_sided_sign_test_p_macro_seed_positive": 5.960464477539063e-08,
+  "one_sided_sign_test_p_macro_seed_gate": 5.960464477539063e-08,
+  "claim_strength": "strong_multiseed",
+  "reason": ">=10 complete seeds with at least 80% full gate passes",
+  "macro_claim_strength": "strong_macro_multiseed",
+  "macro_reason": ">=10 complete seeds with at least 80% macro gate passes"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+   93      True                1.568620              1.937658 oracle_loss_macro_subtype_event_staticnorm                               0.369038                               0.156033                                     0.135590                                            0.080436                                     0.078377                      True                  True                True            True
+   94      True                1.596270              1.650309 oracle_loss_macro_subtype_event_staticnorm                               0.054038                               0.058651                                     0.058114                                            0.062325                                     0.069290                      True                  True                True            True
+   95      True                1.951350              1.963998 oracle_loss_macro_subtype_event_staticnorm                               0.012648                               0.027350                                     0.086573                                            0.078369                                     0.087540                      True                  True                True            True
+   96      True                1.644688              1.682449 oracle_loss_macro_subtype_event_staticnorm                               0.037761                               0.059296                                     0.035452                                            0.040998                                     0.043479                      True                  True                True            True
+   97      True                1.628064              1.749918 oracle_loss_macro_subtype_event_staticnorm                               0.121854                               0.101587                                     0.108964                                            0.097154                                     0.098268                      True                  True                True            True
+   98      True                1.691185              1.713773 oracle_loss_macro_subtype_event_staticnorm                               0.022588                               0.046098                                     0.051022                                            0.053092                                     0.062896                      True                  True                True            True
+   99      True                1.715256              2.115944 oracle_loss_macro_subtype_event_staticnorm                               0.400688                               0.137161                                     0.136233                                            0.108157                                     0.108792                      True                  True                True            True
+  100      True                1.651600              1.706767 oracle_loss_macro_subtype_event_staticnorm                               0.055167                               0.033763                                     0.118899                                            0.082933                                     0.086874                      True                  True                True            True
+  101      True                1.300811              1.344353 oracle_loss_macro_subtype_event_staticnorm                               0.043542                               0.067299                                     0.147926                                            0.040290                                     0.059720                      True                  True                True            True
+  102      True                1.393161              1.563924 oracle_loss_macro_subtype_event_staticnorm                               0.170763                               0.100222                                     0.162205                                            0.064413                                     0.071185                      True                  True                True            True
+  103      True                1.460250              1.588082 oracle_loss_macro_subtype_event_staticnorm                               0.127832                               0.123276                                     0.084548                                            0.081028                                     0.081303                      True                  True                True            True
+  104      True                1.515300              1.707184 oracle_loss_macro_subtype_event_staticnorm                               0.191885                               0.136209                                     0.094391                                            0.095470                                     0.101766                      True                  True                True            True
+  105      True                1.531876              1.599536 oracle_loss_macro_subtype_event_staticnorm                               0.067659                               0.103413                                     0.047650                                            0.040518                                     0.056868                      True                  True                True            True
+  106      True                1.568325              1.639076 oracle_loss_macro_subtype_event_staticnorm                               0.070750                               0.084618                                     0.091826                                            0.089732                                     0.091076                      True                  True                True            True
+  107      True                1.658113              1.742467 oracle_loss_macro_subtype_event_staticnorm                               0.084354                               0.096063                                     0.070275                                            0.078223                                     0.075941                      True                  True                True            True
+  108      True                1.662191              1.838266 oracle_loss_macro_subtype_event_staticnorm                               0.176075                               0.182911                                     0.119623                                            0.132851                                     0.131161                      True                  True                True            True
+  109      True                1.525281              1.806063 oracle_loss_macro_subtype_event_staticnorm                               0.280782                               0.149415                                     0.091285                                            0.090136                                     0.099073                      True                  True                True            True
+  110      True                1.528125              1.591258 oracle_loss_macro_subtype_event_staticnorm                               0.063133                               0.095815                                     0.065686                                            0.073538                                     0.089076                      True                  True                True            True
+  111      True                1.754666              1.853317 oracle_loss_macro_subtype_event_staticnorm                               0.098651                               0.100471                                     0.095461                                            0.087406                                     0.088090                      True                  True                True            True
+  112      True                1.315242              1.472940 oracle_loss_macro_subtype_event_staticnorm                               0.157698                               0.126076                                     0.087678                                            0.084700                                     0.086239                      True                  True                True            True
+  113      True                1.522041              1.618816 oracle_loss_macro_subtype_event_staticnorm                               0.096775                               0.109481                                     0.131164                                            0.092393                                     0.101495                      True                  True                True            True
+  114      True                2.115026              2.202620 oracle_loss_macro_subtype_event_staticnorm                               0.087594                               0.094633                                     0.157688                                            0.101819                                     0.105772                      True                  True                True            True
+  115      True                1.657192              1.809309 oracle_loss_macro_subtype_event_staticnorm                               0.152117                               0.125730                                     0.064608                                            0.064501                                     0.088786                      True                  True                True            True
+  116      True                1.460323              1.719372 oracle_loss_macro_subtype_event_staticnorm                               0.259049                               0.129525                                     0.096500                                            0.097098                                     0.106274                      True                  True                True            True
+reports/aggregate/scenebal1_24seed_93_116_raw_macro_20260621/metpair_seed_summary.csv
+reports/aggregate/scenebal1_24seed_93_116_raw_macro_20260621/metpair_claim_summary.json
+{
+  "complete_seeds": 24,
+  "seed_gate_pass_count": 24,
+  "learned_gate_pass_count": 24,
+  "replay_gate_pass_count": 24,
+  "behavior_gate_pass_count": 24,
+  "learned_macro_positive_count": 24,
+  "replay_macro_positive_count": 24,
+  "macro_seed_positive_count": 24,
+  "learned_macro_gate_count": 24,
+  "replay_macro_gate_count": 24,
+  "macro_seed_gate_count": 24,
+  "mean_learned_margin_abs": 0.1334350319560921,
+  "median_learned_margin_abs": 0.09771294128222507,
+  "mean_replay_margin_abs_vs_static_reference": 0.10187899248753259,
+  "median_replay_margin_abs_vs_static_reference": 0.10102907109057924,
+  "mean_learned_macro_margin_abs": 0.09747339848621199,
+  "median_learned_macro_margin_abs": 0.09310850408024246,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.0798991684744227,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.08198080841921579,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.08622246686188466,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.08781504045971167,
+  "one_sided_sign_test_p_seed_gate": 5.960464477539063e-08,
+  "one_sided_sign_test_p_macro_seed_positive": 5.960464477539063e-08,
+  "one_sided_sign_test_p_macro_seed_gate": 5.960464477539063e-08,
+  "claim_strength": "strong_multiseed",
+  "reason": ">=10 complete seeds with at least 80% full gate passes",
+  "macro_claim_strength": "strong_macro_multiseed",
+  "macro_reason": ">=10 complete seeds with at least 80% macro gate passes"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+   93      True                1.568620              1.937658 oracle_loss_macro_subtype_event_staticnorm                               0.369038                               0.156033                                     0.135590                                            0.080436                                     0.078377                      True                  True                True            True
+   94      True                1.596270              1.650309 oracle_loss_macro_subtype_event_staticnorm                               0.054038                               0.058651                                     0.058114                                            0.062325                                     0.069290                      True                  True                True            True
+   95      True                1.951350              1.963998 oracle_loss_macro_subtype_event_staticnorm                               0.012648                               0.027350                                     0.086573                                            0.078369                                     0.087540                      True                  True                True            True
+   96      True                1.644688              1.682449 oracle_loss_macro_subtype_event_staticnorm                               0.037761                               0.059296                                     0.035452                                            0.040998                                     0.043479                      True                  True                True            True
+   97      True                1.628064              1.749918 oracle_loss_macro_subtype_event_staticnorm                               0.121854                               0.101587                                     0.108964                                            0.097154                                     0.098268                      True                  True                True            True
+   98      True                1.691185              1.713773 oracle_loss_macro_subtype_event_staticnorm                               0.022588                               0.046098                                     0.051022                                            0.053092                                     0.062896                      True                  True                True            True
+   99      True                1.715256              2.115944 oracle_loss_macro_subtype_event_staticnorm                               0.400688                               0.137161                                     0.136233                                            0.108157                                     0.108792                      True                  True                True            True
+  100      True                1.651600              1.706767 oracle_loss_macro_subtype_event_staticnorm                               0.055167                               0.033763                                     0.118899                                            0.082933                                     0.086874                      True                  True                True            True
+  101      True                1.300811              1.344353 oracle_loss_macro_subtype_event_staticnorm                               0.043542                               0.067299                                     0.147926                                            0.040290                                     0.059720                      True                  True                True            True
+  102      True                1.393161              1.563924 oracle_loss_macro_subtype_event_staticnorm                               0.170763                               0.100222                                     0.162205                                            0.064413                                     0.071185                      True                  True                True            True
+  103      True                1.460250              1.588082 oracle_loss_macro_subtype_event_staticnorm                               0.127832                               0.123276                                     0.084548                                            0.081028                                     0.081303                      True                  True                True            True
+  104      True                1.515300              1.707184 oracle_loss_macro_subtype_event_staticnorm                               0.191885                               0.136209                                     0.094391                                            0.095470                                     0.101766                      True                  True                True            True
+  105      True                1.531876              1.599536 oracle_loss_macro_subtype_event_staticnorm                               0.067659                               0.103413                                     0.047650                                            0.040518                                     0.056868                      True                  True                True            True
+  106      True                1.568325              1.639076 oracle_loss_macro_subtype_event_staticnorm                               0.070750                               0.084618                                     0.091826                                            0.089732                                     0.091076                      True                  True                True            True
+  107      True                1.658113              1.742467 oracle_loss_macro_subtype_event_staticnorm                               0.084354                               0.096063                                     0.070275                                            0.078223                                     0.075941                      True                  True                True            True
+  108      True                1.662191              1.838266 oracle_loss_macro_subtype_event_staticnorm                               0.176075                               0.182911                                     0.119623                                            0.132851                                     0.131161                      True                  True                True            True
+  109      True                1.525281              1.806063 oracle_loss_macro_subtype_event_staticnorm                               0.280782                               0.149415                                     0.091285                                            0.090136                                     0.099073                      True                  True                True            True
+  110      True                1.528125              1.591258 oracle_loss_macro_subtype_event_staticnorm                               0.063133                               0.095815                                     0.065686                                            0.073538                                     0.089076                      True                  True                True            True
+  111      True                1.754666              1.853317 oracle_loss_macro_subtype_event_staticnorm                               0.098651                               0.100471                                     0.095461                                            0.087406                                     0.088090                      True                  True                True            True
+  112      True                1.315242              1.472940 oracle_loss_macro_subtype_event_staticnorm                               0.157698                               0.126076                                     0.087678                                            0.084700                                     0.086239                      True                  True                True            True
+  113      True                1.522041              1.618816 oracle_loss_macro_subtype_event_staticnorm                               0.096775                               0.109481                                     0.131164                                            0.092393                                     0.101495                      True                  True                True            True
+  114      True                2.115026              2.202620 oracle_loss_macro_subtype_event_staticnorm                               0.087594                               0.094633                                     0.157688                                            0.101819                                     0.105772                      True                  True                True            True
+  115      True                1.657192              1.809309 oracle_loss_macro_subtype_event_staticnorm                               0.152117                               0.125730                                     0.064608                                            0.064501                                     0.088786                      True                  True                True            True
+  116      True                1.460323              1.719372 oracle_loss_macro_subtype_event_staticnorm                               0.259049                               0.129525                                     0.096500                                            0.097098                                     0.106274                      True                  True                True            True
+reports/aggregate/scenebal1_24seed_93_116_oldclaim_replaynorm_20260621/oldclaim_seed_summary.csv
+reports/aggregate/scenebal1_24seed_93_116_oldclaim_replaynorm_20260621/oldclaim_summary.json
+{
+  "complete_seeds": 24,
+  "old_claim_step_gate_count": 24,
+  "old_claim_macro_gate_count": 24,
+  "behavior_eval_dirs": [
+    "."
+  ],
+  "step_static_gate_count": 24,
+  "step_rule_dynamic_gate_count": 24,
+  "step_operational_gate_count": 24,
+  "macro_static_gate_count": 24,
+  "macro_rule_dynamic_gate_count": 24,
+  "macro_operational_gate_count": 24,
+  "replay_gate_count": 24,
+  "replay_macro_gate_count": 24,
+  "learned_replay_static_gate_count": 23,
+  "learned_replay_macro_static_gate_count": 24,
+  "learned_true_static_step_gate_count": 23,
+  "learned_true_static_macro_gate_count": 24,
+  "behavior_gate_count": 24,
+  "mean_step_margin_vs_best_operational_baseline": 0.1326820479213306,
+  "median_step_margin_vs_best_operational_baseline": 0.09771294128222507,
+  "mean_macro_margin_vs_best_operational_baseline": 0.08623929180153722,
+  "median_macro_margin_vs_best_operational_baseline": 0.07459018842417175,
+  "one_sided_sign_test_p_old_claim_step_gate": 5.960464477539063e-08,
+  "one_sided_sign_test_p_old_claim_macro_gate": 5.960464477539063e-08,
+  "one_sided_sign_test_p_learned_true_static_step_gate": 1.4901161193847656e-06,
+  "one_sided_sign_test_p_learned_true_static_macro_gate": 5.960464477539063e-08,
+  "claim_strength": "strong_old_claim_step",
+  "reason": ">=10 complete seeds with at least 80% old-claim step gates",
+  "macro_claim_strength": "strong_old_claim_macro",
+  "macro_reason": ">=10 complete seeds with at least 80% old-claim macro gates"
+}
+ seed  complete  custom_ppo_loss  best_static_loss best_rule_dynamic_policy  best_rule_dynamic_loss  step_margin_vs_best_operational_baseline  step_margin_vs_replay_static_reference  macro_margin_vs_best_operational_baseline  macro_margin_vs_replay_static_reference  old_claim_step_gate_pass  old_claim_macro_gate_pass  learned_true_static_step_gate_pass  learned_true_static_macro_gate_pass
+   93      True         1.568620          1.937658              round_robin                1.948473                                  0.369038                                0.155887                                   0.215306                                 0.080436                      True                       True                                True                                 True
+   94      True         1.596270          1.650309              round_robin                1.894542                                  0.054038                                0.061583                                   0.046032                                 0.062325                      True                       True                                True                                 True
+   95      True         1.951350          1.963998                   random                2.264455                                  0.012648                                0.001742                                   0.032039                                 0.078369                      True                       True                               False                                 True
+   96      True         1.644688          1.682449                      aoi                1.888809                                  0.037761                                0.052241                                   0.078364                                 0.040998                      True                       True                                True                                 True
+   97      True         1.628064          1.749918                      aoi                1.918096                                  0.121854                                0.110762                                   0.060471                                 0.097154                      True                       True                                True                                 True
+   98      True         1.691185          1.713773                      aoi                1.986108                                  0.022588                                0.020629                                   0.062927                                 0.053092                      True                       True                                True                                 True
+   99      True         1.715256          2.115944              round_robin                2.145690                                  0.400688                                0.125738                                   0.128196                                 0.108157                      True                       True                                True                                 True
+  100      True         1.651600          1.706767              round_robin                1.917900                                  0.055167                                0.049639                                   0.043059                                 0.082933                      True                       True                                True                                 True
+  101      True         1.300811          1.344353                   random                1.408354                                  0.043542                                0.047932                                   0.032760                                 0.040290                      True                       True                                True                                 True
+  102      True         1.393161          1.563924              round_robin                1.586647                                  0.170763                                0.090826                                   0.139206                                 0.064413                      True                       True                                True                                 True
+  103      True         1.460250          1.588082                   random                1.737380                                  0.127832                                0.125941                                   0.070875                                 0.081028                      True                       True                                True                                 True
+  104      True         1.515300          1.707184              round_robin                1.723664                                  0.191885                                0.125367                                   0.095467                                 0.095470                      True                       True                                True                                 True
+  105      True         1.531876          1.599536                      aoi                1.766490                                  0.067659                                0.068518                                   0.100838                                 0.040518                      True                       True                                True                                 True
+  106      True         1.568325          1.639076                      aoi                1.758316                                  0.070750                                0.074086                                   0.061870                                 0.089732                      True                       True                                True                                 True
+  107      True         1.658113          1.742467              round_robin                2.011781                                  0.084354                                0.094234                                   0.051486                                 0.078223                      True                       True                                True                                 True
+  108      True         1.662191          1.838266                   random                2.153452                                  0.176075                                0.181463                                   0.077050                                 0.132851                      True                       True                                True                                 True
+  109      True         1.525281          1.806063              round_robin                1.787992                                  0.262710                                0.123024                                   0.104614                                 0.090136                      True                       True                                True                                 True
+  110      True         1.528125          1.591258                      aoi                1.760768                                  0.063133                                0.058991                                   0.072130                                 0.073538                      True                       True                                True                                 True
+  111      True         1.754666          1.853317              round_robin                2.182196                                  0.098651                                0.094798                                   0.070506                                 0.087406                      True                       True                                True                                 True
+  112      True         1.315242          1.472940                      aoi                1.541485                                  0.157698                                0.122698                                   0.110928                                 0.084700                      True                       True                                True                                 True
+  113      True         1.522041          1.618816              round_robin                1.814878                                  0.096775                                0.090561                                   0.138469                                 0.092393                      True                       True                                True                                 True
+  114      True         2.115026          2.202620                      aoi                2.548846                                  0.087594                                0.082118                                   0.140748                                 0.101819                      True                       True                                True                                 True
+  115      True         1.657192          1.809309              round_robin                1.825566                                  0.152117                                0.084777                                   0.047468                                 0.064501                      True                       True                                True                                 True
+  116      True         1.460323          1.719372                   random                1.729798                                  0.259049                                0.097441                                   0.088934                                 0.097098                      True                       True                                True                                 True
+reports/aggregate/scenebal1_24seed_93_116_oldclaim_replaynorm_20260621/SCENEBAL1_24SEED_REPORT.md
+reports/aggregate/scenebal1_24seed_93_116_decision_audit_20260621.json
+reports/aggregate/scenebal1_24seed_93_116_decision_audit_20260621.md
+{
+  "decision": "upgrade_sign_bounded",
+  "rationale": "all operational/replay/behavior/true-static-sign gates pass; strict true-static step remains a boundary",
+  "recommendation": {
+    "next_layer": "claim_update_no_blind_expansion",
+    "next_action": "Use sign-bounded strong wording; do not run another same-configuration seed wave unless it answers a concrete unresolved uncertainty.",
+    "protocol_report": "reports/aggregate/pdppo_next_layer_pivot_designs_20260621.md"
+  },
+  "gates": {
+    "complete_seeds": 24,
+    "step_operational_gate_count": 24,
+    "macro_operational_gate_count": 24,
+    "replay_step_gate_count": 24,
+    "replay_macro_gate_count": 24,
+    "behavior_gate_count": 24,
+    "true_static_macro_gate_count": 24,
+    "true_static_step_strict_gate_count": 23,
+    "true_static_step_positive_count": 24,
+    "old_claim_step_gate_count": 24,
+    "old_claim_macro_gate_count": 24
+  },
+  "failures": {
+    "step_operational_fail_seeds": [],
+    "macro_operational_fail_seeds": [],
+    "replay_step_fail_seeds": [],
+    "replay_macro_fail_seeds": [],
+    "behavior_fail_seeds": [],
+    "true_static_step_sign_fail_seeds": [],
+    "true_static_step_strict_fail_seeds": [
+      95
+    ],
+    "true_static_macro_fail_seeds": []
+  }
+}
+reports/aggregate/scenebal1_24seed_93_116_next_action_protocol_20260621.md
+{
+  "decision": "upgrade_sign_bounded",
+  "bounded_unit": "Sign-Bounded Claim Update"
+}
+[2026-06-21T14:29:03+08:00] remote 24-seed collect complete

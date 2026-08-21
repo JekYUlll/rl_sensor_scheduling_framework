@@ -1,0 +1,23 @@
+reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/truth_static_break_calibration.csv
+reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/transport_v6_b0p60_p1p60/dataset_validation/synthetic_validation.csv
+Traceback (most recent call last):
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/49_v31_physical_event_oracle_lift.py", line 1029, in <module>
+    main()
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/49_v31_physical_event_oracle_lift.py", line 861, in main
+    oracle = helpers.train_oracle(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/23_v2_train_ppo.py", line 292, in train_oracle
+    result = run_policy_rollout(env, policy, steps=int(per_rollout_steps), start_idx=int(start_idx))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/src/v2/rollout.py", line 75, in run_policy_rollout
+    _, reward, done, info = env.step_scores(scores)
+                            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/src/v2/env.py", line 145, in step_scores
+    projection = self.projector.project_scores(self._duty_adjusted_scores(scores), self.runtimes)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/src/v2/power_projector.py", line 47, in project_scores
+    selected = self._coverage_selection(selected, scores_arr, runtimes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/src/v2/power_projector.py", line 104, in _coverage_selection
+    raise ValueError(
+ValueError: Coverage group 'snow_transport' cannot satisfy current power constraints. Relax constraints or reduce coverage_groups.

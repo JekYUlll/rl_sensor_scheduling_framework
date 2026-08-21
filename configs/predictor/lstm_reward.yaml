@@ -6,3 +6,21 @@ lr: 0.001
 batch_size: 128
 use_observed_mask: true
 use_time_delta: true
+time_delta:
+  encoding: log_capped
+  cap_steps: 600
+  prefix: staleness
+input_filter:
+  type: causal_moving_average
+  window: 3
+  columns:
+    - wind_speed_ms
+    - wind_direction_deg
+    - air_temperature_c
+    - relative_humidity
+    - air_pressure_pa
+    - solar_radiation_wm2
+    - snow_surface_temperature_c
+    - snow_particle_mean_diameter_mm
+    - snow_particle_mean_velocity_ms
+    - snow_mass_flux_kg_m2_s

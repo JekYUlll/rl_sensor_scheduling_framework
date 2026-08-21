@@ -1,0 +1,15 @@
+[v31-pilot] tasks=5 skipped=0 pending=5 workers=3
+[run] worker=0 v31_pilot_budget1p70_seed41 -> reports/v31_pilot/logs/v31_pilot_budget1p70_seed41.log
+[run] worker=1 v31_pilot_budget1p70_seed42 -> reports/v31_pilot/logs/v31_pilot_budget1p70_seed42.log
+[run] worker=2 v31_pilot_budget1p70_seed43 -> reports/v31_pilot/logs/v31_pilot_budget1p70_seed43.log
+[run] worker=1 v31_pilot_budget1p70_seed44 -> reports/v31_pilot/logs/v31_pilot_budget1p70_seed44.log
+[run] worker=0 v31_pilot_budget1p70_seed45 -> reports/v31_pilot/logs/v31_pilot_budget1p70_seed45.log
+reports/v31_pilot/v31_pilot_overall_long.csv
+reports/v31_pilot/v31_pilot_summary.csv
+                      policy      mean       std  count
+3    full_open_unconstrained  0.412989  0.033319      5
+2  feasible_static_projected  0.435173  0.041905      5
+1                 custom_ppo  0.439764  0.042531      5
+5                round_robin  0.450091  0.043011      5
+0                        aoi  0.481950  0.048386      5
+4                     random  0.482748  0.044471      5

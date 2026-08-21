@@ -1,0 +1,26 @@
+\begin{table*}[htbp]
+  \centering
+  \caption{Descriptive aggregate over all 24 reported seeds, including the two pilot/model-selection seeds. Positive differences favor the complete PD-PPO training configuration. These values are retained for transparency and are not the post-selection inferential analysis.}
+  \label{tab:reported_24seed_descriptive}
+  \scriptsize
+  \setlength{\tabcolsep}{2.5pt}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.29\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\centering\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+    \toprule
+    Comparison and scope & Endpoint & Seeds favoring PD-PPO & Mean paired difference [95\% bootstrap CI] \\
+    \midrule
+    Event-balanced evaluation windows: fixed-schedule baseline & Mean forecast loss & 24 of 24 & +0.1580 [+0.1161, +0.2052] \\
+    Event-balanced evaluation windows: fixed-schedule baseline & Macro-averaged loss & 24 of 24 & +0.0801 [+0.0673, +0.0931] \\
+    Continuous full partition: fixed-schedule baseline & Mean forecast loss & 24 of 24 & +0.1247 [+0.0898, +0.1641] \\
+    Continuous full partition: fixed-schedule baseline & Macro-averaged loss & 24 of 24 & +0.0793 [+0.0642, +0.0951] \\
+    Warning-rule baseline & Macro-averaged loss & 11 of 24 & +0.0012 [-0.0043, +0.0076] \\
+    Privileged true-label baseline & Macro-averaged loss & 12 of 24 & +0.0018 [-0.0039, +0.0081] \\
+    Double DQN training configuration & Macro-averaged loss & 24 of 24 & +0.0697 [+0.0539, +0.0855] \\
+    AoI-objective PPO configuration & Macro-averaged loss & 13 of 24 & +0.0010 [-0.0039, +0.0058] \\
+    Uncertainty-objective PPO configuration & Macro-averaged loss & 12 of 24 & +0.0008 [-0.0036, +0.0046] \\
+    Ridge-forecaster fixed-schedule baseline & Macro-averaged loss & 23 of 24 & +0.1334 [+0.1112, +0.1544] \\
+    \bottomrule
+  \end{tabular}
+  \begin{minipage}{0.92\textwidth}
+  \vspace{0.4ex}\footnotesize The objective rows are matched PPO training configurations with different scalar objectives, not isolated scalar-reward ablations. The Double DQN row compares complete training configurations. The warning-rule and privileged true-label confidence intervals include zero.
+  \end{minipage}
+\end{table*}

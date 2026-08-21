@@ -1,0 +1,106 @@
+{
+  "budget": 1.2,
+  "candidate_count": 128,
+  "truth_event_rate": 0.25475,
+  "eval_start_indices": [
+    5441,
+    10929,
+    7265
+  ],
+  "event_loss_min": 0.32746537957904576,
+  "non_event_loss_min": 0.27030613205987203,
+  "best_overall": {
+    "action_idx": 84,
+    "sensor_ids": "surface_temp_ir|fc4_flux",
+    "oracle_loss_mean": 0.31042819359645907,
+    "power_mean": 0.59,
+    "peak_max": 0.78
+  },
+  "best_event_laser": {
+    "action_idx": 78,
+    "sensor_ids": "radiometer_basic|surface_temp_ir|shielded_thermo_hygro|laser_disdrometer",
+    "oracle_loss_event": 0.32855689090961493,
+    "power_mean": 1.07,
+    "peak_max": 1.51
+  },
+  "best_event_no_laser": {
+    "action_idx": 6,
+    "sensor_ids": "radiometer_basic|surface_temp_ir",
+    "oracle_loss_event": 0.32746537957904576,
+    "power_mean": 0.18999999999999997,
+    "peak_max": 0.24000000000000002
+  },
+  "best_event_fc4": {
+    "action_idx": 84,
+    "sensor_ids": "surface_temp_ir|fc4_flux",
+    "oracle_loss_event": 0.3277944590376684,
+    "power_mean": 0.59,
+    "peak_max": 0.78
+  },
+  "best_event_no_fc4": {
+    "action_idx": 6,
+    "sensor_ids": "radiometer_basic|surface_temp_ir",
+    "oracle_loss_event": 0.32746537957904576,
+    "power_mean": 0.18999999999999997,
+    "peak_max": 0.24000000000000002
+  },
+  "best_non_event_laser": {
+    "action_idx": 57,
+    "sensor_ids": "laser_disdrometer",
+    "oracle_loss_non_event": 0.3007267167264488,
+    "power_mean": 0.7199999999999999,
+    "peak_max": 1.05
+  },
+  "best_non_event_no_laser": {
+    "action_idx": 84,
+    "sensor_ids": "surface_temp_ir|fc4_flux",
+    "oracle_loss_non_event": 0.27030613205987203,
+    "power_mean": 0.59,
+    "peak_max": 0.78
+  },
+  "laser_event_lift": -0.0010915113305691726,
+  "fc4_event_lift": -0.00032907945862264976,
+  "laser_non_event_lift": -0.030420584666576767,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v9_debundled_context.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_v9_diverse_linear/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.2,
+    0.2,
+    0.3,
+    0.05,
+    0.05,
+    0.05,
+    8.0,
+    4.0,
+    4.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.2,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  },
+  "eval_start_selection": "event_fraction",
+  "eval_selection_stride": 64
+}

@@ -1,0 +1,76 @@
+{
+  "protocol": "chronological_split_v31_retraining",
+  "truth_steps": 90000,
+  "seed": 50,
+  "budget": 1.7,
+  "split_ratios": [
+    0.35,
+    0.5,
+    0.075,
+    0.075
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      31500
+    ],
+    "rl_train": [
+      31500,
+      76500
+    ],
+    "validation": [
+      76500,
+      83250
+    ],
+    "final_test": [
+      83250,
+      90000
+    ]
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      31500
+    ]
+  },
+  "rl_train": {
+    "range": [
+      31500,
+      76500
+    ],
+    "ppo_start_min": 31500,
+    "ppo_start_max": 75979,
+    "normalization_range": [
+      31500,
+      76500
+    ],
+    "candidate_prior_starts": [
+      40122,
+      49128,
+      58128,
+      67412
+    ],
+    "candidate_prior_steps": 512
+  },
+  "validation": {
+    "static_selection_starts": [
+      77467,
+      78936,
+      80376,
+      81813
+    ],
+    "static_selection_steps": 512
+  },
+  "final_test": {
+    "eval_starts": [
+      83335,
+      84429,
+      85550,
+      86651,
+      87759,
+      88868
+    ],
+    "eval_steps": 1024,
+    "selection": "uniform_random_non_overlapping_without_event_filtering"
+  }
+}

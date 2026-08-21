@@ -1,0 +1,77 @@
+\section{Background and Related Work}
+
+\subsection{Resource-constrained sensing}
+
+Resource-constrained sensor scheduling has been studied extensively in estimation,
+communication, and energy-aware monitoring. Estimation-oriented formulations
+minimize state-estimation error or posterior covariance
+\citep{Shi_2011,AlAhdab2025}. Energy-harvesting censoring policies optimize the
+utility of transmitted measurements \citep{FernandezBes2015}, while
+freshness-driven policies use age of information (AoI) or age of incorrect
+information \citep{Kaul_2012,Jonah2026}. Reinforcement learning has also been
+applied to tracking and belief-state scheduling \citep{Qu2022,Alali2024} and to
+delay-aware remote estimation with broader scheduling objectives
+\citep{Tran2026}. These objectives directly match evaluation criteria based on
+measurement freshness or current uncertainty. The present forecasting problem
+retains the resource constraints and uses forecast loss as the scheduling
+objective. A channel receives greater scheduling value when its observations
+reduce forecast loss over the evaluation horizon.
+
+A forecast-loss objective is particularly relevant for heterogeneous sensing
+systems. A meteorological core channel can provide inexpensive and broadly useful
+measurements, while optional channels may provide their greatest forecasting
+benefit near specific physical events. The validation-selected fixed-schedule
+baseline therefore provides a meaningful comparator. The evaluation compares observation-dependent
+scheduling with fixed and dynamic baselines and with a privileged true-label baseline.
+
+\input{tables/related_work_positioning}
+
+\subsection{Adaptive sensing and learning-based scheduling}
+
+Forecast-oriented sensor scheduling is related to active perception and partially
+observable decision making. In these settings, an agent selects observations
+sequentially to improve a downstream task
+\citep{Bajcsy2018,Lauri_2023}. Related theoretical work studies adaptive
+observation selection under partial observability \citep{Golovin2011}. These
+formulations support policies that respond to available observations. They do not
+address how forecast-oriented channel selections should be executed under
+steady-state power limits, startup-peak power limits, and a minimum dwell-time
+constraint.
+
+Deep reinforcement learning has been used for resource-constrained adaptive
+sensing and sensor steering \citep{Murad2020,Ogbodo2025}, informative path
+planning \citep{Wei2020}, and constrained optimization with delayed rewards
+\citep{Pendyala2024}. Its sequential objective can account for consequences that
+emerge over multiple time steps. Explicit feasibility enforcement is required when
+the sensing system cannot execute arbitrary actions. The PD-PPO policy is
+categorical over candidate action indices, and the scheduler applies a
+feasible-action mask at each time step. The mask removes indices whose candidate
+activation vectors violate the steady-state or startup-peak power limit.
+
+\subsection{Forecasting models for schedule evaluation}
+
+Forecasting models can quantify the downstream prediction loss associated with
+an observation sequence produced by a sensor schedule. Relevant architectures
+include the Temporal Fusion Transformer, temporal convolutional networks, and
+iTransformer \citep{Lim2021,Bai2018,Liu2024}. The primary forecaster is trained
+on the forecaster-training partition, and its parameters are held fixed throughout
+policy training and evaluation. During policy training, it provides the
+multi-step forecast-loss term used to construct the policy reward. During test
+evaluation, it measures the forecast loss of the observation sequence produced
+by each schedule. The alternative-forecaster analysis applies a ridge forecaster
+to the same observation sequences and reselects the fixed-schedule baseline on the
+calibration/validation partition. This sensitivity analysis quantifies the same
+comparison under a second forecasting model.
+
+\subsection{Antarctic blowing-snow monitoring}
+
+Antarctic automatic weather station (AWS) networks and blowing-snow monitoring
+provide the application context for the simulation. Antarctic AWS networks supply long-term
+atmospheric and surface observations, while their spatial instrument coverage
+remains uneven \citep{AntAWS2023}. Field measurements and numerical models
+have been used to study drifting-snow occurrence and transport,
+atmosphere--snow interactions, and snow particle properties
+\citep{Amory2020,Sharma2023,Monrad2026}. The controlled simulation represents
+this setting with one mandatory meteorological core channel and five optional channels.
+At most one optional channel can operate at a time. For each seed, the PD-PPO scheduler and all
+baselines are evaluated on the same simulated ground-truth time series.

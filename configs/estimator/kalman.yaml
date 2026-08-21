@@ -6,3 +6,11 @@ max_spectral_radius: 0.995
 min_scale: 1.0e-6
 normalize_rl_state: true
 use_logdet: false
+observation_preprocessing:
+  enabled: true
+  type: robust_ema
+  alpha: 0.35
+  clip_sigma: 4.0
+  gap_reset_steps: 20
+  effective_noise_scale: auto
+  min_std: 1.0e-6

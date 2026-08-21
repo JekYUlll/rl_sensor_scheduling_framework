@@ -1,0 +1,1898 @@
+[
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "main.tex",
+    "line": 110,
+    "text": "Abbreviations",
+    "raw": "Abbreviations"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "main.tex",
+    "line": 129,
+    "text": "CRediT Author Statement",
+    "raw": "CRediT Author Statement"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "main.tex",
+    "line": 135,
+    "text": "Funding",
+    "raw": "Funding"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "main.tex",
+    "line": 139,
+    "text": "Declaration of Competing Interest",
+    "raw": "Declaration of Competing Interest"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "main.tex",
+    "line": 144,
+    "text": "Data Availability",
+    "raw": "Data Availability"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "main.tex",
+    "line": 152,
+    "text": "Declaration of Generative AI and AI-Assisted Technologies",
+    "raw": "Declaration of Generative AI and AI-Assisted Technologies"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "main.tex",
+    "line": 158,
+    "text": "Acknowledgements",
+    "raw": "Acknowledgements"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/01_introduction.tex",
+    "line": 1,
+    "text": "Introduction",
+    "raw": "Introduction"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/02_related_work.tex",
+    "line": 1,
+    "text": "Background and Related Work",
+    "raw": "Background and Related Work"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/02_related_work.tex",
+    "line": 3,
+    "text": "Resource-constrained sensing",
+    "raw": "Resource-constrained sensing"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/02_related_work.tex",
+    "line": 24,
+    "text": "Adaptive sensing and learning-based scheduling",
+    "raw": "Adaptive sensing and learning-based scheduling"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/02_related_work.tex",
+    "line": 42,
+    "text": "Forecasting models as schedule evaluators",
+    "raw": "Forecasting models as schedule evaluators"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/02_related_work.tex",
+    "line": 55,
+    "text": "Antarctic blowing-snow monitoring",
+    "raw": "Antarctic blowing-snow monitoring"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/related_work_positioning.tex",
+    "line": 3,
+    "text": "Position of this work relative to nearby scheduling and sensing literatures.",
+    "raw": "Position of this work relative to nearby scheduling and sensing literatures."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 10,
+    "text": "Literature line & Typical optimisation target & Scheduling structure & Difference addressed here \\\\",
+    "raw": "Literature line & Typical optimisation target & Scheduling structure & Difference addressed here \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 13,
+    "text": "& Covariance, estimation error, information age",
+    "raw": "& Covariance, estimation error, information age"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 14,
+    "text": "& Sensor selection under communication or energy limits",
+    "raw": "& Sensor selection under communication or energy limits"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 15,
+    "text": "& Multi-step forecast loss is the scoring target. \\\\",
+    "raw": "& Multi-step forecast loss is the scoring target. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 17,
+    "text": "& Task information under partial observability",
+    "raw": "& Task information under partial observability"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 18,
+    "text": "& Observation actions chosen from belief or context",
+    "raw": "& Observation actions chosen from belief or context"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 19,
+    "text": "& The paper studies a fixed backbone benchmark with limited specialist capacity and replayable references. \\\\",
+    "raw": "& The paper studies a fixed backbone benchmark with limited specialist capacity and replayable references. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 21,
+    "text": "& Information gain, coverage, data acquisition utility, or monitoring reward",
+    "raw": "& Information gain, coverage, data acquisition utility, or monitoring reward"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 22,
+    "text": "& Learned adaptive policies, often with soft or task-specific constraints",
+    "raw": "& Learned adaptive policies, often with soft or task-specific constraints"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 23,
+    "text": "& Feasible candidate masks enforce the single specialist operating rule at execution time. \\\\",
+    "raw": "& Feasible candidate masks enforce the single specialist operating rule at execution time. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 25,
+    "text": "& Forecast accuracy after the observation stream is given",
+    "raw": "& Forecast accuracy after the observation stream is given"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 26,
+    "text": "& Forecasting model for a given observation stream",
+    "raw": "& Forecasting model for a given observation stream"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/related_work_positioning.tex",
+    "line": 27,
+    "text": "& A fixed forecaster is used as a common evaluator of schedules, not as a separately retrained model per policy. \\\\",
+    "raw": "& A fixed forecaster is used as a common evaluator of schedules, not as a separately retrained model per policy. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/03_problem_formulation.tex",
+    "line": 1,
+    "text": "Problem Formulation",
+    "raw": "Problem Formulation"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/03_problem_formulation.tex",
+    "line": 3,
+    "text": "Forecast objective for sensor scheduling",
+    "raw": "Forecast objective for sensor scheduling"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/03_problem_formulation.tex",
+    "line": 46,
+    "text": "When changing specialists can help",
+    "raw": "When changing specialists can help"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/03_problem_formulation.tex",
+    "line": 149,
+    "text": "Forecast loss and macro scoring across regimes",
+    "raw": "Forecast loss and macro scoring across regimes"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/03_problem_formulation.tex",
+    "line": 197,
+    "text": "Why forecast loss is not an AoI or covariance proxy",
+    "raw": "Why forecast loss is not an AoI or covariance proxy"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "sections/03_problem_formulation.tex",
+    "line": 24,
+    "text": "&a_met=1,\\;",
+    "raw": "&a_{\\mathrm{met}}=1,\\;"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/notation_summary.tex",
+    "line": 3,
+    "text": "Notation used for the scheduling formulation and PPO objective.",
+    "raw": "Notation used for the scheduling formulation and PPO objective."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 9,
+    "text": "Symbol & Meaning \\\\",
+    "raw": "Symbol & Meaning \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 11,
+    "text": "MATH & Latent microclimate state at scheduling epoch MATH \\\\",
+    "raw": "$x_t$ & Latent microclimate state at scheduling epoch $t$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 12,
+    "text": "MATH & Scheduler observation built from the estimator state, uncertainty, channel history, previous mask, and event context \\\\",
+    "raw": "$o_t$ & Scheduler observation built from the estimator state, uncertainty, channel history, previous mask, and event context \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 13,
+    "text": "MATH & Candidate executable channel mask with index MATH \\\\",
+    "raw": "$m^k$ & Candidate executable channel mask with index $k$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 14,
+    "text": "MATH & Candidate-index set that remains feasible at epoch MATH after power, startup, and minimum-duration checks \\\\",
+    "raw": "$\\mathcal{I}_t$ & Candidate-index set that remains feasible at epoch $t$ after power, startup, and minimum-duration checks \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 15,
+    "text": "MATH & PPO action index sampled or selected from MATH \\\\",
+    "raw": "$u_t$ & PPO action index sampled or selected from $\\mathcal{I}_t$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 16,
+    "text": "MATH & Executed binary channel mask \\\\",
+    "raw": "$a_t=m^{u_t}$ & Executed binary channel mask \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 17,
+    "text": "MATH & Ordinary multi-horizon forecast loss \\\\",
+    "raw": "$\\mathcal{L}_{\\mathrm{step}}$ & Ordinary multi-horizon forecast loss \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 18,
+    "text": "MATH & Macro score normalised by static references across event regimes \\\\",
+    "raw": "$\\mathcal{M}_{\\mathrm{staticnorm}}$ & Macro score normalised by static references across event regimes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/notation_summary.tex",
+    "line": 19,
+    "text": "MATH & Switching or minimum-duration penalty term used during policy learning \\\\",
+    "raw": "$S_t$ & Switching or minimum-duration penalty term used during policy learning \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 1,
+    "text": "PD-PPO Scheduler and Evaluation Protocol",
+    "raw": "PD-PPO Scheduler and Evaluation Protocol"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 14,
+    "text": "State, action, and feasibility masking",
+    "raw": "State, action, and feasibility masking"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 58,
+    "text": "Fixed evaluation forecaster and training reward",
+    "raw": "Fixed evaluation forecaster and training reward"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 105,
+    "text": "PPO objective",
+    "raw": "PPO objective"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 192,
+    "text": "Chronological separation and comparison references",
+    "raw": "Chronological separation and comparison references"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 7,
+    "text": "Forecasting reward scheduling framework. Forecaster fitting, policy training, static-reference selection, and final evaluation are separated chronologically. The diagram shows where forecast loss enters training and where held-out final comparisons are computed.",
+    "raw": "Forecasting reward scheduling framework. Forecaster fitting, policy\n  training, static-reference selection, and final evaluation are separated\n  chronologically. The diagram shows where forecast loss enters training and\n  where held-out final comparisons are computed."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 39,
+    "text": "Masked PD-PPO training",
+    "raw": "Masked PD-PPO training"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/04_framework_protocol.tex",
+    "line": 202,
+    "text": "Chronological split used by the benchmark. Forecaster fitting, policy learning, static reference selection, and final testing are separated before any reported comparison is computed. The split makes the reported held-out comparison a replay test rather than a final-window tuning procedure.",
+    "raw": "Chronological split used by the benchmark. Forecaster fitting, policy\n  learning, static reference selection, and final testing are separated before\n  any reported comparison is computed. The split makes the reported held-out\n  comparison a replay test rather than a final-window tuning procedure."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 3,
+    "text": "Feasible action masks in the final single specialist benchmark.",
+    "raw": "Feasible action masks in the final single specialist benchmark."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 9,
+    "text": "Id & Executed channels & Power & Interpretation & Static selections \\\\",
+    "raw": "Id & Executed channels & Power & Interpretation & Static selections \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 11,
+    "text": "0 & Weather backbone & 0.25 & Backbone only & 0/24 \\\\",
+    "raw": "0 & Weather backbone & 0.25 & Backbone only & 0/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 12,
+    "text": "1 & Weather backbone + Radiometer & 0.33 & Radiation context & 0/24 \\\\",
+    "raw": "1 & Weather backbone + Radiometer & 0.33 & Radiation context & 0/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 13,
+    "text": "2 & Weather backbone + Thermo-hygro & 0.43 & Non-event thermo-hygro context & 0/24 \\\\",
+    "raw": "2 & Weather backbone + Thermo-hygro & 0.43 & Non-event thermo-hygro context & 0/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 14,
+    "text": "3 & Weather backbone + Surface IR & 0.74 & Thermal-event specialist & 9/24 \\\\",
+    "raw": "3 & Weather backbone + Surface IR & 0.74 & Thermal-event specialist & 9/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 15,
+    "text": "4 & Weather backbone + Laser disdrometer & 0.74 & Particle-event specialist & 2/24 \\\\",
+    "raw": "4 & Weather backbone + Laser disdrometer & 0.74 & Particle-event specialist & 2/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/action_space_instantiation.tex",
+    "line": 16,
+    "text": "5 & Weather backbone + FC4 flux & 0.74 & Flux-event specialist & 13/24 \\\\",
+    "raw": "5 & Weather backbone + FC4 flux & 0.74 & Flux-event specialist & 13/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/online_observability_audit.tex",
+    "line": 3,
+    "text": "Online observability audit for scheduler inputs and diagnostics.",
+    "raw": "Online observability audit for scheduler inputs and diagnostics."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 9,
+    "text": "Quantity & Source & Online & Use in the protocol \\\\",
+    "raw": "Quantity & Source & Online & Use in the protocol \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 11,
+    "text": "State estimate and last observations & Estimator and channel history & Yes & Policy input and fixed forecaster input \\\\",
+    "raw": "State estimate and last observations & Estimator and channel history & Yes & Policy input and fixed forecaster input \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 12,
+    "text": "Observation mask and AoI/freshness & Runtime observation log & Yes & Policy input; also used by rule-based baselines \\\\",
+    "raw": "Observation mask and AoI/freshness & Runtime observation log & Yes & Policy input; also used by rule-based baselines \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 13,
+    "text": "Previous mask and warm-up state & Scheduler runtime & Yes & Feasibility mask and switching/minimum-duration accounting \\\\",
+    "raw": "Previous mask and warm-up state & Scheduler runtime & Yes & Feasibility mask and switching/minimum-duration accounting \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 14,
+    "text": "Station-side event context proxies & Noisy lead signals generated before event onset & Yes & Policy input; not final test labels \\\\",
+    "raw": "Station-side event context proxies & Noisy lead signals generated before event onset & Yes & Policy input; not final test labels \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 15,
+    "text": "Event type labels & Simulator truth sequence & No & Training auxiliary labels and diagnostic grouping only \\\\",
+    "raw": "Event type labels & Simulator truth sequence & No & Training auxiliary labels and diagnostic grouping only \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 16,
+    "text": "Future target values & Simulator truth sequence & No & Fixed forecaster fitting, reward scoring, and final evaluation \\\\",
+    "raw": "Future target values & Simulator truth sequence & No & Fixed forecaster fitting, reward scoring, and final evaluation \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/online_observability_audit.tex",
+    "line": 17,
+    "text": "Static normalisers and selected fixed mask & Validation/static selection partition & No & Reference selection and metric normalisation only \\\\",
+    "raw": "Static normalisers and selected fixed mask & Validation/static selection partition & No & Reference selection and metric normalisation only \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 3,
+    "text": "PD-PPO training hyperparameters for the final benchmark.",
+    "raw": "PD-PPO training hyperparameters for the final benchmark."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 10,
+    "text": "Parameter & Value \\\\",
+    "raw": "Parameter & Value \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 12,
+    "text": "Policy timesteps & 200,000 \\\\",
+    "raw": "Policy timesteps & 200,000 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 13,
+    "text": "PPO rollout / batch / epochs & 1024 / 128 / 8 \\\\",
+    "raw": "PPO rollout / batch / epochs & 1024 / 128 / 8 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 14,
+    "text": "Actor/critic network & Candidate mask embeddings; 32-dimensional action embeddings; 128 hidden units; actor and critic conditioned on event context \\\\",
+    "raw": "Actor/critic network & Candidate mask embeddings; 32-dimensional action embeddings; 128 hidden units; actor and critic conditioned on event context \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 15,
+    "text": "Learning rate / discount / GAE MATH & 0.0003 / 0.99 / 0.95 \\\\",
+    "raw": "Learning rate / discount / GAE $\\lambda$ & 0.0003 / 0.99 / 0.95 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 16,
+    "text": "Clip MATH / entropy coef. / value coef. & 0.2 / 0.0075 / 0.5 \\\\",
+    "raw": "Clip $\\epsilon$ / entropy coef. / value coef. & 0.2 / 0.0075 / 0.5 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 17,
+    "text": "MATH / MATH & 2.5 / 5.0; guide prior not used \\\\",
+    "raw": "$\\beta_{\\mathrm{BC}}$ / $\\beta_{\\mathrm{event}}$ & 2.5 / 5.0; guide prior not used \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 18,
+    "text": "Minimum on-time / switch cost & 6 epochs / 0.001 \\\\",
+    "raw": "Minimum on-time / switch cost & 6 epochs / 0.001 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/pdppo_training_hyperparameters.tex",
+    "line": 19,
+    "text": "Behaviour-cloning pretraining & 10,000 steps; 18 epochs; batch 256 \\\\",
+    "raw": "Behaviour-cloning pretraining & 10,000 steps; 18 epochs; batch 256 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 3,
+    "text": "Comparison references used in the evaluation.",
+    "raw": "Comparison references used in the evaluation."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 10,
+    "text": "Reference family & Role in the protocol & Interpretation \\\\",
+    "raw": "Reference family & Role in the protocol & Interpretation \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 13,
+    "text": "& Select one feasible fixed mask before final testing.",
+    "raw": "& Select one feasible fixed mask before final testing."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 14,
+    "text": "& Main fixed-subset comparator. \\\\",
+    "raw": "& Main fixed-subset comparator. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 16,
+    "text": "& Use feasible cycling, stale-channel priority, or random rules.",
+    "raw": "& Use feasible cycling, stale-channel priority, or random rules."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 17,
+    "text": "& Non-learned dynamic comparators. \\\\",
+    "raw": "& Non-learned dynamic comparators. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 19,
+    "text": "& Replay one constant mask without duty guards or fallback rotation.",
+    "raw": "& Replay one constant mask without duty guards or fallback rotation."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 20,
+    "text": "& Constant-mask comparison under matched replay. \\\\",
+    "raw": "& Constant-mask comparison under matched replay. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 22,
+    "text": "& Choose specialists from event type during replay.",
+    "raw": "& Choose specialists from event type during replay."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 23,
+    "text": "& Privileged-information diagnostic, not the learned controller. \\\\",
+    "raw": "& Privileged-information diagnostic, not the learned controller. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 25,
+    "text": "& Measure mask diversity, event-mask dependence, and fixed/cycle patterns.",
+    "raw": "& Measure mask diversity, event--mask dependence, and fixed/cycle patterns."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 26,
+    "text": "& Describes non-fixed, non-cycle behaviour. \\\\",
+    "raw": "& Describes non-fixed, non-cycle behaviour. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 28,
+    "text": "& Retrain PD-PPO variants with selected components removed.",
+    "raw": "& Retrain PD-PPO variants with selected components removed."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/baseline_reference_taxonomy.tex",
+    "line": 29,
+    "text": "& Tests mechanism reliability. \\\\",
+    "raw": "& Tests mechanism reliability. \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/05_simulation_setup.tex",
+    "line": 1,
+    "text": "Simulation and Evaluation Setup",
+    "raw": "Simulation and Evaluation Setup"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/05_simulation_setup.tex",
+    "line": 4,
+    "text": "Benchmark sensing system",
+    "raw": "Benchmark sensing system"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/05_simulation_setup.tex",
+    "line": 33,
+    "text": "Truth-sequence generation",
+    "raw": "Truth-sequence generation"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/05_simulation_setup.tex",
+    "line": 59,
+    "text": "Metrics, seeds, and statistical summaries",
+    "raw": "Metrics, seeds, and statistical summaries"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/05_simulation_setup.tex",
+    "line": 96,
+    "text": "Behavioural checks",
+    "raw": "Behavioural checks"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/05_simulation_setup.tex",
+    "line": 24,
+    "text": "Author-rendered AWS platform used to motivate the benchmark sensing system. The simulator represents the platform as a required meteorological backbone plus one specialist sensing slot, so the image is a physical anchor rather than the experimental wiring diagram.",
+    "raw": "Author-rendered AWS platform used to motivate the benchmark sensing\n  system. The simulator represents the platform as a required meteorological\n  backbone plus one specialist sensing slot, so the image is a physical anchor\n  rather than the experimental wiring diagram."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/sensor_specs.tex",
+    "line": 3,
+    "text": "Logical channels and normalised scheduling costs.",
+    "raw": "Logical channels and normalised scheduling costs."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 9,
+    "text": "Idx & Logical channel & Main observed variables",
+    "raw": "Idx & Logical channel & Main observed variables"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 10,
+    "text": "& MATH & MATH & Warm-up \\\\",
+    "raw": "& $p_i$ & $p_i^{\\mathrm{peak}}$ & Warm-up \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 12,
+    "text": "1 & Meteorological backbone",
+    "raw": "1 & Meteorological backbone"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 13,
+    "text": "& wind, air temperature, humidity, pressure",
+    "raw": "& wind, air temperature, humidity, pressure"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 14,
+    "text": "& 0.25 & 0.30 & 0 \\\\",
+    "raw": "& 0.25 & 0.30 & 0 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 15,
+    "text": "2 & Basic radiometer",
+    "raw": "2 & Basic radiometer"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 16,
+    "text": "& solar radiation",
+    "raw": "& solar radiation"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 17,
+    "text": "& 0.08 & 0.10 & 0 \\\\",
+    "raw": "& 0.08 & 0.10 & 0 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 18,
+    "text": "3 & Shielded thermo-hygro",
+    "raw": "3 & Shielded thermo-hygro"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 19,
+    "text": "& air temperature, humidity",
+    "raw": "& air temperature, humidity"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 20,
+    "text": "& 0.18 & 0.22 & 0 \\\\",
+    "raw": "& 0.18 & 0.22 & 0 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 21,
+    "text": "4 & Surface IR thermometer",
+    "raw": "4 & Surface IR thermometer"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 22,
+    "text": "& snow-surface temperature, thermal-regime evidence",
+    "raw": "& snow-surface temperature, thermal-regime evidence"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 23,
+    "text": "& 0.49 & 0.62 & 1 \\\\",
+    "raw": "& 0.49 & 0.62 & 1 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 24,
+    "text": "5 & Laser disdrometer",
+    "raw": "5 & Laser disdrometer"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 25,
+    "text": "& particle diameter, particle velocity, particle microstructure evidence",
+    "raw": "& particle diameter, particle velocity, particle microstructure evidence"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 26,
+    "text": "& 0.49 & 0.62 & 2 \\\\",
+    "raw": "& 0.49 & 0.62 & 2 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 27,
+    "text": "6 & FC4 flux",
+    "raw": "6 & FC4 flux"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 28,
+    "text": "& snow mass flux, snow-flux evidence",
+    "raw": "& snow mass flux, snow-flux evidence"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/sensor_specs.tex",
+    "line": 29,
+    "text": "& 0.49 & 0.62 & 1 \\\\",
+    "raw": "& 0.49 & 0.62 & 1 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 3,
+    "text": "Main evaluation protocol parameters for the final benchmark.",
+    "raw": "Main evaluation protocol parameters for the final benchmark."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 10,
+    "text": "Item & Value \\\\",
+    "raw": "Item & Value \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 12,
+    "text": "Final seeds & 117-140 \\\\",
+    "raw": "Final seeds & 117--140 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 13,
+    "text": "Truth length & 70,000 hourly epochs per seed \\\\",
+    "raw": "Truth length & 70,000 hourly epochs per seed \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 14,
+    "text": "Chronological partitions & [0,24500) forecaster fitting; [24500,59500) policy learning; [59500,64750) static selection; [64750,70000) final test \\\\",
+    "raw": "Chronological partitions & [0,24500) forecaster fitting; [24500,59500) policy learning; [59500,64750) static selection; [64750,70000) final test \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 15,
+    "text": "Forecast lookback / horizon & 20 / 8 epochs \\\\",
+    "raw": "Forecast lookback / horizon & 20 / 8 epochs \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 16,
+    "text": "Evaluation rollouts & 8 rollouts, 512 steps each \\\\",
+    "raw": "Evaluation rollouts & 8 rollouts, 512 steps each \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 17,
+    "text": "Candidate masks & 6 \\\\",
+    "raw": "Candidate masks & 6 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 18,
+    "text": "Required channel & meteorological backbone \\\\",
+    "raw": "Required channel & meteorological backbone \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 19,
+    "text": "Power / startup limits & 0.75 / 0.95 \\\\",
+    "raw": "Power / startup limits & 0.75 / 0.95 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 20,
+    "text": "Minimum on-time & 6 epochs \\\\",
+    "raw": "Minimum on-time & 6 epochs \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 21,
+    "text": "Static selection score & Macro event loss normalised by static references \\\\",
+    "raw": "Static selection score & Macro event loss normalised by static references \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 22,
+    "text": "Event type mix & particle/flux/thermal = 0.40/0.20/0.40 \\\\",
+    "raw": "Event type mix & particle/flux/thermal = 0.40/0.20/0.40 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 23,
+    "text": "Event coverage target & 0.68 \\\\",
+    "raw": "Event coverage target & 0.68 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 24,
+    "text": "Normalisation & forecaster input/target scales fitted before policy updates; static reference scales fitted on static selection windows only \\\\",
+    "raw": "Normalisation & forecaster input/target scales fitted before policy updates; static reference scales fitted on static selection windows only \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 25,
+    "text": "Checkpoint/reference selection & final policy checkpoint fixed after policy learning; fixed mask selected by lowest static selection macro score \\\\",
+    "raw": "Checkpoint/reference selection & final policy checkpoint fixed after policy learning; fixed mask selected by lowest static selection macro score \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/main_protocol_hyperparameters.tex",
+    "line": 26,
+    "text": "Computation & GPU optimisation; metrics computed from held-out rollouts \\\\",
+    "raw": "Computation & GPU optimisation; metrics computed from held-out rollouts \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/static_mask_selection_summary.tex",
+    "line": 3,
+    "text": "Validation-selected fixed mask references over the final seeds.",
+    "raw": "Validation-selected fixed mask references over the final seeds."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_summary.tex",
+    "line": 8,
+    "text": "Id & Fixed channels & Seeds & Mean validation score & Power \\\\",
+    "raw": "Id & Fixed channels & Seeds & Mean validation score & Power \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_summary.tex",
+    "line": 10,
+    "text": "5 & Weather backbone + FC4 flux & 13/24 & 0.899 & 0.74 \\\\",
+    "raw": "5 & Weather backbone + FC4 flux & 13/24 & 0.899 & 0.74 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_summary.tex",
+    "line": 11,
+    "text": "3 & Weather backbone + Surface IR & 9/24 & 0.859 & 0.74 \\\\",
+    "raw": "3 & Weather backbone + Surface IR & 9/24 & 0.859 & 0.74 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_summary.tex",
+    "line": 12,
+    "text": "4 & Weather backbone + Laser disdrometer & 2/24 & 0.905 & 0.74 \\\\",
+    "raw": "4 & Weather backbone + Laser disdrometer & 2/24 & 0.905 & 0.74 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/06_results.tex",
+    "line": 1,
+    "text": "Results",
+    "raw": "Results"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/06_results.tex",
+    "line": 14,
+    "text": "Main held-out comparisons",
+    "raw": "Main held-out comparisons"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/06_results.tex",
+    "line": 46,
+    "text": "Event type decomposition and diagnostic replay",
+    "raw": "Event type decomposition and diagnostic replay"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/06_results.tex",
+    "line": 93,
+    "text": "Behavioural diagnostics",
+    "raw": "Behavioural diagnostics"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/06_results.tex",
+    "line": 118,
+    "text": "Mechanism ablation",
+    "raw": "Mechanism ablation"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/06_results.tex",
+    "line": 139,
+    "text": "Robustness checks",
+    "raw": "Robustness checks"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/06_results.tex",
+    "line": 37,
+    "text": "Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step margin and overlays the corresponding macro margin and the range of prespecified step margin thresholds. Panel B shows seed paired margin distributions for the main step and macro comparisons. All 24 seeds remain positive in the reported comparisons, and all step margins exceed the threshold range shown in Panel A.",
+    "raw": "Seed evidence for the final 24-seed benchmark. Panel A sorts\n  seeds by fixed mask step margin and overlays the corresponding macro margin\n  and the range of prespecified step margin thresholds. Panel B shows seed paired\n  margin distributions for the main step and macro comparisons. All 24 seeds\n  remain positive in the reported comparisons, and all step margins exceed the\n  threshold range shown in Panel A."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/06_results.tex",
+    "line": 58,
+    "text": "Event type diagnostics for the final benchmark. Panel A is the primary specialist selection frequency heatmap: each cell reports the mean fraction of steps, averaged over 24 seeds, in which the learned policy selects the column specialist during windows of the row event type. Panel B shows per-seed macro margins normalised by static references against the validation-selected fixed mask reference, with each point representing one seed. The heatmap shows regime-dependent specialist use rather than a fixed specialist shortcut.",
+    "raw": "Event type diagnostics for the final benchmark. Panel A is the\n  primary specialist selection frequency heatmap: each cell reports the mean\n  fraction of steps, averaged over 24 seeds, in which the learned policy selects\n  the column specialist during windows of the row event type. Panel B shows\n  per-seed macro margins normalised by static references against the\n  validation-selected fixed mask reference, with each point representing one\n  seed. The heatmap shows regime-dependent specialist use rather than a fixed\n  specialist shortcut."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/06_results.tex",
+    "line": 99,
+    "text": "Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions of three scalar diagnostics: mask entropy for action diversity, event-mask mutual information for state dependence of specialist choice, and sensor-use separation for regime-conditioned specialist concentration. Panel B shows the specialist selection frequency heatmap, the same quantity as Panel A, alongside the scalar diagnostics. The repetition co-locates the visual selection pattern with the quantitative behavioural metrics. The combined evidence rules out a constant mask or a simple periodic rotation as the explanation for the result.",
+    "raw": "Behavioural diagnostics for the final 24-seed benchmark. Panel A\n  reports seed distributions of three scalar diagnostics: mask entropy for action\n  diversity, event--mask mutual information for state dependence of specialist\n  choice, and sensor-use separation for regime-conditioned specialist\n  concentration. Panel B shows the specialist selection frequency heatmap, the\n  same quantity as \\Cref{fig:event_type_diagnostics} Panel A, alongside the\n  scalar diagnostics. The repetition co-locates the visual selection pattern with\n  the quantitative behavioural metrics. The combined evidence rules out a\n  constant mask or a simple periodic rotation as the explanation for the result."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 3,
+    "text": "Final 24-seed evidence for the macro score across regimes.",
+    "raw": "Final 24-seed evidence for the macro score across regimes."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 9,
+    "text": "Quantity & Result \\\\",
+    "raw": "Quantity & Result \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 11,
+    "text": "Evaluated test seeds & 24 \\\\",
+    "raw": "Evaluated test seeds & 24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 12,
+    "text": "Step-loss wins vs. validation-selected references & 24/24 \\\\",
+    "raw": "Step-loss wins vs. validation-selected references & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 13,
+    "text": "Macro-score wins vs. validation-selected references & 24/24 \\\\",
+    "raw": "Macro-score wins vs. validation-selected references & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 14,
+    "text": "Event label replay improves over fixed mask replay, step loss & 24/24 \\\\",
+    "raw": "Event label replay improves over fixed mask replay, step loss & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 15,
+    "text": "Event label replay improves over fixed mask replay, macro score & 24/24 \\\\",
+    "raw": "Event label replay improves over fixed mask replay, macro score & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 16,
+    "text": "Behavioural diagnostics support non-degenerate scheduling & 24/24 \\\\",
+    "raw": "Behavioural diagnostics support non-degenerate scheduling & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 17,
+    "text": "PD-PPO step-loss wins vs. fixed mask replay & 24/24 \\\\",
+    "raw": "PD-PPO step-loss wins vs. fixed mask replay & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 18,
+    "text": "PD-PPO macro-score wins vs. fixed mask replay & 24/24 \\\\",
+    "raw": "PD-PPO macro-score wins vs. fixed mask replay & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 19,
+    "text": "Prespecified fixed-mask step-margin criterion & 24/24 \\\\",
+    "raw": "Prespecified fixed-mask step-margin criterion & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 20,
+    "text": "Mean step margin vs. best selected baseline & 0.1494 \\\\",
+    "raw": "Mean step margin vs. best selected baseline & 0.1494 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 21,
+    "text": "Median step margin vs. best selected baseline & 0.1060 \\\\",
+    "raw": "Median step margin vs. best selected baseline & 0.1060 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 23,
+    "text": "Mean macro margin vs. best selected baseline & 0.0841 \\\\",
+    "raw": "Mean macro margin vs. best selected baseline & 0.0841 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 24,
+    "text": "Median macro margin vs. best selected baseline & 0.0884 \\\\",
+    "raw": "Median macro margin vs. best selected baseline & 0.0884 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 26,
+    "text": "Mean learned macro margin vs. fixed mask replay & 0.0710 \\\\",
+    "raw": "Mean learned macro margin vs. fixed mask replay & 0.0710 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 27,
+    "text": "Median learned macro margin vs. fixed mask replay & 0.0673 \\\\",
+    "raw": "Median learned macro margin vs. fixed mask replay & 0.0673 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 29,
+    "text": "Mean event label diagnostic macro margin vs. fixed mask replay & 0.0773 \\\\",
+    "raw": "Mean event label diagnostic macro margin vs. fixed mask replay & 0.0773 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 30,
+    "text": "Median event label diagnostic macro margin vs. fixed mask replay & 0.0726 \\\\",
+    "raw": "Median event label diagnostic macro margin vs. fixed mask replay & 0.0726 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 31,
+    "text": "Sign test, selected-baseline paired improvements & MATH \\\\",
+    "raw": "Sign test, selected-baseline paired improvements & $p=5.96\\times10^{-8}$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 32,
+    "text": "Sign test, fixed mask step margin result & MATH \\\\",
+    "raw": "Sign test, fixed mask step margin result & $p=5.96\\times10^{-8}$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/regime_balanced_24seed_summary.tex",
+    "line": 33,
+    "text": "Minimum fixed mask step margin & 0.0285 \\\\",
+    "raw": "Minimum fixed mask step margin & 0.0285 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/event_type_loss_decomposition.tex",
+    "line": 3,
+    "text": "Event type diagnostic loss decomposition on final test rollouts.",
+    "raw": "Event type diagnostic loss decomposition on final test rollouts."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_type_loss_decomposition.tex",
+    "line": 9,
+    "text": "Event type & PD-PPO & Fixed mask & Best rule & Margin vs. fixed & Positive seeds \\\\",
+    "raw": "Event type & PD-PPO & Fixed mask & Best rule & Margin vs. fixed & Positive seeds \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_type_loss_decomposition.tex",
+    "line": 11,
+    "text": "Particle & 0.968 MATH 0.010 & 0.993 MATH 0.009 & 1.005 MATH 0.003 & 0.025 MATH 0.006 & 18/24 \\\\",
+    "raw": "Particle & 0.968 $\\pm$ 0.010 & 0.993 $\\pm$ 0.009 & 1.005 $\\pm$ 0.003 & 0.025 $\\pm$ 0.006 & 18/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_type_loss_decomposition.tex",
+    "line": 12,
+    "text": "Flux & 0.747 MATH 0.009 & 0.870 MATH 0.029 & 0.970 MATH 0.004 & 0.123 MATH 0.032 & 12/24 \\\\",
+    "raw": "Flux & 0.747 $\\pm$ 0.009 & 0.870 $\\pm$ 0.029 & 0.970 $\\pm$ 0.004 & 0.123 $\\pm$ 0.032 & 12/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_type_loss_decomposition.tex",
+    "line": 13,
+    "text": "Thermal & 0.797 MATH 0.016 & 0.906 MATH 0.029 & 0.946 MATH 0.014 & 0.109 MATH 0.026 & 16/24 \\\\",
+    "raw": "Thermal & 0.797 $\\pm$ 0.016 & 0.906 $\\pm$ 0.029 & 0.946 $\\pm$ 0.014 & 0.109 $\\pm$ 0.026 & 16/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_type_loss_decomposition.tex",
+    "line": 14,
+    "text": "Macro average & 0.837 MATH 0.007 & 0.923 MATH 0.006 & 0.974 MATH 0.005 & 0.086 MATH 0.006 & 24/24 \\\\",
+    "raw": "Macro average & 0.837 $\\pm$ 0.007 & 0.923 $\\pm$ 0.006 & 0.974 $\\pm$ 0.005 & 0.086 $\\pm$ 0.006 & 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 3,
+    "text": "Mechanism ablation over 24 seeds with continuous macro margins.",
+    "raw": "Mechanism ablation over 24 seeds with continuous macro margins."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 10,
+    "text": "Policy variant & Strict step & Behaviour & Mean macro\\ & Median macro\\ & MATH vs full \\\\",
+    "raw": "Policy variant & Strict step & Behaviour & \\shortstack{Mean macro\\\\margin} & \\shortstack{Median macro\\\\margin} & \\shortstack{$\\Delta$ vs full} \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 12,
+    "text": "Full PD-PPO & 24/24 & 24/24 & 0.0710 & 0.0673 & - \\\\",
+    "raw": "Full PD-PPO & 24/24 & 24/24 & 0.0710 & 0.0673 & -- \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 13,
+    "text": "3r95\\",
+    "raw": "\\multicolumn{3}{r}{\\emph{95\\% CI}} & $[0.0624, 0.0796]$ & $[0.0603, 0.0805]$ & -- \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 15,
+    "text": "No imitation guide & 23/24 & 24/24 & 0.0689 & 0.0753 & -0.0020 \\\\",
+    "raw": "No imitation guide & 23/24 & 24/24 & 0.0689 & 0.0753 & -0.0020 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 16,
+    "text": "3r95\\",
+    "raw": "\\multicolumn{3}{r}{\\emph{95\\% CI}} & $[0.0603, 0.0773]$ & $[0.0612, 0.0802]$ & $[-0.0103, 0.0061]$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 18,
+    "text": "No event context auxiliary signal & 21/24 & 24/24 & 0.0665 & 0.0713 & -0.0045 \\\\",
+    "raw": "No event context auxiliary signal & 21/24 & 24/24 & 0.0665 & 0.0713 & -0.0045 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 19,
+    "text": "3r95\\",
+    "raw": "\\multicolumn{3}{r}{\\emph{95\\% CI}} & $[0.0537, 0.0792]$ & $[0.0469, 0.0882]$ & $[-0.0130, 0.0037]$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 21,
+    "text": "No balanced training loss & 24/24 & 24/24 & 0.0703 & 0.0711 & -0.0007 \\\\",
+    "raw": "No balanced training loss & 24/24 & 24/24 & 0.0703 & 0.0711 & -0.0007 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/mechanism_ablation_summary.tex",
+    "line": 22,
+    "text": "3r95\\",
+    "raw": "\\multicolumn{3}{r}{\\emph{95\\% CI}} & $[0.0605, 0.0800]$ & $[0.0559, 0.0819]$ & $[-0.0071, 0.0059]$ \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/event_mix_robustness_summary.tex",
+    "line": 3,
+    "text": "Sensitivity checks under changed event mixtures.",
+    "raw": "Sensitivity checks under changed event mixtures."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_mix_robustness_summary.tex",
+    "line": 9,
+    "text": "Setting & Event mix & Seeds & Step margin & Macro margin & Strict / behaviour \\\\",
+    "raw": "Setting & Event mix & Seeds & Step margin & Macro margin & Strict / behaviour \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_mix_robustness_summary.tex",
+    "line": 11,
+    "text": "Main benchmark & 0.40/0.20/0.40 & 24 & 0.149 / 0.106 & 0.084 / 0.088 & 24/24 / 24/24 \\\\",
+    "raw": "Main benchmark & 0.40/0.20/0.40 & 24 & 0.149 / 0.106 & 0.084 / 0.088 & 24/24 / 24/24 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_mix_robustness_summary.tex",
+    "line": 12,
+    "text": "Higher-flux mixture & 0.35/0.30/0.35 & 6 & 0.169 / 0.102 & 0.094 / 0.094 & 6/6 / 6/6 \\\\",
+    "raw": "Higher-flux mixture & 0.35/0.30/0.35 & 6 & 0.169 / 0.102 & 0.094 / 0.094 & 6/6 / 6/6 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/event_mix_robustness_summary.tex",
+    "line": 13,
+    "text": "Lower-flux mixture & 0.45/0.10/0.45 & 6 & 0.092 / 0.102 & 0.088 / 0.098 & 6/6 / 6/6 \\\\",
+    "raw": "Lower-flux mixture & 0.45/0.10/0.45 & 6 & 0.092 / 0.102 & 0.088 / 0.098 & 6/6 / 6/6 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/07_discussion_future_work.tex",
+    "line": 1,
+    "text": "Discussion",
+    "raw": "Discussion"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/07_discussion_future_work.tex",
+    "line": 4,
+    "text": "What the result establishes",
+    "raw": "What the result establishes"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/07_discussion_future_work.tex",
+    "line": 28,
+    "text": "Why the protocol is part of the contribution",
+    "raw": "Why the protocol is part of the contribution"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/07_discussion_future_work.tex",
+    "line": 60,
+    "text": "Role of the auxiliary training signals",
+    "raw": "Role of the auxiliary training signals"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/07_discussion_future_work.tex",
+    "line": 69,
+    "text": "Limitations and next steps",
+    "raw": "Limitations and next steps"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/08_conclusion.tex",
+    "line": 1,
+    "text": "Conclusion",
+    "raw": "Conclusion"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/appendix_theory.tex",
+    "line": 1,
+    "text": "Supplementary Theoretical Details",
+    "raw": "Supplementary Theoretical Details"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/appendix_theory.tex",
+    "line": 3,
+    "text": "Proof of Proposition~",
+    "raw": "Proof of Proposition~\\ref{prop:non_equivalence}"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/appendix_theory.tex",
+    "line": 34,
+    "text": "Proof of Proposition~",
+    "raw": "Proof of Proposition~\\ref{prop:specialist_bottleneck}"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/appendix_theory.tex",
+    "line": 80,
+    "text": "Scheduling from state evidence and simple cycles",
+    "raw": "Scheduling from state evidence and simple cycles"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/appendix_theory.tex",
+    "line": 102,
+    "text": "Relation to Static Subset Allocation",
+    "raw": "Relation to Static Subset Allocation"
+  },
+  {
+    "source": "tex",
+    "role": "heading:subsection",
+    "file": "sections/appendix_theory.tex",
+    "line": 116,
+    "text": "Optional guide prior regulariser",
+    "raw": "Optional guide prior regulariser"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/appendix_theory.tex",
+    "line": 138,
+    "text": "Generator Validation Checks",
+    "raw": "Generator Validation Checks"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/appendix_theory.tex",
+    "line": 164,
+    "text": "Mechanism Ablation Distribution",
+    "raw": "Mechanism Ablation Distribution"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/appendix_theory.tex",
+    "line": 180,
+    "text": "Training Diagnostics",
+    "raw": "Training Diagnostics"
+  },
+  {
+    "source": "tex",
+    "role": "heading:section",
+    "file": "sections/appendix_theory.tex",
+    "line": 204,
+    "text": "Fixed mask reference selection",
+    "raw": "Fixed mask reference selection"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/appendix_theory.tex",
+    "line": 148,
+    "text": "Generator-family validation checks used to bound the benchmark domain.",
+    "raw": "Generator-family validation checks used to bound the benchmark\n  domain."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/appendix_theory.tex",
+    "line": 158,
+    "text": "Statistical checks for the generated truth-sequence family, covering scalar distributions, wind autocorrelation, and event-window heterogeneity.",
+    "raw": "Statistical checks for the generated truth-sequence family, covering\n  scalar distributions, wind autocorrelation, and event-window heterogeneity."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/appendix_theory.tex",
+    "line": 170,
+    "text": "Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for the full policy and three training variants. Panel B reports paired bootstrap confidence intervals for the change in mean macro margin against the full policy; the labels also report the strict fixed mask step margin count. Removing auxiliary signals weakens reliability on the stricter step-margin gate more than it changes the mean macro margin.",
+    "raw": "Mechanism ablation over 24 seeds. Panel A shows seed macro margin\n  distributions for the full policy and three training variants. Panel B reports\n  paired bootstrap confidence intervals for the change in mean macro margin\n  against the full policy; the labels also report the strict fixed mask step\n  margin count. Removing auxiliary signals weakens reliability on the stricter\n  step-margin gate more than it changes the mean macro margin."
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "sections/appendix_theory.tex",
+    "line": 186,
+    "text": "PPO training diagnostics over the 24 final benchmark seeds and the 24 no-imitation ablation seeds. Curves show mean MATH one standard deviation over seeds. These are optimisation traces from the policy-training partition, not held-out validation macro score curves; they are included to document training behaviour; they do not support a separate efficiency claim.",
+    "raw": "PPO training diagnostics over the 24 final benchmark seeds and the\n  24 no-imitation ablation seeds. Curves show mean $\\pm$ one standard deviation\n  over seeds. These are optimisation traces from the policy-training\n  partition, not held-out validation macro score curves; they are included to\n  document training behaviour; they do not support a separate efficiency\n  claim."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 4,
+    "text": "Validation criterion & Value & Acceptance rule & Passed \\\\",
+    "raw": "Validation criterion & Value & Acceptance rule & Passed \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 6,
+    "text": "Wind speed ACF max deviation, lags 1-12 h & MATH & MATH & yes \\\\",
+    "raw": "Wind speed ACF max deviation, lags 1--12 h & $0.048$ & $<0.05$ & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 7,
+    "text": "MATH in 512-step windows & MATH [ MATH ] & MATH & yes \\\\",
+    "raw": "$P(\\mathrm{event\\ fraction}>0.75)$ in 512-step windows & $0.065$ [$0.062,0.067$] & $>0.05$ & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 8,
+    "text": "MATH in 512-step windows & MATH & MATH & yes \\\\",
+    "raw": "$P(\\mathrm{event\\ fraction}<0.25)$ in 512-step windows & $0.539$ & $>0.30$ & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 9,
+    "text": "Max KS statistic for AntAWS scalar variables & MATH & MATH & yes \\\\",
+    "raw": "Max KS statistic for AntAWS scalar variables & $0.0146$ & $<0.05$ & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 10,
+    "text": "Median blowing-snow event duration & MATH h & MATH - MATH h & yes \\\\",
+    "raw": "Median blowing-snow event duration & $18.0$ h & $12$--$20$ h & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 11,
+    "text": "Flux-wind log-log slope & MATH & MATH - MATH & yes \\\\",
+    "raw": "Flux--wind log--log slope & $2.966$ & $2.5$--$3.5$ & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 12,
+    "text": "Diameter-wind Spearman correlation & MATH & MATH & yes \\\\",
+    "raw": "Diameter--wind Spearman correlation & $-0.544$ & $<-0.30$ & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/g1_generator_validation.tex",
+    "line": 13,
+    "text": "Wind speed PSD log-MSE, 0.1-4.0 cpd & MATH & MATH & yes \\\\",
+    "raw": "Wind speed PSD log-MSE, 0.1--4.0 cpd & $0.0419$ & $<0.10$ & yes \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "caption",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 3,
+    "text": "Per-seed validation-selected fixed mask reference.",
+    "raw": "Per-seed validation-selected fixed mask reference."
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 9,
+    "text": "Seed & Fixed channels & Score & Seed & Fixed channels & Score \\\\",
+    "raw": "Seed & Fixed channels & Score & Seed & Fixed channels & Score \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 11,
+    "text": "117 & Weather backbone + FC4 flux & 0.907 & 129 & Weather backbone + FC4 flux & 0.892 \\\\",
+    "raw": "117 & Weather backbone + FC4 flux & 0.907 & 129 & Weather backbone + FC4 flux & 0.892 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 12,
+    "text": "118 & Weather backbone + FC4 flux & 0.928 & 130 & Weather backbone + Surface IR & 0.820 \\\\",
+    "raw": "118 & Weather backbone + FC4 flux & 0.928 & 130 & Weather backbone + Surface IR & 0.820 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 13,
+    "text": "119 & Weather backbone + Surface IR & 0.804 & 131 & Weather backbone + FC4 flux & 0.873 \\\\",
+    "raw": "119 & Weather backbone + Surface IR & 0.804 & 131 & Weather backbone + FC4 flux & 0.873 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 14,
+    "text": "120 & Weather backbone + FC4 flux & 0.901 & 132 & Weather backbone + FC4 flux & 0.915 \\\\",
+    "raw": "120 & Weather backbone + FC4 flux & 0.901 & 132 & Weather backbone + FC4 flux & 0.915 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 15,
+    "text": "121 & Weather backbone + FC4 flux & 0.859 & 133 & Weather backbone + Surface IR & 0.825 \\\\",
+    "raw": "121 & Weather backbone + FC4 flux & 0.859 & 133 & Weather backbone + Surface IR & 0.825 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 16,
+    "text": "122 & Weather backbone + Surface IR & 0.844 & 134 & Weather backbone + Surface IR & 0.940 \\\\",
+    "raw": "122 & Weather backbone + Surface IR & 0.844 & 134 & Weather backbone + Surface IR & 0.940 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 17,
+    "text": "123 & Weather backbone + FC4 flux & 0.905 & 135 & Weather backbone + Laser disdrometer & 0.930 \\\\",
+    "raw": "123 & Weather backbone + FC4 flux & 0.905 & 135 & Weather backbone + Laser disdrometer & 0.930 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 18,
+    "text": "124 & Weather backbone + Surface IR & 0.847 & 136 & Weather backbone + FC4 flux & 0.892 \\\\",
+    "raw": "124 & Weather backbone + Surface IR & 0.847 & 136 & Weather backbone + FC4 flux & 0.892 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 19,
+    "text": "125 & Weather backbone + Surface IR & 0.926 & 137 & Weather backbone + Laser disdrometer & 0.880 \\\\",
+    "raw": "125 & Weather backbone + Surface IR & 0.926 & 137 & Weather backbone + Laser disdrometer & 0.880 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 20,
+    "text": "126 & Weather backbone + FC4 flux & 0.887 & 138 & Weather backbone + FC4 flux & 0.888 \\\\",
+    "raw": "126 & Weather backbone + FC4 flux & 0.887 & 138 & Weather backbone + FC4 flux & 0.888 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 21,
+    "text": "127 & Weather backbone + FC4 flux & 0.904 & 139 & Weather backbone + Surface IR & 0.821 \\\\",
+    "raw": "127 & Weather backbone + FC4 flux & 0.904 & 139 & Weather backbone + Surface IR & 0.821 \\\\"
+  },
+  {
+    "source": "tex",
+    "role": "table-row/source",
+    "file": "tables/static_mask_selection_ledger.tex",
+    "line": 22,
+    "text": "128 & Weather backbone + FC4 flux & 0.933 & 140 & Weather backbone + Surface IR & 0.905 \\\\",
+    "raw": "128 & Weather backbone + FC4 flux & 0.933 & 140 & Weather backbone + Surface IR & 0.905 \\\\"
+  }
+]

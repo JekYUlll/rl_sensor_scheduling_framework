@@ -1,0 +1,27 @@
+[2026-06-21T16:01:55+08:00] scenebal2 watch tick
+Connection closed by 223.111.157.214 port 22
+rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
+rsync error: unexplained error (code 255) at io.c(232) [Receiver=3.2.7]
+[2026-06-21T16:01:55+08:00] sync outputs failed or incomplete
+[2026-06-21T16:01:57+08:00] remote session ended but decision aggregate is not present; retrying
+[2026-06-21T16:02:34+08:00] scenebal2 watch tick
+[2026-06-21T16:02:40+08:00] remote session still active; waiting
+[2026-06-21T16:07:40+08:00] scenebal2 watch tick
+[2026-06-21T16:07:46+08:00] remote session still active; waiting
+[2026-06-21T16:12:46+08:00] scenebal2 watch tick
+Connection closed by 223.111.157.214 port 22
+rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
+rsync error: unexplained error (code 255) at io.c(232) [Receiver=3.2.7]
+[2026-06-21T16:12:48+08:00] sync outputs failed or incomplete
+[2026-06-21T16:12:50+08:00] remote session still active; waiting
+[2026-06-21T16:17:50+08:00] scenebal2 watch tick
+kex_exchange_identification: read: Connection reset by peer
+Connection reset by 223.111.157.214 port 22
+rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
+rsync error: unexplained error (code 255) at io.c(232) [Receiver=3.2.7]
+[2026-06-21T16:17:53+08:00] sync outputs failed or incomplete
+kex_exchange_identification: read: Connection reset by peer
+Connection reset by 223.111.157.214 port 22
+[2026-06-21T16:17:54+08:00] remote session ended but decision aggregate is not present; retrying
+[2026-06-21T16:22:54+08:00] scenebal2 watch tick
+[2026-06-21T16:23:01+08:00] remote session ended and decision aggregate exists; final sync

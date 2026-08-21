@@ -1,0 +1,54 @@
+{
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v6_static_break.yaml",
+  "oracle_type": "tcn",
+  "target_profiles": {
+    "transport_v6": [
+      0.2,
+      0.2,
+      0.3,
+      0.05,
+      0.05,
+      0.05,
+      8.0,
+      4.0,
+      4.0
+    ]
+  },
+  "rows": [
+    {
+      "profile": "transport_v6",
+      "budget": 1.1,
+      "startup_peak_budget": 1.6,
+      "required_sensors": "",
+      "candidate_count": 99,
+      "dynamic_count": 40,
+      "best_static_sensor_ids": "met_station_core|surface_temp_ir|ultrasonic_anemometer_hd|snow_particle_counter",
+      "best_static_loss": 0.1800165450313215,
+      "best_static_event_loss": 0.2008120389894033,
+      "best_static_non_event_loss": 0.1475755744567141,
+      "best_static_has_laser": false,
+      "best_static_has_fc4": false,
+      "best_static_has_spc": true,
+      "top5_static_laser_frac": 0.0,
+      "top5_static_fc4_frac": 0.2,
+      "top5_static_spc_frac": 1.0,
+      "best_dynamic_sensor_ids": "dynamic:auto_non36_event51_lead0",
+      "best_dynamic_loss": 0.1782206051921093,
+      "best_dynamic_event_loss": 0.1983018269201215,
+      "best_dynamic_non_event_loss": 0.1468938992964104,
+      "best_dynamic_has_laser": false,
+      "best_dynamic_has_fc4": false,
+      "best_dynamic_has_spc": true,
+      "best_dynamic_switches_per_step": 0.00927734375,
+      "dynamic_margin": 0.009976526540378365,
+      "event_dynamic_margin": 0.012500306664453897,
+      "laser_shortcut_broken": true,
+      "dynamic_headroom": false,
+      "gate_pass": false,
+      "combo": "transport_v6_b1p10_p1p60",
+      "out_dir": "reports/v31_static_break_calibration_tcn_gate_20260607/transport_v6_b1p10_p1p60",
+      "log_path": "reports/v31_static_break_calibration_tcn_gate_20260607/transport_v6_b1p10_p1p60.log"
+    }
+  ],
+  "failures": []
+}

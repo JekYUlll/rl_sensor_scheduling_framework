@@ -11,6 +11,27 @@ from scheduling.rl.q_network import QNetwork
 from scheduling.rl.replay_buffer import ReplayBuffer
 
 
+class RunningRewardNormalizer:
+    """Online Welford mean/variance normalizer for reward signals."""
+
+    def __init__(self, clip: float = 10.0, enabled: bool = True) -> None:
+        self.mean = 0.0
+        self.var = 1.0
+        self.count = 0
+        self.clip = clip
+        self.enabled = enabled
+
+    def update_and_normalize(self, r: float) -> float:
+        if not self.enabled:
+            return r
+        self.count += 1
+        delta = r - self.mean
+        self.mean += delta / self.count
+        self.var = self.var + (delta * (r - self.mean) - self.var) / max(self.count, 1)
+        std = max(self.var ** 0.5, 1e-6)
+        return float(np.clip((r - self.mean) / std, -self.clip, self.clip))
+
+
 class DQNAgent:
     def __init__(self, state_dim: int, action_dim: int, cfg: dict, device: str | None = None) -> None:
         hidden_dims = cfg.get("network", {}).get("hidden_dims", [128, 128])
@@ -44,7 +65,13 @@ class DQNAgent:
             eps_end=float(expl_cfg.get("eps_end", 0.05)),
             decay_steps=int(expl_cfg.get("eps_decay_steps", 10000)),
         )
+        norm_cfg = cfg.get("reward_normalization", {})
+        self.reward_normalizer = RunningRewardNormalizer(
+            clip=float(norm_cfg.get("clip", 10.0)),
+            enabled=bool(norm_cfg.get("enabled", True)),
+        )
         self.total_steps = 0
+        self._ep_q_vals: list[float] = []
 
     def _resolve_feasible(self, feasible_action_ids: list[int] | None) -> list[int]:
         if feasible_action_ids:
@@ -64,7 +91,20 @@ class DQNAgent:
             feasible_tensor = torch.as_tensor(feasible, dtype=torch.int64, device=self.device)
             feasible_q = qv.index_select(0, feasible_tensor)
             best_idx = int(torch.argmax(feasible_q).item())
+            if not greedy:
+                self._ep_q_vals.extend(feasible_q.cpu().tolist())
             return int(feasible[best_idx])
+
+    def get_q_stats(self) -> dict[str, float]:
+        if not self._ep_q_vals:
+            return {"q_mean": float("nan"), "q_max": float("nan"), "q_entropy": float("nan")}
+        arr = np.array(self._ep_q_vals, dtype=np.float64)
+        shifted = arr - arr.max()
+        probs = np.exp(shifted) / np.exp(shifted).sum()
+        entropy = float(-np.sum(probs * np.log(probs + 1e-9)))
+        result = {"q_mean": float(arr.mean()), "q_max": float(arr.max()), "q_entropy": entropy}
+        self._ep_q_vals.clear()
+        return result
 
     def observe(
         self,
@@ -74,6 +114,7 @@ class DQNAgent:
         next_state: np.ndarray,
         done: bool,
     ) -> dict[str, float | None]:
+        reward = self.reward_normalizer.update_and_normalize(reward)
         self.replay.push(state, action, reward, next_state, done)
         self.total_steps += 1
         info: dict[str, float | None] = {"loss": None}

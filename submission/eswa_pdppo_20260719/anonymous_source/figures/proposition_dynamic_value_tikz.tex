@@ -1,0 +1,96 @@
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  >=Latex,
+  font=\sffamily\fontsize{7.8}{9.2}\selectfont,
+  panel/.style={rounded corners=2.2mm,line width=0.8pt,minimum width=4.05cm,
+    minimum height=5.00cm,inner sep=0pt},
+  title/.style={font=\sffamily\fontsize{8.8}{10.3}\selectfont\bfseries,
+    text=pdcharcoal,align=left},
+  badge/.style={font=\sffamily\fontsize{9.2}{10.8}\selectfont\bfseries,
+    text=pdcharcoal,align=center},
+  subtitle/.style={font=\sffamily\fontsize{7.4}{8.6}\selectfont,
+    text=pdslate,align=center,text width=3.65cm},
+  matrixcell/.style={rounded corners=0.8mm,draw=white,line width=0.5pt,
+    minimum width=0.72cm,minimum height=0.46cm,align=center},
+  rowlabel/.style={font=\sffamily\bfseries,text=pdslate,align=right},
+  item/.style={rounded corners=1.2mm,draw=white,line width=0.5pt,
+    minimum width=3.45cm,minimum height=0.53cm,align=center},
+  flow/.style={-Latex,line width=1.15pt,draw=pdslate},
+  note/.style={font=\sffamily\fontsize{7.2}{8.5}\selectfont,text=pdslate,
+    align=center,text width=3.65cm}
+]
+  \definecolor{pdblue}{HTML}{0072B2}
+  \definecolor{pdteal}{HTML}{009E73}
+  \definecolor{pdorange}{HTML}{E69F00}
+  \definecolor{pdslate}{HTML}{56606A}
+  \definecolor{pdcharcoal}{HTML}{28323C}
+  \definecolor{pdlight}{HTML}{EEF2F5}
+
+  \node[panel,fill=pdblue!5,draw=pdblue!65] (panelA) at (2.05,0) {};
+  \node[panel,fill=pdorange!6,draw=pdorange!72] (panelB) at (6.55,0) {};
+  \node[panel,fill=pdteal!6,draw=pdteal!72] (panelC) at (11.05,0) {};
+
+  \node[badge] at (0.30,2.10) {A};
+  \node[title,anchor=west] at (0.60,2.10) {Condition optima};
+  \node[subtitle] at (2.05,1.45)
+    {$n_{\mathrm{opt}}=3$, $q=1$; best channel\\depends on the condition};
+  \node[rowlabel] at (0.75,0.72) {$c\backslash s$};
+  \node[rowlabel] at (0.75,0.18) {$c_1$};
+  \node[rowlabel] at (0.75,-0.36) {$c_2$};
+  \node[rowlabel] at (0.75,-0.90) {$c_3$};
+  \node[rowlabel,align=center] at (1.42,0.72) {$s_1$};
+  \node[rowlabel,align=center] at (2.22,0.72) {$s_2$};
+  \node[rowlabel,align=center] at (3.02,0.72) {$s_3$};
+  \node[matrixcell,fill=pdteal!88,text=white,font=\sffamily\bfseries]
+    at (1.42,0.18) {$s_{c_1}^{\star}$};
+  \node[matrixcell,fill=pdlight,text=pdslate] at (2.22,0.18) {$\times$};
+  \node[matrixcell,fill=pdlight,text=pdslate] at (3.02,0.18) {$\times$};
+  \node[matrixcell,fill=pdlight,text=pdslate] at (1.42,-0.36) {$\times$};
+  \node[matrixcell,fill=pdteal!88,text=white,font=\sffamily\bfseries]
+    at (2.22,-0.36) {$s_{c_2}^{\star}$};
+  \node[matrixcell,fill=pdlight,text=pdslate] at (3.02,-0.36) {$\times$};
+  \node[matrixcell,fill=pdlight,text=pdslate] at (1.42,-0.90) {$\times$};
+  \node[matrixcell,fill=pdlight,text=pdslate] at (2.22,-0.90) {$\times$};
+  \node[matrixcell,fill=pdteal!88,text=white,font=\sffamily\bfseries]
+    at (3.02,-0.90) {$s_{c_3}^{\star}$};
+  \node[note] at (2.05,-1.85)
+    {No single optional channel\\is best for all conditions};
+
+  \node[badge] at (4.80,2.10) {B};
+  \node[title,anchor=west] at (5.10,2.10) {Fixed allocation};
+  \node[subtitle] at (6.55,1.45) {Example: $s=s_2$\\for every condition};
+  \node[item,fill=pdorange!23,text=pdcharcoal] at (6.55,0.60)
+    {$c_1\rightarrow s_2$\quad excess $+\Delta_1$};
+  \node[item,fill=pdteal!16,text=pdcharcoal] at (6.55,-0.02)
+    {$c_2\rightarrow s_2$\quad condition best};
+  \node[item,fill=pdorange!23,text=pdcharcoal] at (6.55,-0.64)
+    {$c_3\rightarrow s_2$\quad excess $+\Delta_3$};
+  \node[note] at (6.55,-1.85)
+    {Every fixed $s$\\has at least one mismatch};
+
+  \node[badge] at (9.30,2.10) {C};
+  \node[title,anchor=west] at (9.60,2.10) {Label-aware policy};
+  \node[subtitle] at (11.05,1.35) {Condition-label access\\guides channel changes};
+  \node[item,fill=pdteal!16,text=pdcharcoal] at (11.05,0.60)
+    {$c_1\rightarrow s_1=s_{c_1}^{\star}$};
+  \node[item,fill=pdteal!16,text=pdcharcoal] at (11.05,-0.02)
+    {$c_2\rightarrow s_2=s_{c_2}^{\star}$};
+  \node[item,fill=pdteal!16,text=pdcharcoal] at (11.05,-0.64)
+    {$c_3\rightarrow s_3=s_{c_3}^{\star}$};
+  \node[note] at (11.05,-1.85)
+    {Transition losses enter\\each condition-specific loss};
+
+  \draw[flow] (panelA.east) -- (panelB.west);
+  \draw[flow] (panelB.east) -- (panelC.west);
+
+  \node[rounded corners=1.6mm,draw=pdslate!55,fill=white,line width=0.7pt,
+    minimum width=13.05cm,minimum height=0.78cm,align=center,
+    font=\sffamily\fontsize{9.0}{10.6}\selectfont,text=pdcharcoal]
+    at (6.55,-3.25)
+    {$\displaystyle
+      L_{\rho}(\pi_s)-
+      L_{\rho}(\pi_{\text{label}})
+      \geq \sum_{c\in\mathcal{C}_{\mathrm{mis}}(s)}
+      \rho_c\Delta_c > 0$};
+\end{tikzpicture}

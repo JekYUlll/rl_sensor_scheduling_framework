@@ -1,0 +1,58 @@
+\documentclass[11pt]{letter}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}
+\usepackage[margin=0.85in]{geometry}
+
+\signature{Yongzhe Li\\Corresponding author\\School of Mechanical Engineering\\Southeast University}
+\address{School of Mechanical Engineering\\Southeast University\\Nanjing 211189, China\\yongzheli@seu.edu.cn}
+
+\begin{document}
+
+\begin{letter}{Editor-in-Chief\\Expert Systems with Applications}
+\opening{Dear Editor,}
+
+Please consider the manuscript, ``Reinforcement learning with forecast-loss rewards for
+sensor scheduling under power constraints,'' for publication as a
+Research Article in \emph{Expert Systems with Applications}.
+
+The paper presents the Prediction-Driven Proximal Policy Optimization (PD-PPO)
+scheduler for a power budget that prevents all channels from operating
+simultaneously. Its complete training configuration combines a
+reward based on forecast loss, behavior cloning pretraining, continuing
+advantage-weighted behavior cloning, an auxiliary future-condition
+classification loss, and
+simulated warning signals. A feasibility layer checks the steady-state and
+startup-peak power limits, while the minimum dwell-time constraint
+determines the executed channel subset. All six candidates satisfy both power
+limits in the reported $q=1$ instance, so the optional-channel cardinality
+constraint and minimum dwell-time constraint are the active restrictions.
+
+Across 22 post-selection evaluation seeds in a controlled six-channel
+cold-region monitoring simulation, the complete PD-PPO configuration achieved
+10.6\% lower mean forecast loss and 8.0\% lower macro-averaged normalized
+forecast loss than the validation-selected fixed-schedule baseline. Both losses are
+lower in every seed and remain lower over each continuous 5,242-step scoreable
+test partition. The separate 24-seed descriptive aggregate, which includes two
+pilot/model-selection seeds, retains the 10.1\% and 7.9\% reductions. The
+evaluation also includes matched PPO training configurations with different
+scalar objectives, a Double DQN training-configuration comparison, an
+alternative-forecaster analysis, and executed-action diagnostics. The
+privileged one-step look-ahead reference uses next-step test targets. The
+privileged true-label baseline uses the exact label sequence
+$c_t,\ldots,c_{t+16}$ at each decision; neither information source is available
+to a deployed scheduler.
+
+The manuscript fits the journal's scope through constrained sensor scheduling,
+forecast-based evaluation, explicit information boundaries, and reproducible
+system-level analysis. It is original, is not under consideration elsewhere,
+and has been approved by both authors. The authors declare no competing interests.
+
+The code and evidence repository will be made public upon acceptance. No
+graphical asset was created or modified using a generative image tool. The
+anonymous manuscript, title page, highlights, supplementary material, and
+reproducibility archive are separate submission files.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}

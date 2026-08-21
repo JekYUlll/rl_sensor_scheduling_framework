@@ -1,0 +1,132 @@
+{
+  "protocol": "chronological_split_v31_retraining",
+  "truth_steps": 90000,
+  "seed": 47,
+  "budget": 1.7,
+  "split_ratios": [
+    0.35,
+    0.5,
+    0.075,
+    0.075
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      31500
+    ],
+    "rl_train": [
+      31500,
+      76500
+    ],
+    "validation": [
+      76500,
+      83250
+    ],
+    "final_test": [
+      83250,
+      90000
+    ]
+  },
+  "truth_event_design": {
+    "event_coverage": 0.28,
+    "min_duration": 12,
+    "max_duration": 24,
+    "min_gap": 4,
+    "lead_steps": 6,
+    "wind_margin_ms": 1.2,
+    "cred_hysteresis_on": 0.6,
+    "cred_hysteresis_off": 0.3,
+    "flux_wind_exponent": 3.0,
+    "event_microstructure_sigma": 0.0,
+    "event_microstructure_alpha": 0.18,
+    "event_microstructure_diameter_scale": 0.0,
+    "event_microstructure_velocity_scale": 0.0,
+    "event_particle_microstructure_correlation": 1.0
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      31500
+    ]
+  },
+  "rl_train": {
+    "range": [
+      31500,
+      76500
+    ],
+    "ppo_start_min": 31500,
+    "ppo_start_max": 75979,
+    "normalization_range": [
+      31500,
+      76500
+    ],
+    "candidate_prior_starts": [
+      39998,
+      48902,
+      58162,
+      67404
+    ],
+    "candidate_prior_steps": 512
+  },
+  "validation": {
+    "static_selection_starts": [
+      77403,
+      78826,
+      80299,
+      81769
+    ],
+    "static_selection_steps": 512
+  },
+  "final_test": {
+    "eval_starts": [
+      83331,
+      84458,
+      85570,
+      86666,
+      87766,
+      88878
+    ],
+    "eval_steps": 1024,
+    "selection": "uniform_random_non_overlapping_without_event_filtering",
+    "skip_rollout_evaluation": true
+  },
+  "operational_baselines": {
+    "eval_duty_constrained_baselines": true,
+    "baseline_duty_hard_low": 0.12,
+    "baseline_duty_hard_high": 0.75,
+    "baseline_duty_hard_score": 12.0,
+    "baseline_duty_score_feedback": 2.5
+  },
+  "reward_shaping": {
+    "lambda_warmup_abort": 0.0,
+    "lambda_switch": 0.002,
+    "energy_account": false,
+    "energy_capacity": 0.0,
+    "initial_energy": 0.0,
+    "harvest_per_step": 0.0,
+    "reserve_energy": 0.0,
+    "lambda_energy_deficit": 1.0,
+    "soc_soft_penalty_buffer": 0.0,
+    "lambda_soc_soft_penalty": 0.0,
+    "lambda_duty_balance": 0.8,
+    "duty_balance_low": 0.12,
+    "duty_balance_high": 0.75,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 2.5,
+    "duty_score_target": 0.4,
+    "duty_hard_guard": true,
+    "duty_hard_low": 0.12,
+    "duty_hard_high": 0.75,
+    "duty_hard_score": 12.0,
+    "min_dwell_steps": 12
+  },
+  "ppo_controls": {
+    "ent_coef": 0.003,
+    "awbc_coef": 0.0,
+    "awbc_label_stride": 4,
+    "prior_kl_coef": 0.05,
+    "greedy_lookahead_steps": 4,
+    "use_candidate_prior": true,
+    "candidate_prior_scale": 0.5
+  }
+}

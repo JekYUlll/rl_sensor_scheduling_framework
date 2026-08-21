@@ -1,0 +1,15 @@
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.43\linewidth}>{\raggedright\arraybackslash}p{0.17\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}c@{}}
+\toprule
+Validation criterion & Value & Acceptance rule & Passed \\
+\midrule
+Wind-speed autocorrelation max deviation, lags 1--12 h & $0.048$ & $<0.05$ & yes \\
+$P(\mathrm{event\ fraction}>0.75)$ in 512-step windows & $0.065$ [$0.062,0.067$] & $>0.05$ & yes \\
+$P(\mathrm{event\ fraction}<0.25)$ in 512-step windows & $0.539$ & $>0.30$ & yes \\
+Max KS statistic against reference distributions from Antarctic AWS stations & $0.0146$ & $<0.05$ & yes \\
+Median blowing-snow event duration & $18.0$ h & $12$--$20$ h & yes \\
+Flux--wind relationship, log--log slope & $2.966$ & $2.5$--$3.5$ & yes \\
+Particle-size--wind correlation, Spearman & $-0.544$ & $<-0.30$ & yes \\
+Wind-speed power spectrum log-MSE, 0.1--4.0 cpd & $0.0419$ & $<0.10$ & yes \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,5 @@
+label=budget1p15_seed41
+budget=1.150000
+seed=41
+eval_path=reports/v31_static_break_v15_micro_flux_ppo_eventpair4_dwell36_teacher_20260608/raw/budget1p15_seed41/v2_custom_ppo_metrics.csv
+log_path=reports/v31_static_break_v15_micro_flux_ppo_eventpair4_dwell36_teacher_20260608/logs/budget1p15_seed41.log

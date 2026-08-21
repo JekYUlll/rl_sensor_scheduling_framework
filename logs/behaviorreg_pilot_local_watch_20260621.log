@@ -1,0 +1,10 @@
+[2026-06-21T06:40:45+08:00] watcher started; session=behaviorreg_pilot_parallel_83_92_20260621 interval=600s max_hours=24
+[2026-06-21T06:40:46+08:00] remote snapshot updated
+[2026-06-21T06:40:47+08:00] aggregate sync complete
+[2026-06-21T06:50:49+08:00] remote snapshot updated
+[2026-06-21T06:50:50+08:00] aggregate sync complete
+kex_exchange_identification: read: Connection reset by peer
+Connection reset by 223.111.157.214 port 22
+[2026-06-21T07:00:51+08:00] remote snapshot updated
+[2026-06-21T07:00:53+08:00] aggregate sync complete
+[2026-06-21T07:00:53+08:00] remote behaviorreg_pilot_parallel_83_92_20260621 tmux session is no longer active; final sync and exit

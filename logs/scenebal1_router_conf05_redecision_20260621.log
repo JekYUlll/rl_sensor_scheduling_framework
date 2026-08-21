@@ -1,0 +1,34 @@
+reports/aggregate/scenebal1_24seed_93_116_router_conf05_decision_audit_20260621.json
+reports/aggregate/scenebal1_24seed_93_116_router_conf05_decision_audit_20260621.md
+{
+  "decision": "upgrade_allseed_strict",
+  "rationale": "all pre-registered gates including strict true-static step pass",
+  "recommendation": {
+    "next_layer": "claim_update",
+    "next_action": "Upgrade the SCENEBAL-1 claim only after confirming every pre-registered aggregate and artifact is present.",
+    "protocol_report": "reports/aggregate/pdppo_next_layer_pivot_designs_20260621.md"
+  },
+  "gates": {
+    "complete_seeds": 24,
+    "step_operational_gate_count": 24,
+    "macro_operational_gate_count": 24,
+    "replay_step_gate_count": 24,
+    "replay_macro_gate_count": 24,
+    "behavior_gate_count": 24,
+    "true_static_macro_gate_count": 24,
+    "true_static_step_strict_gate_count": 24,
+    "true_static_step_positive_count": 24,
+    "old_claim_step_gate_count": 24,
+    "old_claim_macro_gate_count": 24
+  },
+  "failures": {
+    "step_operational_fail_seeds": [],
+    "macro_operational_fail_seeds": [],
+    "replay_step_fail_seeds": [],
+    "replay_macro_fail_seeds": [],
+    "behavior_fail_seeds": [],
+    "true_static_step_sign_fail_seeds": [],
+    "true_static_step_strict_fail_seeds": [],
+    "true_static_macro_fail_seeds": []
+  }
+}

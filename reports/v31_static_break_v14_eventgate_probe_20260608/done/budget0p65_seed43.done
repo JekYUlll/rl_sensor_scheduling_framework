@@ -1,0 +1,5 @@
+label=budget0p65_seed43
+budget=0.650000
+seed=43
+eval_path=reports/v31_static_break_v14_eventgate_probe_20260608/raw/budget0p65_seed43/v2_custom_ppo_metrics.csv
+log_path=reports/v31_static_break_v14_eventgate_probe_20260608/logs/budget0p65_seed43.log

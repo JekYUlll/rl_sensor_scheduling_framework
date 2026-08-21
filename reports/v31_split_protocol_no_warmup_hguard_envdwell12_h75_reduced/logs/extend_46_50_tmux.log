@@ -1,0 +1,6 @@
+[split-grid] tasks=5 skipped=0 pending=5 workers=1
+[run] worker=0 budget1p70_seed46 -> reports/v31_split_protocol_no_warmup_hguard_envdwell12_h75_reduced/logs/budget1p70_seed46.log
+[run] worker=0 budget1p70_seed47 -> reports/v31_split_protocol_no_warmup_hguard_envdwell12_h75_reduced/logs/budget1p70_seed47.log
+[run] worker=0 budget1p70_seed48 -> reports/v31_split_protocol_no_warmup_hguard_envdwell12_h75_reduced/logs/budget1p70_seed48.log
+[run] worker=0 budget1p70_seed49 -> reports/v31_split_protocol_no_warmup_hguard_envdwell12_h75_reduced/logs/budget1p70_seed49.log
+[run] worker=0 budget1p70_seed50 -> reports/v31_split_protocol_no_warmup_hguard_envdwell12_h75_reduced/logs/budget1p70_seed50.log

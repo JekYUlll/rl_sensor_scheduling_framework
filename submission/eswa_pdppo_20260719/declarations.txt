@@ -1,0 +1,23 @@
+Funding
+This research received no specific grant from any funding agency in the public,
+commercial, or not-for-profit sectors.
+
+Declaration of Competing Interest
+The authors declare that they have no known competing financial interests or
+personal relationships that could have appeared to influence the work reported
+in this paper.
+
+Data Availability
+A versioned repository containing the code, aggregate tables, seed summaries,
+generated figure assets, and reproduction scripts will be made publicly
+available upon acceptance. An anonymous review archive contains the code and
+evidence needed to verify the reported aggregate results. All reported empirical
+evidence comes from simulated data; field measurements are outside the
+evaluation set.
+
+Declaration of Generative AI and AI-Assisted Technologies
+During preparation of this manuscript the authors used OpenAI Codex and Hermes
+Agent for code inspection, consistency checks, and language-editing assistance.
+The authors reviewed and edited all generated material and take full responsibility for the
+content of the manuscript. No figure or other graphical asset in the manuscript
+was created or modified using a generative image tool.

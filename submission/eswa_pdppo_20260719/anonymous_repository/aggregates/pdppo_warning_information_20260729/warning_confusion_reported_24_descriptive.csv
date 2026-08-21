@@ -1,0 +1,17 @@
+true_label,predicted_label,count,row_fraction
+calm,calm,42111,0.7868567584737846
+calm,particle,4515,0.08436413916813035
+calm,flux,2128,0.039762322956762214
+calm,thermal,4764,0.08901677940132292
+particle,calm,0,0.0
+particle,particle,28318,1.0
+particle,flux,0,0.0
+particle,thermal,0,0.0
+flux,calm,0,0.0
+flux,particle,0,0.0
+flux,flux,13652,1.0
+flux,thermal,0,0.0
+thermal,calm,0,0.0
+thermal,particle,0,0.0
+thermal,flux,0,0.0
+thermal,thermal,30320,1.0

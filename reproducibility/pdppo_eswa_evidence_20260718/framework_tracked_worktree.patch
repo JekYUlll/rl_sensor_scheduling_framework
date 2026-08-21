@@ -1,0 +1,3165 @@
+diff --git a/.planning/.active_plan b/.planning/.active_plan
+index d8b29c6..1915408 100644
+--- a/.planning/.active_plan
++++ b/.planning/.active_plan
+@@ -1 +1 @@
+-2026-07-05-narrative-claim-draft
++2026-06-10-eswa-terminology-rewrite
+diff --git a/.planning/2026-06-10-eswa-terminology-rewrite/findings.md b/.planning/2026-06-10-eswa-terminology-rewrite/findings.md
+index 6f30cb2..7bf25a3 100644
+--- a/.planning/2026-06-10-eswa-terminology-rewrite/findings.md
++++ b/.planning/2026-06-10-eswa-terminology-rewrite/findings.md
+@@ -736,3 +736,532 @@
+   baseline and remains strong against forecast-greedy, but the current evidence
+   does not justify a confirmatory fresh final run or a claim of stable
+   superiority over `context_alert_bandit_t0p5`.
++## 2026-07-10 Post-Hermes Audit: Initial Scope
++- This audit treats the final fixed-backbone, one-specialist SCENEBAL-2
++  aggregate over seeds 117--140 as the active main-text evidence package.
++- The immediate risk is not necessarily a numerical error: the plan explicitly
++  distinguishes the reported static-normalised regime macro score from a raw
++  unnormalised subtype-macro sensitivity diagnostic. The audit must establish
++  that the manuscript names the former consistently and does not imply
++  aggregation-invariant superiority.
++- CA-PD-PPO/context-bandit development results are a separate supplementary
++  framework stress test. They must not be mixed into, or used to invalidate,
++  the completed SCENEBAL-2 primary aggregate without an explicit paper claim.
++
++## 2026-07-10 Post-Hermes Audit: Confirmed Evidence Boundaries
++- The local and `remote-gpu` copies of the primary SCENEBAL-2 aggregate agree
++  byte-for-byte for both `metpair_seed_summary.csv` and
++  `metpair_claim_summary.json`. The 24 truth CSVs also have 24 distinct SHA-256
++  hashes, so the seed dimension represents distinct generated scenarios.
++- Ordinary step-loss results are internally consistent: the old-claim collector
++  reproduces the active table's best-operational step margin of `0.149379`, with
++  `24/24` paired wins and a seed-level bootstrap interval approximately
++  `[0.1124, 0.1895]`. The primary step claim is therefore not affected by the
++  macro normalizer issue below.
++- There is a real macro-normalizer protocol mismatch. Training and ordinary
++  policy evaluation save validation-derived subtype normalizers, but
++  `70_v31_split_replay_gate.py` derives a second set from final-test static
++  candidates and `72_v31_collect_metpair_strongclaim.py` reuses those final-test
++  denominators for replay-static macro summaries. This conflicts with the paper
++  formula and prose saying that macro normalizers are fitted on validation.
++- A read-only recomputation from saved final rollouts and validation candidate
++  tables fixes the normalizer without retraining. It preserves all signs:
++  validation-frozen macro margins are `24/24` positive versus validation static
++  (mean `0.07782`), best operational reference (mean `0.07711`), and true fixed
++  replay static reference (mean `0.07047`, 95% bootstrap interval
++  `[0.06021, 0.08071]`). The existing `0.0710` replay-static number uses the
++  final-test static normalizers, not the validation-frozen metric described in
++  the manuscript.
++- The active main table mixes comparator scopes: `0.1494` and `0.0841` are
++  best-operational-reference margins, while the caption and first two rows refer
++  to the validation-selected fixed schedule. The values are valid but need
++  explicit labels or separate rows.
++- Seed 117 and seed 122 were used in the two-seed SCENEBAL-2 pivot pilot before
++  expansion. The run configuration then remained fixed for the expansion. The
++  post-pilot 22-seed subset (118--121, 123--140) still gives `22/22` positive
++  step and frozen-normalizer replay-static macro margins, with means `0.14965`
++  and `0.07063`, respectively. The manuscript should distinguish independent
++  scenario seeds from strict post-pilot confirmatory seeds.
++- The privileged event-label replay artifacts are retained on `remote-gpu`, but
++  only 12/24 replay metric files are present locally. This is a reproducibility
++  packaging gap, not a changed result. The submission archive must sync each
++  replay summary, metric table, and rollout artifact from the remote result
++  directories before claiming self-contained reproduction.
++
++## 2026-07-10 Evidence Repair: Resolved Findings
++- `scripts/86_v31_collect_validation_frozen_macro.py` now recomputes the macro
++  score solely from final rollouts and the per-run
++  `validation_static_candidates.csv` normalizers. Its CSV-input mode now also
++  honors `--seeds`, allowing the same collector to produce a post-pilot subset.
++- The corrected primary comparison is PD-PPO versus the validation-selected
++  static schedule: 24/24 macro wins, mean margin `0.0778198`, 95% percentile
++  bootstrap interval `[0.0664682, 0.0896082]`; the paired ordinary-step result
++  is also 24/24, mean `0.1530815`.
++- Excluding configuration-pivot seeds 117 and 122 leaves a post-pilot 22-seed
++  replication: 22/22 validation-frozen macro wins, mean `0.0779690`, interval
++  `[0.0669584, 0.0895956]`. The conclusion is therefore not driven by the
++  pilot seeds.
++- Validation-frozen ablations preserve 24/24 macro wins for all variants.
++  The no-event-context auxiliary has 22/24 ordinary-step wins; the other two
++  variants retain 24/24. Their paired macro-margin intervals overlap zero, so
++  auxiliary terms are not presented as large isolated macro effects.
++- The fresh higher-flux setting retains 6/6 validation-frozen macro wins
++  (mean `0.0763879`, interval `[0.0568861, 0.1013251]`). The lower-flux setting
++  is omitted from the same-metric robustness table because seed 147 has zero
++  validation flux windows, making a three-regime macro undefined.
++- The main policy has zero warmup aborts in every seed. The required weather
++  backbone is always active and the radiometer has zero duty; the other four
++  specialists have intermediate duty in every main seed. This is a calibrated
++  action-space boundary, now stated explicitly in Results.
++- The archive is provenance-complete rather than a second full raw-data copy:
++  it contains all extracted rows required for deterministic reaggregation, the
++  collector code, a 530-file remote path/size/SHA-256 manifest, and source
++  snapshots. The remote filesystem was above quota, so the immutable manifest
++  is the reliable raw-artifact pin.
++
++## 2026-07-17 Whole-Paper Structure Audit: Preliminary Findings
++- The canonical source remains `paper/main.tex`; active prose comes from
++  `paper/sections/*.tex`. The current compiled manuscript is 56 pages.
++- The main paper has a recognizable contribution chain: general scheduling
++  motivation, related work, formulation, masked-PPO method/protocol, controlled
++  benchmark, held-out results, discussion, and conclusion. The abstract and
++  Introduction consistently frame PD-PPO as a prediction-driven constrained
++  scheduling framework rather than a novel PPO optimizer.
++- The newly added `tables/development_contextaware_summary.tex` is not promoted
++  into the confirmatory main result. It appears in a clearly labelled
++  development-only appendix, reports only step-margin/gate fields, states that
++  historical macro values used a superseded normalizer, and records that no
++  variant passed the fresh-expansion gate.
++- The main structural risk is hierarchy and volume, not a missing section: the
++  eight-section paper is followed by nine appendix sections in the same PDF.
++  Theory proofs, platform rendering, protocol details, generator validation,
++  ablation distributions, training diagnostics, development variants, the
++  static-selection ledger, and event-mixture sensitivity compete for attention
++  and may obscure the single main contribution.
++- The front matter is complete (authors, correspondence, abstract, keywords,
++  abbreviations, CRediT, funding, conflict, data availability, AI declaration,
++  acknowledgements), but completeness of submission-facing wording and visual
++  placement still requires rendered-PDF inspection.
++
++## 2026-07-17 Whole-Paper Structure Audit: Argument-Level Findings
++- The primary Results hierarchy is substantially improved: Table 7 places the
++  validation-selected fixed schedule first, labels the strongest per-seed rule
++  as post hoc, and keeps forecast-greedy/context-alert comparisons as claim
++  boundaries. The Results prose follows that hierarchy rather than treating all
++  rows as equally confirmatory.
++- The main source contains approximately 9 figures, 15 tables, 18 displayed
++  equations, and 2 propositions. Problem Formulation is about 1,362 words,
++  longer than the roughly 969-word method section and 969-word Results section.
++  This makes the paper read more theoretically elaborate than the empirical
++  contribution warrants; the specialist-bottleneck proposition is especially
++  close to its own incompatibility assumptions and should not carry the novelty
++  claim by itself.
++- The Discussion is only about 579 words and the Conclusion about 151 words.
++  Relative to the 56-page review manuscript and extensive appendix, interpretation
++  is underdeveloped: the paper spends more space documenting diagnostics than
++  explaining when prediction-driven sequential scheduling is useful, what the
++  context-alert result means for method design, and how the one-specialist result
++  transfers to broader sensing systems.
++- Two possible reproducibility gaps require focused verification: (1) the main
++  method repeatedly uses estimated state, covariance/uncertainty, and freshness,
++  but no obvious estimator/partial-observation update subsection appears in the
++  section map; (2) comparison roles are defined, but the executable definitions
++  of AoI, round robin, random, forecast-greedy, and context-alert policies may be
++  absent or too brief. These would be substantive method omissions if not covered
++  by active tables/appendix.
++- The Related Work section is concise (about 453 words across four subsections).
++  It establishes the broad areas but may not compare PD-PPO closely enough with
++  the nearest RL sensor-scheduling and task-oriented active-sensing methods to
++  make the technical gap immediately defensible for ESWA.
++
++## 2026-07-17 Whole-Paper Structure Audit: Confirmed Completeness Gaps
++- The estimator/partial-observation path is not reproducibly specified. The
++  manuscript says the policy and fixed forecaster receive an estimated state,
++  uncertainty, last observations, masks, and freshness, but it does not define
++  the estimator update, process/measurement models, treatment of inactive
++  channels, uncertainty propagation, or observation-noise parameters. The
++  observability table names sources rather than supplying this missing method.
++- Baseline implementation detail is insufficient. Table 6 states that the
++  rule-based family uses cycling, stale-channel priority, or random rules, and
++  describes forecast-greedy/context-alert roles, but gives no executable
++  definitions: cycle order/timing, AoI tie-breaking, random distribution,
++  forecast-greedy evaluation horizon, alert construction/threshold, or how
++  minimum on-time and feasibility are applied. These details are central because
++  the paper's claim is comparative.
++- The synthetic generator description is too compact for standalone
++  reproduction. It names a semi-Markov event process and literature anchors but
++  omits transition/duration distributions, coupling equations, channel noise,
++  proxy-lead generation, target weights, and most acceptance thresholds. The
++  appendix reports check outcomes but not a complete generator parameterization.
++- The abstract, Introduction, Discussion, and Conclusion say PD-PPO improves
++  over “rule-based references/schedules,” while the main table separately shows
++  that a handcrafted context-alert rule is competitive (PD-PPO macro wins 7/24,
++  mean margin -0.0011). Because context-alert is itself rule based, the generic
++  phrase is overbroad. It should consistently say conventional AoI/round-robin/
++  random rules, or explicitly define the excluded stress-test family.
++- The front matter calls all 24 seeds “held-out,” although seeds 117 and 122
++  were used during the configuration pivot. Their final windows are temporally
++  held out, but they are not fully post-pilot confirmation seeds. The Setup is
++  honest about this; the Abstract, Introduction, figure caption, and Conclusion
++  should distinguish the 24-seed full aggregate from the 22-seed post-pilot
++  replication.
++- The paper presents an algorithm/framework contribution but its confirmatory
++  table has no alternative learned-policy baseline under the same action and
++  feasibility interface, and no same-PPO reward comparison against AoI or
++  uncertainty. Forecast-greedy and context-alert are valuable stress tests, but
++  they do not isolate whether PPO or the forecast-loss reward provides the gain.
++  This is the largest remaining experimental-completeness risk for an ESWA
++  method paper.
++
++## 2026-07-17 Whole-Paper Structure Audit: Final Layout and Priority Findings
++- The current `paper/main.pdf` is synchronized with the active sources: no
++  manuscript source is newer than the PDF. It contains 56 letter-size review
++  pages. The compile log has no undefined citation/reference or fatal error;
++  only one 1.8-pt overfull box and several underfull table cells remain.
++- Main-text visual continuity is acceptable. The framework figure appears near
++  the start of the paper, result figures and tables are readable at page scale,
++  and no sampled main-text page shows clipping or overlap.
++- Appendix pagination is visibly defective. Appendix H has a heading-only page
++  (PDF page 49), while its fixed-schedule table moves to page 50. Appendix G is
++  also spread across two sparse pages. Consecutive `\\clearpage` commands around
++  the appendix inputs cause this and should be removed or replaced by controlled
++  float barriers in the submission layout.
++- The Discussion is structurally underweight relative to the formulation,
++  diagnostics, and nine appendices. It should synthesize the static-versus-
++  adaptive design rule, the context-alert result, online computational cost,
++  transfer beyond one specialist slot, and the practical meaning of the frozen
++  forecaster result rather than adding more limitations.
++- The `epsilon_s=max(0.001,0.002L_ref)` superiority threshold is labelled
++  prespecified but has no engineering or statistical rationale. It should be
++  justified, demoted to a diagnostic, or removed because paired margins and
++  confidence intervals already carry the primary inference.
++- Generality remains empirical rather than demonstrated: the main evidence uses
++  one power budget, one active specialist slot, one simulator family, and one
++  fixed TCN evaluator. A capacity/budget sensitivity and a second frozen
++  forecaster replay are higher-value additions than more development variants.
++- Submission-facing data availability is not yet complete: the manuscript says
++  code and aggregate evidence will be archived, but gives no persistent URL,
++  DOI, commit, or anonymized package identifier. This is acceptable for the
++  supervisor draft but not the final submission package.
++
++## 2026-07-18 Method and Experimental Closure: Initial Findings
++- `docs/07-18-01.md` preserves the correct paper identity: forecast-loss-driven
++  constrained scheduling is the primary contribution, masked PPO is the
++  executable implementation, and the replay protocol is supporting evidence.
++  It explicitly rejects turning the manuscript into a benchmark catalogue or
++  importing the separate no-warmup/deployment-constrained paper line.
++- The decisive experimental gap is a matched reward comparison. The prior
++  `reward_proxy_mode` implementation already supports `forecast`, `aoi`,
++  `coverage`, and `instant_error`, but only AoI and coverage were piloted on
++  seeds 117--118. Those two-seed results are exploratory and coverage is not a
++  direct uncertainty/covariance control.
++- The old AoI pilot appears to preserve the custom masked-PPO training path and
++  final fixed-forecaster evaluation, but its raw run directories are not local;
++  remote manifests and commands must be checked before treating it as a valid
++  same-architecture control or expanding it.
++- The existing comparator package contains fixed schedules, conventional
++  dynamic rules, one-step forecast-greedy, and context-alert references. None is
++  a matched learned-policy baseline under the final candidate-mask and hard
++  feasibility interface. Existing historical DQN code cannot be cited until its
++  current-interface parity is demonstrated.
++- The final experiment matrix must be frozen before expansion. It may compare
++  forecast reward with AoI and uncertainty rewards, and PD-PPO with one matched
++  learned baseline, but it must not alter the SCENEBAL-2 simulator or tune reward
++  definitions against final-test outcomes.
++- Remote audit confirms that the seed-117 mainline, AoI, and coverage runs use
++  byte-identical truth CSVs and manifests that differ only in
++  `ppo_controls.reward_proxy_mode`. The AoI and coverage mode is also recorded in
++  `v2_ppo_metadata.json`; the mainline predates explicit recording and therefore
++  implies the default forecast mode.
++- The old reward pilots are nevertheless not strict single-factor controls. Each
++  variant retrained its own TCN evaluator and recomputed validation static
++  candidates/normalizers. For seed 117, the evaluator-derived normalizers and
++  selected-static candidate scores differ slightly across forecast, AoI, and
++  coverage directories despite identical truth. A formal reward comparison must
++  reuse the mainline per-seed truth, fixed evaluator checkpoint, validation
++  candidates, normalizers, start indices, and candidate masks, and retrain only
++  the scheduler.
++- The existing AoI proxy is explicit and interpretable: it averages normalized
++  time since the last valid target observation over the lookback window. The
++  coverage proxy instead measures the fraction of target entries observed in the
++  lookback; it is not an uncertainty/covariance objective and cannot satisfy the
++  requested uncertainty reward control.
++- The current `CustomPPO._make_env` and `evaluate_custom_ppo` reconstruct
++  `WarmupEnvConfig` field by field. They copy the forecast/AoI proxy selector but
++  omit the event-subtype reward multipliers, static-normalizer tuple/default,
++  and common-random-number switch. Consequently, the existing SCENEBAL-2 policy
++  was trained with forecast loss, but the subtype-balanced reward shaping
++  recorded in metadata was not fully propagated to the episode environments.
++  This is an implementation/provenance defect, not evidence that the policy used
++  an unrelated objective.
++- `src/v2/dqn.py` uses the same candidate masks and online feasibility mask, but
++  it has the same field-by-field configuration problem and omits even more of the
++  current hard-constraint/context fields. It is not a matched learned baseline
++  until environment construction is replaced by a complete dataclass copy and
++  a current-protocol launcher is added.
++- The corrective experiment must not compare newly fixed controls against the
++  old policy as though they were single-factor variants. The bounded pilot will
++  retrain forecast-, AoI-, and uncertainty-reward PPO policies after the common
++  environment-copy fix, while reusing each seed's frozen truth, TCN evaluator,
++  candidate set, validation normalizers, static selection, and final windows.
++  Only if the fixed forecast policy passes the existing behavioural/performance
++  gates will the triplet be expanded.
++
++## 2026-07-18 Method and Experimental Closure: Implementation Audit
++- The old SCENEBAL-2 actor and event-aware critic consumed the exact simulator
++  `event_flag` through both the observation tail and direct event-gate inputs.
++  This conflicts with the manuscript's online-observability claim. Corrective
++  runs disable that feature and route actor/critic event context through the
++  saved station-side `agent_context_event_alert` proxy. Exact subtype labels
++  remain restricted to the RL-training partition for the existing auxiliary
++  losses and event-conditioned episode sampling.
++- `WarmupSchedulingEnv` is a normalized sample-and-hold partial-observation
++  buffer, not the Kalman-style estimator implied by current manuscript prose.
++  It fuses simultaneous active-sensor measurements by inverse noise variance,
++  carries inactive variables forward, and tracks masks, sensor mode, warm-up,
++  freshness, previous action, power/time, and online alert context. The policy
++  does not currently receive an explicit posterior covariance vector. The
++  manuscript must describe this implementation directly rather than inventing
++  an estimator state or uncertainty input.
++- Added a bounded diagonal predict-update uncertainty proxy for the matched
++  reward control. Process variance is estimated from normalized first
++  differences on the RL-training normalization partition; active measurements
++  use sensor noise variances, and inactive variables accumulate process
++  variance. This proxy changes only the training reward in the uncertainty
++  control; final scoring remains the frozen TCN forecast loss.
++- Replaced field-by-field environment reconstruction in PPO and DQN with full
++  dataclass copies. This preserves subtype reward multipliers, static
++  normalizers, dwell/energy settings, and future configuration fields across
++  training episodes and final evaluation.
++- Added a strict control-source reuse path. It verifies source truth hashes,
++  seed, sensor configuration, constraints, lookback/horizon, candidate masks,
++  validation starts, final starts, frozen evaluator, static normalizers, and
++  selected fixed-schedule assets. Seed-117 and seed-118 preflights passed with
++  six identical executable masks and the source-specific final/validation
++  windows recorded in `control_source_preflight.json`.
++- The frozen bounded matrix is: corrected forecast-reward PPO, AoI-reward PPO,
++  and diagonal-uncertainty-reward PPO on seeds 117 and 118, all at 200k steps;
++  each reuses the same seed-specific source assets and excludes exact event
++  labels at policy execution. Expansion is conditional on corrected forecast
++  performance and behavior, not on choosing the best final-test reward mode.
++- A matched Double-DQN launcher has been added for the second learning baseline.
++  It uses the same six candidate masks, hard feasibility checks, online
++  observation contract, frozen forecast reward, training range, and final
++  windows; it has no teacher imitation, bandit prior, or final-test event label.
++  It still requires a remote smoke run before formal pilot launch.
++- The four online context columns require more precise wording than the current
++  manuscript uses. They are not the exact `event_flag` at execution, but the
++  generator constructs each subtype score from the corresponding synthetic
++  subtype interval, a 16-step leading ramp, and Gaussian noise. They therefore
++  represent supplied synthetic warning signals, not the output of a validated
++  station-side event detector. This assumption belongs in the simulator
++  appendix and must not be blurred into an observed physical event label.
++- Candidate-mask reconstruction is now explicit: the action surface contains
++  six masks (meteorological core alone, or the core paired with one of the five
++  optional channels). Online feasibility masking and the projector enforce
++  steady/startup power and maximum-active constraints; the environment then
++  applies the six-epoch global mask-hold rule.
++- The corrected forecast pilot preserves the positive main mechanism after
++  removing exact event labels from online execution. Seed 117 has macro score
++  `0.785992` versus static `0.817379`; seed 118 has `0.653137` versus
++  `0.708560`. Both ordinary forecast losses also improve over static.
++- The pilot is genuinely adaptive rather than merely nonconstant. Seed 117/118
++  action entropy is `1.857/1.882` bits, subtype-mask mutual information is
++  `0.615/0.641` bits, and both traces pass the fixed/cycle/complexity gates.
++  Specialist duties are distributed over thermo-hygrometer, surface infrared,
++  laser, and FC4; the weather backbone is mandatory and the radiometer remains
++  unused.
++- The corrected seed-118 policy also beats the validation-frozen context-alert
++  stress test in the pilot replay by `0.011685` macro units. This is an early
++  implementation check, not a seed-expanded claim.
++- The old 24-seed policy, mechanism-ablation table, event-type figures, and
++  changed-mixture claims were generated before the online event-label defect was
++  corrected. They cannot remain confirmatory evidence. The corrected forecast
++  expansion must replace the main table and figures; old component ablations
++  must either be rerun under the corrected observation contract or removed in
++  favor of the matched reward-objective evidence.
++- A second information-boundary audit found two remaining direct event-gate
++  inputs in PPO: the rollout bootstrap value and the behavior-cloning warm-start
++  batch. Both now use `online_event_context()`. Exact subtype labels remain only
++  as training targets for the subtype guide and auxiliary classifier. A focused
++  regression test verifies that rollout and warm-start actor inputs follow the
++  warning scores even when exact simulator labels disagree.
++- The complete two-seed matched reward pilot is inconclusive on reward ranking.
++  Forecast reward beats AoI reward in `1/2` seeds with mean loss improvement
++  `+0.004340` and beats uncertainty reward in `1/2` seeds with mean improvement
++  `+0.000139`; both bootstrap ranges cross zero. All three variants beat their
++  validation-selected fixed schedules in `2/2` seeds and have zero warm-up
++  aborts. This supports expansion but not a forecast-reward superiority claim.
++- The first formal expansion was stopped before completion after the residual
++  event-gate input was discovered. The authoritative restart is tagged
++  `20260718corrected24r2`; all 24 forecast seeds use the same corrected actor and
++  critic input contract, and the matched AoI/uncertainty sweep is queued behind
++  it. Earlier incomplete `corrected24` and `corrected24r1` directories are not
++  evidence sources.
++- The manuscript previously misdescribed the formal `subtype_auto` guide as a
++  per-state forecaster-greedy label. The code instead maps training-partition
++  calm/particle/flux/thermal labels to predefined feasible guide masks; the
++  frozen forecaster supplies PPO reward. The method section now separates these
++  channels and records the 10,000-step supervised warm start.
++- A deeper inference-path audit found a separate and more consequential issue:
++  when `subtype_router_enabled` was true, deterministic evaluation could map the
++  auxiliary subtype classifier directly to a predefined action and bypass the
++  PPO actor. The earlier positive two-seed pilot and all interrupted
++  `corrected24*` expansions therefore represent a hybrid classifier-router/PPO
++  policy, not the intended masked-PPO method. They are retained only as
++  exploratory implementation history and cannot support the primary claim.
++- The confirmatory restart now disables the hard router. Two bounded candidates
++  are running on seeds 117 and 118: plain masked PD-PPO with no separate context
++  encoder (`20260718cleanpilot`) and a clean context-aware variant that encodes
++  the four online warning features but still executes only actor logits
++  (`20260718capilot`). Process arguments were inspected directly and contain
++  `--no-subtype-router`; the plain variant contains `--no-context-encoder`, and
++  the context-aware variant contains `--context-encoder --context-feature-dim
++  4 --context-layer-norm`.
++- Exact subtype labels remain permissible only on the policy-learning partition
++  as guide/auxiliary targets and reward stratification. The selected final
++  policy must consume online warning proxies at rollout, bootstrap, warm start,
++  and final inference, and must not use auxiliary-classifier routing.
++- The plain actor-only pilot has now completed and independently clears the
++  frozen two-seed gate. Seed 117/118 ordinary margins over the
++  validation-selected static schedule are `+0.043472/+0.070925`; their
++  validation-normalized subtype-macro margins are `+0.031334/+0.048653`.
++  Both have zero aborts and pass the same action-trace complexity audit, with
++  mask entropy `1.858/1.883` bits and subtype-mask mutual information
++  `0.613/0.524` bits. This establishes a valid fallback primary method while
++  the paired CA actor results remain pending; it does not pre-empt the frozen
++  architecture-selection rule.
++- The compact robustness addition is now specified in executable form. A
++  multi-output ridge forecaster is fitted on exactly the forecaster-fitting
++  partition and rollout mixture, a corresponding static mask is selected only
++  on calibration/validation windows, and already frozen final trajectories are
++  rescored. Exact subtypes enter only post-prediction loss grouping. This tests
++  evaluator-family sensitivity without retraining the policy or selecting on
++  final outcomes.
++
++## 2026-07-18 Clean 24-Seed Main Evidence
++- The actor-only forecast-reward policy completes seeds `117--140` and preserves
++  the frozen information contract: no hard subtype router and no exact online
++  simulator event flag.
++- Validation-frozen macro evidence is uniformly positive against the
++  validation-selected static schedule: `24/24` wins, mean margin `+0.080126`,
++  95% bootstrap CI `[+0.067398,+0.093035]`, median `+0.083573`, and minimum
++  `+0.019128`. Ordinary forecast loss also wins `24/24`, with mean margin
++  `+0.157971` and CI `[+0.116100,+0.205185]`.
++- The unchanged seeds `119--140` replicate this direction in `22/22` cases;
++  their mean macro margin is `+0.083774` with CI
++  `[+0.070685,+0.096705]`. The main result therefore does not rely on the two
++  bounded architecture-selection seeds.
++- The macro comparison is `24/24` against AoI, round robin, and random, and
++  remains `24/24` against the post-hoc strongest of those three in each seed.
++  This supports the primary adaptive-scheduling claim independently of the
++  still-pending strong context, myopic, and privileged references.
++- Behavior-complexity gates pass in all 24 clean traces. Each trace uses four
++  specialist masks and is subtype-dependent; the weather backbone is mandatory
++  and therefore always on, while the radiometer is unused. The meaningful
++  learned decision is allocation among the thermo-hygrometer, surface IR,
++  laser, and FC4 specialists.
++- `scripts/86_v31_collect_validation_frozen_macro.py` previously assumed the
++  truth CSV was copied into every run. Clean source-reuse runs intentionally do
++  not duplicate it. The collector now resolves the metadata/control-source
++  truth and verifies its SHA-256 before aggregation.
++- Offline action grouping gives a clean mechanism match without hard routing:
++  particle windows select the laser with mean duty `0.9928`, flux windows
++  select FC4 with `0.9783`, and thermal windows select surface IR with `0.9914`.
++  Calm windows distribute the specialist slot among thermo-hygrometer, surface
++  IR, laser, and FC4. The validation-selected fixed policy is FC4 in 13 seeds,
++  surface IR in 9, and laser in 2, so no single selected static specialist can
++  cover all three event regimes.
++- These near-deterministic event-window mappings must be interpreted together
++  with the supplied synthetic warning scores and training-partition subtype
++  guide. They establish correct actor execution and regime-dependent allocation,
++  not robustness to an independently estimated field event detector.
++## 2026-07-18 Clean strong-reference boundary
++
++- The complete 24-seed strong-reference aggregate is
++  `reports/aggregate/pdppo_framework_baselines_clean_24seed_20260718/`.
++- One-step forecast-greedy is decisively weaker than PD-PPO: `24/24` wins and
++  mean margins `+0.269041` (ordinary) and `+0.178989` (macro).
++- Context-alert and exact-label policies are not beaten consistently. PD-PPO
++  ordinary wins are `10/24` against each; macro wins are `11/24` and `12/24`.
++  The mean macro margins (`+0.001222`, `+0.001768`) are negligible compared
++  with the `+0.080126` primary margin against validation-selected static.
++- The final paper must distinguish these information-advantaged references
++  from fair deployable baselines. It may claim sequential value over myopic
++  forecast-greedy selection, but not superiority over direct context routing.
++
++## 2026-07-18 Double-DQN execution profiling
++
++- The initial formal DQN expansion was compute-bound by sequential frozen-TCN
++  inference on CPU, not by the value-learning updates. At the observed rate it
++  would have delayed manuscript closure by several hours.
++- Moving only the frozen training evaluator to CUDA reduced a 10,000-step run
++  plus complete evaluation to 2 minutes 22 seconds. Candidate masks, reward
++  weights, observations, seeds, transitions, optimizer settings, and total
++  timesteps are unchanged.
++- To prevent backend roundoff from entering paired final metrics, the formal
++  implementation reloads the checksummed evaluator on CPU after training and
++  uses that CPU instance for every final DQN/static/rule rollout. The collector
++  rejects runs that do not record `cuda` for training scoring and `cpu` for
++  final scoring.
++- A full 4,096-window seed-117 backend audit measures the actual reward-level
++  difference: mean absolute CPU/CUDA loss difference `0.000165`, or `0.0236%`
++  of the CPU mean; the signed mean difference is `+0.000062`. The raw physical
++  prediction maximum is dominated by the unscaled flux output and is not used
++  as the equivalence criterion. The durable audit is
++  `reports/analysis/pdppo_dqn_oracle_backend_audit_20260718.md`.
++- The matched-reward collector now hashes normalized complete metadata after
++  removing only output paths and `reward_proxy_mode`. A seed-117 three-mode
++  remote smoke test passes with one shared protocol SHA-256, confirming that
++  forecast, AoI, and uncertainty runs differ only in the intended reward proxy.
++
++## 2026-07-18 Independent forecaster sensitivity
++
++- The 24-seed ridge-forecaster rescore completed without changing policy
++  checkpoints or trajectories. Each seed fits the ridge model on indices
++  `0--24500`, selects its own fixed mask on four validation windows, and scores
++  the original frozen final windows.
++- PD-PPO beats the original fixed trajectory in `24/24` seeds under both
++  ordinary and macro ridge losses. Against the ridge-selected fixed schedule,
++  ordinary wins remain `24/24`; macro wins are `23/24`, with mean margin
++  `+0.133435` and 95% CI `[+0.111065,+0.154450]`.
++- Seed `129` is the only negative ridge-selected-static macro case
++  (`-0.022431`). The post-pilot subset remains `21/22` with mean
++  `+0.133948`. This is a strong evaluator-family sensitivity result, not a
++  claim of joint scheduler/forecaster training or universal invariance.
++
++## 2026-07-18 Matched Double-DQN control
++
++- The complete protocol-matched Double-DQN comparison is
++  `reports/aggregate/pdppo_matched_dqn_clean_24seed_20260718/`; its audit status
++  is `passed` for all seeds `117--140`.
++- PD-PPO has lower macro loss in `24/24` seeds, with mean DQN-minus-PD-PPO
++  margin `+0.069719` and 95% CI `[+0.053916,+0.085406]`. Ordinary-loss wins
++  are `23/24`, with mean margin `+0.140775` and CI
++  `[+0.104129,+0.178748]`.
++- Seed `121` is the sole ordinary-loss exception (`-0.003950`) but retains a
++  positive macro difference (`+0.002521`). Double-DQN itself beats the fixed
++  schedule in only `12/24` macro comparisons.
++- Double-DQN passes the behavior gate in `21/24` seeds and has zero aborts;
++  seeds `122`, `126`, and `131` fail the full action-trace criterion. PD-PPO
++  passes in all 24. The comparison therefore supports the complete PD-PPO
++  training package on the shared decision surface, not an isolated claim about
++  the PPO clipping operator.
++
++## 2026-07-18 Matched reward controls
++
++- The formal same-architecture reward aggregate is
++  `reports/aggregate/pdppo_clean_matched_reward_24seed_20260718/`. The strict
++  protocol audit passes all 24 seeds and all three reward modes.
++- Forecast reward does not materially separate from AoI reward: ordinary wins
++  are `10/24` with mean AoI-minus-forecast difference `-0.000874` and macro
++  wins are `13/24` with mean `+0.001005`; both confidence intervals contain
++  zero.
++- Forecast reward also does not materially separate from diagonal uncertainty:
++  ordinary wins are `11/24` with mean `+0.000105`, and macro wins are `12/24`
++  with mean `+0.000807`; both confidence intervals contain zero.
++- Every reward mode beats its validation-selected fixed schedule in all 24
++  seeds and passes the basic action-validity checks. The forecast objective
++  remains the direct task definition, but the labelled guide, context auxiliary
++  loss, warning scores, and small feasible action surface make the final policy
++  insensitive to which of the three scalar proxies supplies the PPO reward.
+diff --git a/.planning/2026-06-10-eswa-terminology-rewrite/progress.md b/.planning/2026-06-10-eswa-terminology-rewrite/progress.md
+index fa1995e..340eb55 100644
+--- a/.planning/2026-06-10-eswa-terminology-rewrite/progress.md
++++ b/.planning/2026-06-10-eswa-terminology-rewrite/progress.md
+@@ -1604,3 +1604,423 @@
+   margin (`0.008257`, 13/24 macro wins), but it also fails the `>0.010` mean
+   and 15/24 win gates. Fresh final seeds 301--324 remain locked and were not
+   launched.
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit: Started
++- Scope is a read-only audit of the active ESWA manuscript and the final
++  SCENEBAL-2 24-seed evidence, requested after several Hermes manuscript edits.
++- The canonical manuscript remains `paper/main.tex` with active
++  `paper/sections/*.tex`; `raw.tex` and historical rewrite sources are out of
++  scope.
++- Remote check through `ssh remote-gpu` found no active tmux experiment session
++  or scheduler/collector process. The audit therefore examines completed,
++  durable artifacts rather than partial runs.
++- Initial boundary to verify: the paper's 24/24 claim is tied to ordinary step
++  loss and a static-normalised event-regime macro score. Historical raw
++  unnormalised subtype-macro diagnostics are not equivalent and must not be
++  silently substituted for the reported primary metric.
++
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit: Midpoint
++- Verified local/remote SHA-256 equality for the final aggregate CSV and JSON.
++  There is no evidence that Hermes' manuscript edits changed the underlying
++  primary aggregate.
++- Recomputed ordinary step statistics from the durable seed CSV: the reported
++  best-operational margin `0.149379`, all 24 positive paired margins, and the
++  reported sign-test direction are consistent with the source values.
++- Diagnosed a macro normalizer mismatch rather than a PPO-performance failure.
++  `70_v31_split_replay_gate.py` builds its static normalizers from final-test
++  replay candidates, while the active paper states that normalizers are fixed
++  from validation. A strict validation-frozen recomputation from existing NPZ
++  rollouts retains 24/24 positive macro margins; no training rerun is required.
++- Two read-only analysis attempts initially failed because the router metrics
++  CSV intentionally stores only summary loss values, not subtype columns. The
++  audit switched to the saved policy rollout NPZ files plus the truth labels,
++  which is the correct source for subtype macro recomputation.
++- Confirmed that seeds 117 and 122 were the initial SCENEBAL-2 pivot pilot.
++  The 22 subsequent seeds retain the positive result. This calls for a modest
++  confirmatory-scope correction, not for discarding the whole 24-seed result.
++- Next: recompute the privileged event-label diagnostic under the same frozen
++  normalizers on `remote-gpu`, inspect action-trace/baseline artifact completeness
++  there, then classify the required manuscript and evidence-package corrections.
++
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit: Complete
++- Wrote durable audit report:
++  `reports/analysis/pdppo_posthermes_evidence_audit_20260710/audit_report.md`.
++- The primary aggregate hashes match local and remote. Step-loss 24/24 and
++  behavior evidence are confirmed. The post-pilot 22-seed subset also remains
++  all-positive.
++- The main correction requirement is deterministic macro reaggregation. Current
++  replay collectors derive macro denominators from final-test static candidates,
++  despite the active manuscript defining validation-frozen denominators. A
++  validation-frozen recalculation preserves 24/24 macro signs, so no PPO retrain
++  is required.
++- Do not edit the manuscript before new frozen-normalizer assets exist. Future
++  paper edits must separate the validation-selected fixed baseline from the
++  stronger post-hoc operational/replay diagnostics, and must label the 117/122
++  pivot pilot versus the 22 post-pilot scenario seeds.
++- Remote has the complete per-seed replay metrics and NPZ artifacts; local does
++  not. A versioned evidence sync/archive is now a submission blocker.
++
++## 2026-07-10 Evidence Repair Goal: Started
++- User authorized completion of the audit repairs. Scope is deterministic
++  aggregation, evidence freezing, and manuscript correction; no PPO retraining
++  is authorized or required at this stage.
++- Binding principle: direct primary macro claims must use validation-frozen
++  static normalizers. Final-test-selected fixed replay and event-label schedules
++  may remain only as explicitly privileged diagnostics.
++
++## 2026-07-10 Evidence Repair Goal: Near Completion
++- Implemented the validation-frozen collector and regenerated the primary,
++  mechanism-ablation, and changed-mixture evidence without retraining PPO.
++- Updated the active manuscript tables, figures, Results, Discussion,
++  Conclusion, and theory appendix so that direct validation-selected comparisons
++  are distinct from fixed-replay and privileged event-label diagnostics.
++- Generated and archived the post-pilot 22-seed replication: 22/22 positive
++  primary macro margins, mean `0.0779690`, bootstrap interval
++  `[0.0669584, 0.0895956]`.
++- Added a versioned reproducibility package under
++  `reproducibility/pdppo_eswa_evidence_20260710/` and an external immutable
++  remote-artifact manifest under `/home/horeb/_Data/pdppo_eswa_evidence_20260710/`.
++- This intermediate status is superseded by the completion record below.
++
++## 2026-07-10 Evidence Repair Goal: Complete
++- Final checks passed: `py_compile` for the new collectors and figure/table
++  generators; `pytest -q tests/v2/test_custom_ppo.py` (10 passed); both
++  framework and paper `git diff --check`; and `latexmk` for `paper/main.tex`.
++- `paper/main.pdf` compiles to 57 pages with no undefined citation/reference or
++  fatal LaTeX error. The remaining messages are existing table underfull boxes,
++  a 1.8-pt page-width overfull box, and four bibliography entries lacking page
++  fields.
++- Final archive snapshot:
++  `reproducibility/pdppo_eswa_evidence_20260710/` (11 MiB), with current
++  source patches, a paper source tarball, deterministic aggregate inputs, and
++  SHA-256 checksums. Its remote manifest covers 530 read-only artifacts
++  totaling 1.13 GiB; the local archive deliberately pins rather than duplicates
++  that raw source set.
++
++## 2026-07-17 Manuscript Completeness and Structure Audit: Started
++- User requested a fresh whole-paper review after later Hermes edits. Scope is
++  read-only: canonical `paper/main.tex`, active `paper/sections/*.tex`, active
++  tables/figures, and rendered `paper/main.pdf`; `raw.tex` remains out of scope.
++- Initial state: the paper is 56 pages and the nested paper worktree contains a
++  new untracked `tables/development_contextaware_summary.tex`. The audit will
++  verify that development-only CA-PD-PPO evidence has not displaced or blurred
++  the validation-frozen 24-seed main claim.
++
++## 2026-07-17 Manuscript Completeness and Structure Audit: Complete
++- Audited the complete active source, front matter, eight main sections, nine
++  appendices, 38-entry bibliography, compile log, and representative rendered
++  pages. No manuscript files were edited.
++- Confirmed that the validation-frozen fixed schedule remains the primary
++  comparison and that later context-aware experiments are confined to a
++  development-only appendix with no confirmatory promotion.
++- Identified four revision blockers: missing estimator/partial-observation
++  specification, non-executable baseline definitions, overbroad rule-based and
++  24-held-out-seed wording, and absence of matched learned-policy/reward
++  baselines for an algorithm-framework submission.
++- Identified secondary work: fuller simulator specification, a stronger
++  Discussion and nearest-work comparison, one budget/capacity or forecaster
++  sensitivity, justification of the superiority threshold, appendix pagination
++  cleanup, and a concrete submission archive identifier.
++- Verified the current 56-page PDF is source-synchronized and has no undefined
++  citation/reference or fatal LaTeX error. Appendix H has an isolated heading on
++  page 49 because of forced page breaks; sampled main-text pages have no visible
++  clipping or overlap.
++
++## 2026-07-18 Method and Experimental Closure Goal: Started
++- Created the explicit Codex goal to complete experiments, aggregate evidence,
++  revise the canonical English manuscript coherently, and finish with a compiled
++  claim-to-evidence audit.
++- Read `docs/07-18-01.md`, the active ESWA planning history, the completed 07-05
++  narrative plan, framework supplement reports, and the relevant experiment and
++  remote-server skills.
++- Corrected `.planning/.active_plan` from the completed 07-05 narrative draft to
++  the authoritative 06-10 ESWA plan so later planning hooks preserve this work.
++- Confirmed that the local worktree is heavily dirty from prior user/Hermes work;
++  no existing changes will be reverted. Formal experiments remain remote-only.
++- Located the prior reward-control hook in `scripts/25_v2_train_custom_ppo.py`:
++  `reward_proxy_mode` currently accepts forecast, AoI, coverage, and instant
++  error. The formal uncertainty control and matched learned-policy baseline still
++  require implementation/interface audit.
++- Connected to `remote-gpu` through the SSH alias. No PD-PPO tmux or scheduler
++  process is active; GPUs 0--4 are free, while GPU 5 has an unrelated/unresolved
++  allocation and will be excluded from this experiment wave.
++- Verified local/remote SHA-256 equality for `25_v2_train_custom_ppo.py`,
++  `58_v31_split_protocol_run.py`, `src/v2/env.py`, and `src/v2/custom_ppo.py`.
++- The first remote manifest read used `python`, which is unavailable in the
++  non-interactive shell. Retried with system `python3`; no environment or file
++  modification was needed.
++- Compared seed-117 mainline, AoI, and coverage manifests/metadata. Truth and
++  protocol controls match, but each old reward variant retrained the TCN
++  evaluator and regenerated static normalizers. The formal experiment therefore
++  needs a reuse/freeze path before seed expansion.
++- Audited `src/v2/dqn.py`, `src/v2/custom_ppo.py`, and `src/v2/env.py`. The DQN
++  action mask is conceptually compatible, but both learned trainers rebuild
++  environment configs incompletely. This exposed a missing propagation path for
++  subtype reward weights/static normalizers in the existing PPO run. The next
++  implementation phase is therefore a shared complete-config clone, an explicit
++  uncertainty proxy, and a frozen-source-run launcher, followed by a seed-117/118
++  remote pilot before any full expansion.
++- A local lookup for the raw seed-117 run failed because raw mainline artifacts
++  are remote-only. The authoritative directory was then located directly on
++  `remote-gpu`; it stores truth, oracle, normalizers, validation candidates,
++  checkpoint, metrics, and rollouts at the run root rather than under `raw/`.
++- The first local regression-test command used bare `pytest`, which is not on
++  this shell's PATH. Tests are rerun through the existing `darts` conda
++  environment; no package installation or environment mutation is required.
++- Implemented uncertainty-reward state tracking and online alert routing in
++  `src/v2/env.py`, complete environment copies in `src/v2/custom_ppo.py` and
++  `src/v2/dqn.py`, strict source reuse/provenance in
++  `scripts/25_v2_train_custom_ppo.py`, and forwarding support in
++  `scripts/58_v31_split_protocol_run.py`.
++- Added focused regression tests for uncertainty updates, online-alert priority,
++  full PPO config propagation/snapshot restore, and DQN config propagation.
++  Local validation passes: 25 tests, Python compilation, shell syntax, and
++  `git diff --check`.
++- Added `scripts/run_v31_matched_reward_controls_20260718.sh` and the five-GPU
++  bounded launcher `scripts/run_v31_matched_reward_pilot_20260718.sh`. Remote
++  preflight completed with exit 0 for seeds 117 and 118; both source truth,
++  frozen evaluator, six masks, validation starts, and final starts passed the
++  strict validator.
++- Launched the six-job reward pilot in remote tmux session
++  `pdppo_matched_reward_pilot_20260718` on GPUs 0--4. GPU 5 remains excluded.
++  The sixth job is queued behind the first worker by the bounded launcher.
++- Added `scripts/89_v31_train_matched_dqn.py` for the same-mask Double-DQN
++  comparator and `scripts/90_v31_collect_matched_reward_controls.py` for paired
++  reward-control aggregation. The DQN launcher is syntax/import validated but
++  not yet formally run.
++- A remote `conda run` test invocation became detached by the command transport
++  after exceeding its wait window; the resulting owned test/dry-run processes
++  were explicitly cleaned. Long remote work now runs only in tmux with durable
++  logs. No training process was killed or modified.
++- Completed the executable method and baseline audit at
++  `reports/analysis/pdppo_method_reproducibility_audit_20260718.md`. It records
++  the sample-and-hold observation update, the reward-control uncertainty
++  recursion, all six candidate actions, hard feasibility/minimum-duration
++  semantics, information privileges, and selection/tie-breaking rules for the
++  fixed, conventional, context-aware, myopic, event-label, and full-observation
++  references.
++- The remote reward pilot remains active in tmux
++  `pdppo_matched_reward_pilot_20260718`: five 200k-step jobs are running on GPUs
++  0--4 and the sixth is queued. The formal matched-DQN queue is waiting in tmux
++  `pdppo_matched_dqn_pilot_20260718` and will start automatically after the PPO
++  pilot. GPU 5 remains excluded.
++- Corrected forecast-reward PPO completed on pilot seeds 117 and 118. Its
++  validation-selected-static macro margins are `+0.0313873` and `+0.0554237`;
++  its ordinary step-loss margins are `+0.0459912` and `+0.0820836`. Both have
++  zero warm-up aborts.
++- The corrected pilot action traces pass the existing complexity gate in both
++  seeds. Each uses four specialist masks, has mask entropy above 1.85 bits, is
++  neither fixed-like nor cycle-like, and leaves only the low-value radiometer at
++  zero duty. The mandatory weather backbone is the sole always-active channel.
++- Launched the frozen 24-seed corrected forecast expansion in tmux
++  `pdppo_corrected_forecast24_20260718` on GPUs 2--4, with seeds 117--140 and no
++  further tuning. A second tmux session,
++  `pdppo_corrected_controls24_20260718`, is queued to run the matched AoI and
++  uncertainty controls on GPUs 1--4 after the forecast expansion.
++- Added resumable artifact checks to the reward-control launcher and a bounded
++  worker-pool launcher for the eventual 24-seed Double-DQN expansion. The
++  formal DQN expansion remains gated by the two-seed pilot.
++- Expanded Discussion with result-independent interpretation of strong fixed
++  schedules, the supplied-warning context rule, sequential value under minimum
++  activation time, deployment-time computation, and extension to several
++  specialist slots. `paper/main.tex` recompiles successfully to 66 pages; no
++  new fatal, undefined-reference, or clipping issue was introduced.
++- Completed the two-seed matched reward-control aggregate. Forecast versus AoI
++  is `1/2` wins with mean macro-loss improvement `+0.004340`; forecast versus
++  uncertainty is `1/2` wins with mean improvement `+0.000139`. All three reward
++  variants beat validation-selected static in `2/2` seeds with zero aborts.
++  Result path:
++  `reports/aggregate/pdppo_matched_reward_pilot_20260718/`.
++- Removed the collector's optional `tabulate` dependency after the first remote
++  Markdown write failed; the CSV computations were unaffected. The repaired
++  collectors are self-contained and the aggregate now writes successfully.
++- Found and fixed residual exact-event use in PPO bootstrap and BC warm-start
++  actor/critic gates. Rollout, bootstrap, warm start, and final inference now
++  pass the online warning proxy; exact subtype labels are confined to
++  training-only guide and auxiliary targets. Focused validation is now 26 tests.
++- Stopped the partially trained formal `corrected24`/`corrected24r1` batches to
++  avoid mixing information contracts. Restarted the authoritative 24-seed
++  forecast sweep as `pdppo_corrected_forecast24r2_20260718`; matched AoI and
++  uncertainty controls are queued in
++  `pdppo_corrected_controls24r2_20260718`.
++- Corrected the manuscript's behavior-cloning description: the formal guide is
++  subtype-to-mask supervision on the policy-training partition, while the
++  frozen forecaster supplies the PPO reward. `paper/main.tex` recompiles to 66
++  pages without fatal or undefined-reference errors; result pages remain
++  provisional until the corrected aggregate replaces the historical figures.
++- Audited deterministic inference and found that the optional auxiliary
++  subtype router bypassed actor logits in the earlier pilot. Stopped all partial
++  `corrected24`, `corrected24r1`, and `corrected24r2` expansions before treating
++  them as evidence. The earlier two-seed reward-control aggregate is now marked
++  exploratory rather than confirmatory.
++- Launched two actor-only forecast pilots on `remote-gpu`: plain no-router
++  PD-PPO (`20260718cleanpilot`, seeds 117/118 on GPUs 2/3) and no-router
++  context-aware PD-PPO (`20260718capilot`, seeds 117/118 sequentially on GPU 4).
++  Direct process inspection verifies `--no-subtype-router` for both and the
++  intended context-encoder flags. The same-mask Double-DQN pilot remains active
++  on GPUs 0/1.
++- Added an automatic, lock-safe CA seed-118 launcher in tmux
++  `pdppo_ca_norouter_seed118_20260718`. It waits for the plain pilot to release
++  GPU 2, then runs the second CA seed concurrently with CA seed 117; the
++  existing sequential launcher will wait for or skip the same complete
++  artifact set rather than duplicate it.
++- Added `forecast_loss_samples` and
++  `scripts/93_v31_secondary_forecaster_rescore.py` for the compact forecaster
++  sensitivity promised by the 07-18 plan. The tool fits a multi-output ridge
++  forecaster only on the original forecaster-fitting partition, selects its
++  static reference only on validation windows, and rescores frozen final
++  trajectories without policy updates. Focused local validation now passes 28
++  tests, Python compilation, and the new global-step/subtype alignment test.
++- The clean architecture gate completed and selected plain actor-only PD-PPO.
++  Both plain and CA variants passed the two-seed static, behavior, and zero-abort
++  criteria. CA improved the macro score in both seeds, but its mean paired gain
++  was `+0.002891`, below the frozen `+0.005` materiality threshold; the added
++  encoder is therefore not promoted.
++- Launched selected-architecture AoI and uncertainty controls in tmux
++  `pdppo_clean_reward_controls_pilot_20260718`, a post-DQN aggregation watcher
++  in `pdppo_dqn_clean_collect_20260718`, and a one-seed independent ridge
++  forecaster smoke run in `pdppo_secondary_forecaster_smoke_20260718`.
++- The matched Double-DQN pilot completed and passed protocol/behavior audits.
++  Plain PD-PPO wins `2/2` on ordinary and macro loss, with mean DQN-minus-PPO
++  margins `+0.083934` and `+0.049926`; both policies pass behavior in `2/2`
++  and have zero aborts. Double-DQN beats static in only `1/2` macro comparisons,
++  so it remains a valid but weaker learned-policy comparator.
++- The independent ridge-forecaster smoke completed on seed 117 after fixing the
++  resolver to follow the clean run's checksummed control-source truth rather
++  than require a duplicate CSV. Frozen PD-PPO remains ahead of both the original
++  validation static and the ridge-validation-selected static on ordinary and
++  macro loss. This validates the rescore implementation only; the robustness
++  claim remains gated on the full selected-policy seed set.
++- The clean same-architecture reward-control pilot completed. Forecast reward
++  is `1/2` against AoI (mean improvement `-0.004428`) and `0/2` against the
++  diagonal-uncertainty reward (mean `-0.004510`). All variants still beat
++  static in `2/2`, have zero aborts, and share the selected plain architecture.
++  This is a genuine objective-alignment risk, not an implementation failure;
++  the frozen 22-seed expansion will resolve it without reward-specific tuning.
++- Launched the frozen post-pilot expansion in tmux
++  `pdppo_clean_reward_formal22_20260718`: seeds 119--140 for forecast, AoI, and
++  uncertainty reward, reusing the completed 117/118 artifacts under one tag.
++  Ten bounded workers use GPUs 0--4; GPU 5 remains excluded. A 24-seed matched
++  collector is queued in `pdppo_clean_reward_formal_collect_20260718`.
++- Started Double-DQN seeds 119--122 and queued seeds 123--140 plus a 24-seed
++  collector. The DQN configuration remains byte-for-byte the pilot config; no
++  result-dependent hyperparameter correction was made.
++- Queued read-only postprocessing after the PPO wave: validation-frozen main
++  aggregation and behavior audit, 24-seed ridge-forecaster rescore, and clean
++  context-alert/forecast-greedy/event-label references. These jobs consume only
++  frozen final trajectories and cannot alter architecture or checkpoints.
++- Completed all 24 selected actor-only forecast-reward policies. A repaired
++  validation-frozen collector resolves the checksummed control-source truth
++  when the clean run does not duplicate `truth_v31_split.csv`; local compile,
++  remote seed-117 smoke, and the full aggregate pass.
++- The clean main comparison is positive in `24/24` seeds against the
++  validation-selected fixed schedule for both ordinary loss and macro score.
++  Mean macro margin is `+0.080126` (95% CI
++  `[+0.067398,+0.093035]`; minimum `+0.019128`), and mean ordinary-loss margin
++  is `+0.157971` (`[+0.116100,+0.205185]`). Macro wins against AoI, round
++  robin, random, and the post-hoc best conventional rule are also `24/24`.
++- The predeclared post-pilot subset (seeds `119--140`) remains positive in
++  `22/22` seeds, with mean macro margin `+0.083774`
++  (`[+0.070685,+0.096705]`) and ordinary-loss margin `+0.167133`
++  (`[+0.123090,+0.216425]`). This removes dependence of the primary direction
++  on the two architecture-selection seeds.
++- The complete action-trace audit passes in `24/24` seeds: the mandatory
++  weather backbone is the only always-on channel, the radiometer is the only
++  always-off channel, `3--4` specialists have intermediate duty, switching is
++  `0.002849--0.004721` per step, and aborts are zero. These are clean actor
++  traces rather than hard-router traces.
++- Synced the main and behavior aggregates locally. Matched reward controls,
++  remaining Double-DQN seeds, strong reference replays, and the second-
++  forecaster rescore continue under their frozen protocols.
++- Added and ran a clean-rollout mechanism collector. Offline subtype grouping
++  shows mean specialist duties of `0.9928` laser in particle windows, `0.9783`
++  FC4 in flux windows, and `0.9914` surface IR in thermal windows. Validation
++  selects a single FC4/static specialist in 13 seeds, surface IR in 9, and
++  laser in 2, so the clean learned policy implements the incompatible
++  specialist allocation that no one fixed schedule can express.
++- The new mechanism aggregate is
++  `reports/aggregate/pdppo_clean_mechanism_24seed_20260718/`. It records that
++  exact subtype labels are used only offline for grouping; the collector rejects
++  hard-router and exact-event-online metadata.
++- Completed and synced the clean 24-seed strong-reference replay aggregate.
++  PD-PPO beats the privileged one-step forecast-greedy diagnostic in `24/24`
++  seeds (mean ordinary/macro margins `+0.269041/+0.178989`). It is effectively
++  tied with the context-alert and exact-label references: ordinary win counts
++  are `10/24` for both, macro win counts are `11/24` and `12/24`, and mean
++  macro margins are only `+0.001222` and `+0.001768`. These are explicit
++  context-information boundaries, not primary deployable baselines.
++- Added `scripts/95_v31_build_clean_paper_assets.py` as the single frozen-
++  evidence source for the replacement result tables and figures. It requires
++  all 24 seeds for the primary, mechanism, strong-reference, matched-reward,
++  Double-DQN, and independent-forecaster inputs before writing any manuscript
++  asset, records input checksums, and fails on incomplete seed sets. Python
++  compilation passes; execution remains intentionally gated on the pending
++  formal controls.
++- Removed an unnecessary serial dependency from the remaining Double-DQN queue.
++  GPUs 0--4 had low memory occupancy and ample utilization headroom, so seeds
++  123--140 now train concurrently with the reward controls in tmux
++  `pdppo_matched_dqn_fast_20260718`. The original frozen configuration, seed
++  list, and output paths are unchanged. The existing `expand2` queue now waits
++  for both active waves and reruns only missing artifacts before the unchanged
++  24-seed collector starts.
++- Reprofiled the matched Double-DQN execution path after the CPU-evaluator
++  queue advanced too slowly for a bounded closure run. A 10,000-step CUDA
++  evaluator timing run, including the full 4,096-step multi-policy evaluation,
++  completed successfully in 2 minutes 22 seconds. This changes only the device
++  used to compute the already frozen TCN reward during training.
++- Split the DQN evaluator device contract: training now uses CUDA, while final
++  rollout scoring reloads the same checksummed forecaster on CPU. The latter
++  preserves the exact numerical comparison path used by PD-PPO and the fixed
++  replay. Local DQN tests, Python compilation, shell syntax checks, and remote
++  syntax checks pass.
++- Stopped the incomplete CPU-DQN queue without deleting its artifacts and
++  launched a uniform 24-seed replacement under tag `20260718cuda` in tmux
++  `pdppo_matched_dqn_cuda24_20260718`; its frozen collector is
++  `pdppo_matched_dqn_cuda_collect_20260718`. All 24 seeds retain 200,000
++  timesteps and the original DQN hyperparameters.
++- Strengthened the matched-reward collector with a normalized full-metadata
++  fingerprint. A remote three-mode seed-117 audit passed; paths and reward mode
++  are the only permitted differences. The running formal collector will use
++  this stricter script.
++- Quantified CPU/CUDA frozen-evaluator agreement over all 4,096 held-out
++  seed-117 forecast windows. Mean absolute reward difference is `0.000165`
++  (`0.0236%` of the CPU mean), while all reported metrics remain CPU-scored.
++  Recorded the check in
++  `reports/analysis/pdppo_dqn_oracle_backend_audit_20260718.md`.
++- Completed, synced, and independently rechecked the 24-seed ridge-forecaster
++  sensitivity aggregate. PD-PPO records `24/24` ordinary and `23/24` macro
++  wins against ridge-validation-selected static schedules; mean macro margin
++  is `+0.133435` with CI `[+0.111065,+0.154450]`. Only seed `129` is negative.
++  Appended this result to the root `CHANGELOG.md` as a separate completed
++  evidence block.
++- Completed the controlled eval-only pass for all 24 frozen Double-DQN
++  checkpoints after limiting evaluation to six workers and four CPU threads per
++  worker. This changed resource scheduling only; every checkpoint retains the
++  predeclared 200,000-step training history and all final metrics use the CPU
++  forecaster.
++- The strict DQN collector passed all source-truth, oracle, candidate-mask,
++  observation, partition, final-window, and evaluator-device checks. PD-PPO
++  wins `24/24` macro comparisons against Double-DQN (mean DQN-minus-PD-PPO
++  margin `+0.069719`, 95% CI `[+0.053916,+0.085406]`) and `23/24` ordinary
++  comparisons (mean `+0.140775`, CI `[+0.104129,+0.178748]`). Double-DQN
++  beats static in `12/24` macro comparisons and passes behavior in `21/24`.
++- Synced the lightweight aggregate to
++  `reports/aggregate/pdppo_matched_dqn_clean_24seed_20260718/`, independently
++  recomputed directions and counts, and appended the result to the root
++  `CHANGELOG.md`.
++- Completed and strictly aggregated all 72 matched reward runs. The normalized
++  full-metadata fingerprint confirms that, within a seed, forecast, AoI, and
++  uncertainty runs differ only in reward mode and output/model paths.
++- Forecast reward is comparable to both proxy rewards rather than uniformly
++  better. Against AoI it records `10/24` ordinary and `13/24` macro wins, with
++  mean AoI-minus-forecast differences `-0.000874` and `+0.001005`; both 95%
++  intervals cross zero. Against uncertainty it records `11/24` ordinary and
++  `12/24` macro wins, with mean differences `+0.000105` and `+0.000807`; both
++  intervals also cross zero.
++- All three reward modes beat their own validation-selected fixed schedule in
++  `24/24` macro comparisons and pass the basic execution checks in every seed.
++  The final paper must retain theoretical objective non-equivalence but cannot
++  claim empirical reward-proxy superiority under the shared labelled guide and
++  auxiliary protocol.
++- Synced and independently checked
++  `reports/aggregate/pdppo_clean_matched_reward_24seed_20260718/`; appended the
++  frozen result to the root `CHANGELOG.md`.
+diff --git a/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md b/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md
+index 13c32ad..540170d 100644
+--- a/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md
++++ b/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md
+@@ -170,7 +170,7 @@ Use ESWA scheduling articles as style anchors:
+   and volume/page/article-number data for audited references, added foundational
+   PPO and TCN citations, removed the weak Liang 2024 graph-coverage citation,
+   rebuilt `paper/main.pdf`, and verified `.bbl`/PDF/log/diff checks.
+-- [ ] Pin the final code revision and prepare a versioned evidence archive for
++- [x] Pin the final code revision and prepare a versioned evidence archive for
+   submission. The archive should contain the exact code revision, final aggregate
+   tables, seed-level summaries, figure assets, manuscript source, and
+   reproduction scripts for the current ESWA evidence package.
+@@ -208,7 +208,7 @@ Use ESWA scheduling articles as style anchors:
+   macro wins on development seeds; if it only matches, frame it as competitive
+   with a strong context-aware rule; if it loses, keep the bandit as a diagnostic
+   baseline and do not promote patchwork modules.
+-- [ ] Run a final submission-package audit after the archive is pinned: verify
++- [x] Run a final submission-package audit after the archive is pinned: verify
+   `paper/main.pdf`, source/PDF terminology scans, table/figure asset presence,
+   author metadata, data/code availability wording, and that no historical release
+   is cited as the current evidence package.
+@@ -322,3 +322,138 @@ Use ESWA scheduling articles as style anchors:
+ - [x] Aggregate `reports/aggregate/ca_pdppo_bounded_dev2_20260703capdppodev2/`.
+ - [x] Apply the predeclared final-launch gate and either start fresh final
+   seeds 301--324 or stop with CA-PD-PPO as competitive/exploratory evidence.
++
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit
++- [x] Trace every active main-text numerical claim to the SCENEBAL-2 24-seed
++  aggregate and its seed-level source files.
++- [x] Check protocol integrity: chronological split, final-test isolation,
++  fixed-schedule selection/replay, baseline feasibility parity, and the
++  independence/meaning of the seed dimension.
++- [x] Recompute or independently cross-check reported win counts, margins,
++  confidence intervals, sign tests, and action-trace gates from the durable
++  result artifacts.
++- [x] Audit the paper for metric-boundary errors, especially ordinary loss
++  versus static-normalised regime macro scoring and learned-policy versus
++  privileged event-label replay.
++- [x] Classify findings as correction-required, supplementary-evidence-needed,
++  or no-action; manuscript edits are deferred until the frozen-normalizer
++  reaggregation is generated.
++- [x] Repair the macro collector and regenerate all active macro-derived
++  tables/figures from validation-frozen normalizers before any submission build.
++- [x] Sync and freeze a versioned per-seed evidence archive, then update the
++  manuscript comparator labels and post-pilot seed-scope statement.
++
++## 2026-07-10 Evidence Repair Goal
++
++Goal: complete the audit repairs without retraining PPO. The binding primary
++claim must use validation-frozen macro normalizers; final-test-selected static
++and event-label schedules remain explicitly privileged diagnostics.
++
++- [x] Freeze and checksum the remote authoritative per-seed evidence subset.
++- [x] Implement a reusable validation-frozen macro collector with tests or
++  deterministic cross-checks against saved rollout data.
++- [x] Regenerate the main 24-seed macro summary and a post-pilot 22-seed
++  replication summary from frozen normalizers.
++- [x] Reaggregate the macro-derived ablation and changed-mixture robustness
++  artifacts, or remove any artifact whose saved inputs are incomplete.
++- [x] Rebuild all affected tables/figures, then revise the canonical manuscript
++  to separate direct validation baselines from privileged diagnostics.
++- [x] Create a versioned evidence archive with manifest, checksums, source
++  revision/bundle, and reproduction entry point.
++- [x] Compile the canonical PDF and run source/PDF/evidence consistency audit.
++
++## 2026-07-10 Evidence Repair Goal: Completion Checklist
++
++- [x] Freeze and checksum the remote authoritative per-seed evidence subset.
++- [x] Implement a reusable validation-frozen macro collector with deterministic
++  reaggregation from archived seed rows.
++- [x] Regenerate the main 24-seed macro summary and a post-pilot 22-seed
++  replication summary from frozen normalizers.
++- [x] Reaggregate macro-derived ablation and higher-flux sensitivity artifacts;
++  retain lower-flux evidence as unavailable under the three-regime metric.
++- [x] Rebuild affected tables and figures, and separate direct validation
++  baselines from privileged diagnostics in the canonical manuscript.
++- [x] Create a versioned provenance archive with remote manifest, checksums,
++  source snapshots, reproduction commands, and extracted per-seed rows.
++- [x] Compile the canonical PDF and complete final source/PDF/evidence checks.
++
++## 2026-07-17 Manuscript Completeness and Structure Audit
++
++- [x] Map the active `main.tex` section, figure, table, and appendix structure.
++- [x] Check whether the abstract, introduction, method, results, discussion, and
++  conclusion express one consistent contribution and evidence hierarchy.
++- [x] Audit recent supplementary/development evidence for accidental promotion
++  into confirmatory claims.
++- [x] Inspect the rendered PDF for section balance, float placement, visual
++  continuity, and appendix overload.
++- [x] Produce a severity-ranked review with exact source/PDF locations and a
++  bounded revision order; do not edit the manuscript during this review.
++
++## 2026-07-18 Method and Experimental Closure Goal
++
++Goal: close the reproducibility and experimental-disentanglement gaps identified
++in `docs/07-18-01.md` while preserving the paper as a prediction-driven,
++feasibility-masked PPO framework. The canonical paper remains `paper/main.tex`
++with active `paper/sections/*.tex`; `raw.tex`, v1, and the separate no-warmup
++paper line are out of scope.
++
++- [x] Recover the complete SCENEBAL-2 implementation and evidence context,
++  including the prior two-seed reward-proxy pilots, current validation-frozen
++  aggregation, remote raw runs, and exact scheduler observation/action/reward
++  interfaces.
++- [x] Define and freeze an experiment matrix before final runs: same-architecture
++  forecast/AoI/uncertainty reward controls, one matched learned-policy baseline,
++  paired seed protocol, metrics, behavior gates, and keep/stop rules.
++- [x] Implement and validate any missing explicit reward-mode and matched-baseline interfaces
++  without changing the primary PD-PPO architecture, action candidates, hard
++  feasibility masking, chronological partitions, or final-test evaluator.
++- [x] Add focused tests and run local CPU/syntax smoke checks only; all formal
++  training and evaluation must run through `ssh remote-gpu` in tmux.
++- [x] Run a bounded pilot, diagnose failures once, and freeze the final
++  configuration without tuning on final-test outcomes.
++  - [x] Complete and aggregate the matched forecast/AoI/uncertainty PPO pilot.
++    This first aggregate is exploratory only: a later audit found that its
++    deterministic evaluator could invoke a hard auxiliary-classifier router.
++  - [x] Complete and compare the clean no-router PD-PPO and no-router
++    context-encoder pilots on seeds 117 and 118; freeze one primary actor-only
++    policy before expanding any PPO evidence.
++  - [x] Complete and aggregate the same-mask Double-DQN pilot.
++  - [x] Freeze the corrected actor/critic online-input contract before the
++    formal 24-seed restart.
++- [x] Run the approved seed expansion on `remote-gpu`, monitor it to completion,
++  sync lightweight artifacts, and produce seed-level CSV, aggregate statistics,
++  confidence intervals, behavior diagnostics, and an honest keep/pivot decision.
++  - [x] Complete the 24-seed clean actor-only primary comparison, post-pilot
++    replication, behavior audit, and offline mechanism decomposition.
++  - [x] Complete the 24-seed context-alert, exact-label, and one-step
++    forecast-greedy reference replays.
++  - [x] Complete and aggregate all 24 matched AoI/uncertainty reward controls.
++  - [x] Complete and aggregate the same-mask Double-DQN comparator over all 24
++    seeds.
++- [x] Complete one compact robustness addition only after the mandatory reward
++  and learned-policy controls are sound; prefer a second frozen-forecaster replay
++  or budget/capacity sensitivity based on implementation cost and validity.
++- [x] Specify the estimator/partial-observation update, executable baseline
++  definitions, and simulator parameters directly from code and saved configs.
++- [ ] Revise the manuscript globally after evidence is frozen: correct seed and
++  comparator scope, integrate new controls, rebalance Discussion, and avoid
++  importing terminology or claims from other paper lines.
++- [ ] Rebuild all affected tables/figures and `paper/main.pdf`; verify numerical
++  traceability, terminology consistency, citations/references, pagination, and
++  source/PDF agreement before marking the goal complete.
++
++### Clean-policy decision rule (frozen 2026-07-18)
++
++- The primary method must execute the feasibility-masked PPO actor at final
++  evaluation. The optional auxiliary subtype classifier may remain a
++  training-only loss but must not route actions.
++- Compare the plain actor and the context-encoder actor only on the bounded
++  development seeds 117 and 118. Both must use online warning scores, the same
++  six masks, the same frozen evaluator, and the same final windows.
++- Prefer the plain actor unless the context encoder gives a material and
++  behavior-valid improvement. Do not select on a single favorable final-test
++  scalar or add bandit-dependent residuals, priors, rewards, or labels.
++- After selection, freeze the architecture and run the matched
++  forecast/AoI/uncertainty expansion and same-mask Double-DQN comparator.
++  Incomplete `corrected24`, `corrected24r1`, and `corrected24r2` directories are
++  excluded from all evidence aggregation.
+diff --git a/paper b/paper
+--- a/paper
++++ b/paper
+@@ -1 +1 @@
+-Subproject commit e3af6ec828c08a5d385fbc80aca1d6140ec84ff1
++Subproject commit e3af6ec828c08a5d385fbc80aca1d6140ec84ff1-dirty
+diff --git a/scripts/25_v2_train_custom_ppo.py b/scripts/25_v2_train_custom_ppo.py
+index ede9468..05e3039 100644
+--- a/scripts/25_v2_train_custom_ppo.py
++++ b/scripts/25_v2_train_custom_ppo.py
+@@ -2,9 +2,11 @@
+ from __future__ import annotations
+ 
+ import argparse
++import hashlib
+ import importlib.util
+ import json
+ import os
++import shutil
+ import subprocess
+ import sys
+ from dataclasses import replace
+@@ -21,10 +23,12 @@ sys.path.insert(0, str(ROOT / "src"))
+ 
+ from v2.custom_ppo import CustomPPO, CustomPPOConfig, evaluate_custom_ppo  # noqa: E402
+ from v2.env import WarmupEnvConfig  # noqa: E402
++from v2.oracle import LinearFrozenForecastOracle  # noqa: E402
+ from v2.power_projector import PowerConstraintsV2  # noqa: E402
+ from v2.policies import MinDwellPolicyWrapper, StaticMaskPolicy  # noqa: E402
+ from v2.rollout import save_rollout_npz  # noqa: E402
+ from v2.sensor_spec import load_sensor_specs  # noqa: E402
++from v2.tcn_oracle import TCNFrozenForecastOracle  # noqa: E402
+ 
+ 
+ SUBTYPE_LABELS = {
+@@ -106,6 +110,111 @@ def finite_mean(values: list[float] | np.ndarray) -> float:
+     return float(np.mean(arr)) if arr.size else float("nan")
+ 
+ 
++def sha256_file(path: str | Path) -> str:
++    digest = hashlib.sha256()
++    with open(path, "rb") as handle:
++        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
++            digest.update(chunk)
++    return digest.hexdigest()
++
++
++def load_json(path: str | Path) -> dict[str, object]:
++    value = json.loads(Path(path).read_text(encoding="utf-8"))
++    if not isinstance(value, dict):
++        raise ValueError(f"Expected a JSON object in {path}")
++    return value
++
++
++def validate_control_source(
++    *,
++    source_dir: Path,
++    truth_path: Path,
++    sensor_cfg_path: Path,
++    candidate_masks: np.ndarray,
++    args: argparse.Namespace,
++) -> tuple[dict[str, object], dict[str, object]]:
++    required = (
++        "truth_v31_split.csv",
++        "v2_ppo_metadata.json",
++        "split_protocol_manifest.json",
++        "custom_ppo.pt",
++        "reward_staticnorm_candidates.csv",
++        "reward_staticnorm_normalizers.json",
++        "validation_static_candidates.csv",
++    )
++    missing = [name for name in required if not (source_dir / name).is_file()]
++    if missing:
++        raise FileNotFoundError(f"control source {source_dir} is missing: {missing}")
++    metadata = load_json(source_dir / "v2_ppo_metadata.json")
++    manifest = load_json(source_dir / "split_protocol_manifest.json")
++    oracle_filename = "v2_tcn_oracle.pt" if str(metadata.get("oracle_type", "tcn")) == "tcn" else "v2_linear_oracle.npz"
++    if not (source_dir / oracle_filename).is_file():
++        raise FileNotFoundError(f"control source is missing frozen evaluator: {source_dir / oracle_filename}")
++    if int(metadata.get("seed", -1)) != int(args.seed):
++        raise ValueError(f"control source seed {metadata.get('seed')} != requested seed {args.seed}")
++    source_truth = source_dir / "truth_v31_split.csv"
++    if sha256_file(source_truth) != sha256_file(truth_path):
++        raise ValueError("control source truth and requested truth CSV are not byte-identical")
++    if Path(str(metadata.get("sensor_cfg", ""))).name != sensor_cfg_path.name:
++        raise ValueError("control source sensor configuration does not match requested sensor configuration")
++    constraints = dict(metadata.get("constraints", {}))
++    expected_constraints = {
++        "max_active": int(args.max_active),
++        "per_step_budget": float(args.per_step_budget),
++        "startup_peak_budget": float(args.startup_peak_budget),
++        "required_sensor_ids": [str(value) for value in args.required_sensors],
++    }
++    for key, expected in expected_constraints.items():
++        actual = constraints.get(key)
++        if isinstance(expected, float):
++            if actual is None or not np.isclose(float(actual), expected):
++                raise ValueError(f"control source constraint {key}={actual} != {expected}")
++        elif actual != expected:
++            raise ValueError(f"control source constraint {key}={actual} != {expected}")
++    if int(metadata.get("lookback", -1)) != int(args.lookback) or int(metadata.get("horizon", -1)) != int(args.horizon):
++        raise ValueError("control source lookback/horizon does not match requested protocol")
++    source_eval = tuple(int(value) for value in metadata.get("eval_start_indices", ()))
++    requested_eval = tuple(int(value) for value in (args.eval_start_indices or ()))
++    if requested_eval and source_eval != requested_eval:
++        raise ValueError("control source final-test start indices do not match requested indices")
++    partition = dict(metadata.get("partition_protocol", {}))
++    source_static = tuple(int(value) for value in partition.get("static_selection_start_indices", ()))
++    requested_static = tuple(int(value) for value in (args.static_selection_start_indices or ()))
++    if requested_static and source_static != requested_static:
++        raise ValueError("control source validation start indices do not match requested indices")
++
++    import torch
++
++    checkpoint = torch.load(source_dir / "custom_ppo.pt", map_location="cpu", weights_only=False)
++    source_masks = np.asarray(checkpoint.get("candidate_masks"), dtype=bool)
++    if source_masks.shape != candidate_masks.shape or not np.array_equal(source_masks, candidate_masks):
++        raise ValueError("control source candidate masks do not match the requested action surface")
++    return metadata, manifest
++
++
++def load_control_oracle(
++    *,
++    source_dir: Path,
++    metadata: dict[str, object],
++    out_dir: Path,
++    inference_device: str,
++) -> tuple[object, Path, Path]:
++    oracle_type = str(metadata.get("oracle_type", "tcn"))
++    filename = "v2_tcn_oracle.pt" if oracle_type == "tcn" else "v2_linear_oracle.npz"
++    source_path = source_dir / filename
++    if not source_path.is_file():
++        raise FileNotFoundError(f"control source oracle is missing: {source_path}")
++    output_path = out_dir / filename
++    shutil.copy2(source_path, output_path)
++    if oracle_type == "tcn":
++        oracle = TCNFrozenForecastOracle.load(output_path, device=str(inference_device))
++    elif oracle_type == "linear":
++        oracle = LinearFrozenForecastOracle.load(str(output_path))
++    else:
++        raise ValueError(f"Unsupported control source oracle_type={oracle_type!r}")
++    return oracle, output_path, source_path
++
++
+ def sort_table_by_score(table: pd.DataFrame, score_col: str) -> pd.DataFrame:
+     if table.empty:
+         return table
+@@ -117,7 +226,10 @@ def sort_table_by_score(table: pd.DataFrame, score_col: str) -> pd.DataFrame:
+         values = pd.to_numeric(table.get(actual), errors="coerce")
+     ranked = table.copy()
+     ranked["_selection_score"] = values
+-    ranked = ranked.sort_values(["_selection_score", "oracle_loss_mean"], na_position="last").drop(
++    sort_columns = ["_selection_score", "oracle_loss_mean"]
++    if "action_idx" in ranked.columns:
++        sort_columns.append("action_idx")
++    ranked = ranked.sort_values(sort_columns, na_position="last").drop(
+         columns=["_selection_score"]
+     )
+     return ranked.reset_index(drop=True)
+@@ -345,6 +457,16 @@ def main() -> None:
+     parser.add_argument("--oracle-levels", type=int, default=3)
+     parser.add_argument("--oracle-device", default="auto")
+     parser.add_argument("--oracle-inference-device", default="cpu")
++    parser.add_argument(
++        "--control-source-run-dir",
++        default=None,
++        help="Reuse truth-linked frozen evaluator and validation assets from an existing run.",
++    )
++    parser.add_argument(
++        "--validate-control-source-only",
++        action="store_true",
++        help="Validate matched-control assets and exit before loading models or training.",
++    )
+     parser.add_argument("--oracle-loss-clip", type=float, default=10.0)
+     parser.add_argument("--oracle-candidate-mask-repeat", type=int, default=0)
+     parser.add_argument("--oracle-candidate-mask-limit", type=int, default=0)
+@@ -498,7 +620,7 @@ def main() -> None:
+     )
+     parser.add_argument(
+         "--reward-proxy-mode",
+-        choices=["forecast", "aoi", "coverage", "instant_error"],
++        choices=["forecast", "aoi", "coverage", "uncertainty", "instant_error"],
+         default="forecast",
+         help=(
+             "Training loss proxy for PPO reward. Final evaluation still reports the fixed forecast evaluator loss."
+@@ -585,6 +707,39 @@ def main() -> None:
+         constraints,
+         max_candidate_warmup=None if int(args.ppo_max_candidate_warmup) < 0 else int(args.ppo_max_candidate_warmup),
+     )
++    control_source_dir = Path(args.control_source_run_dir).resolve() if args.control_source_run_dir else None
++    control_source_metadata: dict[str, object] | None = None
++    control_source_manifest: dict[str, object] | None = None
++    if control_source_dir is not None:
++        control_source_metadata, control_source_manifest = validate_control_source(
++            source_dir=control_source_dir,
++            truth_path=Path(truth_path),
++            sensor_cfg_path=sensor_cfg_path,
++            candidate_masks=candidate_masks,
++            args=args,
++        )
++    if bool(args.validate_control_source_only):
++        if control_source_dir is None or control_source_metadata is None:
++            raise ValueError("--validate-control-source-only requires --control-source-run-dir")
++        oracle_filename = (
++            "v2_tcn_oracle.pt"
++            if str(control_source_metadata.get("oracle_type", "tcn")) == "tcn"
++            else "v2_linear_oracle.npz"
++        )
++        payload = {
++            "status": "passed",
++            "seed": int(args.seed),
++            "control_source_run_dir": str(control_source_dir),
++            "truth_sha256": sha256_file(truth_path),
++            "oracle_sha256": sha256_file(control_source_dir / oracle_filename),
++            "candidate_mask_count": int(candidate_masks.shape[0]),
++            "eval_start_indices": [int(value) for value in (args.eval_start_indices or ())],
++            "static_selection_start_indices": [int(value) for value in (args.static_selection_start_indices or ())],
++        }
++        preflight_path = out_dir / "control_source_preflight.json"
++        preflight_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
++        print(preflight_path)
++        return
+     awbc_teacher_calm_action = -1
+     awbc_teacher_event_action = -1
+     awbc_teacher_calm_actions: tuple[int, ...] = ()
+@@ -692,54 +847,64 @@ def main() -> None:
+                     label="oracle_subtype_thermal",
+                 )
+             ]
+-    oracle_truth = truth
+-    if args.oracle_start_idx is not None or args.oracle_end_idx is not None:
+-        oracle_start = int(args.oracle_start_idx or 0)
+-        oracle_end = int(args.oracle_end_idx or len(truth))
+-        if oracle_start < 0 or oracle_end <= oracle_start or oracle_end > len(truth):
+-            raise ValueError(f"Invalid oracle partition [{oracle_start}, {oracle_end}) for truth length {len(truth)}")
+-        oracle_truth = truth.iloc[oracle_start:oracle_end].reset_index(drop=True)
+-    oracle = helpers.train_oracle(
+-        oracle_truth,
+-        sensors,
+-        constraints,
+-        oracle_type=str(args.oracle_type),
+-        lookback=int(args.lookback),
+-        horizon=int(args.horizon),
+-        rollout_steps=int(args.oracle_rollout_steps),
+-        tcn_epochs=int(args.oracle_epochs),
+-        tcn_batch_size=int(args.oracle_batch_size),
+-        tcn_lr=float(args.oracle_learning_rate),
+-        tcn_channels=int(args.oracle_channels),
+-        tcn_levels=int(args.oracle_levels),
+-        tcn_device=str(args.oracle_device),
+-        tcn_loss_clip=float(args.oracle_loss_clip),
+-        tcn_use_mask_channels=not bool(args.oracle_disable_mask_channels),
+-        target_weights=target_weights,
+-        target_scales=target_scales,
+-        subtype_loss_weighting=bool(args.subtype_loss_weighting),
+-        subtype_particle_target_weights=subtype_particle_target_weights,
+-        subtype_flux_target_weights=subtype_flux_target_weights,
+-        subtype_thermal_target_weights=subtype_thermal_target_weights,
+-        rollouts_per_policy=int(args.oracle_rollouts_per_policy),
+-        event_fraction=float(args.oracle_event_fraction),
+-        full_open_repeat=int(args.oracle_full_open_repeat),
+-        candidate_masks=candidate_masks,
+-        candidate_mask_repeat=int(args.oracle_candidate_mask_repeat),
+-        candidate_mask_limit=int(args.oracle_candidate_mask_limit),
+-        subtype_teacher_repeat=int(args.oracle_subtype_teacher_repeat),
+-        subtype_teacher_lookahead_steps=int(args.oracle_subtype_teacher_lookahead_steps),
+-        subtype_teacher_calm_mask=oracle_subtype_teacher_calm_mask,
+-        subtype_teacher_particle_mask=oracle_subtype_teacher_particle_mask,
+-        subtype_teacher_flux_mask=oracle_subtype_teacher_flux_mask,
+-        subtype_teacher_thermal_mask=oracle_subtype_teacher_thermal_mask,
+-        base_freq_s=int(args.freq_s),
+-        seed=int(args.seed),
+-    )
+-    oracle_path = out_dir / ("v2_tcn_oracle.pt" if args.oracle_type == "tcn" else "v2_linear_oracle.npz")
+-    oracle.save(str(oracle_path))
+-    if args.oracle_type == "tcn":
+-        oracle.to_device(str(args.oracle_inference_device))
++    control_source_oracle_path: Path | None = None
++    if control_source_dir is not None and control_source_metadata is not None:
++        oracle, oracle_path, control_source_oracle_path = load_control_oracle(
++            source_dir=control_source_dir,
++            metadata=control_source_metadata,
++            out_dir=out_dir,
++            inference_device=str(args.oracle_inference_device),
++        )
++        args.oracle_type = str(control_source_metadata.get("oracle_type", args.oracle_type))
++    else:
++        oracle_truth = truth
++        if args.oracle_start_idx is not None or args.oracle_end_idx is not None:
++            oracle_start = int(args.oracle_start_idx or 0)
++            oracle_end = int(args.oracle_end_idx or len(truth))
++            if oracle_start < 0 or oracle_end <= oracle_start or oracle_end > len(truth):
++                raise ValueError(f"Invalid oracle partition [{oracle_start}, {oracle_end}) for truth length {len(truth)}")
++            oracle_truth = truth.iloc[oracle_start:oracle_end].reset_index(drop=True)
++        oracle = helpers.train_oracle(
++            oracle_truth,
++            sensors,
++            constraints,
++            oracle_type=str(args.oracle_type),
++            lookback=int(args.lookback),
++            horizon=int(args.horizon),
++            rollout_steps=int(args.oracle_rollout_steps),
++            tcn_epochs=int(args.oracle_epochs),
++            tcn_batch_size=int(args.oracle_batch_size),
++            tcn_lr=float(args.oracle_learning_rate),
++            tcn_channels=int(args.oracle_channels),
++            tcn_levels=int(args.oracle_levels),
++            tcn_device=str(args.oracle_device),
++            tcn_loss_clip=float(args.oracle_loss_clip),
++            tcn_use_mask_channels=not bool(args.oracle_disable_mask_channels),
++            target_weights=target_weights,
++            target_scales=target_scales,
++            subtype_loss_weighting=bool(args.subtype_loss_weighting),
++            subtype_particle_target_weights=subtype_particle_target_weights,
++            subtype_flux_target_weights=subtype_flux_target_weights,
++            subtype_thermal_target_weights=subtype_thermal_target_weights,
++            rollouts_per_policy=int(args.oracle_rollouts_per_policy),
++            event_fraction=float(args.oracle_event_fraction),
++            full_open_repeat=int(args.oracle_full_open_repeat),
++            candidate_masks=candidate_masks,
++            candidate_mask_repeat=int(args.oracle_candidate_mask_repeat),
++            candidate_mask_limit=int(args.oracle_candidate_mask_limit),
++            subtype_teacher_repeat=int(args.oracle_subtype_teacher_repeat),
++            subtype_teacher_lookahead_steps=int(args.oracle_subtype_teacher_lookahead_steps),
++            subtype_teacher_calm_mask=oracle_subtype_teacher_calm_mask,
++            subtype_teacher_particle_mask=oracle_subtype_teacher_particle_mask,
++            subtype_teacher_flux_mask=oracle_subtype_teacher_flux_mask,
++            subtype_teacher_thermal_mask=oracle_subtype_teacher_thermal_mask,
++            base_freq_s=int(args.freq_s),
++            seed=int(args.seed),
++        )
++        oracle_path = out_dir / ("v2_tcn_oracle.pt" if args.oracle_type == "tcn" else "v2_linear_oracle.npz")
++        oracle.save(str(oracle_path))
++        if args.oracle_type == "tcn":
++            oracle.to_device(str(args.oracle_inference_device))
+ 
+     normalization_mean = None
+     normalization_std = None
+@@ -755,6 +920,21 @@ def main() -> None:
+         normalization_values = truth.iloc[normalization_start:normalization_end][list(helpers.STATE_COLUMNS)].to_numpy(dtype=float)
+         normalization_mean = tuple(float(x) for x in np.mean(normalization_values, axis=0))
+         normalization_std = tuple(float(x) for x in np.maximum(np.std(normalization_values, axis=0), 1e-6))
++    process_values = truth.iloc[normalization_start:normalization_end][list(helpers.STATE_COLUMNS)].to_numpy(dtype=float)
++    process_mean = np.asarray(
++        normalization_mean if normalization_mean is not None else np.mean(process_values, axis=0),
++        dtype=float,
++    )
++    process_std = np.asarray(
++        normalization_std if normalization_std is not None else np.maximum(np.std(process_values, axis=0), 1e-6),
++        dtype=float,
++    )
++    normalized_process_values = (process_values - process_mean.reshape(1, -1)) / process_std.reshape(1, -1)
++    process_differences = np.diff(normalized_process_values, axis=0)
++    uncertainty_process_variance = tuple(
++        float(value)
++        for value in np.clip(np.nanvar(process_differences, axis=0), 1e-6, 1.0)
++    )
+     train_cfg = WarmupEnvConfig(
+         state_columns=helpers.STATE_COLUMNS,
+         reward_target_columns=helpers.REWARD_TARGET_COLUMNS,
+@@ -793,13 +973,48 @@ def main() -> None:
+         alert_context_columns=tuple(str(x) for x in (args.alert_context_columns or WarmupEnvConfig.alert_context_columns)),
+         alert_context_threshold=float(args.alert_context_threshold),
+         alert_context_trend_lookback=max(1, int(args.alert_context_trend_lookback)),
++        uncertainty_process_variance=uncertainty_process_variance,
+         **energy_kwargs(args),
+     )
+     reward_loss_normalizers: tuple[float, float, float] | None = None
+     reward_loss_default_normalizer = 1.0
+     reward_loss_normalizer_map: dict[str, float] = {}
+     reward_staticnorm_table = None
+-    if str(args.reward_loss_normalization) == "staticnorm_subtype":
++    if str(args.reward_loss_normalization) == "staticnorm_subtype" and control_source_dir is not None:
++        source_table_path = control_source_dir / "reward_staticnorm_candidates.csv"
++        source_normalizer_path = control_source_dir / "reward_staticnorm_normalizers.json"
++        reward_staticnorm_table = pd.read_csv(source_table_path)
++        normalizer_payload = load_json(source_normalizer_path)
++        stored_normalizers = dict(normalizer_payload.get("normalizers", {}))
++        reward_loss_normalizer_map = {
++            column: float(stored_normalizers.get(column, float("nan")))
++            for column in SUBTYPE_LOSS_COLUMNS
++        }
++        reward_loss_normalizers = subtype_normalizer_tuple(reward_loss_normalizer_map)
++        source_reward = dict((control_source_metadata or {}).get("reward_shaping", {}))
++        reward_loss_default_normalizer = float(
++            source_reward.get(
++                "reward_loss_default_normalizer",
++                finite_median(reward_staticnorm_table["oracle_loss_mean"]),
++            )
++        )
++        if (
++            any((not np.isfinite(value) or value <= 0.0) for value in reward_loss_normalizers)
++            or not np.isfinite(reward_loss_default_normalizer)
++            or reward_loss_default_normalizer <= 0.0
++        ):
++            raise ValueError("control source contains invalid staticnorm reward normalizers")
++        shutil.copy2(source_table_path, out_dir / "reward_staticnorm_candidates.csv")
++        shutil.copy2(source_normalizer_path, out_dir / "reward_staticnorm_normalizers.json")
++        source_fallback = control_source_dir / "reward_staticnorm_fallback_candidates.csv"
++        if source_fallback.is_file():
++            shutil.copy2(source_fallback, out_dir / source_fallback.name)
++        train_cfg = replace(
++            train_cfg,
++            oracle_loss_reward_normalizers=reward_loss_normalizers,
++            oracle_loss_reward_default_normalizer=float(reward_loss_default_normalizer),
++        )
++    elif str(args.reward_loss_normalization) == "staticnorm_subtype":
+         if not args.static_selection_start_indices:
+             raise ValueError("staticnorm_subtype reward normalization requires --static-selection-start-indices")
+         reward_norm_cfg = (
+@@ -1114,6 +1329,7 @@ def main() -> None:
+         alert_context_columns=tuple(str(x) for x in (args.alert_context_columns or WarmupEnvConfig.alert_context_columns)),
+         alert_context_threshold=float(args.alert_context_threshold),
+         alert_context_trend_lookback=max(1, int(args.alert_context_trend_lookback)),
++        uncertainty_process_variance=uncertainty_process_variance,
+         oracle_loss_reward_normalizers=reward_loss_normalizers,
+         oracle_loss_reward_default_normalizer=float(reward_loss_default_normalizer),
+         **energy_kwargs(args),
+@@ -1142,6 +1358,7 @@ def main() -> None:
+         state_columns=helpers.STATE_COLUMNS,
+     )
+ 
++    eval_policy_names = ["custom_ppo"]
+     dwell_steps = tuple(sorted({max(1, int(value)) for value in args.baseline_min_dwell_steps}))
+     if bool(args.eval_switch_limited_baselines):
+         for dwell in dwell_steps:
+@@ -1167,13 +1384,18 @@ def main() -> None:
+                 state_columns=helpers.STATE_COLUMNS,
+             )
+ 
+-    eval_policy_names = ["custom_ppo"]
+     oracle_static_summary = None
+     oracle_static_mask: tuple[bool, ...] | None = None
+     selected_static_table = candidate_prior_table
+     selected_static_source = "candidate_prior_min_oracle_loss"
+     selected_static_name = "oracle_static_projected"
+-    if args.static_selection_start_indices:
++    if args.static_selection_start_indices and control_source_dir is not None:
++        source_static_path = control_source_dir / "validation_static_candidates.csv"
++        selected_static_table = pd.read_csv(source_static_path)
++        shutil.copy2(source_static_path, out_dir / "validation_static_candidates.csv")
++        selected_static_source = f"control_source_validation_min_{args.static_selection_score}"
++        selected_static_name = "validation_selected_static"
++    elif args.static_selection_start_indices:
+         static_selection_cfg = (
+             train_cfg
+             if bool(args.primary_eval_duty_guard)
+@@ -1407,25 +1629,28 @@ def main() -> None:
+     metrics_frame = add_staticnorm_macro(metrics_frame, metrics_normalizers)
+     metrics = sort_table_by_score(metrics_frame, str(args.metrics_sort_score))
+     metrics.to_csv(out_dir / "v2_custom_ppo_metrics.csv", index=False)
+-    oracle_policy_specs = helpers.build_oracle_policy_specs(
+-        len(sensors),
+-        constraints,
+-        seed=int(args.seed),
+-        full_open_repeat=int(args.oracle_full_open_repeat),
+-        candidate_masks=candidate_masks,
+-        candidate_mask_repeat=int(args.oracle_candidate_mask_repeat),
+-        candidate_mask_limit=int(args.oracle_candidate_mask_limit),
+-    )
+-    oracle_rollout_summary = helpers.summarize_oracle_policy_specs(
+-        oracle_policy_specs,
+-        rollouts_per_policy=int(args.oracle_rollouts_per_policy),
+-        per_rollout_steps=helpers.oracle_per_rollout_steps(
+-            lookback=int(args.lookback),
+-            horizon=int(args.horizon),
+-            rollout_steps=int(args.oracle_rollout_steps),
++    if control_source_metadata is not None:
++        oracle_rollout_summary = dict(control_source_metadata.get("oracle_pretrain_rollout_summary", {}))
++    else:
++        oracle_policy_specs = helpers.build_oracle_policy_specs(
++            len(sensors),
++            constraints,
++            seed=int(args.seed),
++            full_open_repeat=int(args.oracle_full_open_repeat),
++            candidate_masks=candidate_masks,
++            candidate_mask_repeat=int(args.oracle_candidate_mask_repeat),
++            candidate_mask_limit=int(args.oracle_candidate_mask_limit),
++        )
++        oracle_rollout_summary = helpers.summarize_oracle_policy_specs(
++            oracle_policy_specs,
+             rollouts_per_policy=int(args.oracle_rollouts_per_policy),
+-        ),
+-    )
++            per_rollout_steps=helpers.oracle_per_rollout_steps(
++                lookback=int(args.lookback),
++                horizon=int(args.horizon),
++                rollout_steps=int(args.oracle_rollout_steps),
++                rollouts_per_policy=int(args.oracle_rollouts_per_policy),
++            ),
++        )
+     metadata = {
+         "truth_csv": str(truth_path),
+         "sensor_cfg": str(sensor_cfg_path),
+@@ -1446,6 +1671,25 @@ def main() -> None:
+             "thermal": [str(x) for x in (args.oracle_subtype_teacher_thermal_sensors or ())],
+         },
+         "oracle_pretrain_rollout_summary": oracle_rollout_summary,
++        "control_source": {
++            "enabled": control_source_dir is not None,
++            "run_dir": "" if control_source_dir is None else str(control_source_dir),
++            "truth_sha256": sha256_file(truth_path),
++            "metadata_path": "" if control_source_dir is None else str(control_source_dir / "v2_ppo_metadata.json"),
++            "metadata_sha256": ""
++            if control_source_dir is None
++            else sha256_file(control_source_dir / "v2_ppo_metadata.json"),
++            "manifest_path": "" if control_source_dir is None else str(control_source_dir / "split_protocol_manifest.json"),
++            "manifest_sha256": ""
++            if control_source_dir is None
++            else sha256_file(control_source_dir / "split_protocol_manifest.json"),
++            "source_oracle_path": "" if control_source_oracle_path is None else str(control_source_oracle_path),
++            "source_oracle_sha256": ""
++            if control_source_oracle_path is None
++            else sha256_file(control_source_oracle_path),
++            "copied_oracle_sha256": sha256_file(oracle_path),
++            "source_manifest": control_source_manifest,
++        },
+         "oracle_inference_device": str(args.oracle_inference_device),
+         "oracle_use_mask_channels": not bool(args.oracle_disable_mask_channels),
+         "reward_target_columns": list(helpers.REWARD_TARGET_COLUMNS),
+@@ -1475,23 +1719,6 @@ def main() -> None:
+             "flux": float(args.event_subtype_flux_reward_multiplier),
+             "thermal": float(args.event_subtype_thermal_reward_multiplier),
+         },
+-        "truth_event_design": {
+-            "event_subtypes_enabled": bool(args.event_subtypes_enabled),
+-            "event_subtype_particle_humidity_boost_pct": float(args.event_subtype_particle_humidity_boost_pct),
+-            "event_subtype_flux_wind_boost_ms": float(args.event_subtype_flux_wind_boost_ms),
+-            "event_subtype_thermal_air_temp_drop_c": float(args.event_subtype_thermal_air_temp_drop_c),
+-            "event_subtype_latent_alpha": float(args.event_subtype_latent_alpha),
+-            "event_subtype_particle_latent_diameter_scale_mm": float(args.event_subtype_particle_latent_diameter_scale_mm),
+-            "event_subtype_particle_latent_velocity_scale_ms": float(args.event_subtype_particle_latent_velocity_scale_ms),
+-            "event_subtype_flux_latent_sigma": float(args.event_subtype_flux_latent_sigma),
+-            "event_subtype_flux_latent_linear_scale": float(args.event_subtype_flux_latent_linear_scale),
+-            "event_subtype_flux_latent_linear_offset": float(args.event_subtype_flux_latent_linear_offset),
+-            "event_subtype_flux_latent_linear_clip": float(args.event_subtype_flux_latent_linear_clip),
+-            "event_subtype_thermal_latent_surface_scale_c": float(args.event_subtype_thermal_latent_surface_scale_c),
+-            "event_subtype_latent_target_lag_steps": int(args.event_subtype_latent_target_lag_steps),
+-            "event_subtype_context_lead_steps": int(args.event_subtype_context_lead_steps),
+-            "event_subtype_context_noise_std": float(args.event_subtype_context_noise_std),
+-        },
+         "reward_shaping": {
+             "lambda_warmup_abort": float(args.lambda_warmup_abort),
+             "lambda_switch": float(args.lambda_switch),
+@@ -1548,6 +1775,15 @@ def main() -> None:
+             "columns": [str(x) for x in (args.alert_context_columns or WarmupEnvConfig.alert_context_columns)],
+             "threshold": float(args.alert_context_threshold),
+             "trend_lookback": max(1, int(args.alert_context_trend_lookback)),
++            "actor_critic_event_context_source": "online_alert_proxy",
++            "truth_event_labels_used_online": False,
++        },
++        "uncertainty_proxy": {
++            "definition": "normalised diagonal predict-update variance over the sample-and-hold state",
++            "process_variance": [float(value) for value in uncertainty_process_variance],
++            "initial_variance": float(train_cfg.uncertainty_initial_variance),
++            "max_variance": float(train_cfg.uncertainty_max_variance),
++            "measurement_variance_source": "sensor noise_std propagated to observed state columns",
+         },
+         "custom_ppo": as_serializable_config(trainer.cfg, candidate_count=int(candidate_masks.shape[0])),
+         "awbc_teacher": {
+@@ -1651,6 +1887,9 @@ def main() -> None:
+             "event_subtype_particle_prob": float(args.event_subtype_particle_prob),
+             "event_subtype_flux_prob": float(args.event_subtype_flux_prob),
+             "event_subtype_thermal_prob": float(args.event_subtype_thermal_prob),
++            "event_subtype_particle_humidity_boost_pct": float(args.event_subtype_particle_humidity_boost_pct),
++            "event_subtype_flux_wind_boost_ms": float(args.event_subtype_flux_wind_boost_ms),
++            "event_subtype_thermal_air_temp_drop_c": float(args.event_subtype_thermal_air_temp_drop_c),
+             "event_subtype_latent_alpha": float(args.event_subtype_latent_alpha),
+             "event_subtype_particle_latent_diameter_scale_mm": float(args.event_subtype_particle_latent_diameter_scale_mm),
+             "event_subtype_particle_latent_velocity_scale_ms": float(args.event_subtype_particle_latent_velocity_scale_ms),
+diff --git a/scripts/58_v31_split_protocol_run.py b/scripts/58_v31_split_protocol_run.py
+index fc6d755..3e402e9 100644
+--- a/scripts/58_v31_split_protocol_run.py
++++ b/scripts/58_v31_split_protocol_run.py
+@@ -563,6 +563,12 @@ def main() -> None:
+     parser = argparse.ArgumentParser(description="Run one V3.1 experiment with explicit chronological splits.")
+     parser.add_argument("--out-dir", default="reports/v31_split_protocol/budget1p70_seed41")
+     parser.add_argument("--truth-csv", default=None)
++    parser.add_argument(
++        "--control-source-run-dir",
++        default=None,
++        help="Reuse and validate truth, frozen forecaster, masks, and validation assets from this run.",
++    )
++    parser.add_argument("--validate-control-source-only", action="store_true")
+     parser.add_argument("--antaws-root", default="../data/AntAWS/3_hourly")
+     parser.add_argument("--stations", nargs="+", default=["Panda100", "Panda200", "Taishan"])
+     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
+@@ -749,7 +755,7 @@ def main() -> None:
+     )
+     parser.add_argument(
+         "--reward-proxy-mode",
+-        choices=["forecast", "aoi", "coverage", "instant_error"],
++        choices=["forecast", "aoi", "uncertainty", "coverage", "instant_error"],
+         default="forecast",
+     )
+     parser.add_argument("--energy-account", action="store_true")
+@@ -803,7 +809,14 @@ def main() -> None:
+     args = parser.parse_args()
+ 
+     out_dir = Path(args.out_dir)
+-    truth_path = Path(args.truth_csv) if args.truth_csv else out_dir / "truth_v31_split.csv"
++    control_source_dir = Path(args.control_source_run_dir).resolve() if args.control_source_run_dir else None
++    if control_source_dir is not None and not control_source_dir.is_dir():
++        raise FileNotFoundError(f"Control source run does not exist: {control_source_dir}")
++    truth_path = (
++        Path(args.truth_csv)
++        if args.truth_csv
++        else (control_source_dir / "truth_v31_split.csv" if control_source_dir is not None else out_dir / "truth_v31_split.csv")
++    )
+     ratios = tuple(float(value) for value in args.split_ratios)
+     bounds = partition_bounds(int(args.truth_steps), ratios)
+     horizon = 8
+@@ -898,6 +911,8 @@ def main() -> None:
+ 
+     manifest = {
+         "protocol": "chronological_split_v31_retraining",
++        "control_source_run_dir": "" if control_source_dir is None else str(control_source_dir),
++        "matched_control_assets": control_source_dir is not None,
+         "truth_steps": int(args.truth_steps),
+         "seed": int(args.seed),
+         "budget": float(args.budget),
+@@ -1020,6 +1035,8 @@ def main() -> None:
+             "include_observable_regime_belief": bool(args.include_observable_regime_belief),
+             "regime_belief_lookback": max(1, int(args.regime_belief_lookback)),
+             "include_event_flag_in_state": bool(args.include_event_flag_in_state),
++            "actor_critic_event_context_source": "online_alert_proxy",
++            "truth_event_labels_used_online": False,
+             "include_alert_context_features": bool(args.include_alert_context_features),
+             "alert_context_columns": [str(x) for x in (args.alert_context_columns or ())],
+             "alert_context_threshold": float(args.alert_context_threshold),
+@@ -1376,6 +1393,10 @@ def main() -> None:
+         "--soc-aux-coef",
+         str(float(args.soc_aux_coef)),
+     ]
++    if control_source_dir is not None:
++        cmd.extend(["--control-source-run-dir", str(control_source_dir)])
++    if bool(args.validate_control_source_only):
++        cmd.append("--validate-control-source-only")
+     if bool(args.event_subtypes_enabled):
+         cmd.append("--event-subtypes-enabled")
+     cmd.append("--event-aware-critic" if bool(args.event_aware_critic) else "--no-event-aware-critic")
+diff --git a/scripts/64_v31_eval_saved_run_operational_baselines.py b/scripts/64_v31_eval_saved_run_operational_baselines.py
+index 43fd3da..7608d63 100644
+--- a/scripts/64_v31_eval_saved_run_operational_baselines.py
++++ b/scripts/64_v31_eval_saved_run_operational_baselines.py
+@@ -172,6 +172,41 @@ def infer_eval_steps(metadata: dict[str, Any], *, run_dir: Path) -> int:
+     return 1024
+ 
+ 
++def full_final_partition_scope(
++    metadata: dict[str, Any],
++    *,
++    run_dir: Path,
++    truth_length: int,
++    horizon: int,
++) -> tuple[int, int, int]:
++    """Return the full held-out interval for which all future labels exist.
++
++    The chronological final partition can extend to the end of the generated
++    truth sequence.  A forecast loss at time ``t`` requires labels through
++    ``t + horizon``; the last ``horizon`` rows therefore cannot be scored.
++    """
++
++    manifest_path = run_dir / "split_protocol_manifest.json"
++    manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
++    partitions = dict(manifest.get("partitions", {}))
++    final_range = partitions.get("final_test")
++    if final_range is None:
++        source_manifest = dict(dict(metadata.get("control_source", {})).get("source_manifest", {}))
++        final_range = dict(source_manifest.get("partitions", {})).get("final_test")
++    if not isinstance(final_range, (list, tuple)) or len(final_range) != 2:
++        raise ValueError(f"Cannot resolve final_test partition from {manifest_path}")
++
++    partition_start, partition_end = (int(final_range[0]), int(final_range[1]))
++    scoreable_end = min(partition_end, int(truth_length) - int(horizon))
++    if partition_start < 0 or partition_end > int(truth_length) or scoreable_end <= partition_start:
++        raise ValueError(
++            "Invalid full-final scope: "
++            f"partition=[{partition_start}, {partition_end}), "
++            f"scoreable_end={scoreable_end}, truth_length={truth_length}, horizon={horizon}"
++        )
++    return partition_start, partition_end, scoreable_end
++
++
+ def load_oracle(metadata: dict[str, Any], *, run_dir: Path, device: str) -> Any:
+     oracle_path = resolve_path(str(metadata["oracle_path"]), run_dir=run_dir)
+     if str(metadata.get("oracle_type", "linear")) == "tcn":
+@@ -252,6 +287,18 @@ def main() -> None:
+     parser.add_argument("--out-dir", required=True)
+     parser.add_argument("--device", default="cpu")
+     parser.add_argument("--oracle-device", default="cpu")
++    parser.add_argument(
++        "--eval-full-final-partition",
++        action="store_true",
++        help="Replay the complete held-out final interval for which all forecast targets exist.",
++    )
++    parser.add_argument("--eval-steps-override", type=int, default=None)
++    parser.add_argument("--eval-start-indices-override", nargs="+", type=int, default=None)
++    parser.add_argument(
++        "--primary-only",
++        action="store_true",
++        help="Evaluate only the saved custom PPO and validation-selected static reference.",
++    )
+     parser.add_argument("--eval-duty-constrained-baselines", action="store_true")
+     parser.add_argument("--baseline-duty-hard-low", type=float, default=0.12)
+     parser.add_argument("--baseline-duty-hard-high", type=float, default=0.85)
+@@ -291,8 +338,45 @@ def main() -> None:
+         state_columns=helpers.STATE_COLUMNS,
+         metadata=metadata,
+     )
+-    eval_steps = infer_eval_steps(metadata, run_dir=source_run_dir)
+-    eval_starts = tuple(int(x) for x in metadata["eval_start_indices"])
++    if args.eval_full_final_partition and (
++        args.eval_steps_override is not None or args.eval_start_indices_override is not None
++    ):
++        raise ValueError("--eval-full-final-partition cannot be combined with explicit evaluation overrides")
++
++    evaluation_scope: dict[str, Any]
++    if args.eval_full_final_partition:
++        partition_start, partition_end, scoreable_end = full_final_partition_scope(
++            metadata,
++            run_dir=source_run_dir,
++            truth_length=len(truth),
++            horizon=int(oracle.cfg.horizon),
++        )
++        eval_starts = (int(partition_start),)
++        eval_steps = int(scoreable_end - partition_start)
++        evaluation_scope = {
++            "mode": "full_scoreable_final_partition",
++            "final_partition": [int(partition_start), int(partition_end)],
++            "scoreable_interval": [int(partition_start), int(scoreable_end)],
++            "excluded_tail_steps_without_complete_future": int(partition_end - scoreable_end),
++        }
++    else:
++        eval_steps = int(args.eval_steps_override or infer_eval_steps(metadata, run_dir=source_run_dir))
++        eval_starts = tuple(
++            int(x)
++            for x in (
++                args.eval_start_indices_override
++                if args.eval_start_indices_override is not None
++                else metadata["eval_start_indices"]
++            )
++        )
++        evaluation_scope = {
++            "mode": "explicit_override" if (
++                args.eval_steps_override is not None or args.eval_start_indices_override is not None
++            ) else "saved_evaluation_windows",
++            "scoreable_interval": None,
++        }
++    if eval_steps <= 0 or not eval_starts:
++        raise ValueError(f"Invalid evaluation request: starts={eval_starts}, steps={eval_steps}")
+     env_kwargs = env_kwargs_from_metadata(metadata)
+     if args.env_min_dwell_steps is not None:
+         env_kwargs["min_dwell_steps"] = int(max(1, int(args.env_min_dwell_steps)))
+@@ -395,34 +479,35 @@ def main() -> None:
+         eval_policies.append(str(result.policy_name))
+         save_rollout_npz(out_dir / f"rollout_{result.policy_name}.npz", result, sensor_ids=[s.sensor_id for s in sensors], state_columns=helpers.STATE_COLUMNS)
+ 
+-    full_result, full_metrics = helpers.evaluate_score_policy_over_starts(
+-        truth=truth,
+-        sensors=sensors,
+-        constraints=PowerConstraintsV2(),
+-        cfg=baseline_eval_cfg,
+-        oracle=oracle,
+-        policy=FullOpenUnconstrainedScorePolicy(n_sensors=len(sensors)),
+-        steps=int(eval_steps),
+-        start_indices=eval_starts,
+-    )
+-    rows.append(full_metrics)
+-    eval_policies.append("full_open_unconstrained")
+-    save_rollout_npz(out_dir / "rollout_full_open_unconstrained.npz", full_result, sensor_ids=[s.sensor_id for s in sensors], state_columns=helpers.STATE_COLUMNS)
+-
+-    for policy in helpers.default_policies(len(sensors), seed=int(metadata["seed"]) + 100):
+-        result, metrics = helpers.evaluate_score_policy_over_starts(
++    if not bool(args.primary_only):
++        full_result, full_metrics = helpers.evaluate_score_policy_over_starts(
+             truth=truth,
+             sensors=sensors,
+-            constraints=constraints,
++            constraints=PowerConstraintsV2(),
+             cfg=baseline_eval_cfg,
+             oracle=oracle,
+-            policy=policy,
++            policy=FullOpenUnconstrainedScorePolicy(n_sensors=len(sensors)),
+             steps=int(eval_steps),
+             start_indices=eval_starts,
+         )
+-        rows.append(metrics)
+-        eval_policies.append(str(result.policy_name))
+-        save_rollout_npz(out_dir / f"rollout_{result.policy_name}.npz", result, sensor_ids=[s.sensor_id for s in sensors], state_columns=helpers.STATE_COLUMNS)
++        rows.append(full_metrics)
++        eval_policies.append("full_open_unconstrained")
++        save_rollout_npz(out_dir / "rollout_full_open_unconstrained.npz", full_result, sensor_ids=[s.sensor_id for s in sensors], state_columns=helpers.STATE_COLUMNS)
++
++        for policy in helpers.default_policies(len(sensors), seed=int(metadata["seed"]) + 100):
++            result, metrics = helpers.evaluate_score_policy_over_starts(
++                truth=truth,
++                sensors=sensors,
++                constraints=constraints,
++                cfg=baseline_eval_cfg,
++                oracle=oracle,
++                policy=policy,
++                steps=int(eval_steps),
++                start_indices=eval_starts,
++            )
++            rows.append(metrics)
++            eval_policies.append(str(result.policy_name))
++            save_rollout_npz(out_dir / f"rollout_{result.policy_name}.npz", result, sensor_ids=[s.sensor_id for s in sensors], state_columns=helpers.STATE_COLUMNS)
+ 
+     constrained_settings = {
+         "enabled": bool(args.eval_duty_constrained_baselines),
+@@ -532,13 +617,18 @@ def main() -> None:
+         {
+             "source_run_dir": str(source_run_dir),
+             "truth_csv": str(truth_path),
++            "policy_inference_device": str(args.device),
+             "oracle_inference_device": str(args.oracle_device),
+             "eval_policies": eval_policies,
+             "eval_steps": int(eval_steps),
++            "eval_start_indices": [int(value) for value in eval_starts],
++            "evaluation_scope": evaluation_scope,
+             "operational_baseline_replay": {
+                 "enabled": True,
+                 "uses_saved_custom_ppo": True,
+-                "uses_original_truth_and_eval_starts": True,
++                "uses_original_truth": True,
++                "uses_original_eval_starts": evaluation_scope["mode"] == "saved_evaluation_windows",
++                "primary_only": bool(args.primary_only),
+                 "skip_rollout_evaluation": bool(args.skip_rollout_evaluation),
+                 "env_min_dwell_steps": int(env_kwargs.get("min_dwell_steps", 1)),
+                 "env_harvest_per_step": float(env_kwargs.get("harvest_per_step", 0.0)),
+diff --git a/scripts/81_v31_framework_baseline_supplements.py b/scripts/81_v31_framework_baseline_supplements.py
+index bc66348..7cfe73a 100644
+--- a/scripts/81_v31_framework_baseline_supplements.py
++++ b/scripts/81_v31_framework_baseline_supplements.py
+@@ -158,6 +158,7 @@ def capture_env_state(env: Any) -> dict[str, Any]:
+         "observed_mask": np.array(env.observed_mask, dtype=float, copy=True),
+         "history": np.array(env.history, dtype=float, copy=True),
+         "mask_history": np.array(env.mask_history, dtype=float, copy=True),
++        "posterior_variance": np.array(env.posterior_variance, dtype=float, copy=True),
+         "previous_action_mask": np.array(env.previous_action_mask, dtype=float, copy=True),
+         "sensor_on_counts": np.array(env.sensor_on_counts, dtype=float, copy=True),
+         "elapsed_steps": int(env.elapsed_steps),
+@@ -185,6 +186,7 @@ def restore_env_state(env: Any, snapshot: dict[str, Any]) -> None:
+     env.observed_mask = np.array(snapshot["observed_mask"], dtype=float, copy=True)
+     env.history = np.array(snapshot["history"], dtype=float, copy=True)
+     env.mask_history = np.array(snapshot["mask_history"], dtype=float, copy=True)
++    env.posterior_variance = np.array(snapshot["posterior_variance"], dtype=float, copy=True)
+     env.previous_action_mask = np.array(snapshot["previous_action_mask"], dtype=float, copy=True)
+     env.sensor_on_counts = np.array(snapshot["sensor_on_counts"], dtype=float, copy=True)
+     env.elapsed_steps = int(snapshot["elapsed_steps"])
+@@ -234,7 +236,7 @@ class ForecastGreedyOneStepPolicy:
+ 
+ 
+ class ContextAlertBanditPolicy:
+-    """Station-side context-alert bandit with fixed subtype-to-mask choices."""
++    """Context-alert bandit driven by supplied synthetic warning scores."""
+ 
+     def __init__(
+         self,
+@@ -374,6 +376,14 @@ def evaluate_run(
+     run_dir = Path(run_dir)
+     out_dir.mkdir(parents=True, exist_ok=True)
+     metadata = json.loads((run_dir / "v2_ppo_metadata.json").read_text(encoding="utf-8"))
++    policy_cfg = dict(metadata.get("custom_ppo", {}))
++    alert_cfg = dict(metadata.get("agent_alert_context", {}))
++    if bool(policy_cfg.get("subtype_router_enabled", False)):
++        raise ValueError(f"Framework supplements reject hard-router policy: {run_dir}")
++    if bool(alert_cfg.get("include_event_flag_in_state", True)):
++        raise ValueError(f"Framework supplements reject exact online event flag: {run_dir}")
++    if bool(alert_cfg.get("truth_event_labels_used_online", True)):
++        raise ValueError(f"Framework supplements reject online truth-label use: {run_dir}")
+     truth = helpers.ensure_state_columns(pd.read_csv(resolve_path(metadata["truth_csv"], run_dir=run_dir)))
+     sensors = gate.load_sensor_specs(resolve_path(metadata["sensor_cfg"], run_dir=run_dir))
+     constraints = ops.constraints_from_metadata(metadata)
+@@ -422,6 +432,31 @@ def evaluate_run(
+             selected_action_rows.append({"policy": name, **action_indices, "threshold": float(threshold)})
+     if "forecast_greedy" in policies:
+         policy_objects.append(ForecastGreedyOneStepPolicy(candidate_masks, name="forecast_greedy_one_step"))
++    if "event_label" in policies:
++        if "event_subtype_id" not in truth.columns:
++            raise ValueError("event-label reference requires event_subtype_id for offline replay")
++        action_indices = build_context_action_indices(validation_table)
++        lookahead = int(metadata.get("oracle_subtype_teacher_lookahead_steps", 0))
++        policy_objects.append(
++            gate.SubtypeMaskPolicy(
++                name=f"event_label_reference_l{lookahead}",
++                subtype_ids=truth["event_subtype_id"].to_numpy(dtype=int),
++                calm_mask=np.asarray(candidate_masks[action_indices["calm"]], dtype=bool),
++                subtype_masks={
++                    1: np.asarray(candidate_masks[action_indices["particle"]], dtype=bool),
++                    2: np.asarray(candidate_masks[action_indices["flux"]], dtype=bool),
++                    3: np.asarray(candidate_masks[action_indices["thermal"]], dtype=bool),
++                },
++                lookahead_steps=lookahead,
++            )
++        )
++        selected_action_rows.append(
++            {
++                "policy": f"event_label_reference_l{lookahead}",
++                **action_indices,
++                "lookahead_steps": lookahead,
++            }
++        )
+ 
+     rows: list[dict[str, Any]] = []
+     effective_steps = int(eval_steps)
+@@ -443,7 +478,15 @@ def evaluate_run(
+         row["run_dir"] = str(run_dir)
+         row["eval_steps_per_start"] = int(effective_steps)
+         row["eval_start_count"] = int(len(eval_starts))
+-        row["diagnostic_privilege"] = "final_future_loss" if policy.name == "forecast_greedy_one_step" else "station_context_proxy"
++        row["diagnostic_privilege"] = (
++            "final_future_loss"
++            if policy.name == "forecast_greedy_one_step"
++            else (
++                "exact_final_event_subtype"
++                if str(policy.name).startswith("event_label_reference")
++                else "supplied_synthetic_warning_scores"
++            )
++        )
+         rows.append(row)
+         gate.save_rollout_npz(
+             out_dir / f"rollout_{policy.name}.npz",
+@@ -511,7 +554,8 @@ def aggregate(results: pd.DataFrame, out_dir: Path) -> dict[str, Any]:
+         "interpretation": (
+             "Positive margins mean the supplementary baseline has higher loss than PD-PPO. "
+             "forecast_greedy_one_step is a privileged myopic diagnostic because it chooses masks "
+-            "using final-test future loss; context_alert_bandit uses station-side context proxy columns."
++            "using final-test future loss; context_alert_bandit uses supplied synthetic warning-score "
++            "columns; event_label_reference uses exact final-test subtype labels and is privileged."
+         ),
+     }
+     (out_dir / "framework_baseline_summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+@@ -576,8 +620,8 @@ def main() -> None:
+     parser.add_argument(
+         "--policies",
+         nargs="+",
+-        choices=["context_bandit", "forecast_greedy"],
+-        default=["context_bandit", "forecast_greedy"],
++        choices=["context_bandit", "forecast_greedy", "event_label"],
++        default=["context_bandit", "forecast_greedy", "event_label"],
+     )
+     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
+     parser.add_argument(
+@@ -586,6 +630,16 @@ def main() -> None:
+         default=-1,
+         help="If positive, cap per-start rollout length for the expensive privileged forecast-greedy diagnostic.",
+     )
++    parser.add_argument(
++        "--reuse-existing-seed-metrics",
++        action="store_true",
++        help="Load a completed per-seed metrics CSV instead of replaying that seed.",
++    )
++    parser.add_argument(
++        "--no-aggregate",
++        action="store_true",
++        help="Write per-seed artifacts only; a later resume pass can aggregate them.",
++    )
+     args = parser.parse_args()
+ 
+     run_dirs = expand_run_dirs(str(args.run_glob), tuple(int(x) for x in args.seeds))
+@@ -597,19 +651,27 @@ def main() -> None:
+     for run_dir in run_dirs:
+         seed = parse_seed(run_dir)
+         seed_out = out_root / f"seed{seed}"
+-        print(f"framework_baseline_start seed={seed} run_dir={run_dir}", flush=True)
+-        table = evaluate_run(
+-            run_dir,
+-            out_dir=seed_out,
+-            router_eval_dir=str(args.router_eval_dir),
+-            replay_dir=str(args.replay_dir),
+-            oracle_device=str(args.oracle_device),
+-            policies=tuple(str(x) for x in args.policies),
+-            context_thresholds=tuple(float(x) for x in args.context_thresholds),
+-            greedy_max_steps=int(args.greedy_max_steps),
+-        )
++        seed_metrics_path = seed_out / "framework_baseline_metrics.csv"
++        if bool(args.reuse_existing_seed_metrics) and seed_metrics_path.is_file():
++            print(f"framework_baseline_reuse seed={seed} path={seed_metrics_path}", flush=True)
++            table = pd.read_csv(seed_metrics_path)
++        else:
++            print(f"framework_baseline_start seed={seed} run_dir={run_dir}", flush=True)
++            table = evaluate_run(
++                run_dir,
++                out_dir=seed_out,
++                router_eval_dir=str(args.router_eval_dir),
++                replay_dir=str(args.replay_dir),
++                oracle_device=str(args.oracle_device),
++                policies=tuple(str(x) for x in args.policies),
++                context_thresholds=tuple(float(x) for x in args.context_thresholds),
++                greedy_max_steps=int(args.greedy_max_steps),
++            )
+         all_rows.append(table)
+         print(f"framework_baseline_done seed={seed} rows={len(table)}", flush=True)
++    if bool(args.no_aggregate):
++        print(f"framework_baseline_seed_artifacts_done seeds={len(all_rows)}", flush=True)
++        return
+     result = pd.concat(all_rows, ignore_index=True)
+     payload = aggregate(result, out_root)
+     print(json.dumps(payload, indent=2), flush=True)
+diff --git a/scripts/run_v31_metpair_backbone_context_seed_sweep_20260620.sh b/scripts/run_v31_metpair_backbone_context_seed_sweep_20260620.sh
+index c11d44e..f6ef3a7 100755
+--- a/scripts/run_v31_metpair_backbone_context_seed_sweep_20260620.sh
++++ b/scripts/run_v31_metpair_backbone_context_seed_sweep_20260620.sh
+@@ -14,6 +14,9 @@ RUN_PREFIX="${RUN_PREFIX:-v31_metpair_backbone_context}"
+ DATE_TAG="${DATE_TAG:-20260620}"
+ BUDGET="${BUDGET:-0.75}"
+ BUDGET_LABEL="${BUDGET_LABEL:-h075ctx}"
++CONTROL_SOURCE_RUN_PREFIX="${CONTROL_SOURCE_RUN_PREFIX:-}"
++CONTROL_SOURCE_BUDGET_LABEL="${CONTROL_SOURCE_BUDGET_LABEL:-h075ctxolscbal2}"
++CONTROL_SOURCE_DATE_TAG="${CONTROL_SOURCE_DATE_TAG:-20260621}"
+ DEVICE="${DEVICE:-cuda}"
+ ORACLE_DEVICE="${ORACLE_DEVICE:-auto}"
+ ORACLE_INFERENCE_DEVICE="${ORACLE_INFERENCE_DEVICE:-cpu}"
+@@ -75,6 +78,8 @@ ALERT_CONTEXT_TREND_LOOKBACK="${ALERT_CONTEXT_TREND_LOOKBACK:-6}"
+ SKIP_ROUTER_EVAL="${SKIP_ROUTER_EVAL:-0}"
+ SKIP_REPLAY_GATE="${SKIP_REPLAY_GATE:-0}"
+ SKIP_BEHAVIOR_AUDIT="${SKIP_BEHAVIOR_AUDIT:-0}"
++DRY_RUN="${DRY_RUN:-0}"
++PREFLIGHT_ONLY="${PREFLIGHT_ONLY:-0}"
+ TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-120000}"
+ N_STEPS="${N_STEPS:-1024}"
+ BATCH_SIZE="${BATCH_SIZE:-128}"
+@@ -128,6 +133,16 @@ run_seed() {
+   local seed="$1"
+   local out_dir="reports/${RUN_PREFIX}_seed${seed}_${BUDGET_LABEL}_${DATE_TAG}"
+   mkdir -p "$out_dir"
++  local control_source_args=()
++  if [[ -n "$CONTROL_SOURCE_RUN_PREFIX" ]]; then
++    local source_dir="reports/${CONTROL_SOURCE_RUN_PREFIX}_seed${seed}_${CONTROL_SOURCE_BUDGET_LABEL}_${CONTROL_SOURCE_DATE_TAG}"
++    if [[ ! -d "$source_dir" ]]; then
++      echo "Missing control source run: ${source_dir}" >&2
++      return 2
++    fi
++    control_source_args+=(--truth-csv "${source_dir}/truth_v31_split.csv")
++    control_source_args+=(--control-source-run-dir "$source_dir")
++  fi
+   local duty_guard_args=()
+   if [[ "$DUTY_HARD_GUARD" == "1" || "$DUTY_HARD_GUARD" == "true" || "$DUTY_HARD_GUARD" == "yes" ]]; then
+     duty_guard_args+=(--duty-hard-guard)
+@@ -178,12 +193,21 @@ run_seed() {
+   else
+     subtype_router_args+=(--no-subtype-router)
+   fi
++  local dry_run_args=()
++  if [[ "$DRY_RUN" == "1" || "$DRY_RUN" == "true" || "$DRY_RUN" == "yes" ]]; then
++    dry_run_args+=(--dry-run)
++  fi
++  local preflight_args=()
++  if [[ "$PREFLIGHT_ONLY" == "1" || "$PREFLIGHT_ONLY" == "true" || "$PREFLIGHT_ONLY" == "yes" ]]; then
++    preflight_args+=(--validate-control-source-only)
++  fi
+ 
+   echo "[metpair-backbone-context] seed=${seed} out_dir=${out_dir}"
+ 
+   if [[ ! -f "${out_dir}/custom_ppo.pt" ]]; then
+     "$PY" scripts/58_v31_split_protocol_run.py \
+       --out-dir "$out_dir" \
++      "${control_source_args[@]}" \
+       --sensor-cfg configs/sensors/windblown_sensors_v31_met_specialist_pair.yaml \
+       --seed "$seed" \
+       --budget "$BUDGET" \
+@@ -338,6 +362,8 @@ run_seed() {
+       --agent-context-columns agent_context_particle_alert agent_context_flux_alert agent_context_thermal_alert agent_context_event_alert \
+       --alert-context-columns agent_context_particle_alert agent_context_flux_alert agent_context_thermal_alert \
+       --device "$DEVICE" \
++      "${dry_run_args[@]}" \
++      "${preflight_args[@]}" \
+       2>&1 | tee "${out_dir}/run_train_eval.log"
+   else
+     echo "[metpair-backbone-context] seed=${seed} training artifact exists; skipping train"
+diff --git a/src/v2/custom_ppo.py b/src/v2/custom_ppo.py
+index 0012181..9340a81 100644
+--- a/src/v2/custom_ppo.py
++++ b/src/v2/custom_ppo.py
+@@ -572,7 +572,7 @@ class CustomPPO:
+                 else np.ones(self.candidate_masks_np.shape[0], dtype=bool)
+             )
+             subtype_label, subtype_valid = self._subtype_aux_label(env)
+-            event_flag = float(_env_is_event(env))
++            event_flag = float(env.online_event_context())
+             obs_t = torch_tensor(obs_np.reshape(1, -1), device=self.device)
+             action_mask_t = torch_tensor(action_mask_np.reshape(1, -1), device=self.device, dtype=torch.bool)
+             event_t = torch_tensor(np.asarray([event_flag], dtype=np.float32), device=self.device)
+@@ -621,7 +621,10 @@ class CustomPPO:
+             last_value = 0.0
+         else:
+             obs_t = torch_tensor(env._state().astype(np.float32).reshape(1, -1), device=self.device)
+-            event_t = torch_tensor(np.asarray([float(_env_is_event(env))], dtype=np.float32), device=self.device)
++            event_t = torch_tensor(
++                np.asarray([float(env.online_event_context())], dtype=np.float32),
++                device=self.device,
++            )
+             with torch.no_grad():
+                 last_value = float(self.model.value(obs_t, event_t).detach().cpu().item())
+ 
+@@ -687,7 +690,7 @@ class CustomPPO:
+ 
+             obs_rows.append(obs_np)
+             teacher_rows.append(int(teacher))
+-            event_rows.append(float(_env_is_event(env)))
++            event_rows.append(float(env.online_event_context()))
+             action_mask_rows.append(action_mask_np.astype(bool))
+             subtype_label_rows.append(int(subtype_label))
+             subtype_valid_rows.append(float(subtype_valid))
+@@ -1204,13 +1207,21 @@ class CustomPPO:
+                 margin_loss = (penalties * choice_valid.float()).sum() / (choice_valid.float().sum() + 1.0e-8)
+         return ce_loss, margin_loss, valid_rate
+ 
+-    def predict_mask(self, obs: np.ndarray, action_mask: np.ndarray | None = None, *, deterministic: bool = True) -> np.ndarray:
++    def predict_mask(
++        self,
++        obs: np.ndarray,
++        action_mask: np.ndarray | None = None,
++        *,
++        deterministic: bool = True,
++        event_context: float | None = None,
++    ) -> np.ndarray:
+         torch, _ = _torch_modules()
+         obs_t = torch_tensor(np.asarray(obs, dtype=np.float32).reshape(1, -1), device=self.device)
+         if action_mask is None or not bool(self.cfg.use_action_mask):
+             action_mask = np.ones(self.candidate_masks_np.shape[0], dtype=bool)
+         mask_t = torch_tensor(np.asarray(action_mask, dtype=bool).reshape(1, -1), device=self.device, dtype=torch.bool)
+-        event_t = torch_tensor(np.asarray([self._event_from_obs(obs_t)], dtype=np.float32), device=self.device)
++        event_value = self._event_from_obs(obs_t) if event_context is None else float(event_context)
++        event_t = torch_tensor(np.asarray([event_value], dtype=np.float32), device=self.device)
+         with torch.no_grad():
+             action = self._subtype_router_action(obs_t, mask_t, event_t) if deterministic else None
+             if action is None:
+@@ -1248,16 +1259,28 @@ class CustomPPO:
+         return None
+ 
+     def _event_from_obs(self, obs_t: Any) -> float:
+-        if not bool(self.env_cfg.include_event_flag_in_state):
+-            return 0.0
+-        # Alert/context encoder features are appended after event/SOC fields.
+-        event_offset = -1 - int(getattr(self, "context_feature_dim", 0))
++        values = obs_t.reshape(-1)
++        trailing = int(getattr(self, "context_feature_dim", 0))
+         if bool(self.env_cfg.energy_account_enabled):
+-            event_offset -= 1
+-        if abs(int(event_offset)) > int(obs_t.numel()):
+-            return 0.0
+-        value = float(obs_t.reshape(-1)[event_offset].detach().cpu().item())
+-        return 1.0 if value >= 0.5 else 0.0
++            trailing += 1
++        if bool(self.env_cfg.include_event_flag_in_state):
++            offset = trailing + 1
++            if offset <= int(values.numel()):
++                return float(np.clip(float(values[-offset].detach().cpu().item()), 0.0, 1.0))
++        columns = tuple(str(name) for name in self.env_cfg.agent_context_columns)
++        if columns:
++            if "agent_context_event_alert" in columns:
++                context_idx = columns.index("agent_context_event_alert")
++            else:
++                alert_indices = [idx for idx, name in enumerate(columns) if name.endswith("_alert")]
++                if not alert_indices:
++                    return 0.0
++                context_idx = alert_indices[-1]
++            trailing += int(bool(self.env_cfg.include_event_flag_in_state))
++            offset = trailing + (len(columns) - int(context_idx))
++            if offset <= int(values.numel()):
++                return float(np.clip(float(values[-offset].detach().cpu().item()), 0.0, 1.0))
++        return 0.0
+ 
+     def save(self, path: str | Path) -> None:
+         torch, _ = _torch_modules()
+@@ -1291,52 +1314,7 @@ class CustomPPO:
+             self.truth_df,
+             self.sensor_specs,
+             self.constraints,
+-            WarmupEnvConfig(
+-                state_columns=self.env_cfg.state_columns,
+-                reward_target_columns=self.env_cfg.reward_target_columns,
+-                reward_proxy_mode=self.env_cfg.reward_proxy_mode,
+-                lookback=self.env_cfg.lookback,
+-                episode_len=self.env_cfg.episode_len,
+-                seed=int(self.env_cfg.seed) + int(seed_offset),
+-                base_freq_s=self.env_cfg.base_freq_s,
+-                event_column=self.env_cfg.event_column,
+-                normalize_agent_state=self.env_cfg.normalize_agent_state,
+-                normalization_mean=self.env_cfg.normalization_mean,
+-                normalization_std=self.env_cfg.normalization_std,
+-                lambda_warmup_abort=self.env_cfg.lambda_warmup_abort,
+-                lambda_switch=self.env_cfg.lambda_switch,
+-                event_reward_multiplier=self.env_cfg.event_reward_multiplier,
+-                energy_account_enabled=self.env_cfg.energy_account_enabled,
+-                energy_capacity=self.env_cfg.energy_capacity,
+-                initial_energy=self.env_cfg.initial_energy,
+-                harvest_per_step=self.env_cfg.harvest_per_step,
+-                reserve_energy=self.env_cfg.reserve_energy,
+-                lambda_energy_deficit=self.env_cfg.lambda_energy_deficit,
+-                soc_soft_penalty_buffer=self.env_cfg.soc_soft_penalty_buffer,
+-                lambda_soc_soft_penalty=self.env_cfg.lambda_soc_soft_penalty,
+-                lambda_duty_balance=self.env_cfg.lambda_duty_balance,
+-                duty_balance_low=self.env_cfg.duty_balance_low,
+-                duty_balance_high=self.env_cfg.duty_balance_high,
+-                duty_balance_grace_steps=self.env_cfg.duty_balance_grace_steps,
+-                duty_score_feedback=self.env_cfg.duty_score_feedback,
+-                duty_score_target=self.env_cfg.duty_score_target,
+-                duty_hard_guard=self.env_cfg.duty_hard_guard,
+-                duty_hard_low=self.env_cfg.duty_hard_low,
+-                duty_hard_high=self.env_cfg.duty_hard_high,
+-                duty_hard_score=self.env_cfg.duty_hard_score,
+-                min_dwell_steps=self.env_cfg.min_dwell_steps,
+-                include_agent_cycle_phase=self.env_cfg.include_agent_cycle_phase,
+-                agent_cycle_period_steps=self.env_cfg.agent_cycle_period_steps,
+-                agent_cycle_dwell_steps=self.env_cfg.agent_cycle_dwell_steps,
+-                include_observable_regime_belief=self.env_cfg.include_observable_regime_belief,
+-                regime_belief_lookback=self.env_cfg.regime_belief_lookback,
+-                agent_context_columns=self.env_cfg.agent_context_columns,
+-                include_event_flag_in_state=self.env_cfg.include_event_flag_in_state,
+-                include_alert_context_features=self.env_cfg.include_alert_context_features,
+-                alert_context_columns=self.env_cfg.alert_context_columns,
+-                alert_context_threshold=self.env_cfg.alert_context_threshold,
+-                alert_context_trend_lookback=self.env_cfg.alert_context_trend_lookback,
+-            ),
++            replace(self.env_cfg, seed=int(self.env_cfg.seed) + int(seed_offset)),
+             oracle=self.oracle,
+         )
+ 
+@@ -1385,7 +1363,12 @@ class CustomPPOPolicy:
+ 
+     def act_mask(self, env: WarmupSchedulingEnv) -> np.ndarray:
+         action_mask = feasible_candidate_mask(env, self.trainer.candidate_masks_np)
+-        return self.trainer.predict_mask(env._state().astype(np.float32), action_mask, deterministic=bool(self.deterministic))
++        return self.trainer.predict_mask(
++            env._state().astype(np.float32),
++            action_mask,
++            deterministic=bool(self.deterministic),
++            event_context=env.online_event_context(),
++        )
+ 
+     def act_scores(self, env: WarmupSchedulingEnv) -> np.ndarray:
+         mask = self.act_mask(env)
+@@ -1421,52 +1404,7 @@ def evaluate_custom_ppo(
+             truth_df,
+             sensor_specs,
+             constraints,
+-            WarmupEnvConfig(
+-                state_columns=cfg.state_columns,
+-                reward_target_columns=cfg.reward_target_columns,
+-                reward_proxy_mode=cfg.reward_proxy_mode,
+-                lookback=cfg.lookback,
+-                episode_len=cfg.episode_len,
+-                seed=int(cfg.seed) + int(offset),
+-                base_freq_s=cfg.base_freq_s,
+-                event_column=cfg.event_column,
+-                normalize_agent_state=cfg.normalize_agent_state,
+-                normalization_mean=cfg.normalization_mean,
+-                normalization_std=cfg.normalization_std,
+-                lambda_warmup_abort=cfg.lambda_warmup_abort,
+-                lambda_switch=cfg.lambda_switch,
+-                event_reward_multiplier=cfg.event_reward_multiplier,
+-                energy_account_enabled=cfg.energy_account_enabled,
+-                energy_capacity=cfg.energy_capacity,
+-                initial_energy=cfg.initial_energy,
+-                harvest_per_step=cfg.harvest_per_step,
+-                reserve_energy=cfg.reserve_energy,
+-                lambda_energy_deficit=cfg.lambda_energy_deficit,
+-                soc_soft_penalty_buffer=cfg.soc_soft_penalty_buffer,
+-                lambda_soc_soft_penalty=cfg.lambda_soc_soft_penalty,
+-                lambda_duty_balance=cfg.lambda_duty_balance,
+-                duty_balance_low=cfg.duty_balance_low,
+-                duty_balance_high=cfg.duty_balance_high,
+-                duty_balance_grace_steps=cfg.duty_balance_grace_steps,
+-                duty_score_feedback=cfg.duty_score_feedback,
+-                duty_score_target=cfg.duty_score_target,
+-                duty_hard_guard=cfg.duty_hard_guard,
+-                duty_hard_low=cfg.duty_hard_low,
+-                duty_hard_high=cfg.duty_hard_high,
+-                duty_hard_score=cfg.duty_hard_score,
+-                min_dwell_steps=cfg.min_dwell_steps,
+-                include_agent_cycle_phase=cfg.include_agent_cycle_phase,
+-                agent_cycle_period_steps=cfg.agent_cycle_period_steps,
+-                agent_cycle_dwell_steps=cfg.agent_cycle_dwell_steps,
+-                include_observable_regime_belief=cfg.include_observable_regime_belief,
+-                regime_belief_lookback=cfg.regime_belief_lookback,
+-                agent_context_columns=cfg.agent_context_columns,
+-                include_event_flag_in_state=cfg.include_event_flag_in_state,
+-                include_alert_context_features=cfg.include_alert_context_features,
+-                alert_context_columns=cfg.alert_context_columns,
+-                alert_context_threshold=cfg.alert_context_threshold,
+-                alert_context_trend_lookback=cfg.alert_context_trend_lookback,
+-            ),
++            replace(cfg, seed=int(cfg.seed) + int(offset)),
+             oracle=oracle,
+         )
+         rollouts.append(run_policy_rollout(env, policy, steps=int(steps), start_idx=int(start_idx)))
+@@ -1598,9 +1536,14 @@ def snapshot_env(env: WarmupSchedulingEnv) -> dict[str, object]:
+         "observed_mask": np.array(env.observed_mask, copy=True),
+         "history": np.array(env.history, copy=True),
+         "mask_history": np.array(env.mask_history, copy=True),
++        "posterior_variance": np.array(env.posterior_variance, copy=True),
+         "previous_action_mask": np.array(env.previous_action_mask, copy=True),
+         "sensor_on_counts": np.array(env.sensor_on_counts, copy=True),
+         "elapsed_steps": int(env.elapsed_steps),
++        "dwell_hold_remaining": int(env.dwell_hold_remaining),
++        "current_energy": float(env.current_energy),
++        "energy_deficit_steps": int(env.energy_deficit_steps),
++        "energy_deficit_total": float(env.energy_deficit_total),
+         "last_info": copy.deepcopy(env.last_info),
+         "rng_state": copy.deepcopy(env.rng.bit_generator.state),
+         "runtimes": {
+@@ -1623,9 +1566,14 @@ def restore_env(env: WarmupSchedulingEnv, snapshot: dict[str, object]) -> None:
+     env.observed_mask = np.asarray(snapshot["observed_mask"], dtype=float).copy()
+     env.history = np.asarray(snapshot["history"], dtype=float).copy()
+     env.mask_history = np.asarray(snapshot["mask_history"], dtype=float).copy()
++    env.posterior_variance = np.asarray(snapshot["posterior_variance"], dtype=float).copy()
+     env.previous_action_mask = np.asarray(snapshot["previous_action_mask"], dtype=float).copy()
+     env.sensor_on_counts = np.asarray(snapshot.get("sensor_on_counts", np.zeros(len(env.sensor_specs))), dtype=float).copy()
+     env.elapsed_steps = int(snapshot.get("elapsed_steps", 0))
++    env.dwell_hold_remaining = int(snapshot.get("dwell_hold_remaining", 0))
++    env.current_energy = float(snapshot.get("current_energy", 0.0))
++    env.energy_deficit_steps = int(snapshot.get("energy_deficit_steps", 0))
++    env.energy_deficit_total = float(snapshot.get("energy_deficit_total", 0.0))
+     env.last_info = copy.deepcopy(snapshot["last_info"])
+     env.rng.bit_generator.state = copy.deepcopy(snapshot["rng_state"])
+     runtime_state = snapshot["runtimes"]
+@@ -1639,11 +1587,6 @@ def restore_env(env: WarmupSchedulingEnv, snapshot: dict[str, object]) -> None:
+         runtime.warmup_abort_count = int(state["warmup_abort_count"])
+ 
+ 
+-def _env_is_event(env: WarmupSchedulingEnv) -> bool:
+-    idx = int(env.current_idx)
+-    return bool(idx < len(env.event_flags) and env.event_flags[idx])
+-
+-
+ def _torch_modules() -> tuple[Any, Any]:
+     import torch
+     from torch import nn
+diff --git a/src/v2/dqn.py b/src/v2/dqn.py
+index 09a4584..b665fc4 100644
+--- a/src/v2/dqn.py
++++ b/src/v2/dqn.py
+@@ -2,7 +2,7 @@ from __future__ import annotations
+ 
+ import json
+ from collections import deque
+-from dataclasses import asdict, dataclass
++from dataclasses import asdict, dataclass, replace
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -41,6 +41,9 @@ class DQNConfig:
+     seed: int = 42
+     log_interval: int = 1_000
+     history_path: str | None = None
++    train_start_indices: tuple[int, ...] = ()
++    train_start_min: int | None = None
++    train_start_max: int | None = None
+ 
+ 
+ class ReplayBuffer:
+@@ -363,54 +366,41 @@ class DQNTrainer:
+             self.truth_df,
+             self.sensor_specs,
+             self.constraints,
+-            WarmupEnvConfig(
+-                state_columns=self.env_cfg.state_columns,
+-                reward_target_columns=self.env_cfg.reward_target_columns,
+-                lookback=self.env_cfg.lookback,
+-                episode_len=self.env_cfg.episode_len,
+-                seed=int(self.env_cfg.seed) + int(seed_offset),
+-                base_freq_s=self.env_cfg.base_freq_s,
+-                event_column=self.env_cfg.event_column,
+-                normalize_agent_state=self.env_cfg.normalize_agent_state,
+-                normalization_mean=self.env_cfg.normalization_mean,
+-                normalization_std=self.env_cfg.normalization_std,
+-                lambda_warmup_abort=self.env_cfg.lambda_warmup_abort,
+-                lambda_switch=self.env_cfg.lambda_switch,
+-                event_reward_multiplier=self.env_cfg.event_reward_multiplier,
+-                energy_account_enabled=self.env_cfg.energy_account_enabled,
+-                energy_capacity=self.env_cfg.energy_capacity,
+-                initial_energy=self.env_cfg.initial_energy,
+-                harvest_per_step=self.env_cfg.harvest_per_step,
+-                reserve_energy=self.env_cfg.reserve_energy,
+-                lambda_energy_deficit=self.env_cfg.lambda_energy_deficit,
+-                soc_soft_penalty_buffer=self.env_cfg.soc_soft_penalty_buffer,
+-                lambda_soc_soft_penalty=self.env_cfg.lambda_soc_soft_penalty,
+-                lambda_duty_balance=self.env_cfg.lambda_duty_balance,
+-                duty_balance_low=self.env_cfg.duty_balance_low,
+-                duty_balance_high=self.env_cfg.duty_balance_high,
+-                duty_balance_grace_steps=self.env_cfg.duty_balance_grace_steps,
+-                duty_score_feedback=self.env_cfg.duty_score_feedback,
+-                duty_score_target=self.env_cfg.duty_score_target,
+-            ),
++            replace(self.env_cfg, seed=int(self.env_cfg.seed) + int(seed_offset)),
+             oracle=self.oracle,
+         )
+ 
+     def _sample_start_idx(self, steps: int, *, seed_offset: int) -> int:
+         horizon = int(getattr(self.oracle.cfg, "horizon", 1))
+-        max_start = max(0, len(self.truth_df) - int(steps) - horizon - 1)
+-        if max_start <= 0:
+-            return 0
++        global_max_start = max(0, len(self.truth_df) - int(steps) - horizon - 1)
++        min_start = max(0, int(self.cfg.train_start_min or 0))
++        max_start = global_max_start
++        if self.cfg.train_start_max is not None:
++            max_start = min(max_start, int(self.cfg.train_start_max))
++        if max_start < min_start:
++            raise ValueError(f"No valid DQN training starts remain in [{min_start}, {max_start}]")
+         rng = np.random.default_rng(int(self.cfg.seed) + int(seed_offset) + 71_239)
++        if self.cfg.train_start_indices:
++            starts = np.asarray(
++                [int(x) for x in self.cfg.train_start_indices if min_start <= int(x) <= max_start],
++                dtype=int,
++            )
++            if starts.size:
++                return int(rng.choice(starts))
+         event_flags = (
+             self.truth_df[self.env_cfg.event_column].astype(bool).to_numpy()
+             if self.env_cfg.event_column in self.truth_df.columns
+             else np.zeros(len(self.truth_df), dtype=bool)
+         )
+-        event_indices = np.flatnonzero(event_flags[: max_start + int(steps)])
++        eligible_event_flags = np.zeros_like(event_flags, dtype=bool)
++        eligible_event_flags[min_start : max_start + int(steps)] = event_flags[
++            min_start : max_start + int(steps)
++        ]
++        event_indices = np.flatnonzero(eligible_event_flags)
+         if event_indices.size and rng.random() < float(self.cfg.event_start_prob):
+             event_idx = int(rng.choice(event_indices))
+-            return int(np.clip(event_idx - int(steps) // 3, 0, max_start))
+-        return int(rng.integers(0, max_start + 1))
++            return int(np.clip(event_idx - int(steps) // 3, min_start, max_start))
++        return int(rng.integers(min_start, max_start + 1))
+ 
+     def _flush_history(self) -> None:
+         if self.cfg.history_path:
+@@ -452,35 +442,7 @@ def evaluate_dqn(
+             truth_df,
+             sensor_specs,
+             constraints,
+-            WarmupEnvConfig(
+-                state_columns=cfg.state_columns,
+-                reward_target_columns=cfg.reward_target_columns,
+-                lookback=cfg.lookback,
+-                episode_len=cfg.episode_len,
+-                seed=int(cfg.seed) + int(offset),
+-                base_freq_s=cfg.base_freq_s,
+-                event_column=cfg.event_column,
+-                normalize_agent_state=cfg.normalize_agent_state,
+-                normalization_mean=cfg.normalization_mean,
+-                normalization_std=cfg.normalization_std,
+-                lambda_warmup_abort=cfg.lambda_warmup_abort,
+-                lambda_switch=cfg.lambda_switch,
+-                event_reward_multiplier=cfg.event_reward_multiplier,
+-                energy_account_enabled=cfg.energy_account_enabled,
+-                energy_capacity=cfg.energy_capacity,
+-                initial_energy=cfg.initial_energy,
+-                harvest_per_step=cfg.harvest_per_step,
+-                reserve_energy=cfg.reserve_energy,
+-                lambda_energy_deficit=cfg.lambda_energy_deficit,
+-                soc_soft_penalty_buffer=cfg.soc_soft_penalty_buffer,
+-                lambda_soc_soft_penalty=cfg.lambda_soc_soft_penalty,
+-                lambda_duty_balance=cfg.lambda_duty_balance,
+-                duty_balance_low=cfg.duty_balance_low,
+-                duty_balance_high=cfg.duty_balance_high,
+-                duty_balance_grace_steps=cfg.duty_balance_grace_steps,
+-                duty_score_feedback=cfg.duty_score_feedback,
+-                duty_score_target=cfg.duty_score_target,
+-            ),
++            replace(cfg, seed=int(cfg.seed) + int(offset)),
+             oracle=oracle,
+         )
+         rollouts.append(run_policy_rollout(env, policy, steps=int(steps), start_idx=int(start_idx)))
+diff --git a/src/v2/env.py b/src/v2/env.py
+index 33506f4..d71f41c 100644
+--- a/src/v2/env.py
++++ b/src/v2/env.py
+@@ -68,6 +68,9 @@ class WarmupEnvConfig:
+     )
+     alert_context_threshold: float = 0.5
+     alert_context_trend_lookback: int = 6
++    uncertainty_process_variance: tuple[float, ...] | None = None
++    uncertainty_initial_variance: float = 1.0
++    uncertainty_max_variance: float = 25.0
+ 
+ 
+ class WarmupSchedulingEnv:
+@@ -140,6 +143,20 @@ class WarmupSchedulingEnv:
+                 raise ValueError("normalization statistics must be finite and standard deviations positive")
+         self.state_mean = state_mean
+         self.state_std = np.maximum(state_std, 1e-6)
++        if cfg.uncertainty_process_variance is None:
++            process_variance = np.full(len(self.state_columns), 0.01, dtype=float)
++        else:
++            process_variance = np.asarray(cfg.uncertainty_process_variance, dtype=float).reshape(-1)
++            if process_variance.shape[0] != len(self.state_columns):
++                raise ValueError("uncertainty_process_variance must contain one value per state column")
++            if np.any(~np.isfinite(process_variance)) or np.any(process_variance < 0.0):
++                raise ValueError("uncertainty_process_variance must be finite and non-negative")
++        self.uncertainty_process_variance = np.maximum(process_variance, 1e-8)
++        self.posterior_variance = np.full(
++            len(self.state_columns),
++            max(float(cfg.uncertainty_initial_variance), 1e-8),
++            dtype=float,
++        )
+         self.event_flags = (
+             self.truth_df[cfg.event_column].astype(bool).to_numpy()
+             if cfg.event_column in self.truth_df.columns
+@@ -179,6 +196,11 @@ class WarmupSchedulingEnv:
+         self.observed_mask = np.zeros(len(self.state_columns), dtype=float)
+         self.history = np.repeat(self.state_mean.reshape(1, -1), int(self.cfg.lookback), axis=0).astype(float)
+         self.mask_history = np.zeros_like(self.history)
++        self.posterior_variance = np.full(
++            len(self.state_columns),
++            max(float(self.cfg.uncertainty_initial_variance), 1e-8),
++            dtype=float,
++        )
+         self.previous_action_mask = np.zeros(len(self.sensor_specs), dtype=float)
+         self.sensor_on_counts = np.zeros(len(self.sensor_specs), dtype=float)
+         self.elapsed_steps = 0
+@@ -243,6 +265,11 @@ class WarmupSchedulingEnv:
+ 
+         truth = self.truth_values[self.current_idx]
+         observed_this_step = np.zeros(len(self.state_columns), dtype=float)
++        observation_variance = np.full(len(self.state_columns), np.inf, dtype=float)
++        prior_variance = np.minimum(
++            self.posterior_variance + self.uncertainty_process_variance,
++            max(float(self.cfg.uncertainty_max_variance), 1e-8),
++        )
+         observation = np.array(self.last_observation, dtype=float, copy=True)
+         common_draws = (
+             self._draw_common_observation_randomness(
+@@ -302,14 +329,40 @@ class WarmupSchedulingEnv:
+             col_idx = self.state_index[variable]
+             observation[col_idx] = fused_value
+             observed_this_step[col_idx] = 1.0
++            physical_variance = float(
++                1.0 / np.sum(1.0 / np.maximum(np.square(noise_stds), 1.0e-12))
++            )
++            observation_variance[col_idx] = physical_variance / max(float(self.state_std[col_idx]) ** 2, 1.0e-12)
+             if variable == "wind_direction_deg":
+                 theta = np.deg2rad(fused_value)
++                angular_variance = physical_variance * (np.pi / 180.0) ** 2
+                 if "wind_dir_sin" in self.state_index:
+-                    observation[self.state_index["wind_dir_sin"]] = np.sin(theta)
+-                    observed_this_step[self.state_index["wind_dir_sin"]] = 1.0
++                    sin_idx = self.state_index["wind_dir_sin"]
++                    observation[sin_idx] = np.sin(theta)
++                    observed_this_step[sin_idx] = 1.0
++                    observation_variance[sin_idx] = angular_variance / max(
++                        float(self.state_std[sin_idx]) ** 2,
++                        1.0e-12,
++                    )
+                 if "wind_dir_cos" in self.state_index:
+-                    observation[self.state_index["wind_dir_cos"]] = np.cos(theta)
+-                    observed_this_step[self.state_index["wind_dir_cos"]] = 1.0
++                    cos_idx = self.state_index["wind_dir_cos"]
++                    observation[cos_idx] = np.cos(theta)
++                    observed_this_step[cos_idx] = 1.0
++                    observation_variance[cos_idx] = angular_variance / max(
++                        float(self.state_std[cos_idx]) ** 2,
++                        1.0e-12,
++                    )
++
++        observed_indices = np.flatnonzero(np.isfinite(observation_variance))
++        posterior_variance = np.array(prior_variance, copy=True)
++        if observed_indices.size:
++            prior_precision = 1.0 / np.maximum(prior_variance[observed_indices], 1.0e-12)
++            measurement_precision = 1.0 / np.maximum(observation_variance[observed_indices], 1.0e-12)
++            posterior_variance[observed_indices] = 1.0 / (prior_precision + measurement_precision)
++        self.posterior_variance = np.minimum(
++            posterior_variance,
++            max(float(self.cfg.uncertainty_max_variance), 1e-8),
++        )
+ 
+         for spec in self.sensor_specs:
+             self.runtimes[spec.sensor_id].end_step(spec.sensor_id in selected_ids)
+@@ -406,6 +459,7 @@ class WarmupSchedulingEnv:
+             "oracle_loss_reward": float(reward_loss),
+             "reward_proxy_mode": str(self.cfg.reward_proxy_mode),
+             "reward_proxy_loss": float(raw_reward_loss),
++            "uncertainty_proxy_mean": float(self._target_uncertainty_loss()),
+         }
+         self.last_info = info
+         if not done:
+@@ -434,6 +488,9 @@ class WarmupSchedulingEnv:
+         if mode == "coverage":
+             raw_loss = self._target_coverage_loss()
+             return raw_loss, raw_loss
++        if mode == "uncertainty":
++            raw_loss = self._target_uncertainty_loss()
++            return raw_loss, raw_loss
+         if mode == "instant_error":
+             raw_loss = float(instant_error)
+             return raw_loss, raw_loss
+@@ -461,6 +518,36 @@ class WarmupSchedulingEnv:
+         coverage = float(np.mean(masks > 0.5))
+         return float(np.clip(1.0 - coverage, 0.0, 1.0))
+ 
++    def _target_uncertainty_loss(self) -> float:
++        variance = np.asarray(self.posterior_variance[self.reward_target_indices], dtype=float)
++        if variance.size == 0:
++            return 1.0
++        bounded = variance / (1.0 + np.maximum(variance, 0.0))
++        return float(np.clip(np.mean(bounded), 0.0, 1.0))
++
++    def online_event_context(self) -> float:
++        """Prefer an online alert proxy, with the exact event flag as a legacy fallback."""
++        if self.agent_context_values.shape[1] > 0:
++            context = np.nan_to_num(
++                self.agent_context_values[int(self.current_idx)],
++                nan=0.0,
++                posinf=1.0,
++                neginf=0.0,
++            )
++            if "agent_context_event_alert" in self.agent_context_columns:
++                idx = self.agent_context_columns.index("agent_context_event_alert")
++                return float(np.clip(context[idx], 0.0, 1.0))
++            alert_indices = [
++                idx
++                for idx, name in enumerate(self.agent_context_columns)
++                if str(name).endswith("_alert")
++            ]
++            if alert_indices:
++                return float(np.clip(np.max(context[alert_indices]), 0.0, 1.0))
++        if bool(self.cfg.include_event_flag_in_state):
++            return float(bool(self.event_flags[int(self.current_idx)]))
++        return 0.0
++
+     def _event_loss_multiplier(self, *, is_event: bool, event_subtype_id: int) -> float:
+         if not bool(is_event):
+             return 1.0
+diff --git a/src/v2/forecast_eval.py b/src/v2/forecast_eval.py
+index ce6eab4..d4767ce 100644
+--- a/src/v2/forecast_eval.py
++++ b/src/v2/forecast_eval.py
+@@ -93,6 +93,81 @@ def forecast_metric_tables(
+     return overall, by_variable, by_condition
+ 
+ 
++def forecast_loss_samples(
++    rollout: Any,
++    *,
++    truth_df: pd.DataFrame,
++    oracle: Any,
++    metadata: dict[str, Any],
++    target_columns: list[str] | tuple[str, ...] | None = None,
++) -> pd.DataFrame:
++    """Rescore a saved rollout and return one frozen-forecaster loss per epoch.
++
++    This is intended for evaluator-sensitivity analyses.  The rollout is not
++    regenerated and the policy is not updated.  Simulator event subtypes are
++    attached only after prediction so that they can be used for offline
++    grouping and context-specific loss weights.
++    """
++    state_columns = tuple(str(name) for name in rollout.state_columns)
++    if not state_columns:
++        raise ValueError("rollout must contain state_columns for forecast evaluation")
++    missing_state = [name for name in state_columns if name not in truth_df.columns]
++    if missing_state:
++        raise ValueError(f"truth_df is missing rollout state columns: {missing_state}")
++    targets = tuple(str(name) for name in (target_columns or metadata.get("reward_target_columns", ())))
++    if not targets:
++        raise ValueError("forecast evaluation requires target_columns or metadata.reward_target_columns")
++    missing_targets = [name for name in targets if name not in truth_df.columns]
++    if missing_targets:
++        raise ValueError(f"truth_df is missing target columns: {missing_targets}")
++
++    lookback = int(metadata.get("lookback", getattr(oracle.cfg, "lookback", 20)))
++    horizon = int(metadata.get("horizon", getattr(oracle.cfg, "horizon", 1)))
++    features, futures, current_truth = _build_forecast_windows(
++        rollout,
++        truth_df=truth_df,
++        state_columns=state_columns,
++        target_columns=targets,
++        lookback=lookback,
++        horizon=horizon,
++        metadata=metadata,
++    )
++    if features.shape[0] == 0:
++        return pd.DataFrame(
++            columns=["policy", "step_index", "event_subtype_id", "event", "forecast_loss"]
++        )
++
++    if "event_subtype_id" in current_truth.columns:
++        subtype_ids = current_truth["event_subtype_id"].fillna(0).to_numpy(dtype=int)
++    else:
++        subtype_ids = np.zeros(features.shape[0], dtype=int)
++    if "blowing_snow_event" in current_truth.columns:
++        event_flags = current_truth["blowing_snow_event"].fillna(0).to_numpy(dtype=float) > 0.5
++    else:
++        event_flags = subtype_ids > 0
++
++    losses = np.asarray(
++        [
++            oracle.loss_with_context(
++                features[idx],
++                futures[idx],
++                context={"event_subtype_id": int(subtype_ids[idx])},
++            )
++            for idx in range(features.shape[0])
++        ],
++        dtype=float,
++    )
++    return pd.DataFrame(
++        {
++            "policy": str(rollout.policy),
++            "step_index": current_truth.index.to_numpy(dtype=int),
++            "event_subtype_id": subtype_ids,
++            "event": event_flags.astype(int),
++            "forecast_loss": losses,
++        }
++    )
++
++
+ def _build_forecast_windows(
+     rollout: Any,
+     *,
+diff --git a/tests/v2/test_custom_ppo.py b/tests/v2/test_custom_ppo.py
+index 81d753a..d032adc 100644
+--- a/tests/v2/test_custom_ppo.py
++++ b/tests/v2/test_custom_ppo.py
+@@ -15,6 +15,8 @@ from v2.custom_ppo import (  # noqa: E402
+     MaskedActor,
+     advantage_weighted_bc_loss,
+     feasible_candidate_mask,
++    restore_env,
++    snapshot_env,
+ )
+ from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
+ from v2.oracle import LinearFrozenForecastOracle, OracleConfig, build_supervised_windows  # noqa: E402
+@@ -97,6 +99,73 @@ def test_masked_actor_feasible_only() -> None:
+     assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
+ 
+ 
++def test_custom_ppo_episode_env_preserves_complete_config() -> None:
++    truth = _truth(64)
++    cfg = WarmupEnvConfig(
++        state_columns=STATE_COLUMNS,
++        reward_target_columns=("air_temperature_c",),
++        reward_proxy_mode="uncertainty",
++        lookback=4,
++        episode_len=8,
++        seed=9,
++        event_subtype_particle_reward_multiplier=1.7,
++        oracle_loss_reward_normalizers=(1.1, 2.2, 3.3),
++        min_dwell_steps=6,
++        agent_context_columns=(
++            "agent_context_particle_alert",
++            "agent_context_flux_alert",
++            "agent_context_thermal_alert",
++        ),
++        include_event_flag_in_state=False,
++        uncertainty_process_variance=tuple(0.02 for _ in STATE_COLUMNS),
++    )
++    trainer = CustomPPO(
++        truth_df=truth,
++        sensor_specs=_sensors(),
++        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
++        env_cfg=cfg,
++        oracle=_oracle(truth),
++        candidate_masks=np.asarray([[True, False, False], [True, False, True]], dtype=bool),
++        cfg=CustomPPOConfig(total_timesteps=1, n_steps=1, batch_size=1, n_epochs=1, device="cpu"),
++    )
++
++    episode_env = trainer._make_env(seed_offset=4)
++
++    assert episode_env.cfg.reward_proxy_mode == "uncertainty"
++    assert episode_env.cfg.event_subtype_particle_reward_multiplier == pytest.approx(1.7)
++    assert episode_env.cfg.oracle_loss_reward_normalizers == (1.1, 2.2, 3.3)
++    assert episode_env.cfg.min_dwell_steps == 6
++    assert not episode_env.cfg.include_event_flag_in_state
++    assert episode_env.cfg.seed == 13
++
++
++def test_oracle_lookahead_snapshot_restores_uncertainty_and_constraint_state() -> None:
++    truth = _truth(64)
++    env = WarmupSchedulingEnv(
++        truth,
++        _sensors(),
++        PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
++        WarmupEnvConfig(
++            state_columns=STATE_COLUMNS,
++            reward_target_columns=STATE_COLUMNS,
++            reward_proxy_mode="uncertainty",
++            lookback=4,
++            episode_len=8,
++            min_dwell_steps=3,
++        ),
++        oracle=_oracle(truth),
++    )
++    env.reset()
++    snapshot = snapshot_env(env)
++    env.step_mask(np.asarray([True, False, False]))
++
++    restore_env(env, snapshot)
++
++    assert np.allclose(env.posterior_variance, snapshot["posterior_variance"])
++    assert env.dwell_hold_remaining == snapshot["dwell_hold_remaining"]
++    assert env.current_idx == snapshot["current_idx"]
++
++
+ def test_masked_actor_context_encoder_preserves_feasible_mask() -> None:
+     actor = MaskedActor(
+         obs_dim=25,
+@@ -361,3 +430,52 @@ def test_custom_ppo_samples_only_inside_configured_training_partition() -> None:
+     starts = [trainer._sample_start_idx(8, seed_offset=idx) for idx in range(20)]
+ 
+     assert all(20 <= start <= 25 for start in starts)
++
++
++def test_ppo_actor_inputs_use_online_alert_in_rollout_and_teacher_batch() -> None:
++    truth = _truth(32)
++    trainer = CustomPPO(
++        truth_df=truth,
++        sensor_specs=_sensors(),
++        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
++        env_cfg=WarmupEnvConfig(
++            state_columns=STATE_COLUMNS,
++            reward_target_columns=STATE_COLUMNS,
++            lookback=4,
++            episode_len=4,
++            seed=3,
++            include_event_flag_in_state=False,
++            agent_context_columns=(
++                "agent_context_particle_alert",
++                "agent_context_flux_alert",
++                "agent_context_thermal_alert",
++            ),
++        ),
++        oracle=_oracle(truth),
++        candidate_masks=np.asarray([[True, False, False]], dtype=bool),
++        cfg=CustomPPOConfig(
++            total_timesteps=4,
++            n_steps=4,
++            batch_size=4,
++            n_epochs=1,
++            embed_dim=8,
++            hidden_dim=16,
++            device="cpu",
++            seed=5,
++            train_start_min=20,
++            train_start_max=20,
++        ),
++    )
++
++    rollout = trainer.collect_rollout(4)
++    teacher = trainer.collect_teacher_batch(4)
++    expected_online = truth.loc[20:23, [
++        "agent_context_particle_alert",
++        "agent_context_flux_alert",
++        "agent_context_thermal_alert",
++    ]].max(axis=1).to_numpy(dtype=np.float32)
++    exact_labels = truth.loc[20:23, "event_flag"].to_numpy(dtype=np.float32)
++
++    np.testing.assert_allclose(rollout["event_flags"], expected_online, atol=1e-7)
++    np.testing.assert_allclose(teacher["event_flags"], expected_online, atol=1e-7)
++    assert not np.allclose(expected_online, exact_labels)
+diff --git a/tests/v2/test_dqn.py b/tests/v2/test_dqn.py
+index 1a22597..a9b9247 100644
+--- a/tests/v2/test_dqn.py
++++ b/tests/v2/test_dqn.py
+@@ -79,17 +79,20 @@ def test_dqn_short_run_and_eval(tmp_path: Path) -> None:
+         ],
+         dtype=bool,
+     )
++    env_cfg = WarmupEnvConfig(
++        state_columns=STATE_COLUMNS,
++        reward_target_columns=STATE_COLUMNS,
++        reward_proxy_mode="uncertainty",
++        lookback=4,
++        episode_len=12,
++        seed=3,
++        min_dwell_steps=3,
++    )
+     trainer = DQNTrainer(
+         truth_df=truth,
+         sensor_specs=sensors,
+         constraints=constraints,
+-        env_cfg=WarmupEnvConfig(
+-            state_columns=STATE_COLUMNS,
+-            reward_target_columns=STATE_COLUMNS,
+-            lookback=4,
+-            episode_len=12,
+-            seed=3,
+-        ),
++        env_cfg=env_cfg,
+         oracle=_oracle(truth),
+         candidate_masks=candidate_masks,
+         cfg=DQNConfig(
+@@ -107,6 +110,10 @@ def test_dqn_short_run_and_eval(tmp_path: Path) -> None:
+             log_interval=6,
+         ),
+     )
++    episode_env = trainer._make_env(seed_offset=3)
++    assert episode_env.cfg.min_dwell_steps == env_cfg.min_dwell_steps
++    assert episode_env.cfg.reward_proxy_mode == env_cfg.reward_proxy_mode
++    assert episode_env.cfg.seed == env_cfg.seed + 3
+ 
+     trainer.train()
+     trainer.save(tmp_path / "dqn.pt")
+diff --git a/tests/v2/test_forecast_eval.py b/tests/v2/test_forecast_eval.py
+index eb56e10..80c704f 100644
+--- a/tests/v2/test_forecast_eval.py
++++ b/tests/v2/test_forecast_eval.py
+@@ -4,7 +4,7 @@ import numpy as np
+ import pandas as pd
+ 
+ from v2.evaluation import LoadedRollout
+-from v2.forecast_eval import forecast_metric_tables
++from v2.forecast_eval import forecast_loss_samples, forecast_metric_tables
+ from v2.oracle import LinearFrozenForecastOracle, OracleConfig, build_supervised_windows
+ 
+ 
+@@ -64,3 +64,58 @@ def test_forecast_metric_tables_use_future_truth_and_conditions() -> None:
+     assert np.isfinite(overall["forecast_weighted_mae_event"])
+     assert len(by_variable) == 2
+     assert {row["condition"] for row in by_condition} == {"all", "event", "non_event", "low_temp", "normal"}
++
++
++def test_forecast_loss_samples_preserve_global_steps_and_offline_subtypes() -> None:
++    t = np.arange(30, dtype=float)
++    truth = pd.DataFrame(
++        {
++            "x": t,
++            "event_subtype_id": np.where((t >= 12) & (t < 18), 2, 0),
++            "blowing_snow_event": np.where((t >= 12) & (t < 18), 1, 0),
++        }
++    )
++    observed = truth[["x"]].to_numpy(dtype=float)
++    masks = np.ones_like(observed)
++    x_train, y_train = build_supervised_windows(observed, masks, observed, lookback=3, horizon=2)
++    oracle = LinearFrozenForecastOracle(
++        OracleConfig(
++            lookback=3,
++            horizon=2,
++            ridge_alpha=0.1,
++            target_weights=(1.0,),
++            target_scales=(10.0,),
++            subtype_loss_weighting=True,
++            subtype_flux_target_weights=(2.0,),
++        )
++    ).fit(x_train, y_train)
++    rollout = LoadedRollout(
++        policy="demo",
++        observations=observed[8:20],
++        masks=masks[8:20],
++        truth=observed[8:20],
++        rewards=np.zeros(12),
++        scores=np.zeros((12, 1)),
++        powers=np.ones(12),
++        peaks=np.ones(12),
++        selected_masks=np.ones((12, 1), dtype=int),
++        mode_ids=np.ones((12, 1), dtype=int) * 2,
++        event_flags=np.zeros(12),
++        oracle_losses=np.zeros(12),
++        step_indices=np.arange(8, 20),
++        warmup_abort_count=0,
++        sensor_ids=("s",),
++        state_columns=("x",),
++    )
++
++    samples = forecast_loss_samples(
++        rollout,
++        truth_df=truth,
++        oracle=oracle,
++        metadata={"lookback": 3, "horizon": 2, "reward_target_columns": ["x"]},
++    )
++
++    assert samples["step_index"].tolist() == list(range(8, 20))
++    assert samples.loc[samples["step_index"] == 12, "event_subtype_id"].item() == 2
++    assert samples.loc[samples["step_index"] == 12, "event"].item() == 1
++    assert np.all(np.isfinite(samples["forecast_loss"]))
+diff --git a/tests/v2/test_warmup_env.py b/tests/v2/test_warmup_env.py
+index 749c87f..3f5ba3c 100644
+--- a/tests/v2/test_warmup_env.py
++++ b/tests/v2/test_warmup_env.py
+@@ -2,6 +2,7 @@ from __future__ import annotations
+ 
+ import numpy as np
+ import pandas as pd
++import pytest
+ 
+ from v2.env import WarmupEnvConfig, WarmupSchedulingEnv
+ from v2.oracle import LinearFrozenForecastOracle, OracleConfig, build_supervised_windows
+@@ -219,6 +220,50 @@ def test_warmup_env_uses_external_normalization_statistics() -> None:
+     assert np.allclose(env.state_std, np.ones(len(STATE_COLUMNS)))
+ 
+ 
++def test_uncertainty_reward_decreases_when_target_is_observed() -> None:
++    cfg = WarmupEnvConfig(
++        state_columns=STATE_COLUMNS,
++        reward_target_columns=("air_temperature_c",),
++        reward_proxy_mode="uncertainty",
++        lookback=2,
++        episode_len=2,
++        seed=5,
++        uncertainty_process_variance=tuple(0.05 for _ in STATE_COLUMNS),
++    )
++    constraints = PowerConstraintsV2(max_active=1, per_step_budget=1.0, startup_peak_budget=1.0)
++    observed_env = WarmupSchedulingEnv(_truth(24), _sensors(), constraints, cfg)
++    stale_env = WarmupSchedulingEnv(_truth(24), _sensors(), constraints, cfg)
++    observed_env.reset()
++    stale_env.reset()
++
++    _, _, _, observed_info = observed_env.step_mask(np.asarray([True, False, False]))
++    _, _, _, stale_info = stale_env.step_mask(np.asarray([False, False, True]))
++
++    assert float(observed_info["reward_proxy_loss"]) < float(stale_info["reward_proxy_loss"])
++    assert str(observed_info["reward_proxy_mode"]) == "uncertainty"
++
++
++def test_online_event_context_prefers_observable_alert_proxy() -> None:
++    truth = _truth(24).copy()
++    truth["event_flag"] = True
++    truth["agent_context_event_alert"] = 0.23
++    env = WarmupSchedulingEnv(
++        truth,
++        _sensors(),
++        PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
++        WarmupEnvConfig(
++            state_columns=STATE_COLUMNS,
++            lookback=2,
++            episode_len=2,
++            agent_context_columns=("agent_context_event_alert",),
++            include_event_flag_in_state=True,
++        ),
++    )
++    env.reset()
++
++    assert env.online_event_context() == pytest.approx(0.23)
++
++
+ def test_rollout_truth_is_aligned_with_observation_step() -> None:
+     class MetOnlyPolicy:
+         name = "met_only"

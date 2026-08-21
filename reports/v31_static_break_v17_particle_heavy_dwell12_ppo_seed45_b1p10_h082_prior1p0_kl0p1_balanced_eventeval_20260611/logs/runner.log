@@ -1,0 +1,13 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p10_seed45 -> reports/v31_static_break_v17_particle_heavy_dwell12_ppo_seed45_b1p10_h082_prior1p0_kl0p1_balanced_eventeval_20260611/logs/budget1p10_seed45.log
+complete_seeds=1/1
+reports/v31_static_break_v17_particle_heavy_dwell12_ppo_seed45_b1p10_h082_prior1p0_kl0p1_balanced_eventeval_20260611/v17_particle_heavy_b1p10_seed45_h082_prior1p0_kl0p1_balanced_eventeval_summary.csv
+reports/v31_static_break_v17_particle_heavy_dwell12_ppo_seed45_b1p10_h082_prior1p0_kl0p1_balanced_eventeval_20260611/v17_particle_heavy_b1p10_seed45_h082_prior1p0_kl0p1_balanced_eventeval_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                0                        -0.004510                       -0.004510                       -0.004510
+               best_static  1                0                        -0.041130                       -0.041130                       -0.041130
+           selected_static  1                0                        -0.041130                       -0.041130                       -0.041130
+deployable_selected_static  1                1                         0.012360                        0.012360                        0.012360
+    best_deployable_static  1                1                         0.007257                        0.007257                        0.007257
+     best_original_dynamic  1                0                        -0.013474                       -0.013474                       -0.013474
+       best_duty_non_pdppo  1                0                        -0.013766                       -0.013766                       -0.013766

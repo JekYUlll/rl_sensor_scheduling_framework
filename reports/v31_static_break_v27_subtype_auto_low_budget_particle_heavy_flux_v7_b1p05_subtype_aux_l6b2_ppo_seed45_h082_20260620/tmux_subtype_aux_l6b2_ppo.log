@@ -1,0 +1,31 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p05_seed45 -> reports/v31_static_break_v27_subtype_auto_low_budget_particle_heavy_flux_v7_b1p05_subtype_aux_l6b2_ppo_seed45_h082_20260620/logs/budget1p05_seed45.log
+complete_seeds=1/1
+reports/v31_static_break_v27_subtype_auto_low_budget_particle_heavy_flux_v7_b1p05_subtype_aux_l6b2_ppo_seed45_h082_20260620/v27_subtype_auto_particle_heavy_flux_v7_b1p05_subtype_aux_l6b2_ppo_seed45_h082_summary.csv
+reports/v31_static_break_v27_subtype_auto_low_budget_particle_heavy_flux_v7_b1p05_subtype_aux_l6b2_ppo_seed45_h082_20260620/v27_subtype_auto_particle_heavy_flux_v7_b1p05_subtype_aux_l6b2_ppo_seed45_h082_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                1                         0.055852                        0.055852                        0.055852
+               best_static  1                1                         0.003883                        0.003883                        0.003883
+           selected_static  1                1                         0.044724                        0.044724                        0.044724
+deployable_selected_static  1                1                         0.026162                        0.026162                        0.026162
+    best_deployable_static  1                1                         0.026162                        0.026162                        0.026162
+     best_original_dynamic  1                1                         0.012783                        0.012783                        0.012783
+       best_duty_non_pdppo  1                1                         0.012783                        0.012783                        0.012783
+reports/v31_static_break_v27_subtype_auto_low_budget_particle_heavy_flux_v7_b1p05_subtype_aux_l6b2_ppo_seed45_h082_20260620/behavior_audit/behavior_complexity_summary.csv
+{
+  "policy": "custom_ppo",
+  "steps": 4096,
+  "unique_mask_count": 9,
+  "top3_mask_fraction": 0.791015625,
+  "mask_entropy_bits": 2.3701736817370307,
+  "transition_entropy_bits": 2.8171922601795654,
+  "best_period": 1,
+  "best_period_match": 0.9384615384615385,
+  "event_sensor_l1": 2.479546018940487,
+  "event_mask_mi_bits": 0.3381545379277595,
+  "fixed_like": false,
+  "simple_cycle_like": false,
+  "low_complexity": false,
+  "weak_state_dependence": false,
+  "behavior_complexity_gate_pass": true
+}

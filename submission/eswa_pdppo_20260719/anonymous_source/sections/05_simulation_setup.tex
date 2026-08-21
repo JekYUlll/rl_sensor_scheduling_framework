@@ -1,0 +1,140 @@
+\section{Simulation and Evaluation Setup}
+\label{sec:simulation_setup}
+
+\subsection{Simulated sensing system}
+
+The evaluation uses a controlled simulation of a cold-region sensing system motivated by
+Antarctic automatic weather stations (AWSs). The final experiment uses six
+logical channels, consisting of one mandatory meteorological core channel and five
+optional channels. \Cref{tab:sensor_specs} lists the channels and their normalized
+scheduling costs. A platform rendering is retained in Supplementary Fig. S2 as
+physical motivation, while the channel table defines
+the logical-channel configuration evaluated in the experiments.
+
+The simulation keeps the meteorological core channel active, and at most one optional
+channel can be active. Core weather measurements remain available while the
+optional-channel capacity is allocated among logical channels whose
+forecast value changes across event types.
+
+\input{tables/sensor_specs}
+
+\subsection{Simulated time-series generation}
+\label{sec:simulator_construction}
+
+Each seed generates a simulated ground-truth time series with wind, temperature,
+humidity, pressure, radiation, snow-surface temperature, particle statistics, and
+snow mass flux. The simulation model uses reference distributions from the Antarctic
+AWS network and blowing-snow statistics. The meteorological variables are parameterized from the AntAWS
+compilation \citep{AntAWS2023}. Event and particle ranges draw on numerical
+modeling of atmosphere--snow interaction, Antarctic drifting-snow observations,
+and cold-region particle measurements \citep{Amory2020,Sharma2023,Monrad2026}.
+Blowing-snow events are produced by a semi-Markov process coupled to wind
+exceedance.
+
+The simulation contains particle, flux, and thermal event types. Each event type
+changes a different part of the simulated physical state and is observed most
+reliably by a different event-specific channel. The laser disdrometer is used for
+particle events, the FC4 snow mass-flux channel for flux events, and the infrared
+snow-surface-temperature channel for thermal events. Event balance, targets weighted by
+event type, and the optional-channel capacity make all three event types matter
+in the forecast loss. One fixed optional channel can be effective on average,
+but no single optional channel covers the full
+forecast objective.
+
+The scheduler input also contains simulated warning signals for the three event
+types. These noisy pre-onset signals are assumed available at decision time;
+their construction and distinction from condition labels are specified in
+Supplementary Section S5. They are simulator-generated and do not constitute a
+validated field warning system.
+
+Eight prespecified validation checks assess the simulated series, covering
+meteorological structure and blowing-snow behavior \citep{Aloni2024}. They include wind
+autocorrelation, event frequency, agreement between simulated and observed
+distributions of scalar variables, event durations,
+the flux--wind relationship, particle-size--wind correlation, and the wind-speed
+power spectrum. All eight criteria pass their prespecified acceptance rules; the
+full table and simulation-validation figure are
+reported in \ref{apx:generator_validation}. These simulation validation checks document the
+simulation construction and remain separate from test policy selection.
+
+\subsection{Metrics, seeds, and statistical summaries}
+
+The primary evaluation uses eight event-balanced evaluation windows of 512 time steps each.
+A prespecified rule balances event types and emphasizes
+transport periods. The rule
+uses event coverage and transport intensity from the simulated ground-truth time series,
+not any policy loss, and is applied identically to the PD-PPO scheduler and every baseline. Mean
+forecast loss averages \Cref{eq:step_forecast_loss} over the resulting 4096
+time steps. The two co-primary endpoints are mean forecast loss and the
+macro-averaged normalized forecast loss in \Cref{eq:macro_loss}.
+Normalization factors are computed from candidate fixed channel subsets on the
+calibration/validation partition, so the loss is
+specific to this simulation model. The primary forecaster architecture
+and training setup are described in \Cref{sec:framework_protocol}.
+
+Continuous full-partition evaluation examines performance beyond the event-balanced
+windows. The same final policy checkpoints and the fixed channel subsets previously
+selected on the calibration/validation partition start fresh continuous rollouts and are evaluated at every
+test step with a complete eight-step future target. This gives 5,242 scoreable test time steps per seed, covering
+$[64750,69992)$; only the last eight
+time steps are excluded because their future targets are incomplete. The policies, fixed channel subsets, and normalization factors fitted on the calibration/validation partition are
+unchanged, and no schedule is reselected from
+this evaluation.
+
+The primary analysis reports 22 post-selection evaluation seeds. Pilot/model-selection seeds 117 and 118 support
+a prespecified two-variant architecture comparison using their selected
+test-window metrics. The selected configuration is then held fixed for the 22
+post-selection evaluation seeds (119--140).
+For each seed, the same simulated ground-truth time series is used for the
+PD-PPO scheduler, the fixed-schedule baseline,
+AoI-priority, round-robin, and random schedules, and all reported baselines. The
+validation-selected fixed-schedule baseline is listed before test
+evaluation and then uses a constant feasible channel subset without fallback
+rotations.
+
+The two pilot/model-selection seeds were used for a prespecified comparison between the
+reported warning-conditioned policy and a variant with an additional deterministic
+feature encoder. The former was selected before the remaining seeds were run.
+Across the 22 post-selection evaluation seeds (119--140), the complete PD-PPO training
+configuration achieved lower macro-averaged normalized forecast loss than the
+validation-selected fixed-schedule baseline in every seed (mean paired difference 0.0838;
+95\% percentile bootstrap confidence interval for the mean paired difference
+[0.0708, 0.0967]). The separate 24-seed descriptive aggregate retains the pilot
+seeds. The simulation parameters, target weights, baseline
+definitions, and reported training settings were held fixed for this expansion.
+
+The main protocol hyperparameters are listed in Supplementary Table S1.
+Fixed channel subsets and calibration/validation losses for each seed are listed in
+Supplementary Table S9.
+
+The alternative-forecaster analysis uses a ridge forecaster fitted on the same
+forecaster-training partition for each seed. The ridge forecaster selects its own
+fixed-schedule baseline using calibration/validation windows and then evaluates the unchanged
+PD-PPO and fixed-baseline observation sequences. Within this analysis, no policy,
+action sequence, or forecaster is updated from its test results. The current
+operating-condition label $c_t$ is used offline to select the same
+predeclared target weights for every baseline and groups the completed losses for the
+macro-averaged normalized forecast loss.
+
+Seed statistical summaries use paired differences because PD-PPO and each baseline
+are evaluated on the same simulated ground-truth time series. For a
+seed $s$, the paired difference is comparator loss minus PD-PPO loss; a positive
+paired difference favors the PD-PPO scheduler. Alongside mean paired differences
+and counts of seeds with lower loss, the results report medians and 95\%
+percentile bootstrap confidence intervals for the mean paired difference over
+seeds.
+
+\subsection{Action-sequence analysis}
+
+The analysis uses the concatenated executed-action sequences from the eight
+event-balanced evaluation windows. It reports executed-action entropy,
+consecutive-action-pair entropy, condition--executed-action mutual information,
+mean normalized Hamming distance between adjacent executed masks, and optional-channel
+activation frequency by operating condition. A sequence is classified as fixed-like when
+one executed activation mask accounts for at least 95\% of actions and as simple-cycle-like
+when the top three masks account for at least 85\% of actions and the best periodic match
+up to lag 64 reaches 90\%. The complete behavior-complexity gate also evaluates the
+unique executed-action count, both entropy diagnostics, and the predeclared
+condition-dependence criteria. These diagnostics include the seven artificial boundaries
+between independently reset windows. They support interpretation of the learned schedule; the primary performance
+claim remains the paired forecast loss comparison.

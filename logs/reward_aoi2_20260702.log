@@ -1,0 +1,4 @@
+scenebal2_confirm_start date=2026-07-02T03:26:15+08:00 train_seeds=117 118 all_seeds=117 118 router_conf=0.5
+scenebal2_pivot_start date=2026-07-02T03:26:15+08:00 seeds=117 118 router_conf=0.5
+scenebal1_router_reaudit_start date=2026-07-02T03:55:31+08:00 seeds=117 118 router_conf=0.5 eval_dir=eval_router_conf05_scenebal2_20260621
+scenebal1_router_reaudit_failed date=2026-07-02T03:55:31+08:00

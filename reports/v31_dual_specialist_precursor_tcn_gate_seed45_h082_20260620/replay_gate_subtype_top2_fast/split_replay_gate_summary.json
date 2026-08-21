@@ -1,0 +1,45 @@
+{
+  "source_run_dir": "reports/v31_dual_specialist_precursor_tcn_gate_seed45_h082_20260620",
+  "replay_family": "subtype_auto",
+  "eval_steps": 512,
+  "eval_start_indices": [
+    55500,
+    56012,
+    56716,
+    57228,
+    57868,
+    58380,
+    58956,
+    59479
+  ],
+  "reference_policy": "validation_selected_static",
+  "reference_oracle_loss_mean": 45.28001843261882,
+  "required_margin_abs": 0.4528001843261882,
+  "source_reference_gate_pass": false,
+  "static_reference_policy": "static_action5",
+  "static_reference_oracle_loss_mean": 45.291966089222115,
+  "static_required_margin_abs": 0.45291966089222113,
+  "best_static_reference_event_loss": 50.34588173135862,
+  "best_static_reference_non_event_loss": 39.228353014822034,
+  "enforce_static_candidate_reference": true,
+  "best_replay_policy": "split_subtype_auto_top2_c0_p0_f1_t0_l0",
+  "best_replay_oracle_loss_mean": 45.302009616512805,
+  "best_replay_event_loss": 50.3634540562984,
+  "best_replay_non_event_loss": 39.22936360229099,
+  "margin_abs_vs_reference": -0.02199118389398791,
+  "margin_rel_vs_reference": -0.00048567082468645596,
+  "margin_abs_vs_static_reference": -0.01004352729069069,
+  "margin_rel_vs_static_reference": -0.0002217507464989623,
+  "static_reference_gate_pass": false,
+  "gate_pass": false,
+  "top_sizes": [
+    2
+  ],
+  "subtype_top_size_cap": 2,
+  "lead_steps": [
+    0
+  ],
+  "dwell_steps": [
+    8
+  ]
+}

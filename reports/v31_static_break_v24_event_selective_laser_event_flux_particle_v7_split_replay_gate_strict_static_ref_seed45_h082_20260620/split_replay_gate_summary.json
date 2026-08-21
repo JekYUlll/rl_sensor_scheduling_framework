@@ -1,0 +1,49 @@
+{
+  "source_run_dir": "reports/v31_static_break_v24_event_selective_laser_event_flux_particle_v7_zero_ppo_source_seed45_h082_20260620/raw/budget1p10_seed45",
+  "eval_steps": 512,
+  "eval_start_indices": [
+    55500,
+    56012,
+    56524,
+    57036,
+    57868,
+    58380,
+    58892,
+    59404
+  ],
+  "reference_policy": "aoi",
+  "reference_oracle_loss_mean": 0.4166981613252574,
+  "required_margin_abs": 0.005,
+  "source_reference_gate_pass": true,
+  "static_reference_policy": "static_action8",
+  "static_reference_oracle_loss_mean": 0.4038176378089702,
+  "static_required_margin_abs": 0.005,
+  "best_static_reference_event_loss": 0.5193630933348052,
+  "best_static_reference_non_event_loss": 0.2700089385224657,
+  "enforce_static_candidate_reference": true,
+  "best_replay_policy": "split_top2_l0_dwell12",
+  "best_replay_oracle_loss_mean": 0.4065995353294056,
+  "best_replay_event_loss": 0.5122766234895877,
+  "best_replay_non_event_loss": 0.28421900857699245,
+  "margin_abs_vs_reference": 0.010098625995851762,
+  "margin_rel_vs_reference": 0.024234870544507132,
+  "margin_abs_vs_static_reference": -0.00278189752043545,
+  "margin_rel_vs_static_reference": -0.00688899458559919,
+  "static_reference_gate_pass": false,
+  "gate_pass": false,
+  "top_sizes": [
+    2,
+    3,
+    5
+  ],
+  "lead_steps": [
+    0,
+    3,
+    6
+  ],
+  "dwell_steps": [
+    6,
+    12,
+    24
+  ]
+}

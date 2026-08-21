@@ -1,0 +1,46 @@
+{
+  "source_run_dir": "reports/v31_static_break_v27_subtype_auto_low_budget_particle_heavy_flux_v7_b1p05_learned_ppo_seed45_h082_20260620/raw/budget1p05_seed45",
+  "replay_family": "subtype_auto",
+  "eval_steps": 512,
+  "eval_start_indices": [
+    55500,
+    56012,
+    56524,
+    57036,
+    57868,
+    58380,
+    58892,
+    59404
+  ],
+  "reference_policy": "feasible_static_projected",
+  "reference_oracle_loss_mean": 0.5178099223503523,
+  "required_margin_abs": 0.005178099223503523,
+  "source_reference_gate_pass": false,
+  "static_reference_policy": "static_action1",
+  "static_reference_oracle_loss_mean": 0.5148388302441163,
+  "static_required_margin_abs": 0.005148388302441163,
+  "best_static_reference_event_loss": 0.7290137466026285,
+  "best_static_reference_non_event_loss": 0.26681118738004356,
+  "enforce_static_candidate_reference": true,
+  "best_replay_policy": "split_subtype_auto_top2_c0_p1_f0_t0_l6",
+  "best_replay_oracle_loss_mean": 0.5133683819603903,
+  "best_replay_event_loss": 0.7151808730878269,
+  "best_replay_non_event_loss": 0.2796571830678162,
+  "margin_abs_vs_reference": 0.004441540389962029,
+  "margin_rel_vs_reference": 0.008577549788543574,
+  "margin_abs_vs_static_reference": 0.0014704482837260002,
+  "margin_rel_vs_static_reference": 0.0028561332155711172,
+  "static_reference_gate_pass": false,
+  "gate_pass": false,
+  "top_sizes": [
+    2
+  ],
+  "subtype_top_size_cap": 2,
+  "lead_steps": [
+    0,
+    6
+  ],
+  "dwell_steps": [
+    1
+  ]
+}

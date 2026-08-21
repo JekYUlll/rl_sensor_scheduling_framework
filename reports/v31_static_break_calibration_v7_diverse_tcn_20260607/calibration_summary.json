@@ -1,0 +1,69 @@
+{
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v7_flux_spc_tradeoff.yaml",
+  "oracle_type": "tcn",
+  "target_profiles": {
+    "transport_v6": [
+      0.2,
+      0.2,
+      0.3,
+      0.05,
+      0.05,
+      0.05,
+      8.0,
+      4.0,
+      4.0
+    ]
+  },
+  "diversity_gate": {
+    "require_diverse_dynamic": true,
+    "min_mid_duty_sensors": 4,
+    "max_always_on_sensors": 2,
+    "max_always_off_sensors": 3,
+    "min_switches_per_step": 0.003,
+    "max_switches_per_step": 0.06
+  },
+  "rows": [
+    {
+      "profile": "transport_v6",
+      "budget": 1.0,
+      "startup_peak_budget": 1.6,
+      "required_sensors": "",
+      "candidate_count": 88,
+      "dynamic_count": 8,
+      "best_static_sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter",
+      "best_static_loss": 0.1847671363830159,
+      "best_static_event_loss": 0.2077658109020632,
+      "best_static_non_event_loss": 0.1488892041333019,
+      "best_static_has_laser": false,
+      "best_static_has_fc4": false,
+      "best_static_has_spc": true,
+      "top5_static_laser_frac": 0.0,
+      "top5_static_fc4_frac": 0.2,
+      "top5_static_spc_frac": 0.2,
+      "best_dynamic_sensor_ids": "dynamic:diverse_top5_lead0_dwell16",
+      "best_dynamic_loss": 0.1889489266268356,
+      "best_any_dynamic_sensor_ids": "dynamic:diverse_top5_lead0_dwell16",
+      "best_any_dynamic_loss": 0.1889489266268356,
+      "best_dynamic_event_loss": 0.2163951872364403,
+      "best_dynamic_non_event_loss": 0.1461327600758522,
+      "best_dynamic_has_laser": false,
+      "best_dynamic_has_fc4": true,
+      "best_dynamic_has_spc": true,
+      "best_dynamic_switches_per_step": 0.0281982421875,
+      "best_dynamic_mid_duty_sensor_count": 5,
+      "best_dynamic_always_on_sensor_count": 2,
+      "best_dynamic_always_off_sensor_count": 1,
+      "best_dynamic_duty_entropy": 0.4333617918083761,
+      "dynamic_margin": -0.022632759946828413,
+      "event_dynamic_margin": -0.04153414990132725,
+      "laser_shortcut_broken": true,
+      "dynamic_headroom": false,
+      "dynamic_diversity_ok": true,
+      "gate_pass": false,
+      "combo": "transport_v6_b1p00_p1p60",
+      "out_dir": "reports/v31_static_break_calibration_v7_diverse_tcn_20260607/transport_v6_b1p00_p1p60",
+      "log_path": "reports/v31_static_break_calibration_v7_diverse_tcn_20260607/transport_v6_b1p00_p1p60.log"
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "path": "rl_sensor_scheduling_framework/reports/v31_static_break_v25_v24_low_budget_particle_heavy_flux_v7_b1p03_split_replay_gate_seed45_h082_20260620/rollout_split_top3_l3_dwell24.npz",
+    "policy": "split_top3_l3_dwell24",
+    "steps": 4096,
+    "sensors": 8,
+    "event_rate": 0.53662109375,
+    "unique_mask_count": 12,
+    "unique_mask_fraction": 0.0029296875,
+    "top1_mask_fraction": 0.27294921875,
+    "top2_mask_fraction": 0.43017578125,
+    "top3_mask_fraction": 0.5712890625,
+    "mask_entropy_bits": 2.9643037313229645,
+    "transition_count": 60,
+    "transition_entropy_bits": 3.4041717685932973,
+    "switches_per_step": 0.029365079365079365,
+    "best_period": 1,
+    "best_period_match": 0.9394383394383394,
+    "event_mask_mi_bits": 0.32246541936023077,
+    "event_sensor_l1": 0.9195594999189798,
+    "event_sensor_linf": 0.34896941467048787,
+    "fixed_like": false,
+    "simple_cycle_like": false,
+    "low_complexity": false,
+    "weak_state_dependence": false,
+    "behavior_complexity_gate_pass": true,
+    "top_masks_json": "[{\"mask\": \"00101010\", \"count\": 1118, \"fraction\": 0.27294921875}, {\"mask\": \"00101001\", \"count\": 644, \"fraction\": 0.1572265625}, {\"mask\": \"10100100\", \"count\": 578, \"fraction\": 0.14111328125}, {\"mask\": \"01010001\", \"count\": 558, \"fraction\": 0.13623046875}, {\"mask\": \"01101100\", \"count\": 491, \"fraction\": 0.119873046875}]",
+    "sensor_duty_json": "[{\"sensor\": \"met_station_core\", \"duty\": 0.196533203125, \"event_duty\": 0.27797998180163785, \"non_event_duty\": 0.10221285563751317, \"event_abs_delta\": 0.17576712616412468}, {\"sensor\": \"radiometer_basic\", \"duty\": 0.4228515625, \"event_duty\": 0.2611464968152866, \"non_event_duty\": 0.6101159114857745, \"event_abs_delta\": 0.34896941467048787}, {\"sensor\": \"surface_temp_ir\", \"duty\": 0.714599609375, \"event_duty\": 0.7766151046405824, \"non_event_duty\": 0.642781875658588, \"event_abs_delta\": 0.13383322898199435}, {\"sensor\": \"ultrasonic_anemometer_hd\", \"duty\": 0.19482421875, \"event_duty\": 0.11237488626023658, \"non_event_duty\": 0.2903055848261328, \"event_abs_delta\": 0.17793069856589622}, {\"sensor\": \"shielded_thermo_hygro\", \"duty\": 0.623291015625, \"event_duty\": 0.6232939035486806, \"non_event_duty\": 0.6232876712328768, \"event_abs_delta\": 6.2323158038779525e-06}, {\"sensor\": \"snow_particle_counter\", \"duty\": 0.3486328125, \"event_duty\": 0.3293903548680619, \"non_event_duty\": 0.37091675447839834, \"event_abs_delta\": 0.04152639961033644}, {\"sensor\": \"laser_disdrometer\", \"duty\": 0.31982421875, \"event_duty\": 0.32074613284804365, \"non_event_duty\": 0.31875658587987354, \"event_abs_delta\": 0.0019895469681701083}, {\"sensor\": \"fc4_flux\", \"duty\": 0.33154296875, \"event_duty\": 0.34986351228389445, \"non_event_duty\": 0.3103266596417281, \"event_abs_delta\": 0.03953685264216633}]"
+  }
+]

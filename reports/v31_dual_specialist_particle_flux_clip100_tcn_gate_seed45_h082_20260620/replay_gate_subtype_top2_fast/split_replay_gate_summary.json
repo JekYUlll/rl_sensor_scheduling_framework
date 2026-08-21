@@ -1,0 +1,45 @@
+{
+  "source_run_dir": "reports/v31_dual_specialist_particle_flux_clip100_tcn_gate_seed45_h082_20260620",
+  "replay_family": "subtype_auto",
+  "eval_steps": 512,
+  "eval_start_indices": [
+    55500,
+    56012,
+    56716,
+    57228,
+    57868,
+    58380,
+    58956,
+    59479
+  ],
+  "reference_policy": "validation_selected_static",
+  "reference_oracle_loss_mean": 45.28407636005432,
+  "required_margin_abs": 0.4528407636005432,
+  "source_reference_gate_pass": false,
+  "static_reference_policy": "static_action1",
+  "static_reference_oracle_loss_mean": 45.265156773122726,
+  "static_required_margin_abs": 0.4526515677312273,
+  "best_static_reference_event_loss": 50.32493529959032,
+  "best_static_reference_non_event_loss": 39.19450949700639,
+  "enforce_static_candidate_reference": true,
+  "best_replay_policy": "split_subtype_auto_top2_c1_p1_f0_t0_l0",
+  "best_replay_oracle_loss_mean": 45.273467779567,
+  "best_replay_event_loss": 50.32529567444869,
+  "best_replay_non_event_loss": 39.21235955337705,
+  "margin_abs_vs_reference": 0.010608580487321717,
+  "margin_rel_vs_reference": 0.00023426734826106967,
+  "margin_abs_vs_static_reference": -0.008311006444273517,
+  "margin_rel_vs_static_reference": -0.0001836071503282272,
+  "static_reference_gate_pass": false,
+  "gate_pass": false,
+  "top_sizes": [
+    2
+  ],
+  "subtype_top_size_cap": 2,
+  "lead_steps": [
+    0
+  ],
+  "dwell_steps": [
+    8
+  ]
+}

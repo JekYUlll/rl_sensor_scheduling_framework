@@ -1,0 +1,122 @@
+reports/v31_static_break_calibration_v11_decorr0_cov_linear_server_20260608/truth_static_break_calibration.csv
+reports/v31_static_break_calibration_v11_decorr0_cov_linear_server_20260608/particle_flux_v6_b0p65_p1p60/dataset_validation/synthetic_validation.csv
+{
+  "budget": 0.65,
+  "candidate_count": 22,
+  "truth_event_rate": 0.27013333333333334,
+  "eval_start_indices": [
+    8576,
+    11008,
+    13888,
+    23040
+  ],
+  "event_loss_min": 0.2838091874324184,
+  "non_event_loss_min": 0.2840240393007596,
+  "best_overall": {
+    "action_idx": 0,
+    "sensor_ids": "met_station_core|radiometer_basic|snow_particle_counter",
+    "oracle_loss_mean": 0.28385282921817523,
+    "power_mean": 0.63,
+    "peak_max": 0.84
+  },
+  "best_event_laser": null,
+  "best_event_no_laser": {
+    "action_idx": 0,
+    "sensor_ids": "met_station_core|radiometer_basic|snow_particle_counter",
+    "oracle_loss_event": 0.2838091874324184,
+    "power_mean": 0.63,
+    "peak_max": 0.84
+  },
+  "best_event_fc4": {
+    "action_idx": 13,
+    "sensor_ids": "radiometer_basic|surface_temp_ir|shielded_thermo_hygro|fc4_flux",
+    "oracle_loss_event": 0.3067404290343745,
+    "power_mean": 0.6500000000000001,
+    "peak_max": 0.8400000000000001
+  },
+  "best_event_no_fc4": {
+    "action_idx": 0,
+    "sensor_ids": "met_station_core|radiometer_basic|snow_particle_counter",
+    "oracle_loss_event": 0.2838091874324184,
+    "power_mean": 0.63,
+    "peak_max": 0.84
+  },
+  "best_non_event_laser": null,
+  "best_non_event_no_laser": {
+    "action_idx": 0,
+    "sensor_ids": "met_station_core|radiometer_basic|snow_particle_counter",
+    "oracle_loss_non_event": 0.2840240393007596,
+    "power_mean": 0.63,
+    "peak_max": 0.84
+  },
+  "laser_event_lift": NaN,
+  "fc4_event_lift": -0.022931241601956087,
+  "laser_non_event_lift": NaN,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v11_spc_static_break.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_v11_decorr0_cov_linear_server_20260608/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.05,
+    0.05,
+    0.15,
+    0.02,
+    0.02,
+    0.0,
+    16.0,
+    6.0,
+    6.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 0.65,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": [
+      {
+        "name": "weather",
+        "sensor_ids": [
+          "met_station_core",
+          "ultrasonic_anemometer_hd",
+          "shielded_thermo_hygro"
+        ]
+      },
+      {
+        "name": "surface_forcing",
+        "sensor_ids": [
+          "radiometer_basic",
+          "surface_temp_ir"
+        ]
+      },
+      {
+        "name": "snow_transport",
+        "sensor_ids": [
+          "snow_particle_counter",
+          "laser_disdrometer",
+          "fc4_flux"
+        ]
+      }
+    ]
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  },
+  "eval_start_selection": "event_transport_rich",
+  "eval_selection_stride": 64
+}
+reports/v31_static_break_calibration_v11_decorr0_cov_linear_server_20260608/particle_flux_v6_b0p65_p1p60/oracle_lift_candidate_table.csv

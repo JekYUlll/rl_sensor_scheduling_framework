@@ -1,0 +1,3242 @@
+[
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Stage 1 Forecaster fitting"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Stage 2 Policy training"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Stage 3 Final evaluation"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0--24,500"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "24,500--59,500"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "64,750--70,000"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Truth"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "sequence"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Fixed"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "forecaster"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Simulator"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "rollouts"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Forecaster"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "loss"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Held-out"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "rollouts"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Step loss"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "+ macro"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Fixed, rule-based, full and"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "candidate mask rollouts"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Imitation"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "labels"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Masked PPO"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "policy"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Fixed and"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "rule references"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Behaviour"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "checks"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Static/reference selection partition"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+    "included_from": "sections/04_framework_protocol.tex",
+    "line": 6,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "59,500--64,750, choose fixed mask references and static normalisers; no final test labels"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "sa"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "="
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "OTT Parsivel2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "IR Snow Surface"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Laser"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Temperature"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Disdrometer"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Sensor"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "re"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "FC4 Blowing-Snow"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Flux Sensor"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Pyranometer"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "(Global Solar"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Radiation)"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "="
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Modbus Multi-"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "parameter"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "~"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "=>,"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Weather Station"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "A"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Smog"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "fi"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "ope oc"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "Soe,"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "\\"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "vak"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "—"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "|*"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "“"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "ok"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/aws_deployment.png",
+    "included_from": "sections/05_simulation_setup.tex",
+    "line": 23,
+    "extractor": "tesseract-psm11",
+    "text": "- a"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(a) Step and macro margins"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.12"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(b) Seed-level paired margins"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Step"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.06"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Macro"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.04"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Loss margin"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.08"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.3"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.1"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.02"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Step threshold"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.0024-0.0036"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "12"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "12"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "9"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "12"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "13"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "14"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "13"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "6"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "11"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "7"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Loss margin"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.10"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Seed, sorted by margin"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "positive favours PD-PPO"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Step"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "refs"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Macro"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "refs"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Macro"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 36,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "fixed"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(a) Specialist-selection frequency"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(b) Margin vs. fixed mask"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.54"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.18"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.18"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.11"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.8"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Particle"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.98"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.01"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Flux"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.01"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.98"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Thermal"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.98"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.02"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "R"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "ser"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.6"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "r"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "ete"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "ro"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "yg"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "m"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "o-h"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "dio"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Ra"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "erm"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "h"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "T"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "eI"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Su"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "c"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "rfa"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "La"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "FC"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Normalised margin"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Mean selection frequency"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Non-event"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.3"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.1"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "−0.1"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "icle"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Part"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "l"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Flux herma"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "T"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "ro"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_event_type_diagnostics.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 57,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Mac"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(a) Distribution over 24 seeds"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(b) Specialist-selection frequency"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "All four behaviour checks passed in 24/24 seeds"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Non-event"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.54"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.18"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.18"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.11"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Diagnostic statistic"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.8"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.5"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Particle"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.98"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.01"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Flux"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.01"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.98"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Thermal"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.98"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.02"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.6"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.5"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Mask"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "entropy"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Event-mask"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "MI"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Event-sensor"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "L1"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "d."
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Ra"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "o."
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "T"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "m"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "her"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "f"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Sur"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "IR"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "ace"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "er"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Las"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "FC"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Mean selection frequency"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_behavior_audit.pdf",
+    "included_from": "sections/06_results.tex",
+    "line": 98,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "2.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "AntAWS anchor"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Synthetic"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "density"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.03"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(b) Wind speed"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.15"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.02"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.01"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "−40"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.10"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.05"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "−20"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "5"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "temperature (deg C)"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(c) Wind autocorrelation"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.75"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "AntAWS anchor"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Synthetic"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "ACF tolerance"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.25"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "2.5"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "5.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "7.5"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "lag (h)"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "15"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "20"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(d) Event-window fractions"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.50"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "10"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "wind speed (m/s)"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "fraction of windows"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "density"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "ACF"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(a) Air temperature"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "10.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "12.5"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "calm"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.3"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "event-heavy"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.1"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.25"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.50"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "event fraction"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.75"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure3_synthetic_statistics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 157,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(a) Seed-level macro margins"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "(b) Paired bootstrap 95% CI"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "No imitation"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "step 23/24"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "No event context"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "auxiliary"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "step 21/24"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Full"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "No imitation"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "No event context"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "auxiliary"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "No balanced"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "training loss"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "No balanced"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "training loss"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.000"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.025"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.050"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.075"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.100"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.125"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Macro margin vs fixed reference"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "step 24/24"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "−0.04"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "−0.02"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.02"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.04"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_mechanism_robustness.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 169,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Δ mean macro margin vs full"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Training loss"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Policy entropy"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1200"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Full PD-PPO"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "No imitation guide"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1000"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Event-context head"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.00"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.8"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.6"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.95"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "600"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "400"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Accuracy"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Entropy"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "Loss"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "800"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "1.0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.8"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.4"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.75"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.2"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "50"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "100"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "150"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "PPO timesteps (k)"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "200"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.85"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.80"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.6"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "200"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0.90"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "50"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "100"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "150"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "PPO timesteps (k)"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "200"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "0"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "50"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "100"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "150"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "PPO timesteps (k)"
+  },
+  {
+    "source": "figure-asset",
+    "role": "figure-visible-text",
+    "figure_path": "figures/figure_training_diagnostics.pdf",
+    "included_from": "sections/appendix_theory.tex",
+    "line": 185,
+    "extractor": "pdftotext-figure-pdf",
+    "text": "200"
+  }
+]

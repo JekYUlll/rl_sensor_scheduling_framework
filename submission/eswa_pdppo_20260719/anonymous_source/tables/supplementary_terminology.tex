@@ -1,0 +1,38 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.08}
+\noindent\begin{tabularx}{0.96\linewidth}{@{}>{\raggedright\arraybackslash}p{0.27\linewidth}>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  Term & Meaning in this study \\
+  \midrule
+  PD-PPO scheduler & Complete scheduler comprising input construction, the policy, feasibility check, and execution constraint. \\
+  Primary forecaster & Temporal convolutional network (TCN) trained on the forecaster-training partition. \\
+  Frozen primary forecaster & Primary forecaster after its parameters are fixed for policy training and offline evaluation. \\
+  Policy & Parameterized masked distribution $\pi_\theta$ over feasible proposed action indices. \\
+  Meteorological core channel & Mandatory logical channel active in every channel subset. \\
+  Optional channel & Any of the other five logical channels. \\
+  Other optional channels & Basic radiometer channel and shielded temperature--humidity channel. \\
+  Specialist channels & Infrared snow-surface-temperature channel, laser disdrometer channel, and FC4 snow mass-flux channel. \\
+  Channel subset & Set of requested logical channels at one time step. \\
+  Activation vector & Binary mathematical representation of a channel subset. \\
+  Proposed action index $u_t$ & Categorical policy selection identifying one proposed candidate channel subset. \\
+  Feasible-action mask & Indicator over candidate actions after the feasibility check. \\
+  Minimum dwell-time constraint & Keeps the previously executed channel subset active until its minimum dwell time is met. \\
+  Sample-and-hold value & Last valid measurement retained when no new measurement is available. \\
+  Observation mask & Indicator that a variable received a new observation at the current time step. \\
+  Current condition label $c_t$ & Simulator-derived current operating-condition label used for training-loss weighting and offline evaluation, not as a deployed policy input. \\
+  Future-condition supervision label $c_t^{\mathrm{sup}}$ & First non-calm label from $t$ through $t+16$, or calm if none occurs; used only for policy-training supervision. \\
+  Channel sampling age & Time since the channel's last ready sampling opportunity; distinct from variable-level age of information (AoI). \\
+  Validation-selected fixed-schedule baseline & Fixed channel subset selected on the calibration/validation partition. \\
+  AoI-priority baseline & Feasible dynamic baseline prioritizing age of information. \\
+  Round-robin baseline & Baseline that uses a fixed cyclic schedule over candidate channel subsets. \\
+  Random-feasible baseline & Baseline sampled from the feasible action set. \\
+  Privileged one-step look-ahead reference using next-step test targets & Reference that selects the feasible action with the lowest next-step forecast loss on the test partition while omitting longer dynamic consequences from its objective. \\
+  Warning-rule baseline & Deterministic baseline driven by simulated warning signals. \\
+  Privileged true-label baseline & Baseline using the exact label sequence $c_t,\ldots,c_{t+16}$ at each decision. \\
+  Double DQN training configuration & Training-configuration comparison using the same state representation, reward, action set, and constraints; it omits behavior cloning pretraining, continuing advantage-weighted behavior cloning, and the auxiliary future-condition classifier used by the complete PD-PPO configuration. \\
+  Macro-averaged normalized forecast loss & Equal-weight mean of the three event-type-specific losses after calibration/validation-based normalization. \\
+  \bottomrule
+\end{tabularx}
+\endgroup

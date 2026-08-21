@@ -6,6 +6,8 @@ data/generated/
 data/processed/
 reports/runs/
 reports/aggregate/
+reports/datasets/
+reports/v2*/
 reports/logs/
 *.pt
 *.pth
@@ -15,3 +17,18 @@ reports/logs/
 .DS_Store
 
 temp.md
+/PPT/
+
+# LaTeX build intermediates (including submission-package builds)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.spl
+*.synctex.gz
+
+/paper_archives/
+/docs/sensors/

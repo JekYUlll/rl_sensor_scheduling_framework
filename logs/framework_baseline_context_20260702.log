@@ -1,0 +1,80 @@
+framework_baseline_start seed=117 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed117_h075ctxolscbal2_20260621
+framework_baseline_done seed=117 rows=1
+framework_baseline_start seed=118 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed118_h075ctxolscbal2_20260621
+framework_baseline_done seed=118 rows=1
+framework_baseline_start seed=119 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed119_h075ctxolscbal2_20260621
+framework_baseline_done seed=119 rows=1
+framework_baseline_start seed=120 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed120_h075ctxolscbal2_20260621
+framework_baseline_done seed=120 rows=1
+framework_baseline_start seed=121 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed121_h075ctxolscbal2_20260621
+framework_baseline_done seed=121 rows=1
+framework_baseline_start seed=122 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed122_h075ctxolscbal2_20260621
+framework_baseline_done seed=122 rows=1
+framework_baseline_start seed=123 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed123_h075ctxolscbal2_20260621
+framework_baseline_done seed=123 rows=1
+framework_baseline_start seed=124 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed124_h075ctxolscbal2_20260621
+framework_baseline_done seed=124 rows=1
+framework_baseline_start seed=125 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed125_h075ctxolscbal2_20260621
+framework_baseline_done seed=125 rows=1
+framework_baseline_start seed=126 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed126_h075ctxolscbal2_20260621
+framework_baseline_done seed=126 rows=1
+framework_baseline_start seed=127 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed127_h075ctxolscbal2_20260621
+framework_baseline_done seed=127 rows=1
+framework_baseline_start seed=128 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed128_h075ctxolscbal2_20260621
+framework_baseline_done seed=128 rows=1
+framework_baseline_start seed=129 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed129_h075ctxolscbal2_20260621
+framework_baseline_done seed=129 rows=1
+framework_baseline_start seed=130 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed130_h075ctxolscbal2_20260621
+framework_baseline_done seed=130 rows=1
+framework_baseline_start seed=131 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed131_h075ctxolscbal2_20260621
+framework_baseline_done seed=131 rows=1
+framework_baseline_start seed=132 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed132_h075ctxolscbal2_20260621
+framework_baseline_done seed=132 rows=1
+framework_baseline_start seed=133 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621
+framework_baseline_done seed=133 rows=1
+framework_baseline_start seed=134 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed134_h075ctxolscbal2_20260621
+framework_baseline_done seed=134 rows=1
+framework_baseline_start seed=135 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed135_h075ctxolscbal2_20260621
+framework_baseline_done seed=135 rows=1
+framework_baseline_start seed=136 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed136_h075ctxolscbal2_20260621
+framework_baseline_done seed=136 rows=1
+framework_baseline_start seed=137 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed137_h075ctxolscbal2_20260621
+framework_baseline_done seed=137 rows=1
+framework_baseline_start seed=138 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed138_h075ctxolscbal2_20260621
+framework_baseline_done seed=138 rows=1
+framework_baseline_start seed=139 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed139_h075ctxolscbal2_20260621
+framework_baseline_done seed=139 rows=1
+framework_baseline_start seed=140 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed140_h075ctxolscbal2_20260621
+framework_baseline_done seed=140 rows=1
+Traceback (most recent call last):
+  File "/home/zhangzhuyu/.conda/envs/darts/lib/python3.12/site-packages/pandas/compat/_optional.py", line 135, in import_optional_dependency
+    module = importlib.import_module(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/.conda/envs/darts/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'tabulate'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/81_v31_framework_baseline_supplements.py", line 592, in <module>
+    main()
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/81_v31_framework_baseline_supplements.py", line 587, in main
+    payload = aggregate(result, out_root)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/81_v31_framework_baseline_supplements.py", line 522, in aggregate
+    lines.append(summary.to_markdown(index=False, floatfmt=".6f"))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/.conda/envs/darts/lib/python3.12/site-packages/pandas/util/_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/.conda/envs/darts/lib/python3.12/site-packages/pandas/core/frame.py", line 2994, in to_markdown
+    tabulate = import_optional_dependency("tabulate")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhangzhuyu/.conda/envs/darts/lib/python3.12/site-packages/pandas/compat/_optional.py", line 138, in import_optional_dependency
+    raise ImportError(msg)
+ImportError: Missing optional dependency 'tabulate'.  Use pip or conda to install tabulate.

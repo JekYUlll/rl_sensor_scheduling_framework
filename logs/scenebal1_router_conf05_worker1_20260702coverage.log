@@ -1,0 +1,6 @@
+worker_start idx=1 gpu=4 date=2026-07-02T04:33:42+08:00
+seed_start seed=118 gpu=4 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_reward_coverage_seed118_h075ctxolscbal2_coverage_20260702coverage date=2026-07-02T04:33:42+08:00
+eval_exists seed=118 path=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_reward_coverage_seed118_h075ctxolscbal2_coverage_20260702coverage/eval_router_conf05_scenebal2_20260621/v2_custom_ppo_metrics.csv
+behavior_exists seed=118 path=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_reward_coverage_seed118_h075ctxolscbal2_coverage_20260702coverage/behavior_audit_router_conf05_scenebal2_20260621/behavior_complexity_summary.json
+seed_done seed=118 gpu=4 date=2026-07-02T04:33:42+08:00
+worker_done idx=1 gpu=4 date=2026-07-02T04:33:42+08:00

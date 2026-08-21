@@ -1,0 +1,13 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p10_seed45 -> reports/v31_static_break_v22_fc4_boundary_event_flux_dwell12_ppo_seed45_b1p10_h082_prior0p5_balanced_eventfraction_20260613/logs/budget1p10_seed45.log
+complete_seeds=1/1
+reports/v31_static_break_v22_fc4_boundary_event_flux_dwell12_ppo_seed45_b1p10_h082_prior0p5_balanced_eventfraction_20260613/v22_fc4_eventflux_b1p10_seed45_h082_prior0p5_balanced_eventfraction_summary.csv
+reports/v31_static_break_v22_fc4_boundary_event_flux_dwell12_ppo_seed45_b1p10_h082_prior0p5_balanced_eventfraction_20260613/v22_fc4_eventflux_b1p10_seed45_h082_prior0p5_balanced_eventfraction_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                0                        -0.001701                       -0.001701                       -0.001701
+               best_static  1                0                        -0.017426                       -0.017426                       -0.017426
+           selected_static  1                0                        -0.013738                       -0.013738                       -0.013738
+deployable_selected_static  1                0                        -0.017863                       -0.017863                       -0.017863
+    best_deployable_static  1                0                        -0.018899                       -0.018899                       -0.018899
+     best_original_dynamic  1                0                        -0.010734                       -0.010734                       -0.010734
+       best_duty_non_pdppo  1                0                        -0.018899                       -0.018899                       -0.018899

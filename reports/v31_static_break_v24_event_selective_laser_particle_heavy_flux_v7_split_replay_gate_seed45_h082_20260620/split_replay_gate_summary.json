@@ -1,0 +1,39 @@
+{
+  "source_run_dir": "reports/v31_static_break_v24_event_selective_laser_particle_heavy_flux_v7_zero_ppo_source_seed45_h082_20260620/raw/budget1p10_seed45",
+  "eval_steps": 512,
+  "eval_start_indices": [
+    55500,
+    56012,
+    56524,
+    57036,
+    57868,
+    58380,
+    58892,
+    59404
+  ],
+  "reference_policy": "aoi",
+  "reference_oracle_loss_mean": 0.4294695969392705,
+  "required_margin_abs": 0.005,
+  "best_replay_policy": "split_top2_l6_dwell12",
+  "best_replay_oracle_loss_mean": 0.41407769713623566,
+  "best_replay_event_loss": 0.5508826339720758,
+  "best_replay_non_event_loss": 0.2556492191777654,
+  "margin_abs_vs_reference": 0.015391899803034848,
+  "margin_rel_vs_reference": 0.0358393234648723,
+  "gate_pass": true,
+  "top_sizes": [
+    2,
+    3,
+    5
+  ],
+  "lead_steps": [
+    0,
+    3,
+    6
+  ],
+  "dwell_steps": [
+    6,
+    12,
+    24
+  ]
+}

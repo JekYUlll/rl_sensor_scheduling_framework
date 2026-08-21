@@ -1,0 +1,77 @@
+{
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v26_calm_selective.yaml",
+  "oracle_type": "tcn",
+  "truth_event_design": {
+    "event_coverage": 0.55,
+    "min_duration": 12,
+    "max_duration": 36,
+    "min_gap": 2,
+    "lead_steps": 6,
+    "flux_wind_exponent": 4.0,
+    "event_microstructure_sigma": 0.65,
+    "event_microstructure_alpha": 0.2,
+    "event_microstructure_diameter_scale": 0.16,
+    "event_microstructure_velocity_scale": 1.5,
+    "event_particle_microstructure_correlation": 0.0,
+    "event_subtypes_enabled": true,
+    "event_subtype_particle_prob": 0.34,
+    "event_subtype_flux_prob": 0.33,
+    "event_subtype_thermal_prob": 0.33,
+    "event_subtype_particle_flux_multiplier": 0.65,
+    "event_subtype_flux_multiplier": 2.8,
+    "event_subtype_thermal_flux_multiplier": 0.45,
+    "event_subtype_particle_diameter_shift_mm": 0.12,
+    "event_subtype_particle_velocity_boost_ms": 1.5,
+    "event_subtype_flux_diameter_shift_mm": -0.05,
+    "event_subtype_flux_velocity_boost_ms": 0.8,
+    "event_subtype_thermal_surface_drop_c": 2.4
+  },
+  "target_profiles": {
+    "particle_heavy_flux_v7": [
+      0.03,
+      0.03,
+      0.1,
+      0.01,
+      0.01,
+      0.0,
+      16.0,
+      22.0,
+      22.0
+    ],
+    "event_flux_particle_v7": [
+      0.03,
+      0.03,
+      0.1,
+      0.01,
+      0.01,
+      0.0,
+      30.0,
+      12.0,
+      12.0
+    ],
+    "dual_flux_particle_v7": [
+      0.03,
+      0.03,
+      0.1,
+      0.01,
+      0.01,
+      0.0,
+      22.0,
+      16.0,
+      16.0
+    ]
+  },
+  "diversity_gate": {
+    "require_diverse_dynamic": true,
+    "min_mid_duty_sensors": 5,
+    "max_always_on_sensors": 1,
+    "max_always_off_sensors": 2,
+    "min_switches_per_step": 0.003,
+    "max_switches_per_step": 0.08,
+    "deployable_static_diagnostics": true,
+    "compare_deployable_static": true,
+    "require_raw_static_margin": true
+  },
+  "rows": [],
+  "failures": []
+}

@@ -1,0 +1,275 @@
+diff --git a/.planning/2026-06-10-eswa-terminology-rewrite/findings.md b/.planning/2026-06-10-eswa-terminology-rewrite/findings.md
+index 6f30cb2..2c78bb5 100644
+--- a/.planning/2026-06-10-eswa-terminology-rewrite/findings.md
++++ b/.planning/2026-06-10-eswa-terminology-rewrite/findings.md
+@@ -736,3 +736,85 @@
+   baseline and remains strong against forecast-greedy, but the current evidence
+   does not justify a confirmatory fresh final run or a claim of stable
+   superiority over `context_alert_bandit_t0p5`.
++## 2026-07-10 Post-Hermes Audit: Initial Scope
++- This audit treats the final fixed-backbone, one-specialist SCENEBAL-2
++  aggregate over seeds 117--140 as the active main-text evidence package.
++- The immediate risk is not necessarily a numerical error: the plan explicitly
++  distinguishes the reported static-normalised regime macro score from a raw
++  unnormalised subtype-macro sensitivity diagnostic. The audit must establish
++  that the manuscript names the former consistently and does not imply
++  aggregation-invariant superiority.
++- CA-PD-PPO/context-bandit development results are a separate supplementary
++  framework stress test. They must not be mixed into, or used to invalidate,
++  the completed SCENEBAL-2 primary aggregate without an explicit paper claim.
++
++## 2026-07-10 Post-Hermes Audit: Confirmed Evidence Boundaries
++- The local and `remote-gpu` copies of the primary SCENEBAL-2 aggregate agree
++  byte-for-byte for both `metpair_seed_summary.csv` and
++  `metpair_claim_summary.json`. The 24 truth CSVs also have 24 distinct SHA-256
++  hashes, so the seed dimension represents distinct generated scenarios.
++- Ordinary step-loss results are internally consistent: the old-claim collector
++  reproduces the active table's best-operational step margin of `0.149379`, with
++  `24/24` paired wins and a seed-level bootstrap interval approximately
++  `[0.1124, 0.1895]`. The primary step claim is therefore not affected by the
++  macro normalizer issue below.
++- There is a real macro-normalizer protocol mismatch. Training and ordinary
++  policy evaluation save validation-derived subtype normalizers, but
++  `70_v31_split_replay_gate.py` derives a second set from final-test static
++  candidates and `72_v31_collect_metpair_strongclaim.py` reuses those final-test
++  denominators for replay-static macro summaries. This conflicts with the paper
++  formula and prose saying that macro normalizers are fitted on validation.
++- A read-only recomputation from saved final rollouts and validation candidate
++  tables fixes the normalizer without retraining. It preserves all signs:
++  validation-frozen macro margins are `24/24` positive versus validation static
++  (mean `0.07782`), best operational reference (mean `0.07711`), and true fixed
++  replay static reference (mean `0.07047`, 95% bootstrap interval
++  `[0.06021, 0.08071]`). The existing `0.0710` replay-static number uses the
++  final-test static normalizers, not the validation-frozen metric described in
++  the manuscript.
++- The active main table mixes comparator scopes: `0.1494` and `0.0841` are
++  best-operational-reference margins, while the caption and first two rows refer
++  to the validation-selected fixed schedule. The values are valid but need
++  explicit labels or separate rows.
++- Seed 117 and seed 122 were used in the two-seed SCENEBAL-2 pivot pilot before
++  expansion. The run configuration then remained fixed for the expansion. The
++  post-pilot 22-seed subset (118--121, 123--140) still gives `22/22` positive
++  step and frozen-normalizer replay-static macro margins, with means `0.14965`
++  and `0.07063`, respectively. The manuscript should distinguish independent
++  scenario seeds from strict post-pilot confirmatory seeds.
++- The privileged event-label replay artifacts are retained on `remote-gpu`, but
++  only 12/24 replay metric files are present locally. This is a reproducibility
++  packaging gap, not a changed result. The submission archive must sync each
++  replay summary, metric table, and rollout artifact from the remote result
++  directories before claiming self-contained reproduction.
++
++## 2026-07-10 Evidence Repair: Resolved Findings
++- `scripts/86_v31_collect_validation_frozen_macro.py` now recomputes the macro
++  score solely from final rollouts and the per-run
++  `validation_static_candidates.csv` normalizers. Its CSV-input mode now also
++  honors `--seeds`, allowing the same collector to produce a post-pilot subset.
++- The corrected primary comparison is PD-PPO versus the validation-selected
++  static schedule: 24/24 macro wins, mean margin `0.0778198`, 95% percentile
++  bootstrap interval `[0.0664682, 0.0896082]`; the paired ordinary-step result
++  is also 24/24, mean `0.1530815`.
++- Excluding configuration-pivot seeds 117 and 122 leaves a post-pilot 22-seed
++  replication: 22/22 validation-frozen macro wins, mean `0.0779690`, interval
++  `[0.0669584, 0.0895956]`. The conclusion is therefore not driven by the
++  pilot seeds.
++- Validation-frozen ablations preserve 24/24 macro wins for all variants.
++  The no-event-context auxiliary has 22/24 ordinary-step wins; the other two
++  variants retain 24/24. Their paired macro-margin intervals overlap zero, so
++  auxiliary terms are not presented as large isolated macro effects.
++- The fresh higher-flux setting retains 6/6 validation-frozen macro wins
++  (mean `0.0763879`, interval `[0.0568861, 0.1013251]`). The lower-flux setting
++  is omitted from the same-metric robustness table because seed 147 has zero
++  validation flux windows, making a three-regime macro undefined.
++- The main policy has zero warmup aborts in every seed. The required weather
++  backbone is always active and the radiometer has zero duty; the other four
++  specialists have intermediate duty in every main seed. This is a calibrated
++  action-space boundary, now stated explicitly in Results.
++- The archive is provenance-complete rather than a second full raw-data copy:
++  it contains all extracted rows required for deterministic reaggregation, the
++  collector code, a 530-file remote path/size/SHA-256 manifest, and source
++  snapshots. The remote filesystem was above quota, so the immutable manifest
++  is the reliable raw-artifact pin.
+diff --git a/.planning/2026-06-10-eswa-terminology-rewrite/progress.md b/.planning/2026-06-10-eswa-terminology-rewrite/progress.md
+index fa1995e..8a210b1 100644
+--- a/.planning/2026-06-10-eswa-terminology-rewrite/progress.md
++++ b/.planning/2026-06-10-eswa-terminology-rewrite/progress.md
+@@ -1604,3 +1604,94 @@
+   margin (`0.008257`, 13/24 macro wins), but it also fails the `>0.010` mean
+   and 15/24 win gates. Fresh final seeds 301--324 remain locked and were not
+   launched.
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit: Started
++- Scope is a read-only audit of the active ESWA manuscript and the final
++  SCENEBAL-2 24-seed evidence, requested after several Hermes manuscript edits.
++- The canonical manuscript remains `paper/main.tex` with active
++  `paper/sections/*.tex`; `raw.tex` and historical rewrite sources are out of
++  scope.
++- Remote check through `ssh remote-gpu` found no active tmux experiment session
++  or scheduler/collector process. The audit therefore examines completed,
++  durable artifacts rather than partial runs.
++- Initial boundary to verify: the paper's 24/24 claim is tied to ordinary step
++  loss and a static-normalised event-regime macro score. Historical raw
++  unnormalised subtype-macro diagnostics are not equivalent and must not be
++  silently substituted for the reported primary metric.
++
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit: Midpoint
++- Verified local/remote SHA-256 equality for the final aggregate CSV and JSON.
++  There is no evidence that Hermes' manuscript edits changed the underlying
++  primary aggregate.
++- Recomputed ordinary step statistics from the durable seed CSV: the reported
++  best-operational margin `0.149379`, all 24 positive paired margins, and the
++  reported sign-test direction are consistent with the source values.
++- Diagnosed a macro normalizer mismatch rather than a PPO-performance failure.
++  `70_v31_split_replay_gate.py` builds its static normalizers from final-test
++  replay candidates, while the active paper states that normalizers are fixed
++  from validation. A strict validation-frozen recomputation from existing NPZ
++  rollouts retains 24/24 positive macro margins; no training rerun is required.
++- Two read-only analysis attempts initially failed because the router metrics
++  CSV intentionally stores only summary loss values, not subtype columns. The
++  audit switched to the saved policy rollout NPZ files plus the truth labels,
++  which is the correct source for subtype macro recomputation.
++- Confirmed that seeds 117 and 122 were the initial SCENEBAL-2 pivot pilot.
++  The 22 subsequent seeds retain the positive result. This calls for a modest
++  confirmatory-scope correction, not for discarding the whole 24-seed result.
++- Next: recompute the privileged event-label diagnostic under the same frozen
++  normalizers on `remote-gpu`, inspect action-trace/baseline artifact completeness
++  there, then classify the required manuscript and evidence-package corrections.
++
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit: Complete
++- Wrote durable audit report:
++  `reports/analysis/pdppo_posthermes_evidence_audit_20260710/audit_report.md`.
++- The primary aggregate hashes match local and remote. Step-loss 24/24 and
++  behavior evidence are confirmed. The post-pilot 22-seed subset also remains
++  all-positive.
++- The main correction requirement is deterministic macro reaggregation. Current
++  replay collectors derive macro denominators from final-test static candidates,
++  despite the active manuscript defining validation-frozen denominators. A
++  validation-frozen recalculation preserves 24/24 macro signs, so no PPO retrain
++  is required.
++- Do not edit the manuscript before new frozen-normalizer assets exist. Future
++  paper edits must separate the validation-selected fixed baseline from the
++  stronger post-hoc operational/replay diagnostics, and must label the 117/122
++  pivot pilot versus the 22 post-pilot scenario seeds.
++- Remote has the complete per-seed replay metrics and NPZ artifacts; local does
++  not. A versioned evidence sync/archive is now a submission blocker.
++
++## 2026-07-10 Evidence Repair Goal: Started
++- User authorized completion of the audit repairs. Scope is deterministic
++  aggregation, evidence freezing, and manuscript correction; no PPO retraining
++  is authorized or required at this stage.
++- Binding principle: direct primary macro claims must use validation-frozen
++  static normalizers. Final-test-selected fixed replay and event-label schedules
++  may remain only as explicitly privileged diagnostics.
++
++## 2026-07-10 Evidence Repair Goal: Near Completion
++- Implemented the validation-frozen collector and regenerated the primary,
++  mechanism-ablation, and changed-mixture evidence without retraining PPO.
++- Updated the active manuscript tables, figures, Results, Discussion,
++  Conclusion, and theory appendix so that direct validation-selected comparisons
++  are distinct from fixed-replay and privileged event-label diagnostics.
++- Generated and archived the post-pilot 22-seed replication: 22/22 positive
++  primary macro margins, mean `0.0779690`, bootstrap interval
++  `[0.0669584, 0.0895956]`.
++- Added a versioned reproducibility package under
++  `reproducibility/pdppo_eswa_evidence_20260710/` and an external immutable
++  remote-artifact manifest under `/home/horeb/_Data/pdppo_eswa_evidence_20260710/`.
++- This intermediate status is superseded by the completion record below.
++
++## 2026-07-10 Evidence Repair Goal: Complete
++- Final checks passed: `py_compile` for the new collectors and figure/table
++  generators; `pytest -q tests/v2/test_custom_ppo.py` (10 passed); both
++  framework and paper `git diff --check`; and `latexmk` for `paper/main.tex`.
++- `paper/main.pdf` compiles to 57 pages with no undefined citation/reference or
++  fatal LaTeX error. The remaining messages are existing table underfull boxes,
++  a 1.8-pt page-width overfull box, and four bibliography entries lacking page
++  fields.
++- Final archive snapshot:
++  `reproducibility/pdppo_eswa_evidence_20260710/` (11 MiB), with current
++  source patches, a paper source tarball, deterministic aggregate inputs, and
++  SHA-256 checksums. Its remote manifest covers 530 read-only artifacts
++  totaling 1.13 GiB; the local archive deliberately pins rather than duplicates
++  that raw source set.
+diff --git a/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md b/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md
+index 13c32ad..4631963 100644
+--- a/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md
++++ b/.planning/2026-06-10-eswa-terminology-rewrite/task_plan.md
+@@ -170,7 +170,7 @@ Use ESWA scheduling articles as style anchors:
+   and volume/page/article-number data for audited references, added foundational
+   PPO and TCN citations, removed the weak Liang 2024 graph-coverage citation,
+   rebuilt `paper/main.pdf`, and verified `.bbl`/PDF/log/diff checks.
+-- [ ] Pin the final code revision and prepare a versioned evidence archive for
++- [x] Pin the final code revision and prepare a versioned evidence archive for
+   submission. The archive should contain the exact code revision, final aggregate
+   tables, seed-level summaries, figure assets, manuscript source, and
+   reproduction scripts for the current ESWA evidence package.
+@@ -208,7 +208,7 @@ Use ESWA scheduling articles as style anchors:
+   macro wins on development seeds; if it only matches, frame it as competitive
+   with a strong context-aware rule; if it loses, keep the bandit as a diagnostic
+   baseline and do not promote patchwork modules.
+-- [ ] Run a final submission-package audit after the archive is pinned: verify
++- [x] Run a final submission-package audit after the archive is pinned: verify
+   `paper/main.pdf`, source/PDF terminology scans, table/figure asset presence,
+   author metadata, data/code availability wording, and that no historical release
+   is cited as the current evidence package.
+@@ -322,3 +322,57 @@ Use ESWA scheduling articles as style anchors:
+ - [x] Aggregate `reports/aggregate/ca_pdppo_bounded_dev2_20260703capdppodev2/`.
+ - [x] Apply the predeclared final-launch gate and either start fresh final
+   seeds 301--324 or stop with CA-PD-PPO as competitive/exploratory evidence.
++
++## 2026-07-10 Post-Hermes Experiment-Evidence Audit
++- [x] Trace every active main-text numerical claim to the SCENEBAL-2 24-seed
++  aggregate and its seed-level source files.
++- [x] Check protocol integrity: chronological split, final-test isolation,
++  fixed-schedule selection/replay, baseline feasibility parity, and the
++  independence/meaning of the seed dimension.
++- [x] Recompute or independently cross-check reported win counts, margins,
++  confidence intervals, sign tests, and action-trace gates from the durable
++  result artifacts.
++- [x] Audit the paper for metric-boundary errors, especially ordinary loss
++  versus static-normalised regime macro scoring and learned-policy versus
++  privileged event-label replay.
++- [x] Classify findings as correction-required, supplementary-evidence-needed,
++  or no-action; manuscript edits are deferred until the frozen-normalizer
++  reaggregation is generated.
++- [x] Repair the macro collector and regenerate all active macro-derived
++  tables/figures from validation-frozen normalizers before any submission build.
++- [x] Sync and freeze a versioned per-seed evidence archive, then update the
++  manuscript comparator labels and post-pilot seed-scope statement.
++
++## 2026-07-10 Evidence Repair Goal
++
++Goal: complete the audit repairs without retraining PPO. The binding primary
++claim must use validation-frozen macro normalizers; final-test-selected static
++and event-label schedules remain explicitly privileged diagnostics.
++
++- [x] Freeze and checksum the remote authoritative per-seed evidence subset.
++- [x] Implement a reusable validation-frozen macro collector with tests or
++  deterministic cross-checks against saved rollout data.
++- [x] Regenerate the main 24-seed macro summary and a post-pilot 22-seed
++  replication summary from frozen normalizers.
++- [x] Reaggregate the macro-derived ablation and changed-mixture robustness
++  artifacts, or remove any artifact whose saved inputs are incomplete.
++- [x] Rebuild all affected tables/figures, then revise the canonical manuscript
++  to separate direct validation baselines from privileged diagnostics.
++- [x] Create a versioned evidence archive with manifest, checksums, source
++  revision/bundle, and reproduction entry point.
++- [x] Compile the canonical PDF and run source/PDF/evidence consistency audit.
++
++## 2026-07-10 Evidence Repair Goal: Completion Checklist
++
++- [x] Freeze and checksum the remote authoritative per-seed evidence subset.
++- [x] Implement a reusable validation-frozen macro collector with deterministic
++  reaggregation from archived seed rows.
++- [x] Regenerate the main 24-seed macro summary and a post-pilot 22-seed
++  replication summary from frozen normalizers.
++- [x] Reaggregate macro-derived ablation and higher-flux sensitivity artifacts;
++  retain lower-flux evidence as unavailable under the three-regime metric.
++- [x] Rebuild affected tables and figures, and separate direct validation
++  baselines from privileged diagnostics in the canonical manuscript.
++- [x] Create a versioned provenance archive with remote manifest, checksums,
++  source snapshots, reproduction commands, and extracted per-seed rows.
++- [x] Compile the canonical PDF and complete final source/PDF/evidence checks.
+diff --git a/paper b/paper
+--- a/paper
++++ b/paper
+@@ -1 +1 @@
+-Subproject commit e3af6ec828c08a5d385fbc80aca1d6140ec84ff1
++Subproject commit e3af6ec828c08a5d385fbc80aca1d6140ec84ff1-dirty

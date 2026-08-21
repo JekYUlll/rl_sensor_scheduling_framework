@@ -1,0 +1,27 @@
+{
+  "stations": [
+    "Panda100",
+    "Panda200",
+    "Taishan"
+  ],
+  "anchor_rows": 136146,
+  "steps": 60000,
+  "freq_s": 3600,
+  "seed": 43,
+  "phase_keep_fraction": 0.15,
+  "match_marginal_distribution": true,
+  "event_threshold": 8.0,
+  "blowing_snow_event_coverage_target": 0.28,
+  "blowing_snow_event_coverage_actual": 0.2858,
+  "blowing_snow_event_model": "semi_markov",
+  "storm_regime_fraction": 0.36085,
+  "wind_ge_8_rate": 0.82915,
+  "wind_ge_12_rate": 0.35001666666666664,
+  "event_cluster_count": 953,
+  "flux_wind_exponent": 3.0,
+  "event_microstructure_sigma": 0.0,
+  "event_microstructure_alpha": 0.18,
+  "event_microstructure_diameter_scale": 0.0,
+  "event_microstructure_velocity_scale": 0.0,
+  "event_particle_microstructure_correlation": 1.0
+}

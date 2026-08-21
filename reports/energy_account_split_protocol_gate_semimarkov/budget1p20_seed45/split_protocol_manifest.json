@@ -1,0 +1,126 @@
+{
+  "protocol": "chronological_split_energy_account_storm_conditional_v1",
+  "evidence_role": "conditional_storm_test_using_truth_event_labels_not_operational_deployment",
+  "truth_csv": "reports/energy_account_split_protocol_gate_semimarkov/budget1p20_seed45/truth_energy_split.csv",
+  "truth_steps": 90000,
+  "seed": 45,
+  "split_ratios": [
+    0.3,
+    0.45,
+    0.125,
+    0.125
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      27000
+    ],
+    "rl_train": [
+      27000,
+      67500
+    ],
+    "validation": [
+      67500,
+      78750
+    ],
+    "final_test": [
+      78750,
+      90000
+    ]
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      27000
+    ]
+  },
+  "rl_train": {
+    "range": [
+      27000,
+      67500
+    ],
+    "normalization_range": [
+      27000,
+      67500
+    ],
+    "curriculum_starts": [
+      35704,
+      37240,
+      38776,
+      43256,
+      51384,
+      61048
+    ],
+    "episode_steps": 512,
+    "context_selection_steps": 1024,
+    "selection": "maximum_total_event_rate_non_overlapping_within_declared_partition",
+    "event_column": "event_flag",
+    "stride": 64,
+    "candidate_count": 618,
+    "selected_event_rates": [
+      0.625,
+      0.5126953125,
+      0.47265625,
+      0.626953125,
+      0.5673828125,
+      0.6328125
+    ],
+    "selected_event_rate_mean": 0.5729166666666666
+  },
+  "validation": {
+    "static_selection_starts": [
+      67820,
+      69612,
+      70700,
+      71852,
+      73388,
+      76588
+    ],
+    "static_selection_steps": 1024,
+    "selection": "maximum_total_event_rate_non_overlapping_within_declared_partition",
+    "event_column": "event_flag",
+    "stride": 64,
+    "candidate_count": 161,
+    "selected_event_rates": [
+      0.4833984375,
+      0.3837890625,
+      0.3466796875,
+      0.4287109375,
+      0.333984375,
+      0.6123046875
+    ],
+    "selected_event_rate_mean": 0.4314778645833333
+  },
+  "final_test": {
+    "eval_starts": [
+      78750,
+      81502,
+      82590,
+      85918,
+      87582,
+      88862
+    ],
+    "eval_steps": 1024,
+    "selection": "maximum_total_event_rate_non_overlapping_within_declared_partition",
+    "event_column": "event_flag",
+    "stride": 64,
+    "candidate_count": 161,
+    "selected_event_rates": [
+      0.490234375,
+      0.4287109375,
+      0.4189453125,
+      0.74609375,
+      0.5615234375,
+      0.408203125
+    ],
+    "selected_event_rate_mean": 0.5089518229166666
+  },
+  "energy_account": {
+    "budget": 1.2,
+    "startup_peak_budget": 1.6,
+    "capacity": 180.0,
+    "initial_energy": 180.0,
+    "harvest_per_step": 0.92,
+    "reserve_energy": 20.0
+  }
+}

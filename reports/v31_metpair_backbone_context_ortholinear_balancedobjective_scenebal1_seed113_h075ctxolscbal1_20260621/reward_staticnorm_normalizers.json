@@ -1,0 +1,22 @@
+{
+  "normalizers": {
+    "oracle_loss_subtype_particle": 0.16822133843221304,
+    "oracle_loss_subtype_flux": 6.796038990850606,
+    "oracle_loss_subtype_thermal": 2.1008115878957474
+  },
+  "missing_from_static_selection": [],
+  "fallback_start_indices": [],
+  "fallback_normalizers": {
+    "oracle_loss_subtype_particle": NaN,
+    "oracle_loss_subtype_flux": NaN,
+    "oracle_loss_subtype_thermal": NaN
+  },
+  "normalization_start_idx": 24500,
+  "normalization_end_idx": 59500,
+  "static_selection_start_indices": [
+    60167,
+    61299,
+    62420,
+    63593
+  ]
+}

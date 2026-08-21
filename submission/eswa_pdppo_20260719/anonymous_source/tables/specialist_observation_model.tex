@@ -1,0 +1,38 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Availability probabilities and Gaussian noise standard deviations for
+  the three specialist logical channels. Entries within a cell follow the variable order
+  shown in the second column. ``Other event'' means an active non-matching
+  event type.}
+  \label{tab:specialist_observation_model}
+  \scriptsize
+  \renewcommand{\arraystretch}{0.92}
+  \setlength{\tabcolsep}{2.7pt}
+  \begin{tabular}{@{}p{0.17\linewidth}p{0.25\linewidth}p{0.16\linewidth}p{0.16\linewidth}p{0.18\linewidth}@{}}
+    \toprule
+    Specialist logical channel & Variables & Calm $(p,\sigma)$ & Other event $(p,\sigma)$ & Matching event type $(p,\sigma)$ \\
+    \midrule
+    Infrared snow-surface-temperature channel
+      & snow-surface temperature; thermal process
+      & (0.20, 1.40); (0.10, 1.20)
+      & (0.25, 1.60); (0.18, 1.20)
+      & (0.96, 0.07); (0.98, 0.03) \\
+    Laser disdrometer channel
+      & diameter; particle velocity; particle process
+      & (0.10, 1.20); (0.10, 3.00); (0.05, 1.50)
+      & (0.18, 0.90); (0.18, 2.80); (0.12, 1.20)
+      & (0.96, 0.06); (0.96, 0.16); (0.98, 0.03) \\
+    FC4 snow mass-flux channel
+      & snow mass flux; flux process
+      & (0.10, $5.0\!\times\!10^{-6}$); (0.05, 1.50)
+      & (0.18, $4.0\!\times\!10^{-6}$); (0.12, 1.20)
+      & (0.96, $2.5\!\times\!10^{-7}$); (0.98, 0.03) \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.4ex}
+
+  \noindent\scriptsize
+  Noise is expressed in the physical units of each variable. The process
+  variables are simulation-model constructs used to make event-dependent channel
+  value explicit; they are distinct from the condition labels.
+\end{table}

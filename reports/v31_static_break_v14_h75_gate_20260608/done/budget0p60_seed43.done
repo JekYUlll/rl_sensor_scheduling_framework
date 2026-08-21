@@ -1,0 +1,5 @@
+label=budget0p60_seed43
+budget=0.600000
+seed=43
+eval_path=reports/v31_static_break_v14_h75_gate_20260608/raw/budget0p60_seed43/v2_custom_ppo_metrics.csv
+log_path=reports/v31_static_break_v14_h75_gate_20260608/logs/budget0p60_seed43.log

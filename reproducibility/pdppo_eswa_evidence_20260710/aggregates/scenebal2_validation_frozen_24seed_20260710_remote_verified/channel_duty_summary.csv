@@ -1,0 +1,7 @@
+sensor_id,min_duty,max_duty,mean_duty,always_on_seed_count,always_off_seed_count,mid_duty_seed_count
+met_station_core,1.0,1.0,1.0,24,0,0
+radiometer_basic,0.0,0.0,0.0,0,24,0
+shielded_thermo_hygro,0.029541015625,0.309326171875,0.17079671223958334,0,0,24
+surface_temp_ir,0.228515625,0.439697265625,0.3363545735677083,0,0,24
+laser_disdrometer,0.232177734375,0.411376953125,0.32098388671875,0,0,24
+fc4_flux,0.08349609375,0.288818359375,0.17186482747395834,0,0,24

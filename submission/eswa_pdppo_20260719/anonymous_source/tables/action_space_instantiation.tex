@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Candidate action set with a mandatory meteorological core channel and an
+  optional-channel capacity of one.}
+  \label{tab:action_space_instantiation}
+  \footnotesize
+  \setlength{\tabcolsep}{3.0pt}
+  \begin{tabular}{@{}c p{0.35\linewidth} c p{0.21\linewidth} c@{}}
+    \toprule
+    Action index & Candidate channel subset & Power & Interpretation & \shortstack{Fixed-baseline\\selections} \\
+    \midrule
+    0 & Meteorological core channel & 0.25 & Core channel only & 0 of 22 \\
+    1 & Meteorological core + basic radiometer channels & 0.33 & Optional channel & 0 of 22 \\
+    2 & Meteorological core + shielded temperature--humidity channels & 0.43 & Optional channel & 0 of 22 \\
+    3 & Meteorological core + infrared snow-surface-temperature channels & 0.74 & Thermal specialist channel & 9 of 22 \\
+    4 & Meteorological core + laser disdrometer channels & 0.74 & Particle specialist channel & 2 of 22 \\
+    5 & Meteorological core + FC4 snow mass-flux channels & 0.74 & Flux specialist channel & 11 of 22 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.4ex}
+
+  \noindent\footnotesize
+  Every candidate channel subset includes the meteorological core channel. The final
+  column reports fixed baselines selected on the calibration/validation partition for the 22
+  post-selection evaluation seeds. The scheduling decision selects at most one
+  optional channel; action 0 selects none.
+\end{table}

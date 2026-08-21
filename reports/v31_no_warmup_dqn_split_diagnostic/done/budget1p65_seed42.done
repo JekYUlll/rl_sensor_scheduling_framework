@@ -1,0 +1,3 @@
+label=budget1p65_seed42
+metrics=/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_no_warmup_dqn_split_diagnostic/raw/budget1p65_seed42/v2_dqn_split_metrics.csv
+log=/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_no_warmup_dqn_split_diagnostic/logs/budget1p65_seed42.log

@@ -1,0 +1,191 @@
+{
+  "protocol": "chronological_split_v31_retraining",
+  "truth_steps": 60000,
+  "seed": 45,
+  "budget": 1.05,
+  "split_ratios": [
+    0.35,
+    0.5,
+    0.075,
+    0.075
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      21000
+    ],
+    "rl_train": [
+      21000,
+      51000
+    ],
+    "validation": [
+      51000,
+      55500
+    ],
+    "final_test": [
+      55500,
+      60000
+    ]
+  },
+  "truth_event_design": {
+    "event_coverage": 0.55,
+    "min_duration": 12,
+    "max_duration": 36,
+    "min_gap": 2,
+    "lead_steps": 6,
+    "wind_margin_ms": 1.2,
+    "cred_hysteresis_on": 0.6,
+    "cred_hysteresis_off": 0.3,
+    "flux_wind_exponent": 4.0,
+    "event_microstructure_sigma": 0.65,
+    "event_microstructure_alpha": 0.2,
+    "event_microstructure_diameter_scale": 0.16,
+    "event_microstructure_velocity_scale": 1.5,
+    "event_particle_microstructure_correlation": 0.0,
+    "event_subtypes_enabled": true,
+    "event_subtype_particle_prob": 0.34,
+    "event_subtype_flux_prob": 0.33,
+    "event_subtype_thermal_prob": 0.33,
+    "event_subtype_particle_flux_multiplier": 0.65,
+    "event_subtype_flux_multiplier": 2.8,
+    "event_subtype_thermal_flux_multiplier": 0.45,
+    "event_subtype_particle_diameter_shift_mm": 0.12,
+    "event_subtype_particle_velocity_boost_ms": 1.5,
+    "event_subtype_flux_diameter_shift_mm": -0.05,
+    "event_subtype_flux_velocity_boost_ms": 0.8,
+    "event_subtype_thermal_surface_drop_c": 2.4
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      21000
+    ]
+  },
+  "rl_train": {
+    "range": [
+      21000,
+      51000
+    ],
+    "ppo_start_min": 21000,
+    "ppo_start_max": 50479,
+    "normalization_range": [
+      21000,
+      51000
+    ],
+    "candidate_prior_starts": [
+      26619,
+      32672,
+      38796,
+      44850
+    ],
+    "candidate_prior_steps": 512
+  },
+  "validation": {
+    "static_selection_starts": [
+      51449,
+      52501,
+      53467,
+      54492
+    ],
+    "static_selection_steps": 512
+  },
+  "final_test": {
+    "eval_starts": [
+      55500,
+      56012,
+      56524,
+      57036,
+      57868,
+      58380,
+      58892,
+      59404
+    ],
+    "eval_steps": 512,
+    "selection": "event_fraction",
+    "event_fraction": 0.65,
+    "selection_stride": 64,
+    "window_summary": {
+      "count": 8,
+      "event_rate_mean": 0.53662109375,
+      "event_rate_min": 0.037109375,
+      "event_rate_max": 0.88671875,
+      "flux_mean": 3.361857803807704e-05
+    },
+    "skip_rollout_evaluation": true
+  },
+  "operational_baselines": {
+    "eval_duty_constrained_baselines": true,
+    "baseline_duty_hard_low": 0.12,
+    "baseline_duty_hard_high": 0.75,
+    "baseline_duty_hard_score": 12.0,
+    "baseline_duty_score_feedback": 2.5
+  },
+  "reward_shaping": {
+    "lambda_warmup_abort": 1.0,
+    "lambda_switch": 0.002,
+    "event_reward_multiplier": 1.5,
+    "energy_account": true,
+    "energy_capacity": 180.0,
+    "initial_energy": 180.0,
+    "harvest_per_step": 0.82,
+    "reserve_energy": 20.0,
+    "lambda_energy_deficit": 1.0,
+    "soc_soft_penalty_buffer": 40.0,
+    "lambda_soc_soft_penalty": 0.08,
+    "lambda_duty_balance": 0.8,
+    "duty_balance_low": 0.12,
+    "duty_balance_high": 0.75,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 2.5,
+    "duty_score_target": 0.4,
+    "duty_hard_guard": true,
+    "duty_hard_low": 0.12,
+    "duty_hard_high": 0.75,
+    "duty_hard_score": 12.0,
+    "min_dwell_steps": 12,
+    "include_agent_cycle_phase": false,
+    "agent_cycle_period_steps": 0,
+    "agent_cycle_dwell_steps": 1
+  },
+  "ppo_controls": {
+    "ent_coef": 0.002,
+    "awbc_coef": 0.8,
+    "awbc_label_stride": 1,
+    "awbc_teacher_mode": "subtype_auto",
+    "awbc_teacher_calm_sensors": [],
+    "awbc_teacher_event_sensors": [],
+    "awbc_teacher_subtype_calm_sensors": [
+      "met_station_core",
+      "surface_temp_ir",
+      "snow_particle_counter"
+    ],
+    "awbc_teacher_subtype_particle_sensors": [
+      "radiometer_basic",
+      "shielded_thermo_hygro",
+      "laser_disdrometer"
+    ],
+    "awbc_teacher_subtype_flux_sensors": [
+      "surface_temp_ir",
+      "shielded_thermo_hygro",
+      "laser_disdrometer"
+    ],
+    "awbc_teacher_subtype_thermal_sensors": [
+      "surface_temp_ir",
+      "shielded_thermo_hygro",
+      "laser_disdrometer"
+    ],
+    "awbc_teacher_calm_pool_spec": "",
+    "awbc_teacher_event_pool_spec": "",
+    "awbc_teacher_event_lookahead_steps": 0,
+    "awbc_teacher_dwell_steps": 1,
+    "prior_kl_coef": 0.03,
+    "greedy_lookahead_steps": 4,
+    "event_start_prob": 0.65,
+    "event_aware_critic": true,
+    "event_gated_actor": true,
+    "soc_aux_horizon": 32,
+    "soc_aux_coef": 0.03,
+    "use_candidate_prior": true,
+    "candidate_prior_scale": 0.5
+  }
+}

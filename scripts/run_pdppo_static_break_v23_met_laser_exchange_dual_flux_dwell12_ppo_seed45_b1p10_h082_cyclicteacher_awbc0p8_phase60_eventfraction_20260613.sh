@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+export OUT_DIR="reports/v31_static_break_v23_met_laser_exchange_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_phase60_eventfraction_20260613"
+export AWBC_COEF="0.80"
+export SUMMARY_NAME="v23_metlaser_dualflux_cyclicteacher_awbc0p8_phase60_seed45_h082_eventfraction_summary.csv"
+export INCLUDE_AGENT_CYCLE_PHASE="1"
+export AGENT_CYCLE_PERIOD_STEPS="60"
+export AGENT_CYCLE_DWELL_STEPS="12"
+
+exec "$SCRIPT_DIR/run_pdppo_static_break_v23_met_laser_exchange_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260613.sh"

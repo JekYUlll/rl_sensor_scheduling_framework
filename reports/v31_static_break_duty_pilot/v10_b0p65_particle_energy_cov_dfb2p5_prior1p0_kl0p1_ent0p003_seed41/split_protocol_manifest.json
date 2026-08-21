@@ -1,0 +1,101 @@
+{
+  "protocol": "chronological_split_v31_retraining",
+  "truth_steps": 60000,
+  "seed": 41,
+  "budget": 0.65,
+  "split_ratios": [
+    0.35,
+    0.5,
+    0.075,
+    0.075
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      21000
+    ],
+    "rl_train": [
+      21000,
+      51000
+    ],
+    "validation": [
+      51000,
+      55500
+    ],
+    "final_test": [
+      55500,
+      60000
+    ]
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      21000
+    ]
+  },
+  "rl_train": {
+    "range": [
+      21000,
+      51000
+    ],
+    "ppo_start_min": 21000,
+    "ppo_start_max": 50479,
+    "normalization_range": [
+      21000,
+      51000
+    ],
+    "candidate_prior_starts": [
+      26567,
+      32762,
+      38823,
+      44957
+    ],
+    "candidate_prior_steps": 512
+  },
+  "validation": {
+    "static_selection_starts": [
+      51485,
+      52489,
+      53508,
+      54525
+    ],
+    "static_selection_steps": 512
+  },
+  "final_test": {
+    "eval_starts": [
+      55588,
+      56696,
+      57793,
+      58894
+    ],
+    "eval_steps": 1024,
+    "selection": "uniform_random_non_overlapping_without_event_filtering"
+  },
+  "reward_shaping": {
+    "lambda_warmup_abort": 0.08,
+    "lambda_switch": 0.002,
+    "energy_account": true,
+    "energy_capacity": 180.0,
+    "initial_energy": 180.0,
+    "harvest_per_step": 0.5,
+    "reserve_energy": 20.0,
+    "lambda_energy_deficit": 1.0,
+    "soc_soft_penalty_buffer": 0.0,
+    "lambda_soc_soft_penalty": 0.0,
+    "lambda_duty_balance": 1.2,
+    "duty_balance_low": 0.05,
+    "duty_balance_high": 0.95,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 2.5,
+    "duty_score_target": 0.4
+  },
+  "ppo_controls": {
+    "ent_coef": 0.003,
+    "awbc_coef": 0.05,
+    "awbc_label_stride": 16,
+    "prior_kl_coef": 0.1,
+    "greedy_lookahead_steps": 1,
+    "use_candidate_prior": true,
+    "candidate_prior_scale": 1.0
+  }
+}

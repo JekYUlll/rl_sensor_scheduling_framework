@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 from forecasting.baselines import NaivePredictor
-from forecasting.input_augmentation import augment_input_series
+from forecasting.input_augmentation import augment_input_series, transform_time_since_observed
 from forecasting.series_preparation import apply_input_filter, prepare_input_and_targets
 from reward.forecast_reward import (
     FrozenForecastRewardOracle,
@@ -46,12 +46,41 @@ def test_augment_input_series_appends_context_before_mask_and_delta() -> None:
         "trace_p",
         "event_transition",
         "is_observed_wind_speed_ms",
-        "delta_wind_speed_ms",
+        "staleness_wind_speed_ms",
     ]
     np.testing.assert_allclose(augmented[:, 1], [0.2, 0.3, 0.4])
     np.testing.assert_allclose(augmented[:, 2], [0.0, 0.0, 1.0])
     assert "is_observed_trace_p" not in names
-    assert "delta_trace_p" not in names
+    assert "staleness_trace_p" not in names
+
+
+def test_time_delta_features_are_bounded_staleness_by_default() -> None:
+    series = np.arange(8, dtype=float).reshape(-1, 1)
+    observed_mask = np.asarray([[1.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]])
+    augmented, names = augment_input_series(
+        input_series=series,
+        observed_mask=observed_mask,
+        feature_names=["snow_mass_flux_kg_m2_s"],
+        use_observed_mask=False,
+        use_time_delta=True,
+        time_delta_cfg={"encoding": "log_capped", "cap_steps": 3},
+    )
+
+    idx = names.index("staleness_snow_mass_flux_kg_m2_s")
+    assert float(augmented[:, idx].min()) >= 0.0
+    assert float(augmented[:, idx].max()) <= 1.0
+    assert np.isclose(augmented[-1, idx], 1.0)
+
+
+def test_raw_delta_encoding_is_available_only_when_requested() -> None:
+    raw = np.asarray([[0.0, 2.0, 1000.0]], dtype=float)
+    transformed, prefix = transform_time_since_observed(
+        raw,
+        {"encoding": "raw"},
+    )
+
+    assert prefix == "delta"
+    np.testing.assert_allclose(transformed, raw)
 
 
 def test_prepare_input_and_targets_keeps_targets_and_adds_context() -> None:
@@ -263,6 +292,11 @@ def test_reward_oracle_artifact_roundtrip_keeps_input_filter() -> None:
                 "window": 3,
                 "columns": ["air_temperature_c"],
             },
+            time_delta_cfg={
+                "encoding": "log_capped",
+                "cap_steps": 600,
+                "prefix": "staleness",
+            },
         )
 
         oracle = load_reward_oracle(artifact)
@@ -271,4 +305,9 @@ def test_reward_oracle_artifact_roundtrip_keeps_input_filter() -> None:
             "type": "causal_moving_average",
             "window": 3,
             "columns": ["air_temperature_c"],
+        }
+        assert oracle.time_delta_cfg == {
+            "encoding": "log_capped",
+            "cap_steps": 600,
+            "prefix": "staleness",
         }

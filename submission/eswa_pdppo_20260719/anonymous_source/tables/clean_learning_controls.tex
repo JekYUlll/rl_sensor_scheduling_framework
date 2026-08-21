@@ -1,0 +1,19 @@
+\begin{table*}[htbp]
+  \centering
+  \caption{Scalar-objective PPO and Double DQN training-configuration comparisons. A positive paired difference indicates lower loss for PD-PPO.}
+  \label{tab:clean_learning_controls}
+  \scriptsize
+  \setlength{\tabcolsep}{2.1pt}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\centering\arraybackslash}p{0.12\textwidth}>{\centering\arraybackslash}p{0.14\textwidth}@{}}
+    \toprule
+    Comparison & Mean forecast loss\newline Seeds with lower loss;\newline mean paired difference\newline [95\% bootstrap CI] & Macro-averaged loss\newline Seeds with lower loss;\newline mean paired difference\newline [95\% bootstrap CI] & Lower macro-averaged\newline loss than fixed baseline & Channel-use acceptance\newline criterion \\
+    \midrule
+    AoI-objective PPO configuration & 10 of 22; -0.0003 [-0.0073, +0.0063] & 12 of 22; +0.0015 [-0.0037, +0.0066] & 22 of 22 & 22 of 22 \\
+    Uncertainty-objective PPO configuration & 10 of 22; +0.0008 [-0.0063, +0.0076] & 12 of 22; +0.0013 [-0.0035, +0.0054] & 22 of 22 & 22 of 22 \\
+    Double DQN training configuration & 21 of 22; +0.1423 [+0.1036, +0.1827] & 22 of 22; +0.0706 [+0.0535, +0.0875] & 12 of 22 & 5 of 22 \\
+    \bottomrule
+  \end{tabular}
+  \begin{minipage}{0.98\textwidth}
+  \vspace{0.4ex}\footnotesize Each interval is a 95\% bootstrap confidence interval. The objective rows compare matched PPO training configurations with different scalar objectives. Each objective changes the PPO surrogate, value target, advantage, and the weights in the advantage-weighted behavior cloning term; the rows are therefore not isolated scalar-reward ablations. The configurations otherwise share the scheduler input, training-only supervised targets, auxiliary future-condition classifier, candidate action set, and constraints. The Double DQN row is a training-configuration comparison: it shares the state representation, reward based on forecast loss, action set, and constraints, but omits behavior cloning pretraining, the continuing behavior cloning term, and the auxiliary classifier. All configurations have zero warm-up interruption structurally because $D_{\min}=6$ exceeds the maximum two-step warm-up; the final column is therefore determined by the channel-use acceptance criterion. All test metrics use the same frozen primary forecaster.
+  \end{minipage}
+\end{table*}

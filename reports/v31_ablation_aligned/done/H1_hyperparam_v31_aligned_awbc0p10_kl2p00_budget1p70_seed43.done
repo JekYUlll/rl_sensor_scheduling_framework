@@ -1,0 +1,9 @@
+label=H1_hyperparam_v31_aligned_awbc0p10_kl2p00_budget1p70_seed43
+experiment=H1_hyperparam_v31_aligned
+variant=awbc0p10_kl2p00
+budget=1.700000
+seed=43
+truth_csv=reports/v31_s2_main/raw/budget1p70_seed43/truth_v31.csv
+run_dir=reports/v31_ablation_aligned/raw/H1_hyperparam_v31_aligned/awbc0p10_kl2p00/budget1p70_seed43
+eval_path=reports/v31_ablation_aligned/raw/H1_hyperparam_v31_aligned/awbc0p10_kl2p00/budget1p70_seed43/evaluation/v2_eval_overall.csv
+log_path=reports/v31_ablation_aligned/logs/H1_hyperparam_v31_aligned_awbc0p10_kl2p00_budget1p70_seed43.log

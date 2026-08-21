@@ -1,0 +1,98 @@
+{
+  "budget": 1.2,
+  "candidate_count": 52,
+  "truth_event_rate": 0.2642,
+  "eval_start_indices": [
+    2144,
+    3788,
+    2931
+  ],
+  "event_loss_min": 0.2859246372745219,
+  "non_event_loss_min": 0.15780391465655205,
+  "best_overall": {
+    "action_idx": 3,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir",
+    "oracle_loss_mean": 0.21708390696612387,
+    "power_mean": 0.31999999999999995,
+    "peak_max": 0.4
+  },
+  "best_event_laser": {
+    "action_idx": 47,
+    "sensor_ids": "met_station_core|laser_disdrometer|fc4_flux",
+    "oracle_loss_event": 0.31691045588988365,
+    "power_mean": 1.1300000000000003,
+    "peak_max": 1.54
+  },
+  "best_event_no_laser": {
+    "action_idx": 3,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir",
+    "oracle_loss_event": 0.2859246372745219,
+    "power_mean": 0.31999999999999995,
+    "peak_max": 0.4
+  },
+  "best_event_fc4": {
+    "action_idx": 47,
+    "sensor_ids": "met_station_core|laser_disdrometer|fc4_flux",
+    "oracle_loss_event": 0.31691045588988365,
+    "power_mean": 1.1300000000000003,
+    "peak_max": 1.54
+  },
+  "best_event_no_fc4": {
+    "action_idx": 3,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir",
+    "oracle_loss_event": 0.2859246372745219,
+    "power_mean": 0.31999999999999995,
+    "peak_max": 0.4
+  },
+  "best_non_event_laser": {
+    "action_idx": 47,
+    "sensor_ids": "met_station_core|laser_disdrometer|fc4_flux",
+    "oracle_loss_non_event": 0.1794931776533852,
+    "power_mean": 1.1300000000000003,
+    "peak_max": 1.54
+  },
+  "best_non_event_no_laser": {
+    "action_idx": 7,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|ultrasonic_anemometer_hd",
+    "oracle_loss_non_event": 0.15780391465655205,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "laser_event_lift": -0.03098581861536176,
+  "fc4_event_lift": -0.03098581861536176,
+  "laser_non_event_lift": -0.02168926299683316,
+  "sensor_cfg": "/home/horeb/_code/microclimate_demo/rl_sensor_scheduling_framework/configs/sensors/windblown_sensors_physical_event_v3.yaml",
+  "truth_csv": "rl_sensor_scheduling_framework/reports/physical_event_v3_dynamic_probe_smoke/truth_v31.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.2,
+    0.3,
+    0.2,
+    0.1,
+    0.1,
+    0.1,
+    12.0,
+    8.0,
+    8.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    5e-05,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.2,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [
+      "met_station_core"
+    ],
+    "coverage_groups": []
+  }
+}

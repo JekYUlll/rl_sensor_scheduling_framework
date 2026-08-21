@@ -1,0 +1,48 @@
+reports/aggregate/scenebal1_12seed_93_104_oldclaim_20260621/oldclaim_seed_summary.csv
+reports/aggregate/scenebal1_12seed_93_104_oldclaim_20260621/oldclaim_summary.json
+{
+  "complete_seeds": 12,
+  "old_claim_step_gate_count": 12,
+  "old_claim_macro_gate_count": 12,
+  "behavior_eval_dirs": [
+    "."
+  ],
+  "step_static_gate_count": 12,
+  "step_rule_dynamic_gate_count": 12,
+  "step_operational_gate_count": 12,
+  "macro_static_gate_count": 12,
+  "macro_rule_dynamic_gate_count": 12,
+  "macro_operational_gate_count": 12,
+  "replay_gate_count": 12,
+  "replay_macro_gate_count": 12,
+  "learned_replay_static_gate_count": 11,
+  "learned_replay_macro_static_gate_count": 5,
+  "learned_true_static_step_gate_count": 11,
+  "learned_true_static_macro_gate_count": 5,
+  "behavior_gate_count": 12,
+  "mean_step_margin_vs_best_operational_baseline": 0.13398364952407374,
+  "median_step_margin_vs_best_operational_baseline": 0.08851065471344555,
+  "mean_macro_margin_vs_best_operational_baseline": 0.08372520848161795,
+  "median_macro_margin_vs_best_operational_baseline": 0.06690121646138092,
+  "one_sided_sign_test_p_old_claim_step_gate": 0.000244140625,
+  "one_sided_sign_test_p_old_claim_macro_gate": 0.000244140625,
+  "one_sided_sign_test_p_learned_true_static_step_gate": 0.003173828125,
+  "one_sided_sign_test_p_learned_true_static_macro_gate": 0.80615234375,
+  "claim_strength": "strong_old_claim_step",
+  "reason": ">=10 complete seeds with at least 80% old-claim step gates",
+  "macro_claim_strength": "strong_old_claim_macro",
+  "macro_reason": ">=10 complete seeds with at least 80% old-claim macro gates"
+}
+ seed  complete  custom_ppo_loss  best_static_loss best_rule_dynamic_policy  best_rule_dynamic_loss  step_margin_vs_best_operational_baseline  step_margin_vs_replay_static_reference  macro_margin_vs_best_operational_baseline  macro_margin_vs_replay_static_reference  old_claim_step_gate_pass  old_claim_macro_gate_pass  learned_true_static_step_gate_pass  learned_true_static_macro_gate_pass
+   93      True         1.568620          1.937658              round_robin                1.948473                                  0.369038                                0.155887                                   0.215306                                -1.078360                      True                       True                                True                                False
+   94      True         1.596270          1.650309              round_robin                1.894542                                  0.054038                                0.061583                                   0.046032                                 0.029002                      True                       True                                True                                 True
+   95      True         1.951350          1.963998                   random                2.264455                                  0.012648                                0.001742                                   0.032039                                 0.406106                      True                       True                               False                                 True
+   96      True         1.644688          1.682449                      aoi                1.888809                                  0.037761                                0.052241                                   0.078364                                -0.333180                      True                       True                                True                                False
+   97      True         1.628064          1.749918                      aoi                1.918096                                  0.121854                                0.110762                                   0.060471                                 0.420698                      True                       True                                True                                 True
+   98      True         1.691185          1.713773                      aoi                1.986108                                  0.022588                                0.020629                                   0.062927                                -0.746701                      True                       True                                True                                False
+   99      True         1.715256          2.115944              round_robin                2.145690                                  0.400688                                0.125738                                   0.128196                                -0.060103                      True                       True                                True                                False
+  100      True         1.651600          1.706767              round_robin                1.917900                                  0.055167                                0.049639                                   0.043059                                -0.037381                      True                       True                                True                                False
+  101      True         1.300811          1.344353                   random                1.408354                                  0.043542                                0.047932                                   0.032760                                 0.099392                      True                       True                                True                                 True
+  102      True         1.393161          1.563924              round_robin                1.586647                                  0.170763                                0.090826                                   0.139206                                -0.860786                      True                       True                                True                                False
+  103      True         1.460250          1.588082                   random                1.737380                                  0.127832                                0.125941                                   0.070875                                 0.208546                      True                       True                                True                                 True
+  104      True         1.515300          1.707184              round_robin                1.723664                                  0.191885                                0.125367                                   0.095467                                -0.125487                      True                       True                                True                                False

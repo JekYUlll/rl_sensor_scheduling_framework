@@ -1,0 +1,23 @@
+\begin{table*}[htbp]
+  \centering
+  \caption{Baseline comparisons with the complete PD-PPO training configuration on the event-balanced evaluation windows over 22 post-selection evaluation seeds. A positive paired difference means that the baseline has higher loss than PD-PPO.}
+  \label{tab:clean_main_comparisons}
+  \footnotesize
+  \setlength{\tabcolsep}{2.4pt}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}@{}}
+    \toprule
+    Baseline & \shortstack[l]{Mean forecast loss\\Seeds with lower loss;\\mean paired difference\\{[95\% bootstrap CI]}} & \shortstack[l]{Macro-averaged loss\\Seeds with lower loss;\\mean paired difference\\{[95\% bootstrap CI]}} \\
+    \midrule
+    Fixed-schedule baseline & 22 of 22; +0.1671 [+0.1231, +0.2164] & 22 of 22; +0.0838 [+0.0708, +0.0967] \\
+    AoI-priority baseline & 22 of 22; +0.2619 [+0.2331, +0.2928] & 22 of 22; +0.1655 [+0.1430, +0.1898] \\
+    Round-robin baseline & 22 of 22; +0.2571 [+0.2249, +0.2900] & 22 of 22; +0.1664 [+0.1427, +0.1917] \\
+    Random-feasible baseline & 22 of 22; +0.2681 [+0.2366, +0.3019] & 22 of 22; +0.1684 [+0.1446, +0.1933] \\
+    Privileged one-step look-ahead reference using next-step test targets & 22 of 22; +0.2746 [+0.2391, +0.3107] & 22 of 22; +0.1855 [+0.1559, +0.2173] \\
+    Warning-rule baseline & 8 of 22; -0.0039 [-0.0102, +0.0019] & 9 of 22; +0.0011 [-0.0049, +0.0081] \\
+    Privileged true-label baseline & 9 of 22; -0.0042 [-0.0108, +0.0011] & 10 of 22; +0.0017 [-0.0045, +0.0086] \\
+    \bottomrule
+  \end{tabular}
+  \begin{minipage}{0.98\textwidth}
+  \vspace{0.4ex}\footnotesize Each interval is a 95\% bootstrap confidence interval for the paired difference. The validation-selected fixed-schedule baseline is the structural primary comparator; the warning-rule baseline is the practical adaptive comparator. The one-step look-ahead reference uses next-step test targets, and the true-label baseline uses the exact sequence $c_t,\ldots,c_{t+16}$; both receive information unavailable during deployment, and neither is an upper bound. The warning-rule baseline uses the same simulator-generated warning signals available to PD-PPO and a mapping selected on the calibration/validation partition.
+  \end{minipage}
+\end{table*}

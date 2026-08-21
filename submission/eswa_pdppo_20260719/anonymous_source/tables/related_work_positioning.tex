@@ -1,0 +1,33 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Position of this work relative to nearby scheduling and sensing literatures.}
+  \label{tab:related_work_positioning}
+  \footnotesize
+  \setlength{\tabcolsep}{3.0pt}
+  \renewcommand{\arraystretch}{0.96}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.23\linewidth}>{\raggedright\arraybackslash}p{0.25\linewidth}>{\raggedright\arraybackslash}p{0.22\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}@{}}
+    \toprule
+    Literature line & Typical optimization target & Scheduling structure & What this paper adds \\
+    \midrule
+    State-estimation and AoI scheduling
+      & Covariance, estimation error, information age
+      & Sensor selection under communication or energy limits
+      & Multi-step forecast loss is the objective. \\
+    Active perception and adaptive observation selection
+      & Task information under partial observability
+      & Observation actions selected from partial observations
+      & A mandatory meteorological core channel, limited optional-channel capacity,
+        and baselines that use information unavailable during deployment. \\
+    DRL-based adaptive sensing and sensor steering
+      & Information gain, coverage, data acquisition utility, or monitoring reward
+      & Learned adaptive policies, often with soft or task-specific constraints
+      & A finite candidate action set enforces the mandatory-core and
+        optional-channel-capacity rules, and a feasible-action mask checks the
+        steady-state and startup-peak power limits. \\
+    Time series forecasting models
+      & Forecast accuracy after the observation stream is given
+      & Forecasting model for a given observation stream
+      & A frozen primary forecaster evaluates every schedule; its parameters are fixed during policy training and evaluation. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

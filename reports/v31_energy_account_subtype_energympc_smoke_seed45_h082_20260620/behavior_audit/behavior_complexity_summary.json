@@ -1,0 +1,30 @@
+[
+  {
+    "path": "reports/v31_energy_account_subtype_energympc_smoke_seed45_h082_20260620/rollout_custom_ppo.npz",
+    "policy": "custom_ppo",
+    "steps": 2048,
+    "sensors": 6,
+    "event_rate": 0.68359375,
+    "unique_mask_count": 1,
+    "unique_mask_fraction": 0.00048828125,
+    "top1_mask_fraction": 1.0,
+    "top2_mask_fraction": 1.0,
+    "top3_mask_fraction": 1.0,
+    "mask_entropy_bits": -0.0,
+    "transition_count": 1,
+    "transition_entropy_bits": -0.0,
+    "switches_per_step": 0.0,
+    "best_period": 1,
+    "best_period_match": 1.0,
+    "event_mask_mi_bits": 0.0,
+    "event_sensor_l1": 0.0,
+    "event_sensor_linf": 0.0,
+    "fixed_like": true,
+    "simple_cycle_like": true,
+    "low_complexity": true,
+    "weak_state_dependence": true,
+    "behavior_complexity_gate_pass": false,
+    "top_masks_json": "[{\"mask\": \"110000\", \"count\": 2048, \"fraction\": 1.0}]",
+    "sensor_duty_json": "[{\"sensor\": \"met_station_core\", \"duty\": 1.0, \"event_duty\": 1.0, \"non_event_duty\": 1.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"radiometer_basic\", \"duty\": 1.0, \"event_duty\": 1.0, \"non_event_duty\": 1.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"shielded_thermo_hygro\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"surface_temp_ir\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"laser_disdrometer\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"fc4_flux\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}]"
+  }
+]

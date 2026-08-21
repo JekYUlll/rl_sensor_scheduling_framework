@@ -1,0 +1,13 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p15_seed41 -> reports/v31_static_break_v15_micro_flux_ppo_teacher_mid_20260608/logs/budget1p15_seed41.log
+complete_seeds=1/1
+reports/v31_static_break_v15_micro_flux_ppo_teacher_mid_20260608/v15_micro_flux_b1p15_seed41_teacher_mid_summary.csv
+reports/v31_static_break_v15_micro_flux_ppo_teacher_mid_20260608/v15_micro_flux_b1p15_seed41_teacher_mid_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                1                         0.009473                        0.009473                        0.009473
+               best_static  1                0                        -0.020588                       -0.020588                       -0.020588
+           selected_static  1                0                        -0.020588                       -0.020588                       -0.020588
+deployable_selected_static  1                0                        -0.004282                       -0.004282                       -0.004282
+    best_deployable_static  1                0                        -0.006474                       -0.006474                       -0.006474
+     best_original_dynamic  1                0                        -0.009927                       -0.009927                       -0.009927
+       best_duty_non_pdppo  1                0                        -0.013453                       -0.013453                       -0.013453

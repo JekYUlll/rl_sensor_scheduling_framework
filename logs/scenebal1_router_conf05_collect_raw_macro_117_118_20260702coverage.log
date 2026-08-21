@@ -1,0 +1,35 @@
+reports/aggregate/scenebal2_confirm_conf05_117_118_raw_macro_20260702coverage/metpair_seed_summary.csv
+reports/aggregate/scenebal2_confirm_conf05_117_118_raw_macro_20260702coverage/metpair_claim_summary.json
+{
+  "complete_seeds": 2,
+  "seed_gate_pass_count": 2,
+  "learned_gate_pass_count": 2,
+  "replay_gate_pass_count": 2,
+  "behavior_gate_pass_count": 2,
+  "learned_macro_positive_count": 2,
+  "replay_macro_positive_count": 2,
+  "macro_seed_positive_count": 2,
+  "learned_macro_gate_count": 0,
+  "replay_macro_gate_count": 2,
+  "macro_seed_gate_count": 0,
+  "mean_learned_margin_abs": 0.06588598897474185,
+  "median_learned_margin_abs": 0.06588598897474185,
+  "mean_replay_margin_abs_vs_static_reference": 0.06722899946521466,
+  "median_replay_margin_abs_vs_static_reference": 0.06722899946521466,
+  "mean_learned_macro_margin_abs": 0.05618554722274427,
+  "median_learned_macro_margin_abs": 0.05618554722274427,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": -1.1193658856531732,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": -1.1193658856531732,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.05340883093991322,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.05340883093991322,
+  "one_sided_sign_test_p_seed_gate": 0.25,
+  "one_sided_sign_test_p_macro_seed_positive": 0.25,
+  "one_sided_sign_test_p_macro_seed_gate": 1.0,
+  "claim_strength": "replicated_pilot",
+  "reason": "all completed pilot seeds pass, but n is below 5",
+  "macro_claim_strength": "macro_not_supported",
+  "macro_reason": "macro seed-level gates are not consistently positive"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss              macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+  117      True                1.239657              1.309386 oracle_loss_macro_subtype_event                               0.069729                               0.063452                                     0.075526                                           -1.295925                                     0.052735                      True                 False                True            True
+  118      True                1.421600              1.483643 oracle_loss_macro_subtype_event                               0.062043                               0.071006                                     0.036845                                           -0.942806                                     0.054083                      True                 False                True            True

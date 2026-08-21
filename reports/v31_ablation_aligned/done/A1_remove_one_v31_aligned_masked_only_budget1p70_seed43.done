@@ -1,0 +1,9 @@
+label=A1_remove_one_v31_aligned_masked_only_budget1p70_seed43
+experiment=A1_remove_one_v31_aligned
+variant=masked_only
+budget=1.700000
+seed=43
+truth_csv=reports/v31_s2_main/raw/budget1p70_seed43/truth_v31.csv
+run_dir=reports/v31_ablation_aligned/raw/A1_remove_one_v31_aligned/masked_only/budget1p70_seed43
+eval_path=reports/v31_ablation_aligned/raw/A1_remove_one_v31_aligned/masked_only/budget1p70_seed43/evaluation/v2_eval_overall.csv
+log_path=reports/v31_ablation_aligned/logs/A1_remove_one_v31_aligned_masked_only_budget1p70_seed43.log

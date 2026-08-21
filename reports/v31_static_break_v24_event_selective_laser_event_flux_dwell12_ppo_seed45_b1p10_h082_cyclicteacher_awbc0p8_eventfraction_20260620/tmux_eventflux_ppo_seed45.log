@@ -1,0 +1,13 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p10_seed45 -> reports/v31_static_break_v24_event_selective_laser_event_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/logs/budget1p10_seed45.log
+complete_seeds=1/1
+reports/v31_static_break_v24_event_selective_laser_event_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/v24_eventlaser_eventflux_cyclicteacher_awbc0p8_seed45_h082_eventfraction_summary.csv
+reports/v31_static_break_v24_event_selective_laser_event_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/v24_eventlaser_eventflux_cyclicteacher_awbc0p8_seed45_h082_eventfraction_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                0                        -0.002529                       -0.002529                       -0.002529
+               best_static  1                0                        -0.000155                       -0.000155                       -0.000155
+           selected_static  1                1                         0.014326                        0.014326                        0.014326
+deployable_selected_static  1                1                         0.008525                        0.008525                        0.008525
+    best_deployable_static  1                1                         0.000134                        0.000134                        0.000134
+     best_original_dynamic  1                0                        -0.001614                       -0.001614                       -0.001614
+       best_duty_non_pdppo  1                1                         0.000134                        0.000134                        0.000134

@@ -1,0 +1,61 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Parameters of the simulation model. One time step
+  equals one hour.}
+  \label{tab:simulator_event_parameters}
+  \scriptsize
+  \renewcommand{\arraystretch}{0.92}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}p{0.35\linewidth}p{0.20\linewidth}p{0.38\linewidth}@{}}
+    \toprule
+    Component & Value & Role \\
+    \midrule
+    Reference distributions from Antarctic AWS stations
+      & Panda100, Panda200, Taishan
+      & Phase-randomized Antarctic AWS series with empirical marginal matching. \\
+    Sequence length and interval
+      & 70,000; 1 h
+      & One independently generated simulated ground-truth time series per seed. \\
+    Simulated blowing-snow event process
+      & alternating semi-Markov storm/calm phases
+      & Lognormal phase duration with log-scale standard deviation 0.35 and a
+        minimum duration of 24 time steps. \\
+    Storm / within-storm event duty
+      & 0.65 / 0.78
+      & Derived from the event-coverage target after clipping. \\
+    Median storm / calm duration
+      & 1,440 / 775 time steps
+      & Parameters of the alternating calm/storm process. \\
+    Event pulse duration / gap
+      & Uniform 28--80 / 8--10 time steps
+      & Bursty blowing-snow episodes within storm phases. \\
+    Wind thresholds and event margin
+      & 8 / 12 / 1.4 m s$^{-1}$
+      & Weak threshold, strong threshold, and event wind-floor margin. \\
+    Hysteresis on / off
+      & 0.60 / 0.30
+      & Converts candidate pulses and wind credibility into event intervals. \\
+    Particle / flux / thermal probability
+      & 0.40 / 0.20 / 0.40
+      & One event type is sampled for each complete event run. \\
+    Event-type process smoothing
+      & 0.65
+      & Low-pass coefficient for event-type-specific simulated processes. \\
+    Target-effect lag
+      & 6 time steps
+      & Delay from the event-type process to target effects. \\
+    Particle process scales
+      & 0.62 mm; 8.2 m s$^{-1}$
+      & Diameter and particle-velocity effects. \\
+    Flux process map
+      & scale 0.0014; offset 1.25; clip 2.4
+      & Linear event-type effect before clipping. \\
+    Thermal process scale
+      & 6.4 $^{\circ}$C
+      & Snow-surface-temperature effect. \\
+    Warning-signal lead / noise
+      & 16 time steps / 0.01
+      & Linear pre-event ramp plus Gaussian noise, clipped to $[0,1]$. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

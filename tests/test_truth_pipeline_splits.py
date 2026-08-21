@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from pipelines.truth_pipeline import _RandomSubsetReplayScheduler, _split_bounds, _validate_reward_horizon_for_warmup
+from pipelines.truth_pipeline import (
+    _RandomSubsetReplayScheduler,
+    _select_validation_objective,
+    _split_bounds,
+    _validate_reward_horizon_for_warmup,
+)
 from scheduling.online_projector import OnlineSubsetProjector
 
 
@@ -66,3 +71,57 @@ def test_reward_horizon_validation_rejects_warmup_longer_than_horizon() -> None:
             },
             {"horizon": 3},
         )
+
+
+def test_feasible_forecast_validation_prefers_lower_forecast_loss() -> None:
+    base_cfg = {"validation": {"objective": "feasible_forecast_loss"}}
+    worse = _select_validation_objective(
+        {
+            "forecast_loss_mean": 0.5,
+            "constraint_violation_mean": 0.0,
+            "peak_violation_rate": 0.0,
+            "avg_power_violation": 0.0,
+            "energy_violation": 0.0,
+        },
+        constrained=False,
+        base_cfg=base_cfg,
+    )
+    better = _select_validation_objective(
+        {
+            "forecast_loss_mean": 0.1,
+            "constraint_violation_mean": 0.0,
+            "peak_violation_rate": 0.0,
+            "avg_power_violation": 0.0,
+            "energy_violation": 0.0,
+        },
+        constrained=False,
+        base_cfg=base_cfg,
+    )
+    assert better > worse
+
+
+def test_feasible_forecast_validation_rejects_infeasible_checkpoint() -> None:
+    base_cfg = {"validation": {"objective": "feasible_forecast_loss"}}
+    feasible = _select_validation_objective(
+        {
+            "forecast_loss_mean": 0.3,
+            "constraint_violation_mean": 0.0,
+            "peak_violation_rate": 0.0,
+            "avg_power_violation": 0.0,
+            "energy_violation": 0.0,
+        },
+        constrained=True,
+        base_cfg=base_cfg,
+    )
+    infeasible = _select_validation_objective(
+        {
+            "forecast_loss_mean": 0.1,
+            "constraint_violation_mean": 0.0,
+            "peak_violation_rate": 0.1,
+            "avg_power_violation": 0.0,
+            "energy_violation": 0.0,
+        },
+        constrained=True,
+        base_cfg=base_cfg,
+    )
+    assert feasible > infeasible

@@ -1,0 +1,945 @@
+{
+  "status": "passed",
+  "date_tag": "20260718cleanpilot",
+  "seeds": [
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140
+  ],
+  "positive_margin_definition": "static loss minus PD-PPO loss",
+  "provenance_by_seed": {
+    "117": {
+      "seed": 117,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed117_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed117_h075ctxolscbal2_20260621",
+      "truth_sha256": "e3a6f9687236ed3c2d9782e818a37b683e1649167dcfdb0bfabc72e653fd4acd",
+      "split_manifest_sha256": "09ddd8202c19c74821e0f431a45d5ee29681662229ce209ded150932d908a12b",
+      "source_policy_metadata_sha256": "9e706a59ea382a27436c1c7eecbe59d6618f6801297bd981fc3764f8df34d1ee",
+      "source_policy_checkpoint_sha256": "0a37708feae1abcb57af72b0a6e7ee064f85ce0ed6d8c77dbd965938d752cb19",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed117/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "a47f0fcda7e2ab53c2586277681692b1ef11850761075c4e7f2bbf36b658bb39",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60128,
+        61300,
+        62453,
+        63603
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        66158,
+        66670,
+        67182,
+        67694,
+        68206,
+        68718
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "118": {
+      "seed": 118,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed118_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed118_h075ctxolscbal2_20260621",
+      "truth_sha256": "dc51121368fb9bcdf0a6af2701fef57b4506646514ab88a3100d20c038215573",
+      "split_manifest_sha256": "40c55f7e73c2f3d1753f2b566f3216233d822fbc62ebe2282dc744010ada19c8",
+      "source_policy_metadata_sha256": "337b840430bd89e76fff4cef024e1df770a8bd355b5ab44ab8f82df3477df55a",
+      "source_policy_checkpoint_sha256": "a3e7a7903d299c973aea879c4bc5c7bc9a047aff8e098a53320c163e7cb2b90e",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed118/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "cdf44e93913f1784324af917948e82210fd19eeda44a907f44013b566729e8ef",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60167,
+        61272,
+        62408,
+        63555
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        65774,
+        66542,
+        67054,
+        67566,
+        68078,
+        69294
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "119": {
+      "seed": 119,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed119_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed119_h075ctxolscbal2_20260621",
+      "truth_sha256": "af1404d49f60b900412ae6b74e6a96c736ec3517cd802a9cb49ae2d11a0c0165",
+      "split_manifest_sha256": "6f616a559a4fe63f7201a516c6b479d59621c91dca2fd1636459335a0e398b28",
+      "source_policy_metadata_sha256": "7ad26a3885a9732a377fdb7751fd940f69ed2d14f208f85c1194d2144a15659d",
+      "source_policy_checkpoint_sha256": "eaa7598ee4a403596780c612a23f533446c5c37a0f65e26d3e5ad37f53d1df83",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed119/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "80a4f45664bfa921ac0809ac59a470cb72d57b5f2bae01ab6918b2eb82c9e74e",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60181,
+        61333,
+        62452,
+        63577
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        65262,
+        65774,
+        66286,
+        66798,
+        67630,
+        68142,
+        68654,
+        69479
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "120": {
+      "seed": 120,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed120_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed120_h075ctxolscbal2_20260621",
+      "truth_sha256": "b99666da4e1cb1d45d3b3d7248a5d11e7137fe7f9c41d1a7f1b61fe25cece476",
+      "split_manifest_sha256": "f2eee7bfe9ef602cb36c9312628d82a5b76b51cd6050c0d16a9ba1660ccb72cd",
+      "source_policy_metadata_sha256": "502e5add8ba4e3f20cae757c988e2f9c4525dcd9b45fb420195762b11ed28be7",
+      "source_policy_checkpoint_sha256": "4f83daee099a0d3695be79c520fca1be581fa31a626a17f0db6ad14fb7e81cec",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed120/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "bc7b4146f744e14ed2152d8b3230674e23377eee83f4f24006cd4aae328414a7",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60139,
+        61246,
+        62401,
+        63572
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        65774,
+        66286,
+        66798,
+        67950,
+        68462,
+        68974
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "121": {
+      "seed": 121,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed121_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed121_h075ctxolscbal2_20260621",
+      "truth_sha256": "5c6f91c446292290321f7c2124e61f2d3827d44b85b54bb19745815f37e35c63",
+      "split_manifest_sha256": "376f618c0deabb6b8ea6e6de62b241bee394149d95adf9b419fb6750b39ee663",
+      "source_policy_metadata_sha256": "dd7ea42252eea58549e54f4cd4b19d639769b420baeeabe5a39e5da715c71a30",
+      "source_policy_checkpoint_sha256": "222b32c067cfe439dc16cbffbb4b41cea2e1ea44cc96fc24409ebcbc1d1dba84",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed121/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "76d9147e7ec478603d509b85ab6ca18d9d945d0920a63a5592fc959e031fb1ff",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60096,
+        61257,
+        62426,
+        63585
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64878,
+        65390,
+        66414,
+        66926,
+        67438,
+        67950,
+        68462,
+        68974
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 5,
+      "selected_secondary_static_sensors": "met_station_core|fc4_flux",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "122": {
+      "seed": 122,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed122_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed122_h075ctxolscbal2_20260621",
+      "truth_sha256": "1d860e346017a1fbe3ac62e236feedb21cb4238a1214cfe098ab5030058c60f8",
+      "split_manifest_sha256": "744b62086c9174fc5f6d747e981d0f61cc0c3e84b6ef4bebc953757cbdd48eea",
+      "source_policy_metadata_sha256": "5d3b88b2a94df8bd6bb16a59a0ce113468813f77a013c89da992bfa270d28cee",
+      "source_policy_checkpoint_sha256": "c6bb3bc566eddbedb968ca82b969166741a4094d44938a3bb4ed6ce50832c8d1",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed122/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "11e367cf2ebea51639df69a35e4d89bd201edac4a844db9a132e53029f56eda7",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60142,
+        61324,
+        62422,
+        63587
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64942,
+        65454,
+        65966,
+        67182,
+        67694,
+        68206,
+        68910,
+        69479
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "123": {
+      "seed": 123,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed123_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed123_h075ctxolscbal2_20260621",
+      "truth_sha256": "9d3e6ae5016d933b992407f5b244becc00b11daa5c0811580d00c189d805feb0",
+      "split_manifest_sha256": "0a6cdbf8ee959a50a1db1e90a92bd1c6bc468128239303c4e2d39483e3bc80c6",
+      "source_policy_metadata_sha256": "9813d0f4198f0f432eae6e8431706137cf92a74674e01ae9d862610e0746f7e7",
+      "source_policy_checkpoint_sha256": "ad538b6b895f3b307d2130763f1986dba4990948046f5b02d7dd3c5c978a50b6",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed123/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "cce1e88c7122b38d0f63bcf38bd4e2532aa70dcf3ca0453cd80046ba20f66ab2",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60124,
+        61262,
+        62411,
+        63606
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        66030,
+        66542,
+        67054,
+        67566,
+        68398,
+        68910,
+        69479
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "124": {
+      "seed": 124,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed124_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed124_h075ctxolscbal2_20260621",
+      "truth_sha256": "b7f78292b5144439b3949fde351cd24e9fe4173549aad72b8a1502f118378060",
+      "split_manifest_sha256": "1a9959ddaee8d9ab865e4cc9e2605e870001f9b59e9d31dc464ae6f518334ce9",
+      "source_policy_metadata_sha256": "56557782049a92977d36dae47c241f6e0b4277d80b857b53ff36fd77bc638524",
+      "source_policy_checkpoint_sha256": "146c5e654bcabd2e1f062339387828a82e1858cb80bb701aa29ef517d7529ac3",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed124/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "8b3a327d657c15f4f8da0412b7a4dd2db122def7cb5c40a6ccf4c3980ccdaaa3",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60094,
+        61235,
+        62374,
+        63567
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65902,
+        66414,
+        66926,
+        67438,
+        68334,
+        68846,
+        69358
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "125": {
+      "seed": 125,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed125_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed125_h075ctxolscbal2_20260621",
+      "truth_sha256": "16b14699912cd5c1fd90c4a30ccb80d1adee3898120260a598455035ddf0892e",
+      "split_manifest_sha256": "802aa9aa135e13155d7755e23a93cf2537870b7b045fb8eba7d93df5e41de30f",
+      "source_policy_metadata_sha256": "59008a103b58c415eff1f99dc44222561210a38426f15dbee0c9d164ff28b01e",
+      "source_policy_checkpoint_sha256": "b922e5da216040f09766d779f2735d815dc3b4b36393154388de564b8331edf3",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed125/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "17416c95cc09045c52c9ea16bca251c64bbae94926e5d09a271ccb77f88904e0",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60182,
+        61311,
+        62450,
+        63602
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65326,
+        65838,
+        66670,
+        67374,
+        67886,
+        68398,
+        69479
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "126": {
+      "seed": 126,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed126_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed126_h075ctxolscbal2_20260621",
+      "truth_sha256": "b5ca9cf7dfdcc5cc0b21ae791d376b962be70791d5b404be1f4bb31b156767cf",
+      "split_manifest_sha256": "3508933a36fddff78ec79ed87784917b625ba77c680612805137638a07302731",
+      "source_policy_metadata_sha256": "6b3efe881c2432821ccb16ce0da3d15a8da71824eefbcd59b42bdec334aaf7da",
+      "source_policy_checkpoint_sha256": "bcc4353ede6909aaeacc8a5c502f2cea7a931a4eb57b6b86c95e9d7e2280e8a6",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed126/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "76eb2bd0a1f082e014944339113212203850f9ad1255b1c9285d32586cd77c8d",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60135,
+        61248,
+        62399,
+        63565
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64878,
+        65454,
+        65966,
+        67118,
+        67694,
+        68206,
+        68718,
+        69230
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "127": {
+      "seed": 127,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed127_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed127_h075ctxolscbal2_20260621",
+      "truth_sha256": "76b9dcfe262ece75c71433070440fe257add3456bc6b6cbaf90c23d520c2f5fa",
+      "split_manifest_sha256": "6fdf8bba28f29c3b793c6886c1a00477062ffb3e555f8abc789385a394c85c35",
+      "source_policy_metadata_sha256": "264c8218517774885cc0633a222809fb5ad9bedc821d4e799aeb6a997b3fa12f",
+      "source_policy_checkpoint_sha256": "ce5c95a84ab484291c9f5012a9b35f621ddfae48fda09d571b35970b675c7794",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed127/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "7b327ae0369c714e1e04b00ac962f9ce5480a54a11863c7559505dfc033ed4ba",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60113,
+        61291,
+        62474,
+        63614
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        65326,
+        65838,
+        66350,
+        66862,
+        67374,
+        68206,
+        68718,
+        69230
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "128": {
+      "seed": 128,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed128_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed128_h075ctxolscbal2_20260621",
+      "truth_sha256": "1c1bb32171a151cd7e5f5d3e26adfac6d5d256e5557f30e402a34c1ebc75991a",
+      "split_manifest_sha256": "048fae20cd5a432729e2c8069eb69bf1c9251d7d812145b5685b9b9adf25fc42",
+      "source_policy_metadata_sha256": "38fe98f352f16c1a11f2b24e5dca49a405b2579e4306903ca3f4f86c8f75a23a",
+      "source_policy_checkpoint_sha256": "8f2fe93d835ea0e64d815ab0f98123c3ef3937411c91022dfa3acf69da207b01",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed128/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "68a5755cd15d220a671fb8f741dc39490ee77bb473fcf4bfcb1861f1c8131bac",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60150,
+        61319,
+        62448,
+        63578
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        65390,
+        65902,
+        66414,
+        66926,
+        67438,
+        67950,
+        68462,
+        68974
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 5,
+      "selected_secondary_static_sensors": "met_station_core|fc4_flux",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "129": {
+      "seed": 129,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed129_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed129_h075ctxolscbal2_20260621",
+      "truth_sha256": "206763de315f2c659fb8796488713c0ef76a50bb0703afde01467e6bd00bb04b",
+      "split_manifest_sha256": "1c3d4b2fced81a505a95454cda5945fdc444adf5b752ba2dda6d4db307e7f286",
+      "source_policy_metadata_sha256": "1c14b92a1d11df17d8445538039a8eb35966526d4890e03391fcc0a4b02d5c0d",
+      "source_policy_checkpoint_sha256": "8618f32cd29e07e9ae386a6ea60e4f700795a35f6ca4e69435199728e7d7c943",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed129/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "acc4ce095fa20a8fc4f46756cd16eed5408acdb2835c17dbd1100242ba0b9154",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60170,
+        61307,
+        62460,
+        63610
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64814,
+        65326,
+        65838,
+        66862,
+        67374,
+        67950,
+        68590,
+        69479
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "130": {
+      "seed": 130,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed130_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed130_h075ctxolscbal2_20260621",
+      "truth_sha256": "2357d45b70a9b70fdbf8f464803216ca2f1aaaefda404f0bcc700b5ee0b9c2ea",
+      "split_manifest_sha256": "a61929f61b46d7a51fde3b127fe8606b21594009680b32d3fe2b347968a7a715",
+      "source_policy_metadata_sha256": "74864b206ff186b16fac3925867f5a3fb3826582050824b0a9e95a771fd87962",
+      "source_policy_checkpoint_sha256": "57ab2a8dadb9dcae62b67ffcd8da5f03e369402d18068aec2e3383d53885ebe0",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed130/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "af7300aec833bde3ea18c98fd4111893009cd37a4f07951bd7631e3a02f085f4",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60136,
+        61273,
+        62466,
+        63608
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65838,
+        66350,
+        66862,
+        67630,
+        68142,
+        68654,
+        69294
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "131": {
+      "seed": 131,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed131_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed131_h075ctxolscbal2_20260621",
+      "truth_sha256": "bf0144805af00852bb2d6db8f61e1c3f4387b7ffc22a265eaf897382fae51a1e",
+      "split_manifest_sha256": "f4124917653bd9eece4ac4b207951f2b7b5d7ae8c9b514b8c164f5c32e9a483f",
+      "source_policy_metadata_sha256": "c3e0ea6d3a34da07a85a7fc45399921738686bb1bc60a971ea97a819760c1c26",
+      "source_policy_checkpoint_sha256": "7cbec08e53ff080ea81d06444cf02e1276123be83e73454cf6a961081cc19824",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed131/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "b2b1203e89e463f774616d10e2e7299207995b29b94c84a8fe509c4932fb732c",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60146,
+        61276,
+        62425,
+        63574
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        65966,
+        66478,
+        66990,
+        67502,
+        68782,
+        69294
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "132": {
+      "seed": 132,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed132_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed132_h075ctxolscbal2_20260621",
+      "truth_sha256": "243b3856018d81cf247dc5b550a05c3f55c489545759701b3b338dabcc787c2d",
+      "split_manifest_sha256": "203812c9efe756327428b1cfb0f992df9e9592de31440b30b5f010576c47e0c6",
+      "source_policy_metadata_sha256": "00a7b90a4b7d84348af19a0cf4c29e25478687d07e4e459fc39fdf3535c3bfad",
+      "source_policy_checkpoint_sha256": "7a36b64d6d670ab776586b0509465e4a336d967ed2e034fc7fabcafa53388c8c",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed132/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "b5745fee3fc267463ec7881e7a71b8d64b05aec1fecdaa087f8521fcaaa1e004",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60104,
+        61289,
+        62404,
+        63587
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64942,
+        65454,
+        65966,
+        66478,
+        67566,
+        68078,
+        68654,
+        69358
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "133": {
+      "seed": 133,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed133_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621",
+      "truth_sha256": "02b09dcfbd4e3b334ebc4865b4626b70de3767a181dd11bd807246a38dc8bd93",
+      "split_manifest_sha256": "66a8fd1ed56c667e43190ffa324c0fc06fd3f9bf20a96a3ebba3da2b104eecae",
+      "source_policy_metadata_sha256": "e7c73fd2fbf2c77560e1db8875f36b9f2ade1cfaba7d4d90b003d6722ff227e7",
+      "source_policy_checkpoint_sha256": "557c0aa2468064f399e95d3037fa7bd7861ac4bddfaf6ef5e070626e3a41e55d",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed133/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "e77604dd32d7ef89956935dab6ac7123e14090db90135bef01ee5f3930c7065e",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60112,
+        61254,
+        62413,
+        63551
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        65774,
+        66286,
+        66798,
+        67310,
+        68590,
+        69294
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "134": {
+      "seed": 134,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed134_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed134_h075ctxolscbal2_20260621",
+      "truth_sha256": "9c5f9cfc517cea7120b96718cf13a41025b3c912268e7443cb56cb5310c87c4c",
+      "split_manifest_sha256": "1aff2c7008e5112ef6922386c0200bac8feb274edf37cb1767e441d42a5e8fb5",
+      "source_policy_metadata_sha256": "71bd1834e3e9b214a1358f61b6c2966ed246e20e5b7c9a344b2a71dd63debc54",
+      "source_policy_checkpoint_sha256": "555e163be117c685b19181404d946da5b1e683f19d6e8a2167a0da9dde228f6c",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed134/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "e1c259b210c65e58f0b72a50e17836531aeb99a9412a878ce9663105901a4c68",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60112,
+        61257,
+        62390,
+        63529
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        66030,
+        66542,
+        67054,
+        67822,
+        68334,
+        68846,
+        69358
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "135": {
+      "seed": 135,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed135_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed135_h075ctxolscbal2_20260621",
+      "truth_sha256": "1c9710be8c0ad005dbbb847b15ec16a4da7e83d25c7c9fb7f9d399f8d16c5294",
+      "split_manifest_sha256": "c6a13867b4f490d3dd0f66432261f139ba9c64d21cfd53476eec804e9b4bccba",
+      "source_policy_metadata_sha256": "f24f497edd1520d751d950ebaf7dddaa3fc9a5452dabf32abed96b6199e96b85",
+      "source_policy_checkpoint_sha256": "af35b14733ec8328ad5e9400d94637e690f00626c7ac82c29910423737555788",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed135/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "e335331c5b93c5cacf0684bde28ebf86374645a18c0d39b81e5b0efc0e31a0e6",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60120,
+        61274,
+        62460,
+        63615
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        65198,
+        65710,
+        66222,
+        66734,
+        67246,
+        67758,
+        68270,
+        68782
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "136": {
+      "seed": 136,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed136_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed136_h075ctxolscbal2_20260621",
+      "truth_sha256": "0b103b410c5ff6e8b473b12835c91146f850d78d4b94774575868efc0a360c60",
+      "split_manifest_sha256": "7850025a8c3b08120208fd85a9241a4fb2234727f9fc50964246d40497da78e9",
+      "source_policy_metadata_sha256": "518a48d791d63980ecce7bca66c5338250037ebdcd988446ffac3cf9d1391faa",
+      "source_policy_checkpoint_sha256": "3eca922106a3240fc6132f64e157dcde27d14d45116623d70deba6c9b6b3fa54",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed136/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "a88f8784c5ac088dbd92baa987fcc3f6f1911c9c7bcbc964d7cfb1678bea1fa8",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60106,
+        61234,
+        62425,
+        63578
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65710,
+        66222,
+        66734,
+        67246,
+        68206,
+        68846,
+        69358
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "137": {
+      "seed": 137,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed137_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed137_h075ctxolscbal2_20260621",
+      "truth_sha256": "2b55e1ca70cae8c9749d8371ebd6c389ef5e033017d1f2920f3fb53a267ad5c9",
+      "split_manifest_sha256": "55bb47efdab30b8c7f6c5c2cd01d9d587fbfb6d14762c71a1bc9cb04d57ee066",
+      "source_policy_metadata_sha256": "8ceb2923daab86fc5301891b166b7a7cbc7cf4a870452ceb37a0dab15c25c246",
+      "source_policy_checkpoint_sha256": "77f64f7e90035fdbf09d7d03587d971104fa66ca39439d6b9fe9acf3af61b6e7",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed137/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "0cbefacee27f654ff83c13279949df2966d95dc7dbb8a4f04892ce141d8f014e",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60146,
+        61286,
+        62447,
+        63599
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        65774,
+        67374,
+        67886,
+        68398,
+        68910,
+        69479
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "138": {
+      "seed": 138,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed138_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed138_h075ctxolscbal2_20260621",
+      "truth_sha256": "1aa8999e7e9f8aea4b4f11b179c1a0e9901bf3eb5f583be96b7b37da037a59fa",
+      "split_manifest_sha256": "abdd53dd9053664f07c09fafc4d2876357379df571a539937b368774815c3861",
+      "source_policy_metadata_sha256": "5c7f30632e9cb174d642b43171d0c29369d28a36b6e2529201bc7d75d8ae8330",
+      "source_policy_checkpoint_sha256": "62e2375fdbd0c5d4cc5720181287a20dc5fec283f65108d72d19d3a229cc08f0",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed138/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "a2bb7d23f0512206fcaa19cd1d291142e9e3bf1915788cda997212e0fc1a13a5",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60141,
+        61300,
+        62437,
+        63587
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        65774,
+        66862,
+        67374,
+        67886,
+        68910,
+        69422
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 5,
+      "selected_secondary_static_sensors": "met_station_core|fc4_flux",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "139": {
+      "seed": 139,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed139_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed139_h075ctxolscbal2_20260621",
+      "truth_sha256": "558e7f31dd2d3da28590b6c2b87bb1341e2e8ba1fd3bbf37d449033df715cd9f",
+      "split_manifest_sha256": "65aae89620b816ac1c5ac20b16737a46218a8d66820e6e448438d18537c14c52",
+      "source_policy_metadata_sha256": "3129be6c9d535d6c31a2f5da66a0606fe61846d0187aaea3f5c6b5ccd5032a4b",
+      "source_policy_checkpoint_sha256": "613be9e1cd0530096f63ba130b8dd9dc8873aa3a345fddf5c745e5f026f29ae7",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed139/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "ac12fa33d5c3e14c63bdb00772459a2d4a98beff6a30ca71df18fd55232e1058",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60118,
+        61259,
+        62457,
+        63571
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64750,
+        65262,
+        65774,
+        66286,
+        67054,
+        67566,
+        68078,
+        68590
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    },
+    "140": {
+      "seed": 140,
+      "source_run_dir": "reports/v31_scenebal2_matched_reward_forecast_noexactevent_seed140_h075forecastctrl_20260718cleanpilot",
+      "control_source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed140_h075ctxolscbal2_20260621",
+      "truth_sha256": "9e90d66bb69d3c218ebb2dba77dd19d398c34814e5ec8586fafd3d83031c3873",
+      "split_manifest_sha256": "7c0ce23dbd5863228b7f3588cb8b616e6bb57efb61dce2ff628f524208563c65",
+      "source_policy_metadata_sha256": "15055555aec47621529b38115f380b9a68d90c1d2e547fb6904542a5a7669af4",
+      "source_policy_checkpoint_sha256": "fa85128713d71765284981c1add5e8902fc327f9003fcb1d9f4c6694c233fb8c",
+      "secondary_forecaster": "multioutput_ridge",
+      "secondary_forecaster_path": "reports/aggregate/pdppo_secondary_forecaster_24seed_20260718/seed140/secondary_linear_oracle.npz",
+      "secondary_forecaster_sha256": "ee45ec431e2010c071a4cd06c7f5f12ae2898bde8451f9745dbd584897ec178b",
+      "forecaster_fit_partition": [
+        0,
+        24500
+      ],
+      "validation_start_indices": [
+        60158,
+        61292,
+        62449,
+        63616
+      ],
+      "validation_steps": 512,
+      "final_start_indices": [
+        64878,
+        65390,
+        66542,
+        67054,
+        67566,
+        68078,
+        68910,
+        69422
+      ],
+      "final_steps": 512,
+      "selected_secondary_static_action": 3,
+      "selected_secondary_static_sensors": "met_station_core|surface_temp_ir",
+      "offline_event_labels_used_only_for_loss_grouping": true,
+      "policy_or_trajectory_retraining": false
+    }
+  }
+}

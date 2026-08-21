@@ -1,0 +1,51 @@
+{
+  "protocol": "no_warmup_split_dqn_diagnostic",
+  "source_run_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_split_protocol_no_warmup/raw/budget1p65_seed42",
+  "source_truth_csv": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_split_protocol_no_warmup/raw/budget1p65_seed42/truth_v31_split.csv",
+  "source_oracle": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_split_protocol_no_warmup/raw/budget1p65_seed42/v2_tcn_oracle.pt",
+  "source_manifest": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_split_protocol_no_warmup/raw/budget1p65_seed42/split_protocol_manifest.json",
+  "source_ppo_metrics": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_split_protocol_no_warmup/raw/budget1p65_seed42/v2_custom_ppo_metrics.csv",
+  "budget": 1.65,
+  "seed": 42,
+  "train_start_min": 31500,
+  "train_start_max": 75979,
+  "final_eval_starts": [
+    83329,
+    84420,
+    85529,
+    86635,
+    87744,
+    88871
+  ],
+  "eval_steps": 1024,
+  "selected_static": {
+    "action_idx": 0,
+    "oracle_loss_mean": 0.1913311311800498,
+    "sensor_ids": "met_station_core|radiometer_basic|snow_particle_counter"
+  },
+  "dqn": {
+    "total_timesteps": 60000,
+    "replay_size": 50000,
+    "learning_starts": 1000,
+    "batch_size": 64,
+    "train_freq": 4,
+    "gradient_steps": 1,
+    "target_update_interval": 1000,
+    "learning_rate": 0.0001,
+    "gamma": 0.99,
+    "n_step_return": 3,
+    "hidden_dim": 128,
+    "exploration_initial_eps": 1.0,
+    "exploration_final_eps": 0.05,
+    "exploration_fraction": 0.3,
+    "max_grad_norm": 10.0,
+    "event_start_prob": 0.67,
+    "oracle_prefill_steps": 0,
+    "oracle_prefill_lookahead_steps": 2,
+    "device": "auto",
+    "seed": 42,
+    "log_interval": 2000,
+    "history_path": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_no_warmup_dqn_split_diagnostic/raw/budget1p65_seed42/dqn_training_history_live.json",
+    "candidate_count": 9
+  }
+}

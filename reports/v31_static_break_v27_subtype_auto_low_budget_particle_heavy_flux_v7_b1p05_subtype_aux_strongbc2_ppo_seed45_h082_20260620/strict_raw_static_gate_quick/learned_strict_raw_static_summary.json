@@ -1,0 +1,17 @@
+{
+  "policy": "custom_ppo",
+  "custom_oracle_loss_mean": 0.5087994777049971,
+  "same_run_feasible_static_projected": 0.5185866523588629,
+  "strict_raw_static_policy": "static_action1",
+  "strict_raw_static_oracle_loss_mean": 0.5139972447404944,
+  "margin_abs_raw_minus_custom": 0.005197767035497236,
+  "margin_rel_raw_minus_custom": 0.010112441435598496,
+  "required_margin_abs": 0.005139972447404943,
+  "learned_strict_raw_static_pass": true,
+  "behavior_complexity_gate_pass": true,
+  "unique_mask_count": 9,
+  "top3_mask_fraction": 0.78076171875,
+  "mask_entropy_bits": 2.3714535029859727,
+  "event_mask_mi_bits": 0.3299390797864099,
+  "event_sensor_l1": 2.3635961804533485
+}

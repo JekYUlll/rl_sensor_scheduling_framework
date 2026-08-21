@@ -1,0 +1,96 @@
+{
+  "budget": 0.65,
+  "candidate_count": 76,
+  "truth_event_rate": 0.27013333333333334,
+  "eval_start_indices": [
+    13746,
+    26616,
+    20595,
+    6948
+  ],
+  "event_loss_min": 0.19093776979694085,
+  "non_event_loss_min": 0.18900960692388719,
+  "best_overall": {
+    "action_idx": 7,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir",
+    "oracle_loss_mean": 0.19034058760079756,
+    "power_mean": 0.2800000000000001,
+    "peak_max": 0.36
+  },
+  "best_event_laser": null,
+  "best_event_no_laser": {
+    "action_idx": 7,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir",
+    "oracle_loss_event": 0.19093776979694085,
+    "power_mean": 0.2800000000000001,
+    "peak_max": 0.36
+  },
+  "best_event_fc4": {
+    "action_idx": 55,
+    "sensor_ids": "met_station_core|surface_temp_ir|fc4_flux",
+    "oracle_loss_event": 0.3381103244036741,
+    "power_mean": 0.6399999999999999,
+    "peak_max": 0.8200000000000001
+  },
+  "best_event_no_fc4": {
+    "action_idx": 7,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir",
+    "oracle_loss_event": 0.19093776979694085,
+    "power_mean": 0.2800000000000001,
+    "peak_max": 0.36
+  },
+  "best_non_event_laser": null,
+  "best_non_event_no_laser": {
+    "action_idx": -2001,
+    "sensor_ids": "dynamic:diverse_top3_lead0_dwell16",
+    "oracle_loss_non_event": 0.18900960692388719,
+    "power_mean": 0.3400000000000001,
+    "peak_max": 0.4
+  },
+  "laser_event_lift": NaN,
+  "fc4_event_lift": -0.14717255460673326,
+  "laser_non_event_lift": NaN,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v12_spc_event_fragile.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_v12_spc_event_fragile_linear_probe_20260607/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.05,
+    0.05,
+    0.15,
+    0.02,
+    0.02,
+    0.0,
+    16.0,
+    6.0,
+    6.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 0.65,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  },
+  "eval_start_selection": "event_fraction",
+  "eval_selection_stride": 64
+}
+reports/v31_static_break_calibration_v12_spc_event_fragile_linear_probe_20260607/particle_flux_v6_b0p65_p1p60/oracle_lift_candidate_table.csv

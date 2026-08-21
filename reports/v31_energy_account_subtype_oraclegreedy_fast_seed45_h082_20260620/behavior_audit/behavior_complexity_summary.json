@@ -1,0 +1,30 @@
+[
+  {
+    "path": "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/rollout_custom_ppo.npz",
+    "policy": "custom_ppo",
+    "steps": 4096,
+    "sensors": 6,
+    "event_rate": 0.543212890625,
+    "unique_mask_count": 2,
+    "unique_mask_fraction": 0.00048828125,
+    "top1_mask_fraction": 0.7353515625,
+    "top2_mask_fraction": 1.0,
+    "top3_mask_fraction": 1.0,
+    "mask_entropy_bits": 0.8336802252198623,
+    "transition_count": 4,
+    "transition_entropy_bits": 1.073850325535414,
+    "switches_per_step": 0.006878306878306878,
+    "best_period": 1,
+    "best_period_match": 0.9587301587301588,
+    "event_mask_mi_bits": 0.21494115684912452,
+    "event_sensor_l1": 0.4409471591830362,
+    "event_sensor_linf": 0.4409471591830362,
+    "fixed_like": true,
+    "simple_cycle_like": true,
+    "low_complexity": true,
+    "weak_state_dependence": false,
+    "behavior_complexity_gate_pass": false,
+    "top_masks_json": "[{\"mask\": \"110000\", \"count\": 3012, \"fraction\": 0.7353515625}, {\"mask\": \"100000\", \"count\": 1084, \"fraction\": 0.2646484375}]",
+    "sensor_duty_json": "[{\"sensor\": \"met_station_core\", \"duty\": 1.0, \"event_duty\": 1.0, \"non_event_duty\": 1.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"radiometer_basic\", \"duty\": 0.7353515625, \"event_duty\": 0.533932584269663, \"non_event_duty\": 0.9748797434526991, \"event_abs_delta\": 0.4409471591830362}, {\"sensor\": \"shielded_thermo_hygro\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"surface_temp_ir\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"laser_disdrometer\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"fc4_flux\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}]"
+  }
+]

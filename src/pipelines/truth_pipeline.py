@@ -10,6 +10,7 @@ from business_cases.windblown_case.predictor_targets import default_forecast_tar
 from envs.truth_replay_env import TruthReplayConfig, TruthReplayEnvironment
 from estimators.kalman_filter import KalmanFilterEstimator
 from estimators.linear_gaussian_fit import fit_linear_gaussian_dynamics, safe_feature_scale, target_relevance_weights
+from estimators.observation_preprocessor import ObservationPreprocessor
 from estimators.state_summary import flatten_rl_state
 from evaluation.constraint_metrics import summarize_constraint_metrics
 from reward.forecast_reward import FrozenForecastRewardEnsemble, FrozenForecastRewardOracle, load_reward_oracle, train_reward_oracle_suite_from_rollouts
@@ -212,6 +213,80 @@ def _sensor_to_dims(sensor_cfg: dict, state_columns: list[str]) -> dict[str, lis
         out[str(sensor['sensor_id'])] = dims
     return out
 
+
+def _sensor_to_variables(sensor_cfg: dict) -> dict[str, list[str]]:
+    out: dict[str, list[str]] = {}
+    for sensor in sensor_cfg.get("sensors", []):
+        out[str(sensor["sensor_id"])] = [str(v) for v in sensor.get("variables", [])]
+    return out
+
+
+def _forecast_target_base_variables(forecast_target_columns: list[str]) -> set[str]:
+    base_targets = set()
+    for name in forecast_target_columns:
+        name = str(name)
+        if name in {"wind_dir_sin", "wind_dir_cos"}:
+            base_targets.add("wind_direction_deg")
+        else:
+            base_targets.add(name)
+    return base_targets
+
+
+def _sensor_quality_scores(sensor_cfg: dict) -> dict[str, float]:
+    raw_scores: dict[str, float] = {}
+    for sensor in sensor_cfg.get("sensors", []):
+        sid = str(sensor["sensor_id"])
+        variables = [str(v) for v in sensor.get("variables", [])]
+        noise_std = sensor.get("noise_std", 1.0)
+        if isinstance(noise_std, dict):
+            values = [float(noise_std.get(var, 1.0)) for var in variables]
+        elif isinstance(noise_std, list):
+            values = [float(v) for v in noise_std[: len(variables)]]
+        else:
+            values = [float(noise_std)] * max(1, len(variables))
+        mean_noise = sum((abs(v) for v in values)) / max(1, len(values))
+        raw_scores[sid] = 1.0 / max(mean_noise, 1e-6)
+    if not raw_scores:
+        return {}
+    lo = min(raw_scores.values())
+    hi = max(raw_scores.values())
+    if hi <= lo + 1e-12:
+        return {sid: 0.0 for sid in raw_scores}
+    return {sid: (score - lo) / (hi - lo) for sid, score in raw_scores.items()}
+
+
+def _sensor_target_relevance(sensor_cfg: dict, forecast_target_columns: list[str]) -> dict[str, float]:
+    target_vars = _forecast_target_base_variables(forecast_target_columns)
+    out: dict[str, float] = {}
+    for sid, variables in _sensor_to_variables(sensor_cfg).items():
+        if not variables:
+            out[sid] = 0.0
+            continue
+        overlap = sum((1 for var in variables if var in target_vars))
+        out[sid] = float(overlap) / float(len(variables))
+    return out
+
+
+def _sensor_event_relevance(sensor_cfg: dict, env_cfg: dict) -> dict[str, float]:
+    event_source = str(env_cfg.get("event_source_column", ""))
+    event_vars = {event_source} if event_source else set()
+    event_vars.update(
+        {
+            "snow_particle_mean_velocity_ms",
+            "snow_particle_mean_diameter_mm",
+            "wind_speed_ms",
+            "wind_direction_deg",
+        }
+    )
+    out: dict[str, float] = {}
+    for sid, variables in _sensor_to_variables(sensor_cfg).items():
+        if not variables:
+            out[sid] = 0.0
+            continue
+        overlap = sum((1 for var in variables if var in event_vars))
+        out[sid] = float(overlap) / float(len(variables))
+    return out
+
 def _selector_mode(env_cfg: dict) -> str:
     return str(env_cfg.get('selector_mode', 'discrete')).strip().lower()
 
@@ -263,9 +338,18 @@ def _build_estimator(truth_df: pd.DataFrame, state_columns: list[str], estimator
     sensor_warmup_steps = {str(s['sensor_id']): int(s.get('warmup_steps', 0)) for s in sensor_cfg.get('sensors', [])}
     state_scale = safe_feature_scale(values, min_scale=float(estimator_cfg.get('min_scale', 1e-06)))
     uncertainty_weights = target_relevance_weights(values, state_columns=state_columns, target_columns=reward_target_columns, min_weight=float(relevance_cfg.get('min_relevance_weight', 0.25)), power=float(relevance_cfg.get('relevance_power', 1.0)))
-    return KalmanFilterEstimator(A=a_mat, Q=q_mat, x0=values[0] if x0 is None else np.asarray(x0, dtype=float), P0=p0, sensor_ids=sensor_ids, b=b_vec, state_scale=state_scale, uncertainty_weights=uncertainty_weights, sensor_warmup_steps=sensor_warmup_steps, normalize_rl_state=bool(estimator_cfg.get('normalize_rl_state', True)), use_logdet=bool(estimator_cfg.get('use_logdet', False)))
+    observation_preprocessor = ObservationPreprocessor.from_config(
+        estimator_cfg.get("observation_preprocessing", {})
+    )
+    return KalmanFilterEstimator(A=a_mat, Q=q_mat, x0=values[0] if x0 is None else np.asarray(x0, dtype=float), P0=p0, sensor_ids=sensor_ids, b=b_vec, state_scale=state_scale, uncertainty_weights=uncertainty_weights, sensor_warmup_steps=sensor_warmup_steps, normalize_rl_state=bool(estimator_cfg.get('normalize_rl_state', True)), use_logdet=bool(estimator_cfg.get('use_logdet', False)), observation_preprocessor=observation_preprocessor)
 
-def _make_scheduler(scheduler_cfg: dict, selector, sensor_cfg: dict, state_columns: list[str]):
+def _make_scheduler(
+    scheduler_cfg: dict,
+    selector,
+    sensor_cfg: dict,
+    state_columns: list[str],
+    env_cfg: dict | None = None,
+):
     name = str(scheduler_cfg.get('scheduler_name', 'random'))
     sensor_ids = [str(s['sensor_id']) for s in sensor_cfg.get('sensors', [])]
     max_active = int(getattr(selector, 'max_active', len(sensor_ids)))
@@ -286,7 +370,21 @@ def _make_scheduler(scheduler_cfg: dict, selector, sensor_cfg: dict, state_colum
             name,
         )
     if name == 'info_priority':
-        return (InfoPriorityScheduler(selector, sensor_ids=sensor_ids, sensor_to_dims=_sensor_to_dims(sensor_cfg, state_columns), max_active=max_active, weights=scheduler_cfg.get('weights', {})), name)
+        env_cfg = env_cfg or {}
+        forecast_target_columns = _resolve_forecast_target_columns(env_cfg, state_columns)
+        return (
+            InfoPriorityScheduler(
+                selector,
+                sensor_ids=sensor_ids,
+                sensor_to_dims=_sensor_to_dims(sensor_cfg, state_columns),
+                max_active=max_active,
+                weights=scheduler_cfg.get('weights', {}),
+                sensor_quality=_sensor_quality_scores(sensor_cfg),
+                sensor_target_relevance=_sensor_target_relevance(sensor_cfg, forecast_target_columns),
+                sensor_event_relevance=_sensor_event_relevance(sensor_cfg, env_cfg),
+            ),
+            name,
+        )
     if name == 'full_open':
         return (FullOpenScheduler(sensor_ids), name)
     if name in {'dqn', 'cmdp_dqn', 'ppo'}:
@@ -517,7 +615,7 @@ def _build_truth_stack(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, 
     col_to_idx = {name: i for i, name in enumerate(state_columns)}
     reward_target_indices = [col_to_idx[col] for col in reward_target_columns if col in col_to_idx]
     forecast_target_columns = _resolve_forecast_target_columns(env_cfg, state_columns)
-    meta = {'truth_df': truth_df, 'state_columns': state_columns, 'event_column': event_col, 'bounds': bounds, 'base_cfg': base_cfg, 'env_cfg': env_cfg, 'sensor_cfg': sensor_cfg, 'reward_cfg': reward_cfg, 'reward_target_columns': reward_target_columns, 'reward_target_indices': reward_target_indices, 'forecast_target_columns': forecast_target_columns, 'estimator_fit_split': estimator_fit_split}
+    meta = {'truth_df': truth_df, 'state_columns': state_columns, 'event_column': event_col, 'bounds': bounds, 'base_cfg': base_cfg, 'env_cfg': env_cfg, 'sensor_cfg': sensor_cfg, 'estimator_cfg': estimator_cfg, 'reward_cfg': reward_cfg, 'reward_target_columns': reward_target_columns, 'reward_target_indices': reward_target_indices, 'forecast_target_columns': forecast_target_columns, 'estimator_fit_split': estimator_fit_split}
     return (env, estimator, selector, meta)
 
 def _rollout_scheduler(env, estimator, scheduler, selector, reward_cfg: dict, reward_target_indices: list[int], reward_oracle: RewardOracleType | None=None, greedy: bool=False, collect_series: bool=False, scheduler_name: str | None=None):
@@ -659,11 +757,42 @@ def _validation_objective(summary: dict, constrained: bool) -> float:
         objective -= 10000.0 * max(float(summary.get('peak_violation_rate', 0.0)), 0.0)
     return objective
 
+
+def _validation_objective_cfg(base_cfg: dict) -> dict[str, str]:
+    validation_cfg = dict(base_cfg.get("validation", {}))
+    return {
+        "objective": str(validation_cfg.get("objective", "task_reward")).strip().lower(),
+    }
+
+
+def _constraint_violation_score(summary: dict[str, float]) -> float:
+    return (
+        max(float(summary.get("constraint_violation_mean", 0.0)), 0.0)
+        + max(float(summary.get("peak_violation_rate", 0.0)), 0.0)
+        + max(float(summary.get("avg_power_violation", 0.0)), 0.0)
+        + max(float(summary.get("energy_violation", 0.0)), 0.0)
+    )
+
+
+def _select_validation_objective(
+    summary: dict[str, float],
+    *,
+    constrained: bool,
+    base_cfg: dict,
+) -> float:
+    objective_cfg = _validation_objective_cfg(base_cfg)
+    objective_name = objective_cfg["objective"]
+    if objective_name == "feasible_forecast_loss":
+        forecast_loss = float(summary.get("forecast_loss_mean", float("inf")))
+        violation = _constraint_violation_score(summary)
+        return float(-forecast_loss - 1_000_000.0 * violation)
+    return _validation_objective(summary, constrained=constrained)
+
 def _evaluate_agent_on_split(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, estimator_cfg_path: str, scheduler_cfg_path: str, split_name: str, agent, reward_artifact: str | None, base_cfg_path: str=DEFAULT_BASE_CFG_PATH) -> dict[str, float]:
     seed = base_cfg_seed(base_cfg_path)
     env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name=split_name, seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name=split_name, base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
     scheduler_cfg = load_yaml(scheduler_cfg_path)
-    _, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
+    _, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'], meta.get('env_cfg'))
     base_cfg = meta['base_cfg']
     constraints_cfg = base_cfg.get('constraints', {})
     constraint_budgets = _resolve_constraint_budgets(constraints_cfg, scheduler_cfg)
@@ -766,7 +895,7 @@ def pretrain_reward_predictor(truth_csv: str, env_cfg_path: str, sensor_cfg_path
     rollout_meta: list[dict[str, float | str]] = []
     for sched_idx, sched_name in enumerate(scheduler_names):
         scheduler_cfg = load_yaml(f'configs/scheduler/{sched_name}.yaml')
-        scheduler, resolved_name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
+        scheduler, resolved_name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'], meta.get('env_cfg'))
         if scheduler is None:
             raise ValueError(f"Reward pretraining does not support RL scheduler '{sched_name}'")
         for rollout_idx in range(pretrain_rollouts_per_scheduler):
@@ -876,9 +1005,30 @@ def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     eval_interval = int(scheduler_cfg.get('ppo', {}).get('eval_interval_episodes', 5))
     eval_episodes = int(scheduler_cfg.get('ppo', {}).get('eval_episodes', 3))
     total_timesteps = int(scheduler_cfg.get('ppo', {}).get('total_timesteps', int(base_cfg.get('run', {}).get('num_episodes', 80)) * max(episode_len, 1)))
+    eval_max_steps = int(scheduler_cfg.get('ppo', {}).get('eval_max_steps', 0))
+    validation_cfg = _validation_objective_cfg(base_cfg)
+    validation_objective = str(validation_cfg.get('objective', 'task_reward'))
 
     def _eval_env_factory():
-        env_val, estimator_val, _, meta_val = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_val', seed=base_seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='rl_val', base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
+        rl_val_len = meta_length_from_truth_csv(
+            truth_csv,
+            env_cfg_path,
+            split_name='rl_val',
+            base_cfg_path=base_cfg_path,
+        )
+        if eval_max_steps > 0:
+            rl_val_len = min(int(rl_val_len), int(eval_max_steps))
+        env_val, estimator_val, _, meta_val = _build_truth_stack(
+            truth_csv=truth_csv,
+            env_cfg_path=env_cfg_path,
+            sensor_cfg_path=sensor_cfg_path,
+            estimator_cfg_path=estimator_cfg_path,
+            split_name='rl_val',
+            seed=base_seed,
+            random_reset=False,
+            episode_len=int(rl_val_len),
+            base_cfg_path=base_cfg_path,
+        )
         raw_env = WindblownSubsetGymEnv(env=env_val, estimator=estimator_val, selector=projector, task_reward_cfg=task_reward_cfg, state_columns=list(meta_val['state_columns']), reward_target_indices=list(meta_val.get('reward_target_indices', [])), constraint_budgets=constraint_budgets, reward_oracle=reward_oracle)
         ppo_cfg = dict(scheduler_cfg.get('ppo', {}))
         gamma = float(ppo_cfg.get('gamma', 0.99))
@@ -890,7 +1040,15 @@ def _train_ppo_scheduler(*, truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     n_envs = max(1, int(ppo_cfg.get('n_envs', 4)))
     env_fns = [lambda seed_offset=i: _make_train_env(seed_offset) for i in range(n_envs)]
     model = build_ppo_model(scheduler_cfg, env_fns, device=str(scheduler_cfg.get('device', 'auto')))
-    callback = PPOTrainingCallback(run_dir=run_dir, eval_env_factory=_eval_env_factory, eval_interval_episodes=eval_interval, eval_episodes=eval_episodes, best_model_path=best_ckpt)
+    callback = PPOTrainingCallback(
+        run_dir=run_dir,
+        eval_env_factory=_eval_env_factory,
+        eval_interval_episodes=eval_interval,
+        eval_episodes=eval_episodes,
+        best_model_path=best_ckpt,
+        best_norm_stats_path=norm_stats_path,
+        validation_objective=validation_objective,
+    )
     model.learn(total_timesteps=total_timesteps, callback=callback, progress_bar=False)
     model.save(str(last_ckpt))
     train_vec_env = model.get_env()
@@ -916,7 +1074,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
     env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='rl_train', seed=seed, random_reset=True, base_cfg_path=base_cfg_path)
     base_cfg = meta['base_cfg']
     scheduler_cfg = load_yaml(scheduler_cfg_path)
-    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
+    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'], meta.get('env_cfg'))
     run_dir = _build_run_dir(run_id)
     save_yaml({'truth_csv': truth_csv, 'base_cfg': base_cfg_path, 'env_cfg': env_cfg_path, 'sensor_cfg': sensor_cfg_path, 'estimator_cfg': estimator_cfg_path, 'scheduler_cfg': scheduler_cfg_path, 'reward_artifact': reward_artifact}, run_dir / 'config_used.yaml')
     run_cfg = base_cfg.get('run', {})
@@ -1010,6 +1168,10 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
     val_forecast_hist: list[float] = []
     val_power_hist: list[float] = []
     val_peak_violation_hist: list[float] = []
+    epsilon_hist: list[float] = []
+    q_mean_hist: list[float] = []
+    q_max_hist: list[float] = []
+    q_entropy_hist: list[float] = []
     best_val_objective = float('-inf')
     best_val_summary: dict[str, float] | None = None
     last_ckpt = run_dir / f"{_checkpoint_name(name).removesuffix('.pt')}_last.pt"
@@ -1156,6 +1318,11 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
         lambda_energy_hist.append(float(dual_metrics.get('lambda_energy', 0.0)))
         avg_power_violation_hist.append(float(dual_metrics.get('avg_power_violation', 0.0)))
         energy_violation_hist.append(float(dual_metrics.get('energy_violation', 0.0)))
+        epsilon_hist.append(agent.eps.value(agent.total_steps) if hasattr(agent, 'eps') else float('nan'))
+        _q_stats = agent.get_q_stats() if hasattr(agent, 'get_q_stats') else {'q_mean': float('nan'), 'q_max': float('nan'), 'q_entropy': float('nan')}
+        q_mean_hist.append(_q_stats['q_mean'])
+        q_max_hist.append(_q_stats['q_max'])
+        q_entropy_hist.append(_q_stats['q_entropy'])
         if ep_losses:
             losses.append(float(np.mean(ep_losses)))
         val_objective_hist.append(float('nan'))
@@ -1165,7 +1332,11 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
         val_peak_violation_hist.append(float('nan'))
         if len(rewards) % save_every == 0 or len(rewards) == num_episodes:
             val_summary = _evaluate_agent_on_split(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, scheduler_cfg_path=scheduler_cfg_path, split_name='rl_val', agent=agent, reward_artifact=reward_artifact, base_cfg_path=base_cfg_path)
-            val_objective = _validation_objective(val_summary, constrained=isinstance(agent, (ConstrainedDQNAgent, ConstrainedScoreDQNAgent)))
+            val_objective = _select_validation_objective(
+                val_summary,
+                constrained=isinstance(agent, (ConstrainedDQNAgent, ConstrainedScoreDQNAgent)),
+                base_cfg=base_cfg,
+            )
             val_objective_hist[-1] = float(val_objective)
             val_reward_hist[-1] = float(val_summary['task_reward_mean'])
             val_forecast_hist[-1] = float(val_summary['forecast_loss_mean'])
@@ -1180,7 +1351,7 @@ def run_scheduler_training(truth_csv: str, env_cfg_path: str, sensor_cfg_path: s
     if best_val_summary is not None:
         metrics.update({'best_val_reward': float(best_val_summary['task_reward_mean']), 'best_val_forecast_loss': float(best_val_summary['forecast_loss_mean']), 'best_val_power_mean': float(best_val_summary['power_mean']), 'best_val_peak_violation_rate': float(best_val_summary['peak_violation_rate'])})
     pd.DataFrame([metrics]).to_csv(run_dir / 'metrics_estimation.csv', index=False)
-    pd.DataFrame({'reward': rewards, 'task_reward': task_rewards, 'task_loss': task_losses, 'trace_P': trace_means, 'uncertainty': uncertainty_means, 'forecast_loss': forecast_means, 'switch_penalty': switch_penalty_means, 'warmup_abort_penalty': warmup_abort_means, 'coverage_penalty': coverage_penalty_means, 'constraint_violation': violation_penalty_means, 'state_tracking_loss': state_tracking_means, 'power': power_means, 'peak_power_max': peak_means, 'total_energy': total_energies, 'peak_violation_rate': peak_violation_rates, 'coverage': coverage_means, 'lambda_avg': lambda_avg_hist, 'lambda_energy': lambda_energy_hist, 'avg_power_violation': avg_power_violation_hist, 'energy_violation': energy_violation_hist, 'val_objective': val_objective_hist, 'val_reward': val_reward_hist, 'val_forecast_loss': val_forecast_hist, 'val_power': val_power_hist, 'val_peak_violation_rate': val_peak_violation_hist}).to_csv(run_dir / 'training_log.csv', index=False)
+    pd.DataFrame({'reward': rewards, 'task_reward': task_rewards, 'task_loss': task_losses, 'trace_P': trace_means, 'uncertainty': uncertainty_means, 'forecast_loss': forecast_means, 'switch_penalty': switch_penalty_means, 'warmup_abort_penalty': warmup_abort_means, 'coverage_penalty': coverage_penalty_means, 'constraint_violation': violation_penalty_means, 'state_tracking_loss': state_tracking_means, 'power': power_means, 'peak_power_max': peak_means, 'total_energy': total_energies, 'peak_violation_rate': peak_violation_rates, 'coverage': coverage_means, 'lambda_avg': lambda_avg_hist, 'lambda_energy': lambda_energy_hist, 'avg_power_violation': avg_power_violation_hist, 'energy_violation': energy_violation_hist, 'val_objective': val_objective_hist, 'val_reward': val_reward_hist, 'val_forecast_loss': val_forecast_hist, 'val_power': val_power_hist, 'val_peak_violation_rate': val_peak_violation_hist, 'epsilon': epsilon_hist, 'q_mean': q_mean_hist, 'q_max': q_max_hist, 'q_entropy': q_entropy_hist}).to_csv(run_dir / 'training_log.csv', index=False)
     if best_ckpt.exists():
         agent.load(str(best_ckpt))
         ckpt = best_ckpt
@@ -1196,7 +1367,7 @@ def evaluate_scheduler(truth_csv: str, env_cfg_path: str, sensor_cfg_path: str, 
     env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name='final_test', seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name='final_test', base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
     base_cfg = meta['base_cfg']
     scheduler_cfg = load_yaml(scheduler_cfg_path)
-    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
+    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'], meta.get('env_cfg'))
     run_dir = _build_run_dir(run_id)
     if _is_rl_scheduler(name):
         state_dim = len(flatten_rl_state(_current_rl_state(env, estimator, current_event=False)))
@@ -1241,7 +1412,7 @@ def build_scheduler_dataset(truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     seed = base_cfg_seed(base_cfg_path)
     env, estimator, selector, meta = _build_truth_stack(truth_csv=truth_csv, env_cfg_path=env_cfg_path, sensor_cfg_path=sensor_cfg_path, estimator_cfg_path=estimator_cfg_path, split_name=split_name, seed=seed, random_reset=False, episode_len=meta_length_from_truth_csv(truth_csv, env_cfg_path, split_name=split_name, base_cfg_path=base_cfg_path), base_cfg_path=base_cfg_path)
     scheduler_cfg = load_yaml(scheduler_cfg_path)
-    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'])
+    scheduler, name = _make_scheduler(scheduler_cfg, selector, meta['sensor_cfg'], meta['state_columns'], meta.get('env_cfg'))
     run_dir = _build_run_dir(run_id)
     if _is_rl_scheduler(name):
         state_dim = len(flatten_rl_state(_current_rl_state(env, estimator, current_event=False)))
@@ -1281,7 +1452,7 @@ def build_scheduler_dataset(truth_csv: str, env_cfg_path: str, sensor_cfg_path: 
     np.savez(out_path, input_series=input_series, target_series=truth_series, observed_mask=observed_mask, powered_mask=powered_mask, warming_mask=warming_mask, ready_mask=ready_mask, warm_remaining=warm_remaining, event_flags=event_flags, power=power, peak_power=peak_power, trace_p=trace_p, time_index=time_index, feature_names=np.asarray(meta['state_columns']), sensor_ids=np.asarray(list(getattr(selector, 'sensor_ids', []))))
     total_full_power = sum((float(s.get('power_cost', 1.0)) for s in meta['sensor_cfg'].get('sensors', [])))
     constraint_metrics = summarize_constraint_metrics(steady_power_hist=rollout['power_hist'], peak_power_hist=rollout['peak_power_hist'], startup_extra_hist=rollout['startup_extra_hist'], average_power_budget=constraint_budgets['average_power_budget'], episode_energy_budget=constraint_budgets['episode_energy_budget'], peak_power_budget=constraint_budgets['peak_power_budget'])
-    dataset_meta = {'run_id': run_id, 'scheduler_name': name, 'truth_csv': truth_csv, 'feature_names': meta['state_columns'], 'n_steps': int(input_series.shape[0]), 'dataset_split': str(split_name), 'reward_target_columns': list(meta.get('reward_target_columns', [])), 'forecast_target_columns': list(meta.get('forecast_target_columns', [])), 'base_freq_s': int(meta['env_cfg'].get('base_freq_s', 1)), 'avg_power': float(constraint_metrics['power_mean']), 'total_power': float(constraint_metrics['total_energy']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'coverage_mean': float(np.mean(rollout['coverage_hist'])) if rollout['coverage_hist'] else 0.0, 'trace_P_mean': float(np.mean(trace_p)) if trace_p.size else float('nan'), 'uncertainty_mean': float(np.mean(rollout['uncertainty_hist'])) if rollout['uncertainty_hist'] else float('nan'), 'full_open_power': float(total_full_power), 'budget_per_step': float(base_cfg.get('constraints', {}).get('per_step_budget', 0.0)), 'startup_peak_budget': constraint_budgets['peak_power_budget'], 'average_power_budget': constraint_budgets['average_power_budget'], 'episode_energy_budget': constraint_budgets['episode_energy_budget'], 'max_active': int(base_cfg.get('constraints', {}).get('max_active', 0))}
+    dataset_meta = {'run_id': run_id, 'scheduler_name': name, 'truth_csv': truth_csv, 'feature_names': meta['state_columns'], 'n_steps': int(input_series.shape[0]), 'dataset_split': str(split_name), 'reward_target_columns': list(meta.get('reward_target_columns', [])), 'forecast_target_columns': list(meta.get('forecast_target_columns', [])), 'base_freq_s': int(meta['env_cfg'].get('base_freq_s', 1)), 'observation_preprocessing_cfg': dict(meta.get('estimator_cfg', {}).get('observation_preprocessing', {}) or {}), 'avg_power': float(constraint_metrics['power_mean']), 'total_power': float(constraint_metrics['total_energy']), 'peak_power_max': float(constraint_metrics['peak_power_max']), 'peak_violation_rate': float(constraint_metrics['peak_violation_rate']), 'coverage_mean': float(np.mean(rollout['coverage_hist'])) if rollout['coverage_hist'] else 0.0, 'trace_P_mean': float(np.mean(trace_p)) if trace_p.size else float('nan'), 'uncertainty_mean': float(np.mean(rollout['uncertainty_hist'])) if rollout['uncertainty_hist'] else float('nan'), 'full_open_power': float(total_full_power), 'budget_per_step': float(base_cfg.get('constraints', {}).get('per_step_budget', 0.0)), 'startup_peak_budget': constraint_budgets['peak_power_budget'], 'average_power_budget': constraint_budgets['average_power_budget'], 'episode_energy_budget': constraint_budgets['episode_energy_budget'], 'max_active': int(base_cfg.get('constraints', {}).get('max_active', 0))}
     save_yaml(dataset_meta, out_path.with_suffix('.meta.yaml'))
     pd.DataFrame([dataset_meta]).to_csv(run_dir / 'dataset_stats.csv', index=False)
     return {'run_dir': str(run_dir), 'out_npz': str(out_path), 'meta': dataset_meta}

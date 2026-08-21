@@ -1,0 +1,35 @@
+reports/aggregate/scenebal2_reward_aoi_117_118_macro_20260702aoi/metpair_seed_summary.csv
+reports/aggregate/scenebal2_reward_aoi_117_118_macro_20260702aoi/metpair_claim_summary.json
+{
+  "complete_seeds": 2,
+  "seed_gate_pass_count": 2,
+  "learned_gate_pass_count": 2,
+  "replay_gate_pass_count": 2,
+  "behavior_gate_pass_count": 2,
+  "learned_macro_positive_count": 2,
+  "replay_macro_positive_count": 2,
+  "macro_seed_positive_count": 2,
+  "learned_macro_gate_count": 2,
+  "replay_macro_gate_count": 2,
+  "macro_seed_gate_count": 2,
+  "mean_learned_margin_abs": 0.07360298817070532,
+  "median_learned_margin_abs": 0.07360298817070532,
+  "mean_replay_margin_abs_vs_static_reference": 0.0735272263771094,
+  "median_replay_margin_abs_vs_static_reference": 0.0735272263771094,
+  "mean_learned_macro_margin_abs": 0.05362103644538557,
+  "median_learned_macro_margin_abs": 0.05362103644538557,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.05133686630183165,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.05133686630183165,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.05367402045532044,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.05367402045532044,
+  "one_sided_sign_test_p_seed_gate": 0.25,
+  "one_sided_sign_test_p_macro_seed_positive": 0.25,
+  "one_sided_sign_test_p_macro_seed_gate": 0.25,
+  "claim_strength": "replicated_pilot",
+  "reason": "all completed pilot seeds pass, but n is below 5",
+  "macro_claim_strength": "replicated_macro_pilot",
+  "macro_reason": "all completed pilot seeds pass the macro gate, but n is below 5"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+  117      True                1.247552              1.298171 oracle_loss_macro_subtype_event_staticnorm                               0.050619                               0.050920                                     0.039129                                            0.035154                                     0.036592                      True                  True                True            True
+  118      True                1.435380              1.531966 oracle_loss_macro_subtype_event_staticnorm                               0.096587                               0.096134                                     0.068113                                            0.067520                                     0.070756                      True                  True                True            True

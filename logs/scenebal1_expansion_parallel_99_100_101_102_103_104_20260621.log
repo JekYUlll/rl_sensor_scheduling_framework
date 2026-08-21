@@ -1,0 +1,123 @@
+scenebal1_parallel_start date=2026-06-21T11:05:01+08:00 seeds=99 100 101 102 103 104 pilot=scenebal1_pilot_99_100_101_102_103_104_20260621
+reports/aggregate/scenebal1_pilot_99_100_101_102_103_104_macro_20260621/metpair_seed_summary.csv
+reports/aggregate/scenebal1_pilot_99_100_101_102_103_104_macro_20260621/metpair_claim_summary.json
+{
+  "complete_seeds": 6,
+  "seed_gate_pass_count": 6,
+  "learned_gate_pass_count": 6,
+  "replay_gate_pass_count": 6,
+  "behavior_gate_pass_count": 6,
+  "learned_macro_positive_count": 6,
+  "replay_macro_positive_count": 6,
+  "macro_seed_positive_count": 6,
+  "learned_macro_gate_count": 6,
+  "replay_macro_gate_count": 6,
+  "macro_seed_gate_count": 6,
+  "mean_learned_margin_abs": 0.16497930094086175,
+  "median_learned_margin_abs": 0.14929724295961944,
+  "mean_replay_margin_abs_vs_static_reference": 0.0996549389564431,
+  "median_replay_margin_abs_vs_static_reference": 0.11174907583063032,
+  "mean_learned_macro_margin_abs": 0.12403352273677677,
+  "median_learned_macro_margin_abs": 0.12756611256358907,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.07871520459681863,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.08198080841921573,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.08493989097618732,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.08408841998486627,
+  "one_sided_sign_test_p_seed_gate": 0.015625,
+  "one_sided_sign_test_p_macro_seed_positive": 0.015625,
+  "one_sided_sign_test_p_macro_seed_gate": 0.015625,
+  "claim_strength": "moderate_multiseed",
+  "reason": ">=5 complete seeds with at least 80% full gate passes",
+  "macro_claim_strength": "moderate_macro_multiseed",
+  "macro_reason": ">=5 complete seeds with at least 80% macro gate passes"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+   99      True                1.715256              2.115944 oracle_loss_macro_subtype_event_staticnorm                               0.400688                               0.137161                                     0.136233                                            0.108157                                     0.108792                      True                  True                True            True
+  100      True                1.651600              1.706767 oracle_loss_macro_subtype_event_staticnorm                               0.055167                               0.033763                                     0.118899                                            0.082933                                     0.086874                      True                  True                True            True
+  101      True                1.300811              1.344353 oracle_loss_macro_subtype_event_staticnorm                               0.043542                               0.067299                                     0.147926                                            0.040290                                     0.059720                      True                  True                True            True
+  102      True                1.393161              1.563924 oracle_loss_macro_subtype_event_staticnorm                               0.170763                               0.100222                                     0.162205                                            0.064413                                     0.071185                      True                  True                True            True
+  103      True                1.460250              1.588082 oracle_loss_macro_subtype_event_staticnorm                               0.127832                               0.123276                                     0.084548                                            0.081028                                     0.081303                      True                  True                True            True
+  104      True                1.515300              1.707184 oracle_loss_macro_subtype_event_staticnorm                               0.191885                               0.136209                                     0.094391                                            0.095470                                     0.101766                      True                  True                True            True
+reports/aggregate/scenebal1_pilot_99_100_101_102_103_104_raw_macro_20260621/metpair_seed_summary.csv
+reports/aggregate/scenebal1_pilot_99_100_101_102_103_104_raw_macro_20260621/metpair_claim_summary.json
+{
+  "complete_seeds": 6,
+  "seed_gate_pass_count": 6,
+  "learned_gate_pass_count": 6,
+  "replay_gate_pass_count": 6,
+  "behavior_gate_pass_count": 6,
+  "learned_macro_positive_count": 6,
+  "replay_macro_positive_count": 6,
+  "macro_seed_positive_count": 6,
+  "learned_macro_gate_count": 6,
+  "replay_macro_gate_count": 6,
+  "macro_seed_gate_count": 6,
+  "mean_learned_margin_abs": 0.16497930094086175,
+  "median_learned_margin_abs": 0.14929724295961944,
+  "mean_replay_margin_abs_vs_static_reference": 0.0996549389564431,
+  "median_replay_margin_abs_vs_static_reference": 0.11174907583063032,
+  "mean_learned_macro_margin_abs": 0.12403352273677677,
+  "median_learned_macro_margin_abs": 0.12756611256358913,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.07871520459681859,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.08198080841921579,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.08493989097618732,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.08408841998486627,
+  "one_sided_sign_test_p_seed_gate": 0.015625,
+  "one_sided_sign_test_p_macro_seed_positive": 0.015625,
+  "one_sided_sign_test_p_macro_seed_gate": 0.015625,
+  "claim_strength": "moderate_multiseed",
+  "reason": ">=5 complete seeds with at least 80% full gate passes",
+  "macro_claim_strength": "moderate_macro_multiseed",
+  "macro_reason": ">=5 complete seeds with at least 80% macro gate passes"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+   99      True                1.715256              2.115944 oracle_loss_macro_subtype_event_staticnorm                               0.400688                               0.137161                                     0.136233                                            0.108157                                     0.108792                      True                  True                True            True
+  100      True                1.651600              1.706767 oracle_loss_macro_subtype_event_staticnorm                               0.055167                               0.033763                                     0.118899                                            0.082933                                     0.086874                      True                  True                True            True
+  101      True                1.300811              1.344353 oracle_loss_macro_subtype_event_staticnorm                               0.043542                               0.067299                                     0.147926                                            0.040290                                     0.059720                      True                  True                True            True
+  102      True                1.393161              1.563924 oracle_loss_macro_subtype_event_staticnorm                               0.170763                               0.100222                                     0.162205                                            0.064413                                     0.071185                      True                  True                True            True
+  103      True                1.460250              1.588082 oracle_loss_macro_subtype_event_staticnorm                               0.127832                               0.123276                                     0.084548                                            0.081028                                     0.081303                      True                  True                True            True
+  104      True                1.515300              1.707184 oracle_loss_macro_subtype_event_staticnorm                               0.191885                               0.136209                                     0.094391                                            0.095470                                     0.101766                      True                  True                True            True
+reports/aggregate/scenebal1_pilot_99_100_101_102_103_104_oldclaim_20260621/oldclaim_seed_summary.csv
+reports/aggregate/scenebal1_pilot_99_100_101_102_103_104_oldclaim_20260621/oldclaim_summary.json
+{
+  "complete_seeds": 6,
+  "old_claim_step_gate_count": 6,
+  "old_claim_macro_gate_count": 6,
+  "behavior_eval_dirs": [
+    "."
+  ],
+  "step_static_gate_count": 6,
+  "step_rule_dynamic_gate_count": 6,
+  "step_operational_gate_count": 6,
+  "macro_static_gate_count": 6,
+  "macro_rule_dynamic_gate_count": 6,
+  "macro_operational_gate_count": 6,
+  "replay_gate_count": 6,
+  "replay_macro_gate_count": 6,
+  "learned_replay_static_gate_count": 6,
+  "learned_replay_macro_static_gate_count": 2,
+  "learned_true_static_step_gate_count": 6,
+  "learned_true_static_macro_gate_count": 2,
+  "behavior_gate_count": 6,
+  "mean_step_margin_vs_best_operational_baseline": 0.16497930094086175,
+  "median_step_margin_vs_best_operational_baseline": 0.14929724295961944,
+  "mean_macro_margin_vs_best_operational_baseline": 0.08492714999469504,
+  "median_macro_margin_vs_best_operational_baseline": 0.08317099166091535,
+  "one_sided_sign_test_p_old_claim_step_gate": 0.015625,
+  "one_sided_sign_test_p_old_claim_macro_gate": 0.015625,
+  "one_sided_sign_test_p_learned_true_static_step_gate": 0.015625,
+  "one_sided_sign_test_p_learned_true_static_macro_gate": 0.890625,
+  "claim_strength": "moderate_old_claim_step",
+  "reason": ">=5 complete seeds with at least 80% old-claim step gates",
+  "macro_claim_strength": "moderate_old_claim_macro",
+  "macro_reason": ">=5 complete seeds with at least 80% old-claim macro gates"
+}
+ seed  complete  custom_ppo_loss  best_static_loss best_rule_dynamic_policy  best_rule_dynamic_loss  step_margin_vs_best_operational_baseline  step_margin_vs_replay_static_reference  macro_margin_vs_best_operational_baseline  macro_margin_vs_replay_static_reference  old_claim_step_gate_pass  old_claim_macro_gate_pass  learned_true_static_step_gate_pass  learned_true_static_macro_gate_pass
+   99      True         1.715256          2.115944              round_robin                2.145690                                  0.400688                                0.125738                                   0.128196                                -0.060103                      True                       True                                True                                False
+  100      True         1.651600          1.706767              round_robin                1.917900                                  0.055167                                0.049639                                   0.043059                                -0.037381                      True                       True                                True                                False
+  101      True         1.300811          1.344353                   random                1.408354                                  0.043542                                0.047932                                   0.032760                                 0.099392                      True                       True                                True                                 True
+  102      True         1.393161          1.563924              round_robin                1.586647                                  0.170763                                0.090826                                   0.139206                                -0.860786                      True                       True                                True                                False
+  103      True         1.460250          1.588082                   random                1.737380                                  0.127832                                0.125941                                   0.070875                                 0.208546                      True                       True                                True                                 True
+  104      True         1.515300          1.707184              round_robin                1.723664                                  0.191885                                0.125367                                   0.095467                                -0.125487                      True                       True                                True                                False
+reports/aggregate/scenebal1_pilot_99_100_101_102_103_104_oldclaim_20260621/SCENEBAL1_REPORT.md
+scenebal1_parallel_done date=2026-06-21T11:26:22+08:00

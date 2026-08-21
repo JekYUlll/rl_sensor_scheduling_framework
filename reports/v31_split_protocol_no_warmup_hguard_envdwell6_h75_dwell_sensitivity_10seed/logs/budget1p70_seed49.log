@@ -1,0 +1,37 @@
+reports/v31_split_protocol_no_warmup_hguard_envdwell6_h75_dwell_sensitivity_10seed/raw/budget1p70_seed49/truth_v31_split.csv
+reports/v31_split_protocol_no_warmup_hguard_envdwell6_h75_dwell_sensitivity_10seed/raw/budget1p70_seed49/dataset_validation/synthetic_validation.csv
+custom_ppo_update update=1 timesteps=2048 loss=0.750396 entropy=2.309939 adv_std=1.334011 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=2 timesteps=4096 loss=0.802861 entropy=2.302785 adv_std=1.270697 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=3 timesteps=6144 loss=2.308599 entropy=2.293794 adv_std=3.203351 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=4 timesteps=8192 loss=0.881796 entropy=2.304936 adv_std=2.962140 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=5 timesteps=10240 loss=1.709035 entropy=2.310730 adv_std=2.796453 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=6 timesteps=12288 loss=1.776457 entropy=2.272276 adv_std=3.427273 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=7 timesteps=14336 loss=1.367943 entropy=2.279420 adv_std=2.438905 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=8 timesteps=16384 loss=2.588593 entropy=2.290277 adv_std=3.096567 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=9 timesteps=18432 loss=3.567258 entropy=2.274180 adv_std=3.493834 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=10 timesteps=20480 loss=2.757772 entropy=2.281019 adv_std=3.257182 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=11 timesteps=22528 loss=2.258121 entropy=2.279409 adv_std=3.817061 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=12 timesteps=24576 loss=4.092764 entropy=2.238199 adv_std=4.048689 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=13 timesteps=26624 loss=2.071240 entropy=2.192961 adv_std=3.252050 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=14 timesteps=28672 loss=2.331638 entropy=2.194840 adv_std=2.920361 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=15 timesteps=30720 loss=2.339224 entropy=2.230575 adv_std=3.145842 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=16 timesteps=32768 loss=3.413386 entropy=2.241443 adv_std=4.147069 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=17 timesteps=34816 loss=1.788211 entropy=2.175168 adv_std=3.230504 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=18 timesteps=36864 loss=2.318087 entropy=2.202394 adv_std=3.437980 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=19 timesteps=38912 loss=1.868483 entropy=2.191792 adv_std=3.971045 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=20 timesteps=40000 loss=1.421141 entropy=2.096691 adv_std=2.709210 soc_aux=0.000000 awbc_label_rate=0.250
+reports/v31_split_protocol_no_warmup_hguard_envdwell6_h75_dwell_sensitivity_10seed/raw/budget1p70_seed49/v2_custom_ppo_metrics.csv
+                                     policy  steps  reward_mean  instant_mae  oracle_loss_mean  dtw_mean  power_mean  peak_power_max  event_rate  warmup_abort_count  switches_per_step  always_on_sensor_count  always_off_sensor_count  mid_duty_sensor_count  duty_entropy  duty_min  duty_max  duty_std
+                    full_open_unconstrained   6144    -0.296265     1.647082          0.108568  1.592341    4.620000            6.28    0.207194                   0           0.000000                       8                        0                      0     -0.000000  1.000000  1.000000  0.000000
+                                 custom_ppo   6144    -0.125142     4.234756          0.123220  2.763299    1.537529            2.33    0.207194                   0           0.060394                       0                        0                      8      0.678908  0.123047  0.750000  0.292375
+duty_constrained_validation_selected_static   6144    -0.127050     4.350199          0.124689  2.779073    1.537012            2.33    0.207194                   0           0.059336                       0                        0                      8      0.677980  0.120117  0.750977  0.292805
+                                round_robin   6144    -0.136798     6.474594          0.124711  3.816204    1.564570            1.98    0.207194                   0           0.072725                       0                        1                      7      0.731880  0.000000  0.753906  0.250992
+                                        aoi   6144    -0.130543     8.055760          0.130321  4.358165    1.658867            2.33    0.207194                   0           0.111021                       0                        0                      8      0.918428  0.328125  0.666016  0.110036
+                    duty_constrained_random   6144    -0.131132     8.340137          0.130954  4.713605    1.625430            2.33    0.207194                   0           0.083957                       0                        0                      8      0.920016  0.239258  0.517578  0.105122
+                                     random   6144    -0.132947     7.376480          0.131434  4.079517    1.609102            2.33    0.207194                   0           0.080254                       0                        0                      8      0.888168  0.142578  0.589844  0.142905
+                       duty_constrained_aoi   6144    -0.131779     7.524143          0.131555  4.200921    1.657663            2.33    0.207194                   0           0.111916                       0                        0                      8      0.938195  0.321615  0.513672  0.073323
+               duty_constrained_round_robin   6144    -0.132049     9.263771          0.131764  4.928695    1.624766            2.25    0.207194                   0           0.081231                       0                        0                      8      0.915108  0.240234  0.507812  0.112045
+ duty_constrained_feasible_static_projected   6144    -0.136098     6.867587          0.133682  3.933322    1.636777            2.33    0.207194                   0           0.105445                       0                        0                      8      0.924157  0.239258  0.530273  0.098762
+                 validation_selected_static   6144    -0.276777     2.881226          0.150082  2.761888    1.460000            1.95    0.207194                   0           0.000000                       3                        5                      0     -0.000000  0.000000  1.000000  0.484123
+                  feasible_static_projected   6144    -0.276777     2.881226          0.150082  2.761888    1.460000            1.95    0.207194                   0           0.000000                       3                        5                      0     -0.000000  0.000000  1.000000  0.484123
+reports/v31_split_protocol_no_warmup_hguard_envdwell6_h75_dwell_sensitivity_10seed/raw/budget1p70_seed49/split_protocol_manifest.json

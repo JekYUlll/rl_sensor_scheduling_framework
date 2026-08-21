@@ -1,18 +1,18 @@
 scheduler_name: ppo
-device: auto
+device: cpu
 network:
   hidden_dims: [128, 128]
 ppo:
   total_timesteps: 160000
-  n_envs: 4
+  n_envs: 1
   learning_rate: 0.0003
-  n_steps: 512
-  batch_size: 128
+  n_steps: 1024
+  batch_size: 256
   n_epochs: 10
   gamma: 0.99
   gae_lambda: 0.95
   clip_range: 0.2
-  ent_coef: 0.02
+  ent_coef: 0.005
   vf_coef: 0.5
   max_grad_norm: 0.5
   policy_hidden_dims: [128, 128]
@@ -20,8 +20,9 @@ ppo:
   normalize_reward: true
   clip_obs: 10.0
   clip_reward: 10.0
-  use_sde: true
-  sde_sample_freq: 4
-  eval_interval_episodes: 5
-  eval_episodes: 3
+  use_sde: false
+  sde_sample_freq: -1
+  eval_interval_episodes: 20
+  eval_episodes: 1
+  eval_max_steps: 4096
   verbose: 0

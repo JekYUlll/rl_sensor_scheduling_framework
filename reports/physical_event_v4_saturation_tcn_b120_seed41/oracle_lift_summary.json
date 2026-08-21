@@ -1,0 +1,101 @@
+{
+  "budget": 1.2,
+  "candidate_count": 52,
+  "truth_event_rate": 0.27013333333333334,
+  "eval_start_indices": [
+    13533,
+    26403,
+    20382,
+    7270,
+    3136,
+    28866
+  ],
+  "event_loss_min": 0.3951464473934196,
+  "non_event_loss_min": 0.2966676873268547,
+  "best_overall": {
+    "action_idx": 28,
+    "sensor_ids": "met_station_core|surface_temp_ir|laser_disdrometer",
+    "oracle_loss_mean": 0.3293176277981426,
+    "power_mean": 1.16,
+    "peak_max": 1.57
+  },
+  "best_event_laser": {
+    "action_idx": 28,
+    "sensor_ids": "met_station_core|surface_temp_ir|laser_disdrometer",
+    "oracle_loss_event": 0.3951464473934196,
+    "power_mean": 1.16,
+    "peak_max": 1.57
+  },
+  "best_event_no_laser": {
+    "action_idx": 18,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter",
+    "oracle_loss_event": 0.41379911403153885,
+    "power_mean": 0.8200000000000002,
+    "peak_max": 1.05
+  },
+  "best_event_fc4": {
+    "action_idx": 34,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|fc4_flux",
+    "oracle_loss_event": 0.41721350513215766,
+    "power_mean": 0.37000000000000005,
+    "peak_max": 0.47000000000000003
+  },
+  "best_event_no_fc4": {
+    "action_idx": 28,
+    "sensor_ids": "met_station_core|surface_temp_ir|laser_disdrometer",
+    "oracle_loss_event": 0.3951464473934196,
+    "power_mean": 1.16,
+    "peak_max": 1.57
+  },
+  "best_non_event_laser": {
+    "action_idx": 28,
+    "sensor_ids": "met_station_core|surface_temp_ir|laser_disdrometer",
+    "oracle_loss_non_event": 0.2966676873268547,
+    "power_mean": 1.16,
+    "peak_max": 1.57
+  },
+  "best_non_event_no_laser": {
+    "action_idx": 18,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter",
+    "oracle_loss_non_event": 0.29776066029364967,
+    "power_mean": 0.8200000000000002,
+    "peak_max": 1.05
+  },
+  "laser_event_lift": 0.018652666638119264,
+  "fc4_event_lift": -0.022067057738738072,
+  "laser_non_event_lift": 0.0010929729667949473,
+  "sensor_cfg": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/configs/sensors/windblown_sensors_physical_event_v4.yaml",
+  "truth_csv": "rl_sensor_scheduling_framework/reports/physical_event_v4_saturation_tcn_b120_seed41/truth_v31.csv",
+  "oracle_type": "tcn",
+  "target_weights": [
+    0.2,
+    0.3,
+    0.2,
+    0.1,
+    0.1,
+    0.1,
+    12.0,
+    8.0,
+    8.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    5e-05,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.2,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [
+      "met_station_core"
+    ],
+    "coverage_groups": []
+  }
+}

@@ -1,0 +1,38 @@
+reports/aggregate/scenebal2_confirm_conf05_117_118_oldclaim_20260702coverage/oldclaim_seed_summary.csv
+reports/aggregate/scenebal2_confirm_conf05_117_118_oldclaim_20260702coverage/oldclaim_summary.json
+{
+  "complete_seeds": 2,
+  "old_claim_step_gate_count": 2,
+  "old_claim_macro_gate_count": 2,
+  "behavior_eval_dirs": [
+    "eval_router_conf05_scenebal2_20260621"
+  ],
+  "step_static_gate_count": 2,
+  "step_rule_dynamic_gate_count": 2,
+  "step_operational_gate_count": 2,
+  "macro_static_gate_count": 2,
+  "macro_rule_dynamic_gate_count": 2,
+  "macro_operational_gate_count": 2,
+  "replay_gate_count": 2,
+  "replay_macro_gate_count": 2,
+  "learned_replay_static_gate_count": 2,
+  "learned_replay_macro_static_gate_count": 2,
+  "learned_true_static_step_gate_count": 2,
+  "learned_true_static_macro_gate_count": 2,
+  "behavior_gate_count": 2,
+  "mean_step_margin_vs_best_operational_baseline": 0.06588598897474185,
+  "median_step_margin_vs_best_operational_baseline": 0.06588598897474185,
+  "mean_macro_margin_vs_best_operational_baseline": 0.05330220563511978,
+  "median_macro_margin_vs_best_operational_baseline": 0.05330220563511978,
+  "one_sided_sign_test_p_old_claim_step_gate": 0.25,
+  "one_sided_sign_test_p_old_claim_macro_gate": 0.25,
+  "one_sided_sign_test_p_learned_true_static_step_gate": 0.25,
+  "one_sided_sign_test_p_learned_true_static_macro_gate": 0.25,
+  "claim_strength": "replicated_old_claim_step_pilot",
+  "reason": "all completed pilot seeds pass old-claim step gates, but n is below 5",
+  "macro_claim_strength": "replicated_old_claim_macro_pilot",
+  "macro_reason": "all completed pilot seeds pass old-claim macro gates, but n is below 5"
+}
+ seed  complete  custom_ppo_loss  best_static_loss best_rule_dynamic_policy  best_rule_dynamic_loss  step_margin_vs_best_operational_baseline  step_margin_vs_replay_static_reference  macro_margin_vs_best_operational_baseline  macro_margin_vs_replay_static_reference  old_claim_step_gate_pass  old_claim_macro_gate_pass  learned_true_static_step_gate_pass  learned_true_static_macro_gate_pass
+  117      True         1.239657          1.309386              round_robin                1.380001                                  0.069729                                0.063067                                   0.057603                                 0.053235                      True                       True                                True                                 True
+  118      True         1.421600          1.483643                   random                1.684074                                  0.062043                                0.059537                                   0.049001                                 0.047845                      True                       True                                True                                 True

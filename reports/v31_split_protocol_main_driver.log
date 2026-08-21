@@ -1,0 +1,40 @@
+[split-grid] tasks=30 skipped=0 pending=30 workers=5
+[run] worker=0 budget1p65_seed41 -> reports/v31_split_protocol_main/logs/budget1p65_seed41.log
+[run] worker=1 budget1p65_seed42 -> reports/v31_split_protocol_main/logs/budget1p65_seed42.log
+[run] worker=2 budget1p65_seed43 -> reports/v31_split_protocol_main/logs/budget1p65_seed43.log
+[run] worker=4 budget1p65_seed45 -> reports/v31_split_protocol_main/logs/budget1p65_seed45.log
+[run] worker=3 budget1p65_seed44 -> reports/v31_split_protocol_main/logs/budget1p65_seed44.log
+[run] worker=1 budget1p65_seed46 -> reports/v31_split_protocol_main/logs/budget1p65_seed46.log
+[run] worker=3 budget1p65_seed47 -> reports/v31_split_protocol_main/logs/budget1p65_seed47.log
+[run] worker=4 budget1p65_seed48 -> reports/v31_split_protocol_main/logs/budget1p65_seed48.log
+[run] worker=2 budget1p65_seed49 -> reports/v31_split_protocol_main/logs/budget1p65_seed49.log
+[run] worker=0 budget1p65_seed50 -> reports/v31_split_protocol_main/logs/budget1p65_seed50.log
+[run] worker=1 budget1p70_seed41 -> reports/v31_split_protocol_main/logs/budget1p70_seed41.log
+[run] worker=3 budget1p70_seed42 -> reports/v31_split_protocol_main/logs/budget1p70_seed42.log
+[run] worker=2 budget1p70_seed43 -> reports/v31_split_protocol_main/logs/budget1p70_seed43.log
+[run] worker=0 budget1p70_seed44 -> reports/v31_split_protocol_main/logs/budget1p70_seed44.log
+[run] worker=4 budget1p70_seed45 -> reports/v31_split_protocol_main/logs/budget1p70_seed45.log
+[run] worker=3 budget1p70_seed46 -> reports/v31_split_protocol_main/logs/budget1p70_seed46.log
+[run] worker=2 budget1p70_seed47 -> reports/v31_split_protocol_main/logs/budget1p70_seed47.log
+[run] worker=0 budget1p70_seed48 -> reports/v31_split_protocol_main/logs/budget1p70_seed48.log
+[run] worker=1 budget1p70_seed49 -> reports/v31_split_protocol_main/logs/budget1p70_seed49.log
+[run] worker=4 budget1p70_seed50 -> reports/v31_split_protocol_main/logs/budget1p70_seed50.log
+[run] worker=2 budget1p75_seed41 -> reports/v31_split_protocol_main/logs/budget1p75_seed41.log
+[run] worker=4 budget1p75_seed42 -> reports/v31_split_protocol_main/logs/budget1p75_seed42.log
+[run] worker=0 budget1p75_seed43 -> reports/v31_split_protocol_main/logs/budget1p75_seed43.log
+[run] worker=3 budget1p75_seed44 -> reports/v31_split_protocol_main/logs/budget1p75_seed44.log
+[run] worker=1 budget1p75_seed45 -> reports/v31_split_protocol_main/logs/budget1p75_seed45.log
+[run] worker=4 budget1p75_seed46 -> reports/v31_split_protocol_main/logs/budget1p75_seed46.log
+[run] worker=2 budget1p75_seed47 -> reports/v31_split_protocol_main/logs/budget1p75_seed47.log
+[run] worker=1 budget1p75_seed48 -> reports/v31_split_protocol_main/logs/budget1p75_seed48.log
+[run] worker=3 budget1p75_seed49 -> reports/v31_split_protocol_main/logs/budget1p75_seed49.log
+[run] worker=0 budget1p75_seed50 -> reports/v31_split_protocol_main/logs/budget1p75_seed50.log
+[collect] /home/zhangzhuyu/.conda/envs/darts/bin/python /home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/43_v31_s2_collect.py --out-dir reports/v31_split_protocol_main --static-policy validation_selected_static --bonferroni-family 6
+reports/v31_split_protocol_main/v31_s2_overall_long.csv
+reports/v31_split_protocol_main/v31_s2_main_stats.csv
+reports/v31_split_protocol_main/v31_s2_budget_check.csv
+ budget             best_policy  full_open_best  pdppo_mean  static_mean              static_policy  pdppo_static_gap  pdppo_static_gap_ok  round_robin_mean  pdppo_beats_round_robin  aoi_mean  pdppo_beats_aoi  random_mean  pdppo_beats_random
+   1.65 full_open_unconstrained            True    0.130417     0.131476 validation_selected_static         -0.008055                 True          0.140026                     True  0.139080             True     0.142110                True
+   1.70 full_open_unconstrained            True    0.133439     0.132879 validation_selected_static          0.004219                 True          0.140774                     True  0.143179             True     0.142479                True
+   1.75 full_open_unconstrained            True    0.131572     0.131134 validation_selected_static          0.003337                 True          0.139033                     True  0.143473             True     0.142501                True
+reports/v31_split_protocol_main/v31_s2_significance.csv

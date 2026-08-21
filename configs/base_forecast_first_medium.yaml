@@ -1,0 +1,45 @@
+seed: 42
+
+data:
+  truth_steps: 262144
+  predictor_pretrain_ratio: 0.35
+  rl_train_ratio: 0.50
+  rl_val_ratio: 0.075
+  final_test_ratio: 0.075
+  estimator_fit_split: predictor_pretrain
+
+run:
+  episode_len: 512
+  num_episodes: 80
+  eval_episodes: 6
+  max_steps: 512
+  save_every: 10
+
+reward:
+  lambda_forecast: 1.0
+  lambda_switch: 0.0
+  lambda_warmup_abort: 0.0
+  lambda_coverage: 0.0
+  lambda_violation: 10.0
+  lambda_state_tracking: 0.0
+  min_coverage_ratio: 0.25
+  min_relevance_weight: 0.25
+  relevance_power: 1.0
+
+forecast_reward:
+  enabled: true
+
+constraints:
+  max_active: 4
+  per_step_budget: 2.0
+  min_coverage_ratio: 0.25
+  startup_peak_budget: 2.55
+  power_safety_margin: 0.05
+  average_power_budget: null
+  episode_energy_budget: null
+
+validation:
+  objective: feasible_forecast_loss
+
+logging:
+  level: INFO

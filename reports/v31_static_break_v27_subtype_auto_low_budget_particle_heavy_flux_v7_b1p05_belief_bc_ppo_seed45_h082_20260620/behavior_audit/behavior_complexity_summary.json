@@ -1,0 +1,30 @@
+[
+  {
+    "path": "reports/v31_static_break_v27_subtype_auto_low_budget_particle_heavy_flux_v7_b1p05_belief_bc_ppo_seed45_h082_20260620/raw/budget1p05_seed45/rollout_custom_ppo.npz",
+    "policy": "custom_ppo",
+    "steps": 4096,
+    "sensors": 8,
+    "event_rate": 0.53662109375,
+    "unique_mask_count": 9,
+    "unique_mask_fraction": 0.002197265625,
+    "top1_mask_fraction": 0.358642578125,
+    "top2_mask_fraction": 0.636962890625,
+    "top3_mask_fraction": 0.778564453125,
+    "mask_entropy_bits": 2.3747405005688136,
+    "transition_count": 38,
+    "transition_entropy_bits": 2.8295275298559757,
+    "switches_per_step": 0.031135531135531136,
+    "best_period": 1,
+    "best_period_match": 0.9357753357753358,
+    "event_mask_mi_bits": 0.3640177451021227,
+    "event_sensor_l1": 2.505203983696262,
+    "event_sensor_linf": 0.5716740287894637,
+    "fixed_like": false,
+    "simple_cycle_like": false,
+    "low_complexity": false,
+    "weak_state_dependence": false,
+    "behavior_complexity_gate_pass": true,
+    "top_masks_json": "[{\"mask\": \"10100100\", \"count\": 1469, \"fraction\": 0.358642578125}, {\"mask\": \"00101010\", \"count\": 1140, \"fraction\": 0.2783203125}, {\"mask\": \"01001010\", \"count\": 580, \"fraction\": 0.1416015625}, {\"mask\": \"11000100\", \"count\": 312, \"fraction\": 0.076171875}, {\"mask\": \"00110001\", \"count\": 298, \"fraction\": 0.07275390625}]",
+    "sensor_duty_json": "[{\"sensor\": \"met_station_core\", \"duty\": 0.434814453125, \"event_duty\": 0.1710646041856233, \"non_event_duty\": 0.7402528977871443, \"event_abs_delta\": 0.569188293601521}, {\"sensor\": \"radiometer_basic\", \"duty\": 0.281494140625, \"event_duty\": 0.3321201091901729, \"non_event_duty\": 0.22286617492096944, \"event_abs_delta\": 0.10925393426920343}, {\"sensor\": \"surface_temp_ir\", \"duty\": 0.718505859375, \"event_duty\": 0.6678798908098271, \"non_event_duty\": 0.7771338250790305, \"event_abs_delta\": 0.10925393426920338}, {\"sensor\": \"ultrasonic_anemometer_hd\", \"duty\": 0.133544921875, \"event_duty\": 0.13239308462238397, \"non_event_duty\": 0.13487881981032665, \"event_abs_delta\": 0.002485735187942678}, {\"sensor\": \"shielded_thermo_hygro\", \"duty\": 0.431640625, \"event_duty\": 0.6965423111919927, \"non_event_duty\": 0.12486828240252898, \"event_abs_delta\": 0.5716740287894637}, {\"sensor\": \"snow_particle_counter\", \"duty\": 0.434814453125, \"event_duty\": 0.1710646041856233, \"non_event_duty\": 0.7402528977871443, \"event_abs_delta\": 0.569188293601521}, {\"sensor\": \"laser_disdrometer\", \"duty\": 0.431640625, \"event_duty\": 0.6965423111919927, \"non_event_duty\": 0.12486828240252898, \"event_abs_delta\": 0.5716740287894637}, {\"sensor\": \"fc4_flux\", \"duty\": 0.133544921875, \"event_duty\": 0.13239308462238397, \"non_event_duty\": 0.13487881981032665, \"event_abs_delta\": 0.002485735187942678}]"
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "budget": 1.2,
+  "candidate_count": 148,
+  "truth_event_rate": 0.25475,
+  "eval_start_indices": [
+    5441,
+    10929,
+    7265
+  ],
+  "event_loss_min": 0.27973926619834183,
+  "non_event_loss_min": 0.1956936620224225,
+  "best_overall": {
+    "action_idx": -1039,
+    "sensor_ids": "dynamic:auto_non11_event80_lead4",
+    "oracle_loss_mean": 0.2608169115991038,
+    "power_mean": 0.4571484375000001,
+    "peak_max": 0.6
+  },
+  "best_event_laser": {
+    "action_idx": 57,
+    "sensor_ids": "laser_disdrometer",
+    "oracle_loss_event": 0.4879668195651895,
+    "power_mean": 1.18,
+    "peak_max": 1.5
+  },
+  "best_event_no_laser": {
+    "action_idx": 80,
+    "sensor_ids": "ultrasonic_anemometer_hd|shielded_thermo_hygro|fc4_flux",
+    "oracle_loss_event": 0.27973926619834183,
+    "power_mean": 0.48000000000000015,
+    "peak_max": 0.6
+  },
+  "best_event_fc4": {
+    "action_idx": 80,
+    "sensor_ids": "ultrasonic_anemometer_hd|shielded_thermo_hygro|fc4_flux",
+    "oracle_loss_event": 0.27973926619834183,
+    "power_mean": 0.48000000000000015,
+    "peak_max": 0.6
+  },
+  "best_event_no_fc4": {
+    "action_idx": 11,
+    "sensor_ids": "met_station_core|radiometer_basic|ultrasonic_anemometer_hd",
+    "oracle_loss_event": 0.28405078311774584,
+    "power_mean": 0.33,
+    "peak_max": 0.42
+  },
+  "best_non_event_laser": {
+    "action_idx": 57,
+    "sensor_ids": "laser_disdrometer",
+    "oracle_loss_non_event": 0.3943369917933719,
+    "power_mean": 1.18,
+    "peak_max": 1.5
+  },
+  "best_non_event_no_laser": {
+    "action_idx": -1002,
+    "sensor_ids": "dynamic:auto_non67_event15_lead0",
+    "oracle_loss_non_event": 0.1956936620224225,
+    "power_mean": 0.4583333333333333,
+    "peak_max": 0.63
+  },
+  "laser_event_lift": -0.20822755336684767,
+  "fc4_event_lift": 0.004311516919404013,
+  "laser_non_event_lift": -0.1986433297709494,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v6_static_break.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_local_auto_linear/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.1,
+    0.1,
+    0.25,
+    0.05,
+    0.05,
+    0.0,
+    10.0,
+    5.0,
+    5.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.2,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  }
+}

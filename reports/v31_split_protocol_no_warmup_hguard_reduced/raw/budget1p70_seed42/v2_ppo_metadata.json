@@ -1,0 +1,273 @@
+{
+  "truth_csv": "reports/v31_split_protocol_no_warmup_hguard_reduced/raw/budget1p70_seed42/truth_v31_split.csv",
+  "sensor_cfg": "configs/sensors/windblown_sensors_balanced_no_warmup.yaml",
+  "oracle_path": "reports/v31_split_protocol_no_warmup_hguard_reduced/raw/budget1p70_seed42/v2_tcn_oracle.pt",
+  "oracle_type": "tcn",
+  "oracle_rollout_steps": 7200,
+  "oracle_rollouts_per_policy": 6,
+  "oracle_event_fraction": 0.5,
+  "oracle_full_open_repeat": 3,
+  "oracle_pretrain_rollout_summary": {
+    "spec_count_by_policy": {
+      "full_open_unconstrained": 3,
+      "feasible_static_projected": 1,
+      "round_robin": 1,
+      "aoi": 1,
+      "random": 1
+    },
+    "rollouts_by_policy": {
+      "full_open_unconstrained": 18,
+      "feasible_static_projected": 6,
+      "round_robin": 6,
+      "aoi": 6,
+      "random": 6
+    },
+    "steps_by_policy": {
+      "full_open_unconstrained": 21600,
+      "feasible_static_projected": 7200,
+      "round_robin": 7200,
+      "aoi": 7200,
+      "random": 7200
+    },
+    "step_fraction_by_policy": {
+      "full_open_unconstrained": 0.42857142857142855,
+      "feasible_static_projected": 0.14285714285714285,
+      "round_robin": 0.14285714285714285,
+      "aoi": 0.14285714285714285,
+      "random": 0.14285714285714285
+    },
+    "total_specs": 7,
+    "total_rollouts": 42,
+    "total_steps": 50400
+  },
+  "oracle_inference_device": "cpu",
+  "oracle_use_mask_channels": true,
+  "reward_target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "target_weights": [
+    1.0,
+    1.0,
+    1.2,
+    0.6,
+    0.6,
+    1.0,
+    3.0,
+    2.0,
+    2.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "model_path": "reports/v31_split_protocol_no_warmup_hguard_reduced/raw/budget1p70_seed42/custom_ppo.pt",
+  "eval_policies": [
+    "custom_ppo",
+    "validation_selected_static",
+    "full_open_unconstrained",
+    "feasible_static_projected",
+    "round_robin",
+    "aoi",
+    "random",
+    "duty_constrained_feasible_static_projected",
+    "duty_constrained_round_robin",
+    "duty_constrained_aoi",
+    "duty_constrained_random"
+  ],
+  "seed": 42,
+  "freq_s": 3600,
+  "lookback": 20,
+  "horizon": 8,
+  "eval_rollouts": 6,
+  "eval_event_fraction": 0.67,
+  "eval_start_indices": [
+    83329,
+    84420,
+    85529,
+    86635,
+    87744,
+    88871
+  ],
+  "train_start_indices": [],
+  "train_start_min": 31500,
+  "train_start_max": 75979,
+  "event_reward_multiplier": 1.0,
+  "reward_shaping": {
+    "lambda_warmup_abort": 0.0,
+    "lambda_switch": 0.002,
+    "lambda_duty_balance": 0.8,
+    "duty_balance_low": 0.12,
+    "duty_balance_high": 0.85,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 2.5,
+    "duty_score_target": 0.4,
+    "duty_hard_guard": true,
+    "duty_hard_low": 0.12,
+    "duty_hard_high": 0.85,
+    "duty_hard_score": 12.0,
+    "baseline_duty_score_feedback": 0.0,
+    "baseline_duty_hard_guard": false
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 0.0,
+    "initial_energy": 0.0,
+    "harvest_per_step": 0.0,
+    "reserve_energy": 0.0,
+    "lambda_energy_deficit": 1.0,
+    "soc_soft_penalty_buffer": 0.0,
+    "lambda_soc_soft_penalty": 0.0
+  },
+  "custom_ppo": {
+    "total_timesteps": 40000,
+    "n_steps": 2048,
+    "batch_size": 64,
+    "n_epochs": 10,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.003,
+    "vf_coef": 0.5,
+    "awbc_coef": 0.02,
+    "awbc_label_stride": 4,
+    "prior_kl_coef": 0.05,
+    "embed_dim": 32,
+    "hidden_dim": 128,
+    "greedy_lookahead_steps": 4,
+    "event_start_prob": 0.67,
+    "use_action_mask": 1,
+    "use_action_embedding": 1,
+    "event_aware_critic": 1,
+    "event_gated_actor": 0,
+    "soc_aux_horizon": 0,
+    "soc_aux_coef": 0.0,
+    "device": "auto",
+    "seed": 42,
+    "candidate_count": 11,
+    "history_path": "reports/v31_split_protocol_no_warmup_hguard_reduced/raw/budget1p70_seed42/custom_ppo_training_history_live.json",
+    "train_start_indices": [],
+    "train_start_min": 31500,
+    "train_start_max": 75979
+  },
+  "candidate_prior": {
+    "enabled": true,
+    "steps": 512,
+    "rollouts": 4,
+    "scale": 0.5,
+    "path": "reports/v31_split_protocol_no_warmup_hguard_reduced/raw/budget1p70_seed42/custom_ppo_candidate_prior.csv",
+    "start_indices": [
+      40180,
+      49405,
+      58362,
+      67559
+    ]
+  },
+  "oracle_static_projected": {
+    "source": "validation_min_oracle_loss",
+    "action_idx": 0,
+    "sensor_ids": "met_station_core|radiometer_basic|snow_particle_counter",
+    "candidate_prior_oracle_loss_mean": 0.19073145030597516,
+    "candidate_prior_power_mean": 1.4600000000000004
+  },
+  "selected_static_reference": {
+    "source": "validation_min_oracle_loss",
+    "action_idx": 0,
+    "sensor_ids": "met_station_core|radiometer_basic|snow_particle_counter",
+    "candidate_prior_oracle_loss_mean": 0.19073145030597516,
+    "candidate_prior_power_mean": 1.4600000000000004
+  },
+  "partition_protocol": {
+    "oracle_start_idx": 0,
+    "oracle_end_idx": 31500,
+    "normalization_start_idx": 31500,
+    "normalization_end_idx": 76500,
+    "static_selection_start_indices": [
+      77460,
+      78889,
+      80301,
+      81749
+    ],
+    "static_selection_steps": 512
+  },
+  "ablation_switches": {
+    "use_action_mask": true,
+    "use_action_embedding": true,
+    "event_aware_critic": true,
+    "event_gated_actor": false,
+    "soc_aux_enabled": false,
+    "awbc_enabled": true,
+    "prior_kl_enabled": true,
+    "eval_duty_constrained_baselines": true
+  },
+  "duty_constrained_baselines": {
+    "enabled": true,
+    "duty_hard_low": 0.12,
+    "duty_hard_high": 0.85,
+    "duty_hard_score": 12.0,
+    "duty_score_feedback": 2.5
+  },
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.7,
+    "startup_peak_budget": 3.2,
+    "required_sensor_ids": [],
+    "coverage_groups": [
+      {
+        "name": "weather",
+        "sensor_ids": [
+          "met_station_core",
+          "ultrasonic_anemometer_hd",
+          "shielded_thermo_hygro"
+        ]
+      },
+      {
+        "name": "surface_forcing",
+        "sensor_ids": [
+          "radiometer_basic",
+          "surface_temp_ir"
+        ]
+      },
+      {
+        "name": "snow_transport",
+        "sensor_ids": [
+          "snow_particle_counter",
+          "laser_disdrometer",
+          "fc4_flux"
+        ]
+      }
+    ]
+  },
+  "truth_event_design": {
+    "blowing_snow_event_coverage": 0.28,
+    "blowing_snow_event_model": "semi_markov",
+    "blowing_snow_min_duration_steps": 12,
+    "blowing_snow_max_duration_steps": 24,
+    "blowing_snow_min_gap_steps": 4,
+    "blowing_snow_lead_steps": 6,
+    "blowing_snow_wind_margin_ms": 1.2,
+    "cred_hysteresis_on": 0.6,
+    "cred_hysteresis_off": 0.3,
+    "flux_wind_exponent": 3.0,
+    "event_microstructure_sigma": 0.0,
+    "event_microstructure_alpha": 0.18,
+    "event_microstructure_diameter_scale": 0.0,
+    "event_microstructure_velocity_scale": 0.0,
+    "event_particle_microstructure_correlation": 1.0
+  }
+}

@@ -1,0 +1,167 @@
+\section{Supplementary Theoretical Details}
+
+\subsection{Proof of Proposition~\ref{prop:specialist_bottleneck}}
+\label{apx:specialist_bottleneck_proof}
+
+Let $\widetilde L_c(\pi)$ denote the normalized condition-specific loss introduced
+before the proposition. For $s\in\mathcal{S}$, a fixed policy $\pi_s$ chooses the
+same optional channel $s$ for every operating condition. The policy
+$\pi_{\text{label}}$ has privileged access to the condition label and changes to the
+corresponding optional channel whenever the common startup and minimum
+dwell-time constraints permit. Condition intervals are long
+enough for these changes, and the losses incurred during transitions are
+included in $\widetilde L_c$.
+
+For a fixed optional channel $s$, define
+$\delta_c(s)=\widetilde L_c(\pi_s)-
+\widetilde L_c(\pi_{\text{label}})$ and the mismatched-condition set
+\begin{equation}
+  \mathcal{C}_{\mathrm{mis}}(s)
+  =
+  \{c\in\mathcal{C}\mid s\text{ mismatches the best optional channel in }c\}.
+\end{equation}
+By assumption, $\delta_c(s)\geq0$ for every condition and
+$\delta_c(s)\geq\Delta_c>0$ for each mismatch. The weighted normalized forecast
+loss of the fixed channel therefore satisfies
+\begin{equation}
+  L_{\rho}(\pi_s)
+  -
+  L_{\rho}(\pi_{\text{label}})
+  =
+  \sum_{c\in\mathcal{C}}\rho_c\delta_c(s)
+  \geq
+  \sum_{c\in\mathcal{C}_{\mathrm{mis}}(s)}
+  \rho_c \Delta_c
+  >
+  0 .
+\end{equation}
+The strict inequality follows because
+$\mathcal{C}_{\mathrm{mis}}(s)$ is non-empty and every included term is
+positive. Thus every fixed channel has higher weighted normalized forecast loss under the stated
+sufficient conditions.
+
+\subsection{Proof of Proposition~\ref{prop:non_equivalence}}
+\label{apx:non_equivalence_proof}
+
+Set the common objective horizon to $T=1$; then all three objectives assign the
+same temporal weight $\gamma^0=1$ to the evaluated step. Consider one forecast
+target, one forecast horizon, and two independent scalar
+Gaussian random walks
+\begin{equation}
+  z_{t+1}=z_t+\xi_t,
+  \qquad
+  e_{t+1}=e_t+\zeta_t,
+  \label{eq:proxy_counterexample_state}
+\end{equation}
+where $\xi_t\sim\mathcal{N}(0,q_z)$ and
+$\zeta_t\sim\mathcal{N}(0,q_e)$ are mutually independent over time. The
+one-step forecast target is
+\begin{equation}
+  y_{t+1}=c z_t+M e_t+\nu_{t+1},
+  \label{eq:proxy_counterexample_target}
+\end{equation}
+with independent $\nu_{t+1}\sim\mathcal{N}(0,\sigma_\nu^2)$ and coefficients
+$M>c>0$. Suppose that one random-walk component can be measured without noise at
+each time step. At the evaluated time step, feasible schedules can produce age vectors
+$d^{(1)}=(0,1)$ under policy $\pi_1$ and $d^{(2)}=(2,0)$ under policy $\pi_2$.
+Here $\mathcal{Y}=\{y\}$ for the forecast-loss objective and
+$\mathcal{V}_{\mathrm{AoI}}=\{z,e\}$ for the AoI objective.
+These vectors can arise from feasible one-measurement schedules that prioritize
+different random-walk components before the evaluated time step.
+Thus $\pi_1$ has lower total AoI because $1<2$.
+
+The corresponding posterior error covariances are
+$P^{(1)}=\operatorname{diag}(0,q_e)$ and
+$P^{(2)}=\operatorname{diag}(2q_z,0)$. Choose $q_z>0$ and
+\begin{equation}
+  \frac{2c^2q_z}{M^2}<q_e<2q_z,
+  \label{eq:proxy_counterexample_condition}
+\end{equation}
+which is possible because $M>c$. The right inequality gives
+$\operatorname{tr}P^{(1)}<\operatorname{tr}P^{(2)}$, so the covariance trace
+objective also prefers $\pi_1$.
+
+Now take the single-target, single-horizon, positive-weight special case of
+\Cref{eq:step_forecast_loss}. Its positive weight cancels between the numerator
+and denominator, so the per-step forecast loss is
+\begin{equation}
+  L_{\mathrm{step}}(t)
+  =
+  \min\!\left\{10,\,
+  \frac{|\widehat y_{t+1}-y_{t+1}|}{\sigma}\right\},
+  \qquad \sigma>0.
+  \label{eq:proxy_counterexample_step_loss}
+\end{equation}
+The conditional forecast errors under $\pi_1$ and $\pi_2$ are zero-mean Gaussian
+with variances
+\begin{equation}
+  v_1=M^2q_e+\sigma_\nu^2,
+  \qquad
+  v_2=2c^2q_z+\sigma_\nu^2.
+  \label{eq:proxy_counterexample_error_variances}
+\end{equation}
+The left inequality in \Cref{eq:proxy_counterexample_condition} gives
+$v_1>v_2$.
+
+For $v>0$, let $Z_v\sim\mathcal{N}(0,v)$ and define
+\begin{equation}
+  g(v)=\mathbb{E}\!\left[
+  \min\!\left\{10,\frac{|Z_v|}{\sigma}\right\}
+  \right].
+\end{equation}
+Writing $Z_v=\sqrt{v}\,U$ with $U\sim\mathcal{N}(0,1)$ shows that the integrand
+for $v_1$ is at least that for $v_2$ at every $U$. The inequality is strict on
+\begin{equation}
+  0<|U|<\frac{10\sigma}{\sqrt{v_1}},
+\end{equation}
+which has positive probability. Hence $g(v_1)>g(v_2)$, and
+\begin{equation}
+  \mathbb{E}[L_{\mathrm{step}}(t;\pi_1)]
+  >
+  \mathbb{E}[L_{\mathrm{step}}(t;\pi_2)].
+\end{equation}
+Because $T=1$ in \Cref{eq:forecast_objective}, this gives
+$J_{\mathrm{fcst}}(\pi_2)>J_{\mathrm{fcst}}(\pi_1)$. The AoI and covariance
+trace objectives therefore prefer $\pi_1$, while the capped, scale-normalized
+forecast-loss objective prefers $\pi_2$.
+
+\subsection{Observation-dependent scheduling and fixed cycles}
+
+A fixed cyclic schedule chooses optional channels from the time index alone. Such a schedule may be
+optimal in structured settings, including periodic conditions or rewards that are
+phase-aligned with the cycle. Without that structure, a fixed cycle need not be
+optimal. If informative observations predict a change in operating condition and a cycle has
+nonzero probability of assigning a mismatched optional channel, the positive mismatch
+loss condition in Proposition~\ref{prop:specialist_bottleneck} yields positive
+expected regret relative to a policy conditioned on those observations. Action
+sequences are therefore needed to distinguish observation-dependent scheduling
+from a fixed schedule or a fixed cyclic schedule.
+
+\subsection{Relation to fixed channel-subset allocation}
+
+\Cref{prop:non_equivalence} does not imply that an adaptive policy must beat a
+fixed channel subset. If one fixed optional channel measures the variables that dominate a
+forecast metric, a fixed policy can remain optimal for that metric. Adaptive
+value requires the incompatible-condition requirement in
+\Cref{prop:specialist_bottleneck}, together with observations that provide useful
+information about a change in operating condition. Mean forecast loss and
+weighted normalized forecast loss can therefore rank a fixed and an adaptive
+policy differently.
+
+\section{Simulation Validation}
+\label{apx:generator_validation}
+
+\Cref{tab:generator_validation} reports the acceptance checks used to bound the
+simulation domain. Supplementary Fig. S3 provides the corresponding
+distribution, autocorrelation, and event-window plots. These checks document
+the simulation construction and are not policy-selection criteria.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Simulation validation checks and acceptance criteria.}
+  \label{tab:generator_validation}
+  \small
+  \input{tables/g1_generator_validation}
+\end{table}
+
+\clearpage

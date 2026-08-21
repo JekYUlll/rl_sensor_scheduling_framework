@@ -1,0 +1,60 @@
+{
+  "run_dir": "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086",
+  "rollout_files": [
+    "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086/rollout_aoi.npz",
+    "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086/rollout_custom_ppo.npz",
+    "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086/rollout_feasible_static_projected.npz",
+    "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086/rollout_full_open_unconstrained.npz",
+    "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086/rollout_random.npz",
+    "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086/rollout_round_robin.npz",
+    "reports/v31_energy_account_subtype_oraclegreedy_fast_seed45_h082_20260620/router_replay_surface_lowconf086/rollout_validation_selected_static.npz"
+  ],
+  "per_step_budget": 1.05,
+  "startup_peak_budget": 1.3,
+  "dtw_window": 50,
+  "target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "target_weights": [
+    0.03,
+    1.0,
+    0.2,
+    0.01,
+    0.01,
+    0.0,
+    60.0,
+    60.0,
+    60.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "forecast_target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "primary_metric": "forecast_weighted_mae_overall"
+}

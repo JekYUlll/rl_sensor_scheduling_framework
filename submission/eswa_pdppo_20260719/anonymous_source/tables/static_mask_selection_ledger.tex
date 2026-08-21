@@ -1,0 +1,33 @@
+\begin{table}[H]
+  \centering
+  \caption{Fixed channel subset selected for each seed on calibration/validation data.}
+  \label{tab:static_mask_selection_ledger}
+  \scriptsize
+  \setlength{\tabcolsep}{2.4pt}
+  \begin{tabular}{@{}c p{0.27\linewidth} c c p{0.27\linewidth} c@{}}
+    \toprule
+    Seed & Fixed channel subset & Selection loss & Seed & Fixed channel subset & Selection loss \\
+    \midrule
+    117 & Core + FC4 mass flux & 0.907 & 129 & Core + FC4 mass flux & 0.892 \\
+    118 & Core + FC4 mass flux & 0.928 & 130 & Core + snow-surface temperature & 0.820 \\
+    119 & Core + snow-surface temperature & 0.804 & 131 & Core + FC4 mass flux & 0.873 \\
+    120 & Core + FC4 mass flux & 0.901 & 132 & Core + FC4 mass flux & 0.915 \\
+    121 & Core + FC4 mass flux & 0.859 & 133 & Core + snow-surface temperature & 0.825 \\
+    122 & Core + snow-surface temperature & 0.844 & 134 & Core + snow-surface temperature & 0.940 \\
+    123 & Core + FC4 mass flux & 0.905 & 135 & Core + laser disdrometer & 0.930 \\
+    124 & Core + snow-surface temperature & 0.847 & 136 & Core + FC4 mass flux & 0.892 \\
+    125 & Core + snow-surface temperature & 0.926 & 137 & Core + laser disdrometer & 0.880 \\
+    126 & Core + FC4 mass flux & 0.887 & 138 & Core + FC4 mass flux & 0.888 \\
+    127 & Core + FC4 mass flux & 0.904 & 139 & Core + snow-surface temperature & 0.821 \\
+    128 & Core + FC4 mass flux & 0.933 & 140 & Core + snow-surface temperature & 0.905 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.4ex}
+
+  \noindent\footnotesize
+  Values are macro-averaged normalized forecast losses on the
+  calibration/validation partition; lower is better. Compact subset labels pair
+  the meteorological core channel with the FC4 snow mass-flux channel, infrared
+  snow-surface-temperature channel, or laser disdrometer channel. The selected
+  fixed-schedule baseline is evaluated unchanged on the test windows.
+\end{table}

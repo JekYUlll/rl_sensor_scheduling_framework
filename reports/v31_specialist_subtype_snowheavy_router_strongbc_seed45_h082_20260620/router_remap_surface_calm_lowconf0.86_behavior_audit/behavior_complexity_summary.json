@@ -1,0 +1,30 @@
+[
+  {
+    "path": "reports/v31_specialist_subtype_snowheavy_router_strongbc_seed45_h082_20260620/router_remap_surface_calm_lowconf0.86/budget1p05_seed45/rollout_custom_ppo.npz",
+    "policy": "custom_ppo",
+    "steps": 4096,
+    "sensors": 6,
+    "event_rate": 0.53662109375,
+    "unique_mask_count": 3,
+    "unique_mask_fraction": 0.000732421875,
+    "top1_mask_fraction": 0.683837890625,
+    "top2_mask_fraction": 0.8798828125,
+    "top3_mask_fraction": 1.0,
+    "mask_entropy_bits": 1.20303829979248,
+    "transition_count": 9,
+    "transition_entropy_bits": 1.4491745403989187,
+    "switches_per_step": 0.011965811965811965,
+    "best_period": 1,
+    "best_period_match": 0.9641025641025641,
+    "event_mask_mi_bits": 0.2488897060675016,
+    "event_sensor_l1": 1.0173239202992277,
+    "event_sensor_linf": 0.5086619601496138,
+    "fixed_like": true,
+    "simple_cycle_like": true,
+    "low_complexity": false,
+    "weak_state_dependence": false,
+    "behavior_complexity_gate_pass": false,
+    "top_masks_json": "[{\"mask\": \"001100\", \"count\": 2801, \"fraction\": 0.683837890625}, {\"mask\": \"001010\", \"count\": 803, \"fraction\": 0.196044921875}, {\"mask\": \"001001\", \"count\": 492, \"fraction\": 0.1201171875}]",
+    "sensor_duty_json": "[{\"sensor\": \"met_station_core\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"radiometer_basic\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"shielded_thermo_hygro\", \"duty\": 1.0, \"event_duty\": 1.0, \"non_event_duty\": 1.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"surface_temp_ir\", \"duty\": 0.683837890625, \"event_duty\": 0.4481346678798908, \"non_event_duty\": 0.9567966280295047, \"event_abs_delta\": 0.5086619601496138}, {\"sensor\": \"laser_disdrometer\", \"duty\": 0.196044921875, \"event_duty\": 0.3403093721565059, \"non_event_duty\": 0.02897787144362487, \"event_abs_delta\": 0.31133150071288107}, {\"sensor\": \"fc4_flux\", \"duty\": 0.1201171875, \"event_duty\": 0.21155595996360327, \"non_event_duty\": 0.01422550052687039, \"event_abs_delta\": 0.19733045943673289}]"
+  }
+]

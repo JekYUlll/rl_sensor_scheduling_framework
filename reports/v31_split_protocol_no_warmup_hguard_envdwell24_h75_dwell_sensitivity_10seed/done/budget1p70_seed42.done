@@ -1,0 +1,5 @@
+label=budget1p70_seed42
+budget=1.700000
+seed=42
+eval_path=reports/v31_split_protocol_no_warmup_hguard_envdwell24_h75_dwell_sensitivity_10seed/raw/budget1p70_seed42/v2_custom_ppo_metrics.csv
+log_path=reports/v31_split_protocol_no_warmup_hguard_envdwell24_h75_dwell_sensitivity_10seed/logs/budget1p70_seed42.log

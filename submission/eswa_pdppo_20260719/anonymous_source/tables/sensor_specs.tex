@@ -1,0 +1,44 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Logical channels and normalized scheduling costs.}
+  \label{tab:sensor_specs}
+  \small
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{@{}c >{\raggedright\arraybackslash}p{0.27\linewidth} >{\raggedright\arraybackslash}p{0.33\linewidth} c c c@{}}
+    \toprule
+    Idx & Logical channel & Main observed variables
+        & $p_i$ & $p_i^{\mathrm{peak}}$ & Warm-up \\
+    \midrule
+    1 & Meteorological core channel
+      & wind, air temperature, relative humidity, pressure
+      & 0.25 & 0.30 & 0 \\
+    2 & Basic radiometer channel
+      & solar radiation
+      & 0.08 & 0.10 & 0 \\
+    3 & Shielded temperature--humidity channel
+      & air temperature, relative humidity
+      & 0.18 & 0.22 & 0 \\
+    4 & Infrared snow-surface-temperature channel
+      & snow surface temperature
+      & 0.49 & 0.62 & 1 \\
+    5 & Laser disdrometer channel
+      & particle diameter, particle velocity, simulated particle latent variable
+      & 0.49 & 0.62 & 2 \\
+    6 & FC4 snow mass-flux channel
+      & snow mass flux
+      & 0.49 & 0.62 & 1 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.5ex}
+
+  \noindent\footnotesize
+  The meteorological core channel is mandatory. At each time step, the scheduler may
+  activate at most one optional channel and may leave all optional channels
+  inactive. The infrared snow-surface-temperature channel, laser disdrometer channel,
+  and FC4 snow mass-flux channel are
+  event-specific channels for thermal, particle, and flux event types,
+  respectively; the basic radiometer channel and shielded temperature--humidity channel
+  are additional optional channels. Condition labels are simulator-derived metadata
+  used only for training, calibration/validation, or offline evaluation; they are not
+  direct channel measurements.
+\end{table}

@@ -1,0 +1,265 @@
+<mxfile host="app.diagrams.net" modified="2026-07-19T00:00:00.000Z" agent="draw.io 30.0.4" version="30.0.4" type="device" compressed="false">
+  <diagram id="pdppo-framework" name="PPO sensor scheduler">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1050" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="panelA" value="" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F7F9FB;strokeColor=#C5CED7;strokeWidth=2;container=1;pointerEvents=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1560" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="panelA_title" value="&lt;b&gt;A&amp;nbsp;&amp;nbsp;Chronological data partitions&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=DejaVu Sans;fontSize=28;fontColor=#28323C;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="35" y="26" width="760" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="stage1" value="&lt;b&gt;1&amp;nbsp; Forecaster training&lt;/b&gt;&lt;br&gt;0–24,500&lt;br&gt;Train primary forecaster" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#EAF3FA;strokeColor=#0072B2;strokeWidth=2.5;fontFamily=DejaVu Sans;fontSize=19;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=72;spacingRight=10;" vertex="1" parent="1">
+          <mxGeometry x="45" y="65" width="350" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="stage2" value="&lt;b&gt;2&amp;nbsp; Policy training&lt;/b&gt;&lt;br&gt;24,500–59,500&lt;br&gt;Train PD-PPO" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=2.5;fontFamily=DejaVu Sans;fontSize=19;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=72;spacingRight=10;" vertex="1" parent="1">
+          <mxGeometry x="425" y="65" width="350" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="stage3" value="&lt;b&gt;3&amp;nbsp; Calibration/validation&lt;/b&gt;&lt;br&gt;59,500–64,750&lt;br&gt;Select fixed baseline&lt;br&gt;Compute training constants" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#F1F3F5;strokeColor=#7A8793;strokeWidth=2.5;fontFamily=DejaVu Sans;fontSize=18;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=82;spacingRight=10;" vertex="1" parent="1">
+          <mxGeometry x="805" y="65" width="350" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="stage4" value="&lt;b&gt;4&amp;nbsp; Test evaluation&lt;/b&gt;&lt;br&gt;64,750–70,000&lt;br&gt;Evaluate final checkpoint" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFF3D9;strokeColor=#E69F00;strokeWidth=2.5;fontFamily=DejaVu Sans;fontSize=19;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=88;spacingRight=10;" vertex="1" parent="1">
+          <mxGeometry x="1185" y="65" width="360" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="stage_edge12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7A8793;strokeWidth=2.5;endArrow=block;endFill=1;" edge="1" parent="1" source="stage1" target="stage2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="stage_edge23" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7A8793;strokeWidth=2.5;endArrow=block;endFill=1;" edge="1" parent="1" source="stage2" target="stage3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="stage_edge34" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7A8793;strokeWidth=2.5;endArrow=block;endFill=1;" edge="1" parent="1" source="stage3" target="stage4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="stage1_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#0072B2;strokeWidth=1.7;" vertex="1" parent="1">
+          <mxGeometry x="59" y="89" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="stage1_icon" value="" style="verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;strokeWidth=1.8;shape=mxgraph.mockup.graphics.lineChart;strokeColor=none;strokeColor2=#0072B2;strokeColor3=#009E73;strokeColor4=#C5CED7;" vertex="1" parent="1">
+          <mxGeometry x="66" y="97" width="30" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="stage2_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#009E73;strokeWidth=1.7;" vertex="1" parent="1">
+          <mxGeometry x="449" y="89" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="stage2_icon" value="" style="sketch=0;html=1;aspect=fixed;strokeColor=none;shadow=0;fillColor=#009E73;verticalAlign=top;labelPosition=center;verticalLabelPosition=bottom;shape=mxgraph.gcp2.network;" vertex="1" parent="1">
+          <mxGeometry x="458" y="98" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="stage3_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#7A8793;strokeWidth=1.7;" vertex="1" parent="1">
+          <mxGeometry x="839" y="89" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="stage3_icon" value="" style="html=1;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeWidth=2;strokeColor=#7A8793;shadow=0;dashed=0;shape=mxgraph.ios7.icons.controls2;" vertex="1" parent="1">
+          <mxGeometry x="847" y="99" width="28" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="stage4_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#E69F00;strokeWidth=1.7;" vertex="1" parent="1">
+          <mxGeometry x="1229" y="89" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="stage4_icon" value="" style="verticalLabelPosition=bottom;align=center;outlineConnect=0;dashed=0;html=1;verticalAlign=top;shape=mxgraph.pid.flow_sensors.target;strokeColor=#E69F00;strokeWidth=2;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1237" y="97" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="no_test_feedback" value="Pilot/model-selection seeds: 117–118&amp;nbsp;&amp;nbsp;&amp;nbsp; Post-selection evaluation seeds: 119–140" style="text;html=1;align=right;verticalAlign=middle;fontFamily=DejaVu Sans;fontSize=17;fontStyle=2;fontColor=#56606A;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="30" width="500" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="panelB" value="" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FBFCFD;strokeColor=#C5CED7;strokeWidth=2;container=1;pointerEvents=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="215" width="1560" height="585" as="geometry" />
+        </mxCell>
+        <mxCell id="panelB_title" value="&lt;b&gt;B&amp;nbsp;&amp;nbsp;Online constrained scheduling&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=DejaVu Sans;fontSize=28;fontColor=#28323C;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="35" y="223" width="760" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="online_badge" value="ONLINE EXECUTION" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#EAF3FA;strokeColor=#0072B2;strokeWidth=1.5;fontFamily=DejaVu Sans;fontSize=14;fontStyle=1;fontColor=#0072B2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="227" width="185" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="sensing_group" value="&lt;b&gt;Channel set&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;core weather channel always active&lt;/font&gt;" style="swimlane;startSize=70;horizontal=1;rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;swimlaneFillColor=#F7F9FB;strokeColor=#7A8793;strokeWidth=2;fontFamily=DejaVu Sans;fontSize=19;fontColor=#28323C;container=1;align=left;spacingLeft=42;" vertex="1" parent="1">
+          <mxGeometry x="45" y="270" width="275" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="sensing_icon" value="" style="sketch=0;html=1;pointerEvents=1;dashed=0;fillColor=none;strokeColor=#56606A;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.cisco.wireless.antenna;" vertex="1" parent="1">
+          <mxGeometry x="58" y="282" width="20" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_backbone" value="&lt;b&gt;Core weather channel&lt;/b&gt;" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#EAF3FA;strokeColor=#0072B2;strokeWidth=1.6;fontFamily=DejaVu Sans;fontSize=20;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=14;spacingRight=8;" vertex="1" parent="sensing_group">
+          <mxGeometry x="15" y="82" width="245" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_rad" value="Basic radiometer" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#F7F9FB;strokeColor=#A8B2BC;strokeWidth=1.3;fontFamily=DejaVu Sans;fontSize=20;fontColor=#56606A;align=left;verticalAlign=middle;spacingLeft=14;spacingRight=8;" vertex="1" parent="sensing_group">
+          <mxGeometry x="15" y="147" width="245" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_ir" value="Shielded thermo-hygrometer" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#F7F9FB;strokeColor=#A8B2BC;strokeWidth=1.3;fontFamily=DejaVu Sans;fontSize=20;fontColor=#56606A;align=left;verticalAlign=middle;spacingLeft=14;spacingRight=8;" vertex="1" parent="sensing_group">
+          <mxGeometry x="15" y="207" width="245" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_laser" value="Surface infrared temperature sensor" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=1.3;fontFamily=DejaVu Sans;fontSize=20;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=14;spacingRight=8;" vertex="1" parent="sensing_group">
+          <mxGeometry x="15" y="272" width="245" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_particle" value="Laser disdrometer" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=1.3;fontFamily=DejaVu Sans;fontSize=20;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=14;spacingRight=8;" vertex="1" parent="sensing_group">
+          <mxGeometry x="15" y="337" width="245" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_flux" value="FC4 blowing-snow flux sensor" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=1.3;fontFamily=DejaVu Sans;fontSize=20;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=14;spacingRight=8;" vertex="1" parent="sensing_group">
+          <mxGeometry x="15" y="397" width="245" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="sample_update" value="&lt;b&gt;Sample-and-hold values&lt;/b&gt;&lt;br&gt;Ready measurements&lt;br&gt;Fuse or retain last value" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0072B2;strokeWidth=2.2;fontFamily=DejaVu Sans;fontSize=18;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=50;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="350" y="290" width="230" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="scheduler_obs" value="&lt;b&gt;Scheduler input&lt;/b&gt;&lt;br&gt;Values + observation masks&lt;br&gt;Channel sampling ages&lt;br&gt;Channel operating states&lt;br&gt;Previous activation vector + budget&lt;br&gt;Warning signals" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#EAF3FA;strokeColor=#0072B2;strokeWidth=2.2;fontFamily=DejaVu Sans;fontSize=18;fontColor=#28323C;align=left;verticalAlign=top;spacingTop=14;spacingLeft=44;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="330" y="440" width="250" height="275" as="geometry" />
+        </mxCell>
+        <mxCell id="sample_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#EAF3FA;strokeColor=#0072B2;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="329" y="300" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="sample_icon" value="" style="pointerEvents=1;verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.waveforms.square_wave;strokeColor=#0072B2;strokeWidth=2;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="336" y="307" width="20" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="obs_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#0072B2;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="329" y="475" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="obs_icon" value="" style="html=1;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeWidth=2;strokeColor=#0072B2;shadow=0;dashed=0;shape=mxgraph.ios7.icons.documents;" vertex="1" parent="1">
+          <mxGeometry x="337" y="481" width="18" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="policy_group" value="&lt;b&gt;PD-PPO scheduler&lt;/b&gt;" style="swimlane;startSize=54;horizontal=1;rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;swimlaneFillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=2.5;fontFamily=DejaVu Sans;fontSize=25;fontColor=#28323C;container=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="270" width="410" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="policy_header_icon" value="" style="sketch=0;html=1;aspect=fixed;strokeColor=none;shadow=0;fillColor=#009E73;verticalAlign=top;labelPosition=center;verticalLabelPosition=bottom;shape=mxgraph.gcp2.network;" vertex="1" parent="1">
+          <mxGeometry x="628" y="282" width="27" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="state_encoder" value="&lt;b&gt;Observation-history&lt;br&gt;encoder&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#56606A&quot;&gt;Recent-history features&lt;/font&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0072B2;strokeWidth=1.7;fontFamily=DejaVu Sans;fontSize=19;fontColor=#28323C;align=center;verticalAlign=middle;" vertex="1" parent="policy_group">
+          <mxGeometry x="20" y="75" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="context_encoder" value="&lt;b&gt;Warning-signal&lt;br&gt;encoder&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#56606A&quot;&gt;Simulated warning signals&lt;/font&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFF3D9;strokeColor=#E69F00;strokeWidth=1.7;fontFamily=DejaVu Sans;fontSize=19;fontColor=#28323C;align=center;verticalAlign=middle;" vertex="1" parent="policy_group">
+          <mxGeometry x="215" y="75" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="fusion" value="&lt;b&gt;Feature combination&lt;/b&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=1.7;fontFamily=DejaVu Sans;fontSize=21;fontColor=#28323C;align=center;verticalAlign=middle;" vertex="1" parent="policy_group">
+          <mxGeometry x="80" y="230" width="250" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="candidate_logits" value="&lt;b&gt;Scores for candidate&lt;br&gt;actions&lt;/b&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=1.9;fontFamily=DejaVu Sans;fontSize=22;fontColor=#28323C;align=center;verticalAlign=middle;" vertex="1" parent="policy_group">
+          <mxGeometry x="45" y="340" width="320" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="enc_edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#009E73;strokeWidth=1.8;endArrow=block;endFill=1;" edge="1" parent="policy_group" source="state_encoder" target="fusion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="enc_edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E69F00;strokeWidth=1.8;endArrow=block;endFill=1;" edge="1" parent="policy_group" source="context_encoder" target="fusion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fusion_edge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#009E73;strokeWidth=1.8;endArrow=block;endFill=1;" edge="1" parent="policy_group" source="fusion" target="candidate_logits">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feasibility" value="&lt;b&gt;Power-limit check&lt;/b&gt;&lt;br&gt;Steady-state + startup-peak&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;All six candidates pass here&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFF3D9;strokeColor=#E69F00;strokeWidth=2.3;fontFamily=DejaVu Sans;fontSize=20;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=54;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="320" width="235" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="masked_policy" value="&lt;b&gt;Proposed activation vector&lt;/b&gt;&lt;br&gt;Feasible actions&lt;br&gt;Sample during training&lt;br&gt;Argmax during evaluation" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=2.3;fontFamily=DejaVu Sans;fontSize=18;fontColor=#28323C;align=left;verticalAlign=top;spacingTop=14;spacingLeft=48;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="500" width="235" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="executed_mask" value="&lt;b&gt;Executed activation vector&lt;/b&gt;&lt;br&gt;Minimum-duration rule&lt;br&gt;Retain previous vector until&lt;br&gt;minimum activation-duration is met" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=2.5;fontFamily=DejaVu Sans;fontSize=18;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=46;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="405" width="220" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="feas_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#E69F00;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1073" y="318" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="feas_icon" value="" style="sketch=0;points=[[0.015,0.015,0],[0.985,0.015,0],[0.985,0.985,0],[0.015,0.985,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25]];verticalLabelPosition=bottom;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.rect;prIcon=shield;fillColor=#FFFFFF;strokeColor=#E69F00;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="325" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="mask_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#009E73;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1073" y="565" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="mask_icon" value="" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#009E73;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.mscae.enterprise.filter;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="573" width="20" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="exec_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#009E73;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1343" y="405" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="exec_icon" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#009E73;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.checked_doc;" vertex="1" parent="1">
+          <mxGeometry x="1351" y="412" width="18" height="21" as="geometry" />
+        </mxCell>
+        <mxCell id="online_edge_samples" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0072B2;strokeWidth=2.5;endArrow=block;endFill=1;" edge="1" parent="1" source="sensing_group" target="sample_update">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="online_edge_update" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0072B2;strokeWidth=2.5;endArrow=block;endFill=1;" edge="1" parent="1" source="sample_update" target="scheduler_obs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="online_edge_obs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0072B2;strokeWidth=2.5;endArrow=block;endFill=1;" edge="1" parent="1" source="scheduler_obs" target="policy_group">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="online_edge_logits" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#009E73;strokeWidth=2.5;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="candidate_logits" target="feasibility">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="online_edge_feasible" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#009E73;strokeWidth=2.5;endArrow=block;endFill=1;" edge="1" parent="1" source="feasibility" target="masked_policy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="online_edge_action" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#009E73;strokeWidth=2.8;endArrow=block;endFill=1;" edge="1" parent="1" source="masked_policy" target="executed_mask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="online_edge_execute" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#28323C;strokeWidth=2.5;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;" edge="1" parent="1" source="executed_mask" target="sensing_group">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1430" y="780" />
+              <mxPoint x="180" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="panelC" value="" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFF9EC;strokeColor=#E69F00;strokeWidth=2;dashed=1;dashPattern=8 5;container=1;pointerEvents=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="815" width="1560" height="215" as="geometry" />
+        </mxCell>
+        <mxCell id="panelC_title" value="&lt;b&gt;C&amp;nbsp;&amp;nbsp;Offline loss, reward, and training updates&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=DejaVu Sans;fontSize=28;fontColor=#28323C;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="35" y="825" width="760" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="training_badge" value="OFFLINE ONLY" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#FFF3D9;strokeColor=#E69F00;strokeWidth=1.5;fontFamily=DejaVu Sans;fontSize=14;fontStyle=1;fontColor=#9A6700;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1395" y="827" width="150" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="frozen_forecaster" value="&lt;b&gt;Frozen primary forecaster&lt;/b&gt;&lt;br&gt;20-step history&lt;br&gt;Multi-step forecast loss &lt;i&gt;L&lt;/i&gt;&lt;sub&gt;step&lt;/sub&gt;(&lt;i&gt;t&lt;/i&gt;)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E69F00;strokeWidth=2;fontFamily=DejaVu Sans;fontSize=18;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=56;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="70" y="875" width="300" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="forecast_reward" value="&lt;b&gt;Loss hierarchy&lt;/b&gt;&lt;br&gt;&lt;i&gt;L&lt;/i&gt;&lt;sub&gt;step&lt;/sub&gt; → &lt;i&gt;L&lt;/i&gt;&lt;sub&gt;train&lt;/sub&gt; → &lt;i&gt;R&lt;/i&gt;&lt;sub&gt;t&lt;/sub&gt;&lt;br&gt;Switching + warm-up* in &lt;i&gt;R&lt;/i&gt;&lt;sub&gt;t&lt;/sub&gt;&lt;br&gt;&lt;i&gt;L&lt;/i&gt;&lt;sub&gt;macro&lt;/sub&gt;: evaluation only&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;*Warm-up term inactive here&lt;/font&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFF3D9;strokeColor=#E69F00;strokeWidth=2;fontFamily=DejaVu Sans;fontSize=18;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=54;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="440" y="870" width="300" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="ppo_update" value="&lt;b&gt;PPO update&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#56606A&quot;&gt;Clipped policy + value&lt;br&gt;Entropy regularization&lt;/font&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#E7F5F0;strokeColor=#009E73;strokeWidth=2;fontFamily=DejaVu Sans;fontSize=20;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=64;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="810" y="875" width="300" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="aux_terms" value="&lt;b&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Training-only supervision&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;Behavior-cloning pretraining&lt;br&gt;Advantage-weighted BC in PPO&lt;br&gt;Aux. look-ahead condition classifier in PPO&lt;/font&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E69F00;strokeWidth=2;fontFamily=DejaVu Sans;fontSize=19;fontColor=#28323C;align=left;verticalAlign=middle;spacingLeft=64;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="875" width="300" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="frozen_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFF3D9;strokeColor=#E69F00;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="84" y="910" width="42" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="frozen_icon" value="" style="verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;strokeWidth=1.8;shape=mxgraph.mockup.graphics.lineChart;strokeColor=none;strokeColor2=#E69F00;strokeColor3=#0072B2;strokeColor4=#C5CED7;" vertex="1" parent="1">
+          <mxGeometry x="91" y="918" width="29" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="reward_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#E69F00;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="454" y="910" width="42" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="reward_icon" value="" style="verticalLabelPosition=bottom;align=center;outlineConnect=0;dashed=0;html=1;verticalAlign=top;shape=mxgraph.pid.flow_sensors.target;strokeColor=#E69F00;strokeWidth=2;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="462" y="918" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="ppo_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#009E73;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="824" y="910" width="42" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="ppo_icon" value="" style="sketch=0;html=1;aspect=fixed;strokeColor=none;shadow=0;fillColor=#009E73;verticalAlign=top;labelPosition=center;verticalLabelPosition=bottom;shape=mxgraph.gcp2.arrow_cycle;" vertex="1" parent="1">
+          <mxGeometry x="833" y="919" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="aux_icon_bg" value="" style="rounded=1;arcSize=16;html=1;fillColor=#FFF3D9;strokeColor=#E69F00;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1194" y="910" width="42" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="aux_icon" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#E69F00;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.checked_doc;" vertex="1" parent="1">
+          <mxGeometry x="1204" y="919" width="22" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="train_edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E69F00;strokeWidth=2.4;dashed=1;dashPattern=8 5;endArrow=block;endFill=1;" edge="1" parent="1" source="frozen_forecaster" target="forecast_reward">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="train_edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E69F00;strokeWidth=2.4;dashed=1;dashPattern=8 5;endArrow=block;endFill=1;" edge="1" parent="1" source="forecast_reward" target="ppo_update">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="train_edge3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E69F00;strokeWidth=2.4;dashed=1;dashPattern=8 5;endArrow=block;endFill=1;" edge="1" parent="1" source="aux_terms" target="ppo_update">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="train_history_down" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E69F00;strokeWidth=2.2;dashed=1;dashPattern=8 5;endArrow=block;endFill=1;exitX=0.45;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="scheduler_obs" target="frozen_forecaster">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="860" />
+              <mxPoint x="220" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="train_update_up" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E69F00;strokeWidth=2.2;dashed=1;dashPattern=8 5;endArrow=block;endFill=1;exitX=0.5;exitY=0;entryX=0.75;entryY=1;" edge="1" parent="1" source="ppo_update" target="policy_group">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="860" />
+              <mxPoint x="915" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

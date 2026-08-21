@@ -1,0 +1,208 @@
+eswa062303_flux10_queue_start date=2026-06-24T00:10:59+08:00
+gpu_free=0 date=2026-06-24T00:10:59+08:00
+gpu_free=0 date=2026-06-24T00:15:59+08:00
+gpu_free=0 date=2026-06-24T00:20:59+08:00
+gpu_free=0 date=2026-06-24T00:26:00+08:00
+gpu_free=0 date=2026-06-24T00:31:00+08:00
+gpu_free=0 date=2026-06-24T00:36:00+08:00
+gpu_free=0 date=2026-06-24T00:41:00+08:00
+gpu_free=0 date=2026-06-24T00:46:00+08:00
+gpu_free=0 date=2026-06-24T00:51:00+08:00
+gpu_free=0 date=2026-06-24T00:56:00+08:00
+gpu_free=2 date=2026-06-24T01:01:00+08:00
+gpu_free=5 date=2026-06-24T01:06:00+08:00
+gpu_free=5 date=2026-06-24T01:11:00+08:00
+gpu_free=5 date=2026-06-24T01:16:01+08:00
+gpu_free=5 date=2026-06-24T01:21:01+08:00
+gpu_free=5 date=2026-06-24T01:26:01+08:00
+gpu_free=1 date=2026-06-24T01:31:01+08:00
+gpu_free=0 date=2026-06-24T01:36:01+08:00
+gpu_free=0 date=2026-06-24T01:41:01+08:00
+gpu_free=0 date=2026-06-24T01:46:01+08:00
+gpu_free=0 date=2026-06-24T01:51:01+08:00
+gpu_free=0 date=2026-06-24T01:56:01+08:00
+gpu_free=0 date=2026-06-24T02:01:01+08:00
+gpu_free=0 date=2026-06-24T02:06:02+08:00
+gpu_free=0 date=2026-06-24T02:11:02+08:00
+gpu_free=0 date=2026-06-24T02:16:02+08:00
+gpu_free=0 date=2026-06-24T02:21:02+08:00
+gpu_free=0 date=2026-06-24T02:26:02+08:00
+gpu_free=0 date=2026-06-24T02:31:02+08:00
+gpu_free=0 date=2026-06-24T02:36:02+08:00
+gpu_free=0 date=2026-06-24T02:41:02+08:00
+gpu_free=0 date=2026-06-24T02:46:02+08:00
+gpu_free=3 date=2026-06-24T02:51:03+08:00
+gpu_free=4 date=2026-06-24T02:56:03+08:00
+gpu_free=4 date=2026-06-24T03:01:03+08:00
+gpu_free=4 date=2026-06-24T03:06:03+08:00
+gpu_free=4 date=2026-06-24T03:11:03+08:00
+gpu_free=4 date=2026-06-24T03:16:03+08:00
+gpu_free=4 date=2026-06-24T03:21:03+08:00
+gpu_free=4 date=2026-06-24T03:26:03+08:00
+gpu_free=4 date=2026-06-24T03:31:03+08:00
+gpu_free=6 date=2026-06-24T03:36:03+08:00
+robustness_pilot_start date=2026-06-24T03:36:03+08:00 seeds=147 148 149 150 151 152 router_conf=0.5
+robustness_variant_train_start variant=event_mix_flux10 date=2026-06-24T03:36:03+08:00
+robustness_variant_train_done variant=event_mix_flux10 date=2026-06-24T03:57:48+08:00
+robustness_collect_start label=event_mix_flux10 date=2026-06-24T03:57:48+08:00
+scenebal1_router_reaudit_start date=2026-06-24T03:57:48+08:00 seeds=147 148 149 150 151 152 router_conf=0.5 eval_dir=eval_router_conf05_robustness_20260624flux10
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_macro_20260624flux10/metpair_seed_summary.csv
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_macro_20260624flux10/metpair_claim_summary.json
+{
+  "complete_seeds": 6,
+  "seed_gate_pass_count": 6,
+  "learned_gate_pass_count": 6,
+  "replay_gate_pass_count": 6,
+  "behavior_gate_pass_count": 6,
+  "learned_macro_positive_count": 6,
+  "replay_macro_positive_count": 6,
+  "macro_seed_positive_count": 6,
+  "learned_macro_gate_count": 6,
+  "replay_macro_gate_count": 6,
+  "macro_seed_gate_count": 6,
+  "mean_learned_margin_abs": 0.11189324918594439,
+  "median_learned_margin_abs": 0.10152812586579774,
+  "mean_replay_margin_abs_vs_static_reference": 0.08351205213110309,
+  "median_replay_margin_abs_vs_static_reference": 0.07215500526899632,
+  "mean_learned_macro_margin_abs": 0.10433971290779659,
+  "median_learned_macro_margin_abs": 0.102877063216822,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.05658172208833362,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.0559734892093221,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.06770264248173906,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.06166446771333356,
+  "one_sided_sign_test_p_seed_gate": 0.015625,
+  "one_sided_sign_test_p_macro_seed_positive": 0.015625,
+  "one_sided_sign_test_p_macro_seed_gate": 0.015625,
+  "claim_strength": "moderate_multiseed",
+  "reason": ">=5 complete seeds with at least 80% full gate passes",
+  "macro_claim_strength": "moderate_macro_multiseed",
+  "macro_reason": ">=5 complete seeds with at least 80% macro gate passes"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+  147      True                1.130443              1.140968 oracle_loss_macro_subtype_event_staticnorm                               0.010525                               0.037616                                     0.029338                                            0.021566                                     0.049530                      True                  True                True            True
+  148      True                1.199825              1.286044 oracle_loss_macro_subtype_event_staticnorm                               0.086220                               0.106543                                     0.092561                                            0.069864                                     0.084648                      True                  True                True            True
+  149      True                1.183958              1.300795 oracle_loss_macro_subtype_event_staticnorm                               0.116837                               0.077446                                     0.113193                                            0.058789                                     0.058678                      True                  True                True            True
+  150      True                1.181020              1.238655 oracle_loss_macro_subtype_event_staticnorm                               0.057635                               0.066864                                     0.055739                                            0.053158                                     0.064651                      True                  True                True            True
+  151      True                1.404433              1.552322 oracle_loss_macro_subtype_event_staticnorm                               0.147888                               0.147577                                     0.140599                                            0.094889                                     0.106564                      True                  True                True            True
+  152      True                1.294343              1.546598 oracle_loss_macro_subtype_event_staticnorm                               0.252255                               0.065026                                     0.194609                                            0.041224                                     0.042145                      True                  True                True            True
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_raw_macro_20260624flux10/metpair_seed_summary.csv
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_raw_macro_20260624flux10/metpair_claim_summary.json
+{
+  "complete_seeds": 6,
+  "seed_gate_pass_count": 6,
+  "learned_gate_pass_count": 6,
+  "replay_gate_pass_count": 6,
+  "behavior_gate_pass_count": 6,
+  "learned_macro_positive_count": 6,
+  "replay_macro_positive_count": 6,
+  "macro_seed_positive_count": 6,
+  "learned_macro_gate_count": 0,
+  "replay_macro_gate_count": 6,
+  "macro_seed_gate_count": 0,
+  "mean_learned_margin_abs": 0.11189324918594439,
+  "median_learned_margin_abs": 0.10152812586579774,
+  "mean_replay_margin_abs_vs_static_reference": 0.08351205213110309,
+  "median_replay_margin_abs_vs_static_reference": 0.07215500526899632,
+  "mean_learned_macro_margin_abs": 0.31739000424119396,
+  "median_learned_macro_margin_abs": 0.3481807027981787,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": -1.5514964041607173,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": -1.4846539470813993,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.06770264248173906,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.06166446771333356,
+  "one_sided_sign_test_p_seed_gate": 0.015625,
+  "one_sided_sign_test_p_macro_seed_positive": 0.015625,
+  "one_sided_sign_test_p_macro_seed_gate": 1.0,
+  "claim_strength": "moderate_multiseed",
+  "reason": ">=5 complete seeds with at least 80% full gate passes",
+  "macro_claim_strength": "macro_not_supported",
+  "macro_reason": "macro seed-level gates are not consistently positive"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss              macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+  147      True                1.130443              1.140968 oracle_loss_macro_subtype_event                               0.010525                               0.037616                                     0.107197                                           -2.428955                                     0.049530                      True                 False                True            True
+  148      True                1.199825              1.286044 oracle_loss_macro_subtype_event                               0.086220                               0.106543                                     0.442330                                           -1.368463                                     0.084648                      True                 False                True            True
+  149      True                1.183958              1.300795 oracle_loss_macro_subtype_event                               0.116837                               0.077446                                     0.523813                                           -1.284784                                     0.058678                      True                 False                True            True
+  150      True                1.181020              1.238655 oracle_loss_macro_subtype_event                               0.057635                               0.066864                                     0.283267                                           -1.636895                                     0.064651                      True                 False                True            True
+  151      True                1.404433              1.552322 oracle_loss_macro_subtype_event                               0.147888                               0.147577                                     0.134638                                           -0.989037                                     0.106564                      True                 False                True            True
+  152      True                1.294343              1.546598 oracle_loss_macro_subtype_event                               0.252255                               0.065026                                     0.413094                                           -1.600845                                     0.042145                      True                 False                True            True
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_oldclaim_20260624flux10/oldclaim_seed_summary.csv
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_oldclaim_20260624flux10/oldclaim_summary.json
+{
+  "complete_seeds": 6,
+  "old_claim_step_gate_count": 6,
+  "old_claim_macro_gate_count": 6,
+  "behavior_eval_dirs": [
+    "eval_router_conf05_robustness_20260624flux10"
+  ],
+  "step_static_gate_count": 6,
+  "step_rule_dynamic_gate_count": 6,
+  "step_operational_gate_count": 6,
+  "macro_static_gate_count": 6,
+  "macro_rule_dynamic_gate_count": 6,
+  "macro_operational_gate_count": 6,
+  "replay_gate_count": 6,
+  "replay_macro_gate_count": 6,
+  "learned_replay_static_gate_count": 6,
+  "learned_replay_macro_static_gate_count": 6,
+  "learned_true_static_step_gate_count": 6,
+  "learned_true_static_macro_gate_count": 6,
+  "behavior_gate_count": 6,
+  "mean_step_margin_vs_best_operational_baseline": 0.09229321741781853,
+  "median_step_margin_vs_best_operational_baseline": 0.10152812586579774,
+  "mean_macro_margin_vs_best_operational_baseline": 0.08776528426423151,
+  "median_macro_margin_vs_best_operational_baseline": 0.09761385554704599,
+  "one_sided_sign_test_p_old_claim_step_gate": 0.015625,
+  "one_sided_sign_test_p_old_claim_macro_gate": 0.015625,
+  "one_sided_sign_test_p_learned_true_static_step_gate": 0.015625,
+  "one_sided_sign_test_p_learned_true_static_macro_gate": 0.015625,
+  "claim_strength": "moderate_old_claim_step",
+  "reason": ">=5 complete seeds with at least 80% old-claim step gates",
+  "macro_claim_strength": "moderate_old_claim_macro",
+  "macro_reason": ">=5 complete seeds with at least 80% old-claim macro gates"
+}
+ seed  complete  custom_ppo_loss  best_static_loss best_rule_dynamic_policy  best_rule_dynamic_loss  step_margin_vs_best_operational_baseline  step_margin_vs_replay_static_reference  macro_margin_vs_best_operational_baseline  macro_margin_vs_replay_static_reference  old_claim_step_gate_pass  old_claim_macro_gate_pass  learned_true_static_step_gate_pass  learned_true_static_macro_gate_pass
+  147      True         1.130443          1.140968              round_robin                1.210071                                  0.010525                                0.002898                                   0.029338                                 0.021566                      True                       True                                True                                 True
+  148      True         1.199825          1.286044                      aoi                1.369717                                  0.086220                                0.090436                                   0.092561                                 0.069864                      True                       True                                True                                 True
+  149      True         1.183958          1.300795              round_robin                1.311899                                  0.116837                                0.075268                                   0.102667                                 0.058789                      True                       True                                True                                 True
+  150      True         1.181020          1.238655                   random                1.301638                                  0.057635                                0.054308                                   0.055739                                 0.053158                      True                       True                                True                                 True
+  151      True         1.404433          1.552322                   random                1.608855                                  0.147888                                0.136949                                   0.140599                                 0.094889                      True                       True                                True                                 True
+  152      True         1.294343          1.488135              round_robin                1.428998                                  0.134655                                0.064234                                   0.105689                                 0.041224                      True                       True                                True                                 True
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_decision_audit_20260624flux10.json
+reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_decision_audit_20260624flux10.md
+{
+  "decision": "upgrade_allseed_strict",
+  "rationale": "all pre-registered gates including strict true-static step pass",
+  "recommendation": {
+    "next_layer": "claim_update",
+    "next_action": "Upgrade the final specialist-budget claim only after confirming every pre-registered aggregate and artifact is present.",
+    "protocol_report": "reports/aggregate/pdppo_next_layer_pivot_designs_20260621.md"
+  },
+  "gates": {
+    "complete_seeds": 6,
+    "step_operational_gate_count": 6,
+    "macro_operational_gate_count": 6,
+    "replay_step_gate_count": 6,
+    "replay_macro_gate_count": 6,
+    "behavior_gate_count": 6,
+    "true_static_macro_gate_count": 6,
+    "true_static_step_strict_gate_count": 6,
+    "true_static_step_positive_count": 6,
+    "old_claim_step_gate_count": 6,
+    "old_claim_macro_gate_count": 6
+  },
+  "failures": {
+    "step_operational_fail_seeds": [],
+    "macro_operational_fail_seeds": [],
+    "replay_step_fail_seeds": [],
+    "replay_macro_fail_seeds": [],
+    "behavior_fail_seeds": [],
+    "true_static_step_sign_fail_seeds": [],
+    "true_static_step_strict_fail_seeds": [],
+    "true_static_macro_fail_seeds": []
+  }
+}
+scenebal1_router_reaudit_done date=2026-06-24T03:59:23+08:00 oldclaim_dir=reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_oldclaim_20260624flux10 decision=reports/aggregate/robustness_event_mix_flux10_147_148_149_150_151_152_decision_audit_20260624flux10.json
+robustness_collect_done label=event_mix_flux10 date=2026-06-24T03:59:23+08:00
+wrote reports/aggregate/robustness_pilot_147_148_149_150_151_152_20260624flux10/robustness_summary.csv
+wrote reports/aggregate/robustness_pilot_147_148_149_150_151_152_20260624flux10/robustness_summary.json
+wrote reports/aggregate/robustness_pilot_147_148_149_150_151_152_20260624flux10/robustness_summary.md
+robustness_pilot_done date=2026-06-24T03:59:24+08:00 out_dir=reports/aggregate/robustness_pilot_147_148_149_150_151_152_20260624flux10

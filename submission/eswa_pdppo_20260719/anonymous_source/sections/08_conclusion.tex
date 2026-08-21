@@ -1,0 +1,37 @@
+\section{Conclusion}
+
+The PD-PPO scheduler formulates sensor scheduling under power constraints as
+downstream forecast optimization over feasible channel subsets. The policy uses
+the scheduler observation to select a proposed action index, the feasible-action
+mask
+enforces the steady-state and startup-peak power limits, and the scheduler
+applies the minimum dwell-time constraint before executing an activation vector.
+In the six-channel simulation, across the 22 post-selection evaluation seeds,
+the complete PD-PPO training configuration achieved 10.6\% lower mean forecast
+loss and 8.0\% lower macro-averaged normalized forecast loss than the
+validation-selected fixed-schedule baseline. Both co-primary endpoints are lower
+in every post-selection seed. The 24-seed descriptive
+aggregate, which includes the two pilot/model-selection seeds, retains the
+previously reported 10.1\% and 7.9\% reductions. Evaluation over all 5,242
+scoreable test time steps preserves this direction for both co-primary
+endpoints. The executed schedules use optional channels condition-dependently;
+all 22 executed action sequences pass the behavior-complexity gate.
+
+The complete PD-PPO training configuration has lower macro-averaged loss than
+the Double DQN training configuration in all 22 post-selection seeds and lower
+mean forecast loss in 21. The configurations also differ in behavior cloning
+pretraining, continuing advantage-weighted behavior cloning, and auxiliary
+future-condition classification, so this is a comparison of complete training
+configurations. The paired difference against the fixed-schedule baseline
+remains positive under the ridge forecaster. For each of the AoI-objective and
+uncertainty-objective PPO configurations, the 95\% bootstrap confidence
+intervals for both co-primary paired differences include zero. The corresponding
+intervals against the warning-rule and privileged true-label baselines also
+include zero; these intervals establish neither a population-level directional
+difference nor equivalence. The privileged true-label baseline uses the exact
+sequence $c_t,\ldots,c_{t+16}$, which is unavailable during deployment. In this
+controlled simulation, the complete PD-PPO training configuration produces
+condition-dependent executed channel activation and lower forecast loss than the
+validation-selected fixed-schedule baseline. The evidence does not isolate the
+scalar objective, PPO update, highly informative warning signals, or
+training-only supervision.

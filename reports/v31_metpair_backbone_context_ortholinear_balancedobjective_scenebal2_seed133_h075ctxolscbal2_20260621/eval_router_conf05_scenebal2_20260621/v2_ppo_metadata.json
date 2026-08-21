@@ -1,0 +1,493 @@
+{
+  "truth_csv": "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621/truth_v31_split.csv",
+  "sensor_cfg": "configs/sensors/windblown_sensors_v31_met_specialist_pair.yaml",
+  "oracle_path": "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621/v2_tcn_oracle.pt",
+  "oracle_type": "tcn",
+  "oracle_rollout_steps": 4096,
+  "oracle_rollouts_per_policy": 6,
+  "oracle_event_fraction": 0.5,
+  "oracle_full_open_repeat": 3,
+  "oracle_candidate_mask_repeat": 1,
+  "oracle_candidate_mask_limit": 0,
+  "oracle_subtype_teacher_repeat": 28,
+  "oracle_subtype_teacher_lookahead_steps": 16,
+  "oracle_subtype_teacher_sensors": {
+    "calm": [
+      "met_station_core",
+      "shielded_thermo_hygro"
+    ],
+    "particle": [
+      "met_station_core",
+      "laser_disdrometer"
+    ],
+    "flux": [
+      "met_station_core",
+      "fc4_flux"
+    ],
+    "thermal": [
+      "met_station_core",
+      "surface_temp_ir"
+    ]
+  },
+  "oracle_pretrain_rollout_summary": {
+    "spec_count_by_policy": {
+      "full_open_unconstrained": 3,
+      "feasible_static_projected": 1,
+      "round_robin": 1,
+      "aoi": 1,
+      "random": 1,
+      "oracle_candidate_r0_a0": 1,
+      "oracle_candidate_r0_a1": 1,
+      "oracle_candidate_r0_a2": 1,
+      "oracle_candidate_r0_a3": 1,
+      "oracle_candidate_r0_a4": 1,
+      "oracle_candidate_r0_a5": 1
+    },
+    "rollouts_by_policy": {
+      "full_open_unconstrained": 18,
+      "feasible_static_projected": 6,
+      "round_robin": 6,
+      "aoi": 6,
+      "random": 6,
+      "oracle_candidate_r0_a0": 6,
+      "oracle_candidate_r0_a1": 6,
+      "oracle_candidate_r0_a2": 6,
+      "oracle_candidate_r0_a3": 6,
+      "oracle_candidate_r0_a4": 6,
+      "oracle_candidate_r0_a5": 6
+    },
+    "steps_by_policy": {
+      "full_open_unconstrained": 12294,
+      "feasible_static_projected": 4098,
+      "round_robin": 4098,
+      "aoi": 4098,
+      "random": 4098,
+      "oracle_candidate_r0_a0": 4098,
+      "oracle_candidate_r0_a1": 4098,
+      "oracle_candidate_r0_a2": 4098,
+      "oracle_candidate_r0_a3": 4098,
+      "oracle_candidate_r0_a4": 4098,
+      "oracle_candidate_r0_a5": 4098
+    },
+    "step_fraction_by_policy": {
+      "full_open_unconstrained": 0.23076923076923078,
+      "feasible_static_projected": 0.07692307692307693,
+      "round_robin": 0.07692307692307693,
+      "aoi": 0.07692307692307693,
+      "random": 0.07692307692307693,
+      "oracle_candidate_r0_a0": 0.07692307692307693,
+      "oracle_candidate_r0_a1": 0.07692307692307693,
+      "oracle_candidate_r0_a2": 0.07692307692307693,
+      "oracle_candidate_r0_a3": 0.07692307692307693,
+      "oracle_candidate_r0_a4": 0.07692307692307693,
+      "oracle_candidate_r0_a5": 0.07692307692307693
+    },
+    "total_specs": 13,
+    "total_rollouts": 78,
+    "total_steps": 53274
+  },
+  "oracle_inference_device": "cpu",
+  "oracle_use_mask_channels": true,
+  "reward_target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "target_weights": [
+    0.1,
+    0.26,
+    0.08,
+    0.0,
+    0.0,
+    0.0,
+    4.5,
+    42.0,
+    42.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "subtype_loss_weighting": true,
+  "subtype_particle_target_weights": [
+    0.0,
+    0.0,
+    0.08,
+    0.0,
+    0.0,
+    0.0,
+    0.5,
+    105.0,
+    105.0
+  ],
+  "subtype_flux_target_weights": [
+    0.0,
+    0.0,
+    0.04,
+    0.0,
+    0.0,
+    0.0,
+    7.0,
+    5.0,
+    5.0
+  ],
+  "subtype_thermal_target_weights": [
+    0.22,
+    85.0,
+    0.08,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    1.0,
+    1.0
+  ],
+  "model_path": "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621/custom_ppo.pt",
+  "eval_policies": [
+    "custom_ppo",
+    "validation_selected_static",
+    "full_open_unconstrained",
+    "feasible_static_projected",
+    "round_robin",
+    "aoi",
+    "random"
+  ],
+  "seed": 133,
+  "freq_s": 3600,
+  "lookback": 20,
+  "horizon": 8,
+  "eval_rollouts": 8,
+  "eval_event_fraction": 0.75,
+  "eval_start_indices": [
+    64750,
+    65262,
+    65774,
+    66286,
+    66798,
+    67310,
+    68590,
+    69294
+  ],
+  "static_selection_score": "oracle_loss_macro_subtype_event_staticnorm",
+  "metrics_sort_score": "oracle_loss_macro_subtype_event_staticnorm",
+  "train_start_indices": [],
+  "train_start_min": 24500,
+  "train_start_max": 58979,
+  "event_reward_multiplier": 1.0,
+  "event_subtype_reward_multipliers": {
+    "particle": 1.55,
+    "flux": 0.95,
+    "thermal": 1.65
+  },
+  "truth_event_design": {
+    "blowing_snow_event_coverage": 0.68,
+    "blowing_snow_event_model": "semi_markov",
+    "blowing_snow_min_duration_steps": 28,
+    "blowing_snow_max_duration_steps": 80,
+    "blowing_snow_min_gap_steps": 8,
+    "blowing_snow_lead_steps": 10,
+    "blowing_snow_wind_margin_ms": 1.4,
+    "cred_hysteresis_on": 0.6,
+    "cred_hysteresis_off": 0.3,
+    "flux_wind_exponent": 3.2,
+    "event_microstructure_sigma": 0.0,
+    "event_microstructure_alpha": 0.18,
+    "event_microstructure_diameter_scale": 0.0,
+    "event_microstructure_velocity_scale": 0.0,
+    "event_particle_microstructure_correlation": 1.0,
+    "event_subtypes_enabled": true,
+    "event_subtype_particle_prob": 0.4,
+    "event_subtype_flux_prob": 0.2,
+    "event_subtype_thermal_prob": 0.4,
+    "event_subtype_latent_alpha": 0.65,
+    "event_subtype_particle_latent_diameter_scale_mm": 0.62,
+    "event_subtype_particle_latent_velocity_scale_ms": 8.2,
+    "event_subtype_flux_latent_sigma": 0.0,
+    "event_subtype_flux_latent_linear_scale": 0.0014,
+    "event_subtype_flux_latent_linear_offset": 1.25,
+    "event_subtype_flux_latent_linear_clip": 2.4,
+    "event_subtype_thermal_latent_surface_scale_c": 6.4,
+    "event_subtype_latent_target_lag_steps": 6,
+    "event_subtype_context_lead_steps": 16,
+    "event_subtype_context_noise_std": 0.01
+  },
+  "reward_shaping": {
+    "lambda_warmup_abort": 1.0,
+    "lambda_switch": 0.001,
+    "reward_loss_normalization": "staticnorm_subtype",
+    "reward_loss_normalizers": [
+      1.4413597923296604,
+      5.615301498143667,
+      0.4414684688284372
+    ],
+    "reward_loss_default_normalizer": 2.0136439323964623,
+    "reward_staticnorm_candidates_path": "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621/reward_staticnorm_candidates.csv",
+    "event_subtype_particle_reward_multiplier": 1.55,
+    "event_subtype_flux_reward_multiplier": 0.95,
+    "event_subtype_thermal_reward_multiplier": 1.65,
+    "lambda_duty_balance": 0.0,
+    "duty_balance_low": 0.05,
+    "duty_balance_high": 0.95,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 0.0,
+    "duty_score_target": 0.4,
+    "duty_hard_guard": false,
+    "duty_hard_low": 0.08,
+    "duty_hard_high": 0.92,
+    "duty_hard_score": 8.0,
+    "min_dwell_steps": 6,
+    "baseline_duty_score_feedback": 0.0,
+    "baseline_duty_hard_guard": false,
+    "primary_eval_duty_guard": false
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 0.0,
+    "initial_energy": 0.0,
+    "harvest_per_step": 0.0,
+    "reserve_energy": 0.0,
+    "lambda_energy_deficit": 1.0,
+    "soc_soft_penalty_buffer": 0.0,
+    "lambda_soc_soft_penalty": 0.0
+  },
+  "agent_cycle_phase": {
+    "enabled": false,
+    "period_steps": 0,
+    "dwell_steps": 1
+  },
+  "observable_regime_belief": {
+    "enabled": true,
+    "lookback": 16
+  },
+  "agent_context_columns": [
+    "agent_context_particle_alert",
+    "agent_context_flux_alert",
+    "agent_context_thermal_alert",
+    "agent_context_event_alert"
+  ],
+  "custom_ppo": {
+    "total_timesteps": 200000,
+    "n_steps": 1024,
+    "batch_size": 128,
+    "n_epochs": 8,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.0075,
+    "vf_coef": 0.5,
+    "awbc_coef": 2.5,
+    "awbc_label_stride": 1,
+    "bc_pretrain_steps": 10000,
+    "bc_pretrain_epochs": 18,
+    "bc_pretrain_batch_size": 256,
+    "bc_pretrain_loss_coef": 7.0,
+    "subtype_aux_coef": 5.0,
+    "subtype_aux_classes": 4,
+    "subtype_aux_lookahead_steps": 16,
+    "subtype_router_enabled": true,
+    "subtype_router_min_confidence": 0.7,
+    "subtype_router_low_confidence_action": -1,
+    "awbc_teacher_mode": "subtype_auto",
+    "awbc_teacher_event_lookahead_steps": 16,
+    "awbc_teacher_energy_mpc_horizon": 4,
+    "awbc_teacher_energy_mpc_soc_bins": 16,
+    "awbc_teacher_energy_mpc_low_soc_ratio": 0.25,
+    "awbc_teacher_energy_mpc_high_soc_ratio": 0.75,
+    "awbc_teacher_energy_mpc_terminal_soc_weight": 0.0,
+    "awbc_teacher_energy_mpc_max_actions": 0,
+    "awbc_teacher_energy_mpc_low_power_action": -1,
+    "awbc_teacher_calm_action": -1,
+    "awbc_teacher_event_action": -1,
+    "awbc_teacher_calm_actions": [],
+    "awbc_teacher_event_actions": [],
+    "awbc_teacher_subtype_calm_action": 2,
+    "awbc_teacher_subtype_particle_action": 4,
+    "awbc_teacher_subtype_flux_action": 5,
+    "awbc_teacher_subtype_thermal_action": 3,
+    "awbc_teacher_dwell_steps": 10,
+    "prior_kl_coef": 0.0,
+    "embed_dim": 32,
+    "hidden_dim": 128,
+    "greedy_lookahead_steps": 8,
+    "event_start_prob": 0.85,
+    "use_action_mask": 1,
+    "use_action_embedding": 1,
+    "event_aware_critic": 1,
+    "event_gated_actor": 1,
+    "soc_aux_horizon": 0,
+    "soc_aux_coef": 0.0,
+    "device": "cuda",
+    "seed": 133,
+    "candidate_count": 6,
+    "history_path": "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621/custom_ppo_training_history_live.json",
+    "train_start_indices": [],
+    "train_start_min": 24500,
+    "train_start_max": 58979
+  },
+  "awbc_teacher": {
+    "mode": "subtype_auto",
+    "calm_sensors": [],
+    "event_sensors": [],
+    "subtype_calm_sensors": [
+      "met_station_core",
+      "shielded_thermo_hygro"
+    ],
+    "subtype_particle_sensors": [
+      "met_station_core",
+      "laser_disdrometer"
+    ],
+    "subtype_flux_sensors": [
+      "met_station_core",
+      "fc4_flux"
+    ],
+    "subtype_thermal_sensors": [
+      "met_station_core",
+      "surface_temp_ir"
+    ],
+    "auto_score_mode": "raw",
+    "auto_selection": {},
+    "calm_pool_spec": "",
+    "event_pool_spec": "",
+    "event_lookahead_steps": 16,
+    "energy_mpc_horizon": 4,
+    "energy_mpc_soc_bins": 16,
+    "energy_mpc_low_soc_ratio": 0.25,
+    "energy_mpc_high_soc_ratio": 0.75,
+    "energy_mpc_terminal_soc_weight": 0.0,
+    "energy_mpc_max_actions": 0,
+    "energy_mpc_low_power_action": -1,
+    "dwell_steps": 10,
+    "calm_action": -1,
+    "event_action": -1,
+    "calm_actions": [],
+    "event_actions": [],
+    "subtype_calm_action": 2,
+    "subtype_particle_action": 4,
+    "subtype_flux_action": 5,
+    "subtype_thermal_action": 3
+  },
+  "candidate_prior": {
+    "enabled": false,
+    "steps": 512,
+    "rollouts": 4,
+    "scale": 2.0,
+    "path": "",
+    "start_indices": [
+      31074,
+      38172,
+      45252,
+      52377
+    ]
+  },
+  "oracle_static_projected": {
+    "source": "validation_min_oracle_loss_macro_subtype_event_staticnorm",
+    "action_idx": 3,
+    "sensor_ids": "met_station_core|surface_temp_ir",
+    "static_selection_score": "oracle_loss_macro_subtype_event_staticnorm",
+    "candidate_prior_oracle_loss_mean": 1.983267165180223,
+    "candidate_prior_oracle_loss_macro_subtype_event": 2.42192953927663,
+    "candidate_prior_oracle_loss_macro_subtype_event_staticnorm": 0.8252114093499444,
+    "candidate_prior_power_mean": 0.7400000000000001
+  },
+  "selected_static_reference": {
+    "source": "validation_min_oracle_loss_macro_subtype_event_staticnorm",
+    "action_idx": 3,
+    "sensor_ids": "met_station_core|surface_temp_ir",
+    "static_selection_score": "oracle_loss_macro_subtype_event_staticnorm",
+    "candidate_prior_oracle_loss_mean": 1.983267165180223,
+    "candidate_prior_oracle_loss_macro_subtype_event": 2.42192953927663,
+    "candidate_prior_oracle_loss_macro_subtype_event_staticnorm": 0.8252114093499444,
+    "candidate_prior_power_mean": 0.7400000000000001
+  },
+  "partition_protocol": {
+    "oracle_start_idx": 0,
+    "oracle_end_idx": 24500,
+    "normalization_start_idx": 24500,
+    "normalization_end_idx": 59500,
+    "static_selection_start_indices": [
+      60112,
+      61254,
+      62413,
+      63551
+    ],
+    "static_selection_steps": 512,
+    "static_selection_score": "oracle_loss_macro_subtype_event_staticnorm",
+    "metrics_sort_score": "oracle_loss_macro_subtype_event_staticnorm"
+  },
+  "ablation_switches": {
+    "use_action_mask": true,
+    "use_action_embedding": true,
+    "event_aware_critic": true,
+    "event_gated_actor": true,
+    "soc_aux_enabled": false,
+    "awbc_enabled": true,
+    "prior_kl_enabled": false,
+    "eval_duty_constrained_baselines": false,
+    "eval_switch_limited_baselines": false
+  },
+  "duty_constrained_baselines": {
+    "enabled": false,
+    "duty_hard_low": 0.08,
+    "duty_hard_high": 0.92,
+    "duty_hard_score": 8.0,
+    "duty_score_feedback": 0.0
+  },
+  "switch_limited_baselines": {
+    "enabled": false,
+    "min_dwell_steps": [
+      6,
+      12
+    ]
+  },
+  "constraints": {
+    "max_active": 2,
+    "per_step_budget": 0.75,
+    "startup_peak_budget": 0.95,
+    "required_sensor_ids": [
+      "met_station_core"
+    ],
+    "coverage_groups": []
+  },
+  "source_run_dir": "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621",
+  "eval_steps": 512,
+  "operational_baseline_replay": {
+    "enabled": true,
+    "uses_saved_custom_ppo": true,
+    "uses_original_truth_and_eval_starts": true,
+    "skip_rollout_evaluation": true,
+    "env_min_dwell_steps": 6,
+    "env_harvest_per_step": 0.0,
+    "custom_ppo_cfg_overrides": {
+      "subtype_router_enabled": true,
+      "subtype_router_min_confidence": 0.5
+    },
+    "duty_constrained_baselines": {
+      "enabled": false,
+      "duty_hard_low": 0.12,
+      "duty_hard_high": 0.85,
+      "duty_hard_score": 12.0,
+      "duty_score_feedback": 2.5
+    },
+    "switch_limited_baselines": {
+      "enabled": false,
+      "min_dwell_steps": [
+        6,
+        12
+      ]
+    }
+  }
+}

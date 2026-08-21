@@ -1,0 +1,36 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Baselines, privileged references, and training-configuration comparisons.}
+  \label{tab:baseline_reference_taxonomy}
+  \footnotesize
+  \setlength{\tabcolsep}{3.2pt}
+  \renewcommand{\arraystretch}{0.96}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.35\linewidth}>{\raggedright\arraybackslash}p{0.29\linewidth}@{}}
+    \toprule
+    Baseline or variant & Role in the protocol & Interpretation \\
+    \midrule
+    Fixed-schedule baseline
+      & Select one feasible fixed channel subset before test evaluation.
+      & Primary fixed-schedule baseline. \\
+    AoI-priority, round-robin, and random-feasible baselines
+      & Use feasible cycling, AoI priority, or random rules.
+      & Non-learned dynamic baselines. \\
+    Double DQN training configuration
+      & Learn with the same scheduler input, forecast-loss reward, candidate action set, and feasibility check.
+      & Training-configuration comparison; only the complete PD-PPO configuration uses behavior cloning pretraining, continuing advantage-weighted behavior cloning, and an auxiliary future-condition classifier. \\
+    Privileged one-step look-ahead reference using next-step test targets
+      & Choose the currently best feasible action using next-step forecast loss on the test partition.
+      & Uses next-step target values unavailable during deployment and does not isolate sequential decision value. \\
+    Warning-rule baseline
+      & Map simulated warning signals to channel subsets selected on calibration/validation data.
+      & Memoryless baseline using the supplied simulated warning signals. \\
+    Privileged true-label baseline
+      & Map the exact label sequence $c_t,\ldots,c_{t+16}$ to channel subsets
+        selected on calibration/validation data.
+      & Uses condition labels that are unavailable during deployment. \\
+    Scalar-objective PPO configurations
+      & Retrain the same PPO architecture and constraints with AoI or a bounded diagonal uncertainty proxy as the reward.
+      & Matched PPO training configurations with different scalar objectives; objective-dependent advantages also change the PPO surrogate, critic targets, and behavior cloning weights. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

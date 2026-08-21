@@ -1,0 +1,60 @@
+{
+  "run_dir": "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41",
+  "rollout_files": [
+    "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41/rollout_aoi.npz",
+    "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41/rollout_custom_ppo.npz",
+    "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41/rollout_feasible_static_projected.npz",
+    "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41/rollout_full_open_unconstrained.npz",
+    "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41/rollout_random.npz",
+    "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41/rollout_round_robin.npz",
+    "reports/v31_static_break_duty_pilot/v7_b0p75_particle_lambda1p2_awbc0p05s16_cov_dfb2p5_prior1p0_kl0p1_ent0p003_evalfix_seed41/rollout_validation_selected_static.npz"
+  ],
+  "per_step_budget": 0.75,
+  "startup_peak_budget": 1.6,
+  "dtw_window": 50,
+  "target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "target_weights": [
+    0.05,
+    0.05,
+    0.15,
+    0.02,
+    0.02,
+    0.0,
+    16.0,
+    6.0,
+    6.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "forecast_target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "primary_metric": "forecast_weighted_mae_overall"
+}

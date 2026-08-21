@@ -1,0 +1,1820 @@
+[
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 2,
+    "text": "1. Introduction"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 4,
+    "text": "1. a forecasting objective for sensor scheduling in systems with a mandatory"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 4,
+    "text": "2. a masked PPO implementation for the forecast scheduling problem that enforces"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 4,
+    "text": "3. an evaluation protocol combining chronological separation, fixed mask replay, a"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 5,
+    "text": "2. Background and Related Work"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 5,
+    "text": "2.1. Resource-constrained sensing"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 5,
+    "text": "2.2. Adaptive sensing and learning-based scheduling"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 6,
+    "text": "Table 1. Position of this work relative to nearby scheduling and sensing literatures."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 7,
+    "text": "2.3. Forecasting models as schedule evaluators"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 7,
+    "text": "2.4. Antarctic blowing-snow monitoring"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 8,
+    "text": "3. Problem Formulation"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 8,
+    "text": "3.1. Forecast objective for sensor scheduling"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 9,
+    "text": "Table 2. Notation used for the scheduling formulation and PPO objective."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 10,
+    "text": "3.2. When changing specialists can help"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 12,
+    "text": "0.906 for particle, flux, and thermal regimes, respectively, while the event label"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 12,
+    "text": "0.968, 0.747, and 0.797. The event label replay strictly improves over the fixed"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 12,
+    "text": "3.3. Forecast loss and macro scoring across regimes"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 13,
+    "text": "3.4. Why forecast loss is not an AoI or covariance proxy"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 14,
+    "text": "0.123 and 0.109 normalised units, are large relative to the particle gap of 0.025,"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 15,
+    "text": "4. PD-PPO Scheduler and Evaluation Protocol"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 15,
+    "text": "Figure 1. Forecasting reward scheduling framework. Forecaster fitting, policy training, static-"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 15,
+    "text": "4.1. State, action, and feasibility masking"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 16,
+    "text": "Table 3 is the executable action surface used by both the learned scheduler and"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 16,
+    "text": "Table 3. Feasible action masks in the final single specialist benchmark."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 16,
+    "text": "0.25"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 16,
+    "text": "0.33"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 16,
+    "text": "0.43"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 16,
+    "text": "0.74"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 16,
+    "text": "0.74"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 16,
+    "text": "0.74"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 16,
+    "text": "4.2. Fixed evaluation forecaster and training reward"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 18,
+    "text": "Table 4 separates quantities available to the online scheduler from labels and"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 18,
+    "text": "Table 4. Online observability audit for scheduler inputs and diagnostics."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 19,
+    "text": "0.05. It is fitted on the forecaster training partition before policy learning. Input"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 19,
+    "text": "4.3. PPO objective"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 20,
+    "text": "4.4. Chronological separation and comparison references"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 21,
+    "text": "Table 5. PD-PPO training hyperparameters for the final benchmark."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 21,
+    "text": "0.0003 / 0.99 / 0.95"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 21,
+    "text": "0.2 / 0.0075 / 0.5"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 21,
+    "text": "2.5 / 5.0; guide prior not used"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 21,
+    "text": "Figure 2. Chronological split used by the benchmark. Forecaster fitting, policy learning, static"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 22,
+    "text": "Table 6 fixes the role of each comparator before the results section: fixed"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 22,
+    "text": "Table 6. Comparison references used in the evaluation."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 23,
+    "text": "5. Simulation and Evaluation Setup"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 23,
+    "text": "5.1. Benchmark sensing system"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 23,
+    "text": "5.2. Truth-sequence generation"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 24,
+    "text": "Figure 3. Author-rendered AWS platform used to motivate the benchmark sensing system. The"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 25,
+    "text": "Table 7. Logical channels and normalised scheduling costs."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 25,
+    "text": "0.25 0.30"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 25,
+    "text": "0.08 0.10"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 25,
+    "text": "0.18 0.22"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 25,
+    "text": "0.49 0.62"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 25,
+    "text": "0.49 0.62"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 25,
+    "text": "0.49 0.62"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 26,
+    "text": "B. These checks document the simulation construction and remain separate from"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 26,
+    "text": "5.3. Metrics, seeds, and statistical summaries"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 27,
+    "text": "Table 8. Main evaluation protocol parameters for the final benchmark."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.75 / 0.95"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.68"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 27,
+    "text": "Table 9. Validation-selected fixed mask references over the final seeds."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.899"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.74"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.859"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.74"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.905"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 27,
+    "text": "0.74"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 28,
+    "text": "5.4. Behavioural checks"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 28,
+    "text": "6. Results"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 29,
+    "text": "6.1. Main held-out comparisons"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 29,
+    "text": "Table 10 and Figure 4 show the final held-out aggregate. PD-PPO reduces"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 29,
+    "text": "6.2. Event type decomposition and diagnostic replay"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 29,
+    "text": "Table 11 is the bridge from the aggregate result to the regime mechanism: it"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 29,
+    "text": "Table 11 and Figure 5 explain how the macro result is obtained. Particle"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 30,
+    "text": "Table 10. Final 24-seed evidence for the macro score across regimes."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.1494"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.1060"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.0841"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.0884"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.0710"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.0673"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.0773"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.0726"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "0.0285"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 30,
+    "text": "Appendix E."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.02"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.04"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.06"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.08"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.10"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.12"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.0024-0.0036"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.1"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.3"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.4"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 31,
+    "text": "Figure 4. Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 31,
+    "text": "Table 11. Event type diagnostic loss decomposition on final test rollouts."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.968 ± 0.010 0.993 ± 0.009 1.005 ± 0.003"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.025 ± 0.006"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.747 ± 0.009 0.870 ± 0.029 0.970 ± 0.004"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.123 ± 0.032"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.797 ± 0.016 0.906 ± 0.029 0.946 ± 0.014"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.109 ± 0.026"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 31,
+    "text": "0.086 ± 0.006"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.54"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.18"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.18"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.11"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.98"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.01"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.01"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.98"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.98"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.02"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.1"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.3"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.4"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.4"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.6"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "0.8"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 32,
+    "text": "1.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 32,
+    "text": "Figure 5. Event type diagnostics for the final benchmark. Panel A is the primary specialist selection"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 33,
+    "text": "6.3. Behavioural diagnostics"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 33,
+    "text": "Figure 6 rules out the two main behavioural shortcuts. The learned traces"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 33,
+    "text": "6.4. Mechanism ablation"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 33,
+    "text": "Table 12 reports the confirmatory ablation summary. The table is the main"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.5"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "1.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "1.5"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "2.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.54"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.18"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.18"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.11"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.98"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.01"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.01"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.98"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.98"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.02"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.4"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.6"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "0.8"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 34,
+    "text": "1.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 34,
+    "text": "Figure 6. Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 34,
+    "text": "Figure 5 Panel A, alongside the scalar diagnostics. The repetition co-locates the visual selection"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 35,
+    "text": "Table 12. Mechanism ablation over 24 seeds with continuous macro margins."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0710"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0673"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0689"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0753"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0665"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0713"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0703"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 35,
+    "text": "0.0711"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 36,
+    "text": "Table 12 and the supplementary distribution plot in Figure C.8 report the"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "6.5. Robustness checks"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 36,
+    "text": "Table 13 is the bounded generalisation check: it repeats the full protocol under"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 36,
+    "text": "Table 13. Sensitivity checks under changed event mixtures."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "0.40/0.20/0.40"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "0.149 / 0.106"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "0.084 / 0.088"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "0.169 / 0.102"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "0.094 / 0.094"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "0.092 / 0.102"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 36,
+    "text": "0.088 / 0.098"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 36,
+    "text": "Table 13 reports two changed mixture sensitivity checks. The full training and"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 37,
+    "text": "7. Discussion"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 37,
+    "text": "7.1. What the result establishes"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 38,
+    "text": "7.2. Why the protocol is part of the contribution"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 39,
+    "text": "7.3. Role of the auxiliary training signals"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 39,
+    "text": "7.4. Limitations and next steps"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 40,
+    "text": "8. Conclusion"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 41,
+    "text": "Appendix A. Supplementary Theoretical Details"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 41,
+    "text": "Appendix A.1. Proof of Proposition 2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 42,
+    "text": "Appendix A.2. Proof of Proposition 1"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 43,
+    "text": "Appendix A.3. Scheduling from state evidence and simple cycles"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 43,
+    "text": "Appendix A.4. Relation to Static Subset Allocation"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 44,
+    "text": "Appendix A.5. Optional guide prior regulariser"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "Appendix B. Generator Validation Checks"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 45,
+    "text": "Table B.14 and Figure B.7 report the generator-family validation checks used to"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 45,
+    "text": "Table B.14. Generator-family validation checks used to bound the benchmark domain."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "0.048"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "0.065"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "0.539"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "0.0146"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "18.0 h"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "2.966"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "2.5–3.5"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 45,
+    "text": "0.0419"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.01"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.02"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.03"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.05"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.10"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.15"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "2.5"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "5.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "7.5"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "10.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "12.5"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.25"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.50"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.75"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "1.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.25"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.50"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.75"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "1.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.1"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 46,
+    "text": "0.3"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 46,
+    "text": "Figure B.7. Statistical checks for the generated truth-sequence family, covering scalar distributions,"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "Appendix C. Mechanism Ablation Distribution"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.000"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.025"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.050"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.075"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.100"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.125"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.02"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 47,
+    "text": "0.04"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 47,
+    "text": "Figure C.8. Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "Appendix D. Training Diagnostics"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.4"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.6"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.8"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "1.0"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "1.2"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "1.4"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "1.6"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "1.8"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.75"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.80"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.85"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.90"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "0.95"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 48,
+    "text": "1.00"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 48,
+    "text": "Figure D.9. PPO training diagnostics over the 24 final benchmark seeds and the 24 no-imitation"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "Appendix E. Fixed mask reference selection"
+  },
+  {
+    "source": "pdf-native",
+    "role": "caption-or-table-title",
+    "page": 49,
+    "text": "Table E.15. Per-seed validation-selected fixed mask reference."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.907"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.892"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.928"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.820"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.804"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.873"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.901"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.915"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.859"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.825"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.844"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.940"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.905"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.930"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.847"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.892"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.926"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.880"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.887"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.888"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.904"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.821"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.933"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 49,
+    "text": "0.905"
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 53,
+    "text": "0326."
+  },
+  {
+    "source": "pdf-native",
+    "role": "heading-or-numbered-line",
+    "page": 54,
+    "text": "1698. URL: http://dx.doi.org/10.1016/j.automatica.2011.02.037,"
+  }
+]

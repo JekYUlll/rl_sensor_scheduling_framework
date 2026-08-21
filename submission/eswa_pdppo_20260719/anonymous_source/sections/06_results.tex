@@ -1,0 +1,216 @@
+\section{Results}
+\label{sec:results}
+
+The evaluation covers forecast accuracy and the executed schedules that produce
+it. Mean forecast loss and macro-averaged normalized forecast loss are co-primary
+endpoints. The validation-selected fixed-schedule baseline is the structural
+primary comparator, and the warning-rule baseline is the practical adaptive
+comparator. Scalar-objective and algorithm comparisons concern complete training
+configurations rather than isolated components.
+
+\subsection{Forecasting performance on event-balanced evaluation windows}
+\label{sec:main_result}
+
+\Cref{tab:clean_main_comparisons} reports the primary paired analysis for the 22
+post-selection evaluation seeds (119--140). The complete PD-PPO training
+configuration has lower mean forecast loss and lower
+macro-averaged normalized forecast loss than the validation-selected
+fixed-schedule baseline in all 22 seeds. Mean forecast
+loss decreases from 1.5744 to 1.4073, a relative reduction of 10.6\%. The
+macro-averaged loss decreases from 1.0440 to 0.9602, a relative reduction of
+8.0\%. The mean paired differences against the fixed-schedule baseline are +0.1671 for
+mean forecast loss and +0.0838 for the macro-averaged loss, with 95\%
+percentile bootstrap confidence intervals for the mean paired differences that
+remain above zero. The exact one-sided sign test probability for a direction
+fixed as lower loss, conditional on 22 independent signs under a 0.5 null, is
+$2.38\times10^{-7}$ for either co-primary endpoint.
+
+Seeds 117 and 118 supplied selected test-window metrics for a two-variant pilot
+architecture comparison, after which the selected configuration was frozen.
+They are excluded from the primary analysis. Supplementary Table S12 retains the
+24-seed descriptive aggregate, including the 10.1\% and 7.9\% reductions, without
+assigning it post-selection inferential status.
+The PD-PPO scheduler also has lower values of both losses than the AoI-priority,
+round-robin, and random-feasible baselines in all 22 seeds.
+
+\input{tables/clean_main_comparisons}
+
+The eight separately reset 512-step windows are constructed from test truth to
+balance particle, flux, and thermal coverage and emphasize transport intensity.
+The resulting event-balanced evaluation windows do not represent the natural
+test distribution.
+Supplementary Table S7 tests whether that
+sampling rule drives the result by evaluating the same final policy checkpoints
+and the fixed channel subsets selected on the calibration/validation partition once
+over all 5,242 scoreable test time steps in each continuous test partition. The
+PD-PPO scheduler again has lower mean forecast loss and lower macro-averaged loss
+in all 22 seeds. The mean paired differences are +0.1347 for mean forecast loss and +0.0836 for the
+macro-averaged loss, and both 95\% percentile bootstrap confidence intervals for
+the mean paired differences remain above zero. The
+observed paired advantage therefore extends beyond the windows emphasizing transport periods
+used for the primary balanced comparison.
+\Cref{fig:clean_main_evidence} summarizes the seed-level paired differences for
+the main comparison with the fixed-schedule baseline and the additional baselines.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figure_clean_main_evidence.pdf}
+  \caption{Seed-level paired differences over 22 post-selection evaluation seeds. Panel A
+  compares PD-PPO with the fixed-schedule baseline. Panel B compares the
+  AoI-priority, round-robin, and random-feasible baselines and the privileged
+  one-step look-ahead reference using next-step test targets.
+  Panel C compares the warning-rule and privileged true-label baselines and the Double DQN
+  training configuration.
+  Positive values mean that the baseline has higher loss than PD-PPO.}
+  \label{fig:clean_main_evidence}
+\end{figure}
+
+\subsection{Channel activation across operating conditions}
+\label{sec:regime_allocation}
+
+The aggregate gain is distributed across all three forecast event types
+(\Cref{tab:clean_regime_decomposition}). Mean paired differences are positive
+for particle, flux, and thermal event types, and each 95\% percentile bootstrap
+confidence interval for the mean paired difference remains above zero. The
+PD-PPO scheduler has lower loss in 18 of 22 particle comparisons, 12 of 22
+flux comparisons, and 15 of 22 thermal comparisons. Equal weighting combines
+the three distinct specialist-channel requirements and yields lower
+macro-averaged loss in all 22 seeds.
+
+\input{tables/clean_regime_decomposition}
+
+\Cref{fig:clean_mechanism} compares optional-channel activation by PD-PPO and the
+validation-selected fixed-schedule baseline. The laser disdrometer channel is active for
+99.2\% of particle-event steps, the FC4 snow mass-flux channel for 97.8\% of
+flux-event steps, and the infrared snow-surface-temperature channel for 99.7\% of
+thermal-event steps. Calm periods use a mixture of the four optional channels with
+nonzero test activation frequency. Calibration/validation selects the FC4 snow
+mass-flux channel in 11 seeds, the infrared snow-surface-temperature channel in
+nine, and the laser disdrometer channel in two, after which the selected subset
+remains fixed on the test partition.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{figure_clean_mechanism.pdf}
+  \caption{Optional-channel activation by operating condition. Panel A shows the
+  shielded temperature--humidity, infrared snow-surface-temperature, laser
+  disdrometer, and FC4 snow mass-flux channels. Panel B shows the fixed channels
+  selected on the calibration/validation partition. Panel C reports executed-action
+  entropy, condition--executed-action mutual information, and mean normalized
+  Hamming distance between adjacent executed masks.}
+  \label{fig:clean_mechanism}
+\end{figure}
+
+All 22 executed-action sequences pass the behavior-complexity gate; none is
+fixed-like or simple-cycle-like under its prespecified criteria. Mean
+executed-action entropy is 1.872 bits, and mean condition--executed-action mutual
+information is 0.632 bits. The mean normalized Hamming distance between adjacent
+executed masks is 0.00369. The meteorological core channel remains active by
+construction, while the executed schedules do not activate the basic radiometer
+channel in the selected test windows. At least three of the four active optional
+channels have intermediate channel activation frequency in every seed; all four
+do so in 21 of 22 seeds.
+No channel was deactivated before completing warm-up because $D_{\min}=6$
+exceeds the maximum two-step warm-up. Executed channel changes occur mainly when
+the operating condition changes.
+The gate's fixed-like and simple-cycle-like criteria exclude fixed schedules and
+simple cycles. These behavior diagnostics concatenate the
+eight separately reset windows and include the seven reset boundaries; they are
+descriptive diagnostics, not a primary performance endpoint.
+
+\subsection{Scalar-objective and training-configuration comparisons}
+\label{sec:objective_learner_controls}
+
+The AoI-objective and uncertainty-objective PPO configurations retain the PPO
+architecture, scheduler input, feasible-action mask, supervised target actions
+used only during training, auxiliary future-condition classifier, chronological
+partitions, and frozen primary forecaster, but use AoI or a bounded diagonal
+uncertainty proxy as the scalar rollout objective. Because each objective supplies its own advantages,
+the comparison also changes the PPO surrogate, value target, and
+advantage-weighted behavior cloning weights. \Cref{tab:clean_learning_controls}
+reports the paired differences from PD-PPO. The mean macro-averaged loss
+difference is +0.0015 for the AoI configuration, with lower loss for the
+forecast-loss-objective configuration in 12 of 22 seeds, and +0.0013 for the
+uncertainty configuration, with lower loss in 12 of 22 seeds. For both
+alternative configurations, both 95\% bootstrap confidence intervals for the
+paired difference in macro-averaged loss and mean forecast loss include zero.
+These comparisons establish neither a population-level directional difference
+nor equivalence among scalar objectives. All three matched PPO configurations
+nevertheless have lower macro-averaged loss than the fixed-schedule baseline in
+all 22 seeds and meet the channel-use acceptance criterion in every seed.
+Warm-up interruption is structurally zero for all
+three configurations because $D_{\min}=6$ exceeds the maximum two-step warm-up.
+
+The Double DQN training configuration uses the same scheduler observation,
+reward based on forecast loss, action set, constraints, policy-training partition, and frozen primary
+forecaster. PD-PPO has lower
+macro-averaged loss in all 22 seeds and lower mean forecast loss in 21 of 22,
+with mean baseline-minus-PD-PPO paired differences of +0.0706 and +0.1423,
+respectively. Double DQN has lower macro-averaged loss than the fixed-schedule baseline
+in 12 of 22 comparisons and meets the channel-use acceptance criterion
+in 5 of 22 seeds; no channel can be deactivated before completing warm-up under
+the reported $D_{\min}$. All test metrics use the same frozen primary forecaster.
+This is a training-configuration comparison on the same scheduling problem,
+because the complete PD-PPO configuration uses behavior cloning pretraining,
+the continuing advantage-weighted behavior cloning term, and the auxiliary
+future-condition classifier; it is not an isolated comparison of
+the PPO and Double DQN update rules.
+
+\input{tables/clean_learning_controls}
+
+\subsection{Baselines using additional information}
+\label{sec:information_references}
+
+The privileged one-step look-ahead reference using next-step test targets uses
+information unavailable during deployment. At each time step it reads next-step targets on
+the test partition and evaluates feasible actions with their next-step forecast
+loss. Its one-step scoring does not account for the longer-term consequences of
+the minimum dwell-time constraint, warm-up, and observation age. The PD-PPO scheduler
+has lower mean forecast loss and lower macro-averaged normalized forecast loss
+in all 22 seeds
+(\Cref{tab:clean_main_comparisons}). For this reference, the mean normalized
+Hamming distance between adjacent executed masks is 0.0280. Despite
+access to next-step forecast loss, it has higher mean forecast loss and higher
+macro-averaged normalized forecast loss in every seed, and its executed activation indicators change approximately 7.6 times as often as those of
+PD-PPO.
+
+The warning-rule baseline maps simulated warning signals to proposed actions.
+The privileged true-label baseline uses the exact sequence $c_t,\ldots,c_{t+16}$
+and a condition-to-action mapping selected on the calibration/validation
+partition. These condition labels are unavailable during deployment.
+Their mean macro-averaged loss differences from PD-PPO are
++0.0011 and +0.0017, respectively. For both baselines, the 95\% percentile
+bootstrap confidence intervals for the mean paired differences include zero
+for macro-averaged loss and mean forecast loss. These intervals establish neither
+a population-level directional difference nor equivalence. The true-label baseline is neither
+deployable nor an upper bound on feasible sequential control.
+
+\subsection{Alternative-forecaster analysis}
+\label{sec:secondary_forecaster}
+
+The alternative-forecaster analysis evaluates the test observation sequences
+with a ridge forecaster. Fixed-schedule selection was repeated on the
+calibration/validation partition before test evaluation. PD-PPO has lower
+macro-averaged loss than the primary-forecaster fixed-schedule baseline in all 22
+comparisons and than the ridge-forecaster fixed-schedule baseline in 21 of 22
+(Supplementary Table S8).
+The mean paired difference against the fixed
+schedule selected using the ridge forecaster is +0.1339,
+with a 95\% percentile bootstrap confidence interval for the mean paired
+difference of [+0.1103, +0.1563]. This evaluation changes both
+the forecaster architecture and the validation-selected fixed-schedule baseline without retraining the
+policy.
+\Cref{fig:clean_controls} summarizes the scalar-objective comparisons and the two
+ridge-forecaster comparisons.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{figure_clean_controls.pdf}
+  \caption{Scalar-objective training-configuration comparisons and
+  alternative-forecaster analysis over 22 post-selection seeds. Panel
+  A compares matched PPO configurations with different scalar objectives. Panel B gives macro-averaged loss differences for the
+  primary-forecaster fixed-schedule baseline and the fixed schedule selected with
+  the ridge forecaster. Positive values mean that the baseline has higher loss than
+  PD-PPO.}
+  \label{fig:clean_controls}
+\end{figure}

@@ -1,0 +1,793 @@
+project: pdppo_strongclaim_autoresearch
+target_journal: "Expert Systems with Applications"
+status: strongclaim_experiment_complete
+last_updated: "2026-06-21T18:40:00+08:00"
+connection_hygiene:
+  last_checked: "2026-06-21T13:08:58+08:00"
+  result: "no executable old UniVPN/aTrust/hardcoded server path found in rl_sensor_scheduling_framework scan; remaining matches are prohibition text or uv.lock version-number false positives"
+remote:
+  ssh_alias: remote-gpu
+  project_dir: "~/_code/microclimate_demo/rl_sensor_scheduling_framework"
+  conda_env: darts
+active_goal:
+  objective: "24h autonomous PD-PPO strong-claim exploration"
+  runtime_clarification: "The API goal text still mentions BO-1, but current execution follows the stricter PD-PPO/SCENEBAL-1 goal here and in the active plan: forecast-best, non-fixed, non-cyclic PPO with per-direction 10-unit anti-stall pivots."
+  success_condition:
+    - "Learned scheduler is forecast-optimal under tested protocol"
+    - "Behaviour audit rejects fixed sensors and simple cycles"
+    - "Evidence supports the strongest defensible ESWA claim"
+  hard_constraint: "use only remote-gpu"
+  algorithm_constraint: "PPO remains the final learned scheduler; do not replace it with another RL algorithm"
+  sensor_constraint: "Preserve the current microclimate sensing setup as the baseline; only moderate, explainable simulated sensor-config variants are allowed"
+  anti_stall_rule:
+    scope: "per modification direction"
+    max_units_without_effective_improvement: 10
+    unit_definition: "complete seed wave, locked pilot, diagnostic branch, or another bounded experiment unit with aggregate evidence and a keep/pivot decision"
+    pivot_layers:
+      - "scene/simulator regime and data generation"
+      - "teacher/oracle and imitation construction"
+      - "PPO observation, auxiliary heads, memory, or policy architecture"
+      - "reward shaping and evaluation/replay protocol"
+      - "moderate sensor/noise calibration consistent with the existing sensing setup"
+active_runs:
+  bo24_runner:
+    tmux_session: bo24_autonomy_20260621
+    branch: v31_metpair_backbone_context_ortholinear_balancedobjective
+    status: stopped_after_41_90
+    wave_active: "none"
+    wave_status: "41-90 aggregate supports statistical but not zero-failure strong claim; stopped same-config expansion"
+    local_watcher: bo24_local_watch_20260621
+    local_status_file: reports/aggregate/bo24_local_watch_20260621_status.md
+  autoteacher_pilot:
+    tmux_session: autoteacher_pilot_parallel_83_92_20260621
+    branch: v31_metpair_backbone_context_ortholinear_balancedobjective_autoteacher
+    seeds: "83,84,86,87,91,92"
+    status: complete_failed
+    modification_direction: "teacher/PPO behavior robustness via subtype_static_auto AWBC teacher"
+  router_sweep:
+    tmux_session: autoteacher_router_sweep_83_92_20260621
+    status: complete_failed
+    seeds: "83,84,86,87,91,92"
+    labels: "conf00,conf05"
+    modification_direction: "deployment router threshold and aligned metrics/behavior collection"
+  behaviorreg_pilot:
+    tmux_session: behaviorreg_pilot_parallel_83_92_20260621
+    status: complete_failed
+    seeds: "83,84,86,87,91,92"
+    modification_direction: "mild duty-balance and duty-score feedback in PPO training"
+    local_watcher: behaviorreg_pilot_local_watch_20260621
+    local_status_file: reports/aggregate/behaviorreg_pilot_local_watch_20260621_status.md
+    latest_remote_status: "complete; all six seeds produced oracle, PPO, eval, replay and behavior artifacts"
+  next_deep_pivot:
+    status: running
+    modification_direction: "observable regime-belief PPO state/architecture path"
+    rationale: "BD-1 action CE/margin was active but failed: step 2/6, macro 4/6, behavior 4/6"
+  behaviorbd_pilot:
+    tmux_session: behaviorbd_pilot_parallel_83_92_20260621
+    local_watcher: behaviorbd_pilot_local_watch_20260621
+    seeds: "83,84,86,87,91,92"
+    status: complete_failed
+    modification_direction: "advantage-independent subtype action CE/margin loss in PPO"
+    latest_remote_status: "complete; old step 2/6, old macro 4/6, behavior 4/6; do not expand"
+  behaviorbrg_pilot:
+    tmux_session: behaviorbrg_pilot_parallel_83_92_20260621
+    local_watcher: behaviorbrg_pilot_local_watch_20260621
+    seeds: "83,84,86,87,91,92"
+    status: complete_partial
+    modification_direction: "observable regime belief plus subtype auxiliary head/router in PPO"
+    rationale: "BD-1 shows direct action regularization is insufficient; the actor needs a stronger deployable regime representation"
+    latest_remote_status: "complete; old step 3/6, old macro 5/6, behavior 5/6; effective improvement but not breakthrough"
+  behaviorbrg2_pilot:
+    tmux_session: behaviorbrg2_pilot_parallel_83_92_20260621
+    local_watcher: behaviorbrg2_pilot_local_watch_20260621
+    seeds: "83,84,86,87,91,92"
+    status: complete_improved
+    modification_direction: "BRG follow-up with matched raw/eval router confidence and higher entropy"
+    rationale: "BRG-1 shows router-eval fixes seed87 behavior but raw deployment still fails; step remains bounded on seed83/92"
+    latest_remote_status: "complete; old step 5/6, subtype-aware macro/behavior 6/6, replay 6/6; seed92 remains learned step-negative"
+  behaviorbrg3_pilot:
+    tmux_session: behaviorbrg3_pilot_parallel_83_92_20260621
+    local_watcher: behaviorbrg3_pilot_local_watch_20260621
+    seeds: "83,84,86,87,91,92"
+    status: complete_failed
+    modification_direction: "BRG plus moderate action-fidelity signal"
+    rationale: "BRG-2 proves explicit replay and subtype-aware behavior headroom on 6/6, but learned PPO misses seed92 selected-static step loss"
+    latest_remote_status: "complete; old step 3/6, macro/behavior 6/6; action-fidelity worsened step and should not be retried"
+  next_temporal_pivot:
+    tmux_session: temporal1_pilot_parallel_83_92_20260621
+    local_watcher: temporal1_pilot_local_watch_20260621
+    seeds: "83,84,86,87,91,92"
+    status: complete_breakthrough_pilot
+    modification_direction: "temporal/lead-aware PPO or reward-credit modification"
+    rationale: "BRG-3 rules out direct action CE/margin; seed92 explicit replay headroom is lead-based but learned PPO does not realize it"
+    latest_remote_status: "complete; old step 6/6, behavior 6/6, replay 6/6, raw macro 6/6; fresh-seed expansion required"
+  temporal1_expansion_93_98:
+    tmux_session: temporal1_pilot_parallel_93_98_20260621
+    local_watcher: temporal1_pilot_local_watch_93_98_20260621
+    seeds: "93,94,95,96,97,98"
+    status: complete_mixed
+    modification_direction: "fresh-seed TEMPORAL-1 expansion"
+    rationale: "TEMPORAL-1 repairs hard/control seeds but needs fresh-seed validation before strong claim"
+    latest_remote_status: "complete; old step 4/6, macro/behavior 6/6, replay step 5/6, replay macro 6/6; not enough for zero-failure step claim"
+  temporal1_wide_replay_diag_95_97:
+    tmux_session: temporal1_wide_replay_diag_95_97_20260621
+    seeds: "95,96,97"
+    status: complete_diagnostic
+    modification_direction: "TEMPORAL-1 failure-mode diagnosis with wider lead/dwell explicit replay"
+    rationale: "Seed95 default explicit replay fails step; seed96/97 show learned-vs-true-static boundary failures despite replay headroom"
+    latest_remote_status: "complete; seed95 remains replay-negative, seeds96/97 replay-positive"
+  scenebal1_pilot:
+    tmux_session: scenebal1_pilot_parallel_93_94_95_96_97_98_20260621
+    local_watcher: scenebal1_pilot_local_watch_93_94_95_96_97_98_20260621
+    final_collect_watcher: scenebal1_wait_collect_93_98_20260621
+    seeds: "93,94,95,96,97,98"
+    status: complete_breakthrough_pilot
+    modification_direction: "simulator/target-generation rebalancing to break met+fc4 step shortcut"
+    rationale: "TEMPORAL-1 seed95 still lacks dynamic step headroom under wide explicit replay; next layer must change objective/data generation while preserving PPO and met+specialist sensor baseline"
+    latest_remote_status: "complete; old operational step 6/6, macro 6/6, behavior 6/6, replay 6/6; learned true-static step 5/6 and macro 3/6 remain boundary"
+    protocol_fix:
+      timestamp: "2026-06-21T10:38:15+08:00"
+      issue: "seed93 validation static-selection windows contained no flux subtype, so staticnorm_subtype could not derive a finite flux normalizer"
+      fix: "scripts/25_v2_train_custom_ppo.py now supplements missing subtype normalizers from subtype-positive windows in the normalization split and writes reward_staticnorm_normalizers.json"
+      evidence_files:
+        - "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal1_seed93_h075ctxolscbal1_20260621/reward_staticnorm_normalizers.json"
+        - "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal1_seed93_h075ctxolscbal1_20260621/reward_staticnorm_fallback_candidates.csv"
+  scenebal1_expansion_99_104:
+    tmux_session: scenebal1_expansion_parallel_99_100_101_102_103_104_20260621
+    seeds: "99,100,101,102,103,104"
+    status: complete_breakthrough_expansion
+    modification_direction: "fresh-seed SCENEBAL-1 expansion"
+    rationale: "SCENEBAL-1 93-98 is the first 6/6 operational step+macro+behavior+replay result; expand fresh seeds before upgrading claim strength"
+    latest_remote_status: "complete; old operational step 6/6, macro 6/6, behavior 6/6, replay 6/6; learned true-static step 6/6 and macro 2/6"
+  scenebal1_expansion_105_110:
+    tmux_session: scenebal1_expansion_parallel_105_106_107_108_109_110_20260621
+    seeds: "105,106,107,108,109,110"
+    status: complete_breakthrough_expansion
+    modification_direction: "fresh-seed SCENEBAL-1 expansion"
+    rationale: "SCENEBAL-1 is now strong over 12 seeds; continue expansion to stress-test the zero-failure operational claim"
+    latest_remote_status: "verified complete on remote-gpu; old operational step 6/6, macro 6/6, behavior 6/6, replay step/macro 6/6; learned true-static step 6/6 and macro 2/6"
+  scenebal1_waitfree_111_116:
+    tmux_session: scenebal1_waitfree_111_116_20260621
+    local_watcher: scenebal1_watch_111_116_20260621
+    postcollect_watcher: scenebal1_postcollect_93_116_20260621
+    local_status_file: reports/aggregate/scenebal1_pilot_111_112_113_114_115_116_local_watch_20260621_status.md
+    postcollect_status_file: reports/aggregate/scenebal1_24seed_93_116_postcollect_status_20260621.md
+    seeds: "111,112,113,114,115,116"
+    status: complete
+    modification_direction: "fresh-seed SCENEBAL-1 robustness stress test"
+    rationale: "18-seed evidence is already strong; this wave is stress testing only and launches automatically only when all six GPUs are idle"
+    latest_remote_status: "complete as of 2026-06-21T14:29:23+08:00; seeds111-116 artifact bits 111111, 24-seed aggregate/decision audit/next-action protocol generated on remote-gpu and synced locally"
+  scenebal1_router_conf05_reaudit:
+    tmux_session: scenebal1_router_conf05_reaudit_20260621
+    seeds: "93--116"
+    status: complete_breakthrough
+    modification_direction: "evaluation/deployment router-threshold calibration for strict true-static step margin"
+    rationale: "seed95 has explicit dynamic replay headroom but original learned PPO router threshold realizes only a thin true-static step margin; seed95 eval-only scan found router confidence 0.5 improves loss enough to potentially pass the pre-existing strict-margin gate, so this bounded unit applies the same threshold uniformly across all 24 seeds and reruns behavior/aggregate gates"
+    script: "scripts/run_v31_scenebal1_router_conf05_reaudit_20260621.sh"
+    local_diagnostic: "reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal1_seed95_h075ctxolscbal1_20260621/seed95_router_threshold_scan_20260621.csv"
+    acceptance: "strict-margin true-static step 24/24, operational/macro/replay/behavior gates preserved, no fixed-like or simple-cycle behavior"
+    latest_remote_status: "complete and synced; decision=upgrade_allseed_strict; all operational, replay, behavior, true-static macro, true-static step sign, and strict-margin true-static step gates are 24/24; min strict true-static step margin=0.004242"
+    aggregate_outputs:
+      decision_json: "reports/aggregate/scenebal1_24seed_93_116_router_conf05_decision_audit_20260621.json"
+      decision_md: "reports/aggregate/scenebal1_24seed_93_116_router_conf05_decision_audit_20260621.md"
+      oldclaim_dir: "reports/aggregate/scenebal1_24seed_93_116_router_conf05_oldclaim_20260621"
+      macro_dir: "reports/aggregate/scenebal1_24seed_93_116_router_conf05_macro_20260621"
+      paper_claim_mapping: "reports/aggregate/scenebal1_24seed_93_116_router_conf05_paper_claim_mapping_20260621.md"
+      breakthrough_report: "reports/aggregate/scenebal1_24seed_93_116_router_conf05_breakthrough_report_20260621.md"
+  scenebal1_prefixed_conf05_confirmation_117_122:
+    tmux_session: scenebal1_prefixed_conf05_117_122_20260621
+    seeds: "117--122"
+    status: complete_pivot
+    modification_direction: "fresh-seed confirmation of the now-fixed router-conf0.5 deployment protocol"
+    rationale: "The 24-seed all-strict upgrade was discovered by diagnosing seed95 and applying one threshold uniformly posthoc; a new seed wave with router_conf=0.5 fixed before launch is the strongest non-blind confirmation step."
+    script: "scripts/run_v31_scenebal1_prefixed_conf05_confirm_117_122_20260621.sh"
+    acceptance: "decision audit upgrade_allseed_strict or at least all operational/replay/behavior/true-static macro gates clean; any major failure triggers pivot away from threshold tuning"
+    latest_remote_status: "complete and synced; decision=pivot_true_static_step_sign_failure; operational step/macro, replay step/macro, behavior, true-static macro, and old-claim step/macro gates are 6/6, but true-static step sign and strict-margin gates are 5/6 because seed122 loses to replay-local true fixed static"
+    failure_seed: 122
+    failure_mechanism: "seed122 learned PPO under-realizes available explicit replay headroom; replay and macro gates pass, behavior is non-fixed/non-cyclic, but true fixed static met_station_core|fc4_flux wins the ordinary step objective"
+    aggregate_outputs:
+      decision_json: "reports/aggregate/scenebal1_prefixed_conf05_117_118_119_120_121_122_decision_audit_20260621.json"
+      decision_md: "reports/aggregate/scenebal1_prefixed_conf05_117_118_119_120_121_122_decision_audit_20260621.md"
+      pivot_report: "reports/aggregate/scenebal1_prefixed_conf05_117_122_pivot_report_20260621.md"
+      oldclaim_dir: "reports/aggregate/scenebal1_prefixed_conf05_117_118_119_120_121_122_oldclaim_20260621"
+      macro_dir: "reports/aggregate/scenebal1_prefixed_conf05_117_118_119_120_121_122_macro_20260621"
+  scenebal2_pivot_122_117:
+    tmux_session: scenebal2_pivot_122_117_20260621
+    seeds: "122,117"
+    status: complete_breakthrough_pilot
+    modification_direction: "SCENEBAL-2 simulator/data-balance pivot after pre-fixed router-conf0.5 seed122 true-static step sign failure"
+    rationale: "Continue the user-mandated deeper exploration instead of threshold tuning: preserve PPO and met+one-specialist geometry, adjust simulator/data balance to remove the met_station_core|fc4_flux true-static ordinary-step shortcut while retaining dynamic replay headroom."
+    scripts:
+      - "scripts/run_v31_scenebal2_seed_sweep_20260621.sh"
+      - "scripts/run_v31_scenebal2_pivot_pilot_117_122_20260621.sh"
+    acceptance: "seed122 recovers true-static step sign while operational, replay, macro, behavior, and non-fixed/non-cyclic gates remain clean; seed117 acts as control. Failure triggers a deeper PPO credit/teacher/architecture pivot, not another router-threshold unit."
+    latest_remote_status: "complete and synced; decision=upgrade_allseed_strict; seed122 recovered true-static step sign/strict margin, seed117 control also passed; operational, replay, behavior, true-static macro, true-static step sign, and strict-margin true-static step gates are 2/2"
+    aggregate_outputs:
+      decision_json: "reports/aggregate/scenebal2_pivot_conf05_122_117_decision_audit_20260621.json"
+      decision_md: "reports/aggregate/scenebal2_pivot_conf05_122_117_decision_audit_20260621.md"
+      pilot_report: "reports/aggregate/scenebal2_pivot_conf05_122_117_pilot_report_20260621.md"
+      oldclaim_dir: "reports/aggregate/scenebal2_pivot_conf05_122_117_oldclaim_20260621"
+      macro_dir: "reports/aggregate/scenebal2_pivot_conf05_122_117_macro_20260621"
+    key_margins:
+      true_static_step_margin_min: 0.0284981032996256
+      true_static_step_margin_seed122: 0.0773864809277711
+      operational_step_margin_min: 0.0442064779217616
+  scenebal2_confirmation_117_122:
+    tmux_session: scenebal2_confirm_117_122_20260621
+    seeds: "117--122"
+    train_missing_seeds: "118,119,120,121"
+    status: complete_breakthrough_confirmation
+    modification_direction: "fresh multi-seed SCENEBAL-2 confirmation after seed122 pilot recovery"
+    rationale: "The 2-seed pilot is a real recovery but not a strong claim; train missing seeds 118--121 and aggregate 117--122 under the same fixed router-conf0.5 protocol before any manuscript claim migration."
+    script: "scripts/run_v31_scenebal2_confirm_117_122_20260621.sh"
+    acceptance: "decision audit upgrade_allseed_strict or at least all operational/replay/behavior/true-static macro gates clean with no true-static step sign failures; any failure triggers ORACLE-2/PPO-REGIME-2 or another non-router pivot according to failure mechanism."
+    latest_remote_status: "complete and synced; decision=upgrade_allseed_strict; operational step/macro, explicit replay step/macro, behavior, true-static macro, true-static step sign, strict-margin true-static step, and old-claim step/macro gates are all 6/6"
+    aggregate_outputs:
+      decision_json: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_decision_audit_20260621.json"
+      decision_md: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_decision_audit_20260621.md"
+      oldclaim_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_oldclaim_20260621"
+      macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_macro_20260621"
+      raw_macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_raw_macro_20260621"
+      paper_fit_audit: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_paper_fit_audit_20260621.md"
+    key_margins:
+      true_static_step_margin_min: 0.0284981032996256
+      true_static_step_margin_median: 0.07191804437707106
+      true_static_step_margin_mean: 0.06891674112690294
+      true_static_step_margin_max: 0.1001438976618371
+      operational_step_margin_min: 0.0442064779217616
+      operational_step_margin_mean: 0.12876196225821931
+    paper_fit_judgment: "more specialized than the broad early framing, but not over-specialized if written as a regime-balanced backbone-plus-one-specialist microclimate benchmark rather than a universal sensor-scheduling theorem"
+  scenebal2_expansion_117_128:
+    tmux_session: scenebal2_expand_117_128_20260621
+    local_watcher: scenebal2_expand_local_watch_20260621
+    seeds: "117--128"
+    train_missing_seeds: "123,124,125,126,127,128"
+    status: complete_breakthrough_confirmation
+    modification_direction: "SCENEBAL-2 expansion from six-seed fresh confirmation to a twelve-seed manuscript-migration candidate"
+    rationale: "The six-seed SCENEBAL-2 confirmation is all-strict but smaller than the existing 24-seed SCENEBAL-1 manuscript result; extend before replacing main paper evidence."
+    script: "scripts/run_v31_scenebal2_expand_117_128_20260621.sh"
+    aggregate_label: "scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128"
+    manuscript_migration_plan: "reports/aggregate/scenebal2_manuscript_migration_patch_plan_20260621.md"
+    prepared_assets:
+      evidence_figure_script: "paper/figures/gen_fig_scenebal_evidence.py"
+      six_seed_smoke_figure_pdf: "paper/figures/figure_scenebal2_6seed_evidence.pdf"
+      six_seed_smoke_figure_png: "paper/figures/figure_scenebal2_6seed_evidence.png"
+      summary_table_script: "scripts/77_v31_write_scenebal_summary_table.py"
+      six_seed_smoke_table: "paper/tables/scenebal2_6seed_staticnorm_macro_summary.tex"
+      twelve_seed_figure_pdf: "paper/figures/figure_scenebal2_12seed_evidence.pdf"
+      twelve_seed_figure_png: "paper/figures/figure_scenebal2_12seed_evidence.png"
+      twelve_seed_table: "paper/tables/scenebal2_12seed_staticnorm_macro_summary.tex"
+    acceptance: "12-seed decision audit upgrade_allseed_strict with operational, replay, behavior, true-static macro, true-static step sign, and strict-margin true-static step gates clean. Failure triggers oracle/PPO credit assignment pivot rather than more scene balancing."
+    latest_remote_status: "complete and synced; decision=upgrade_allseed_strict; operational step/macro, explicit replay step/macro, behavior, true-static macro, true-static step sign, strict-margin true-static step, and old-claim step/macro gates are all 12/12"
+    aggregate_outputs:
+      decision_json: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_decision_audit_20260621.json"
+      decision_md: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_decision_audit_20260621.md"
+      oldclaim_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_oldclaim_20260621"
+      macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_macro_20260621"
+      raw_macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_raw_macro_20260621"
+      breakthrough_report: "reports/aggregate/scenebal2_confirm_conf05_117_128_12seed_breakthrough_report_20260621.md"
+    key_margins:
+      true_static_step_margin_min: 0.0284981032996256
+      true_static_step_margin_median: 0.07486606380541616
+      true_static_step_margin_mean: 0.07391119796812966
+      true_static_step_margin_max: 0.1051445987927763
+      operational_step_margin_min: 0.0442064779217616
+      operational_step_margin_median: 0.0912285565884758
+      operational_step_margin_mean: 0.11265909372389155
+      learned_macro_margin_vs_true_static_reference_mean: 0.06893352508125251
+      explicit_replay_macro_margin_vs_true_static_reference_mean: 0.07404041135351276
+    claim_strength: "12-seed all-strict strong manuscript candidate; not a universal sensor-scheduling theorem"
+    paper_fit_judgment: "more specialized than the original broad framing, but natural if written as a regime-balanced backbone-plus-one-specialist microclimate benchmark"
+  scenebal2_expansion_117_134:
+    tmux_session: scenebal2_expand_117_134_20260621
+    local_watcher: scenebal2_expand_local_watch_117_134_20260621
+    seeds: "117--134"
+    train_missing_seeds: "129,130,131,132,133,134"
+    status: complete_breakthrough_confirmation
+    modification_direction: "SCENEBAL-2 extension from twelve-seed fresh confirmation to an eighteen-seed manuscript-replacement candidate"
+    rationale: "SCENEBAL-2 117--128 is all-strict and paper-natural but has fewer seeds than the existing 24-seed SCENEBAL-1 result; extend to 18 seeds before replacing the main manuscript evidence."
+    script: "scripts/run_v31_scenebal2_expand_117_134_20260621.sh"
+    aggregate_label: "scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134"
+    acceptance: "18-seed decision audit upgrade_allseed_strict with operational, replay, behavior, true-static macro, true-static step sign, and strict-margin true-static step gates clean."
+    latest_remote_status: "complete and synced; decision=upgrade_allseed_strict; operational step/macro, explicit replay step/macro, behavior, true-static macro, true-static step sign, strict-margin true-static step, and old-claim step/macro gates are all 18/18"
+    aggregate_outputs:
+      decision_json: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_decision_audit_20260621.json"
+      decision_md: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_decision_audit_20260621.md"
+      oldclaim_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_oldclaim_20260621"
+      macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_macro_20260621"
+      raw_macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_raw_macro_20260621"
+      breakthrough_report: "reports/aggregate/scenebal2_confirm_conf05_117_134_18seed_breakthrough_report_20260621.md"
+    prepared_assets:
+      eighteen_seed_figure_pdf: "paper/figures/figure_scenebal2_18seed_evidence.pdf"
+      eighteen_seed_figure_png: "paper/figures/figure_scenebal2_18seed_evidence.png"
+      eighteen_seed_table: "paper/tables/scenebal2_18seed_staticnorm_macro_summary.tex"
+    key_margins:
+      true_static_step_margin_min: 0.0284981032996256
+      true_static_step_margin_median: 0.078515523029182
+      true_static_step_margin_mean: 0.07925860958032946
+      true_static_step_margin_max: 0.119145455942089
+      operational_step_margin_min: 0.0314454520184881
+      operational_step_margin_median: 0.1019546449010703
+      operational_step_margin_mean: 0.1365833818776233
+      learned_macro_margin_vs_true_static_reference_mean: 0.07070935948921414
+      explicit_replay_macro_margin_vs_true_static_reference_mean: 0.076546
+    claim_strength: "18-seed all-strict strong manuscript candidate; extend to 24 seeds before replacing the current 24-seed SCENEBAL-1 main result"
+    paper_fit_judgment: "more specialized than the original broad framing, but natural if written as a regime-balanced backbone-plus-one-specialist microclimate benchmark that targets the static-shortcut failure mode"
+  scenebal2_expansion_117_140:
+    tmux_session: scenebal2_expand_117_140_20260621
+    local_watcher: scenebal2_expand_local_watch_117_140_20260621
+    seeds: "117--140"
+    train_missing_seeds: "135,136,137,138,139,140"
+    status: complete_manuscript_replacement_breakthrough
+    modification_direction: "SCENEBAL-2 extension from eighteen-seed fresh confirmation to a twenty-four-seed manuscript-replacement candidate"
+    rationale: "SCENEBAL-2 117--134 is all-strict and better aligned with the paper mechanism than SCENEBAL-1, but the current manuscript already has 24-seed SCENEBAL-1 evidence; extend to 24 seeds before replacing the main result."
+    script: "scripts/run_v31_scenebal2_expand_117_140_20260621.sh"
+    aggregate_label: "scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_135_136_137_138_139_140"
+    acceptance: "24-seed decision audit upgrade_allseed_strict with operational, replay, behavior, true-static macro, true-static step sign, and strict-margin true-static step gates clean. Failure triggers oracle/PPO credit-assignment or simulator mechanism pivot rather than another same-direction seed extension."
+    latest_remote_status: "complete and synced; decision=upgrade_allseed_strict; all operational/replay/behavior/true-static macro/true-static step sign/strict true-static step/old-claim gates are 24/24; all failure lists empty; manuscript migrated to SCENEBAL-2 24-seed and paper/main.pdf rebuilt"
+    aggregate_outputs:
+      decision_json: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_135_136_137_138_139_140_decision_audit_20260621.json"
+      decision_md: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_135_136_137_138_139_140_decision_audit_20260621.md"
+      oldclaim_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_135_136_137_138_139_140_oldclaim_20260621"
+      macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_135_136_137_138_139_140_macro_20260621"
+      raw_macro_dir: "reports/aggregate/scenebal2_confirm_conf05_117_118_119_120_121_122_123_124_125_126_127_128_129_130_131_132_133_134_135_136_137_138_139_140_raw_macro_20260621"
+      breakthrough_report: "reports/aggregate/scenebal2_confirm_conf05_117_140_24seed_breakthrough_report_20260621.md"
+    prepared_assets:
+      twentyfour_seed_figure_pdf: "paper/figures/figure_scenebal2_24seed_evidence.pdf"
+      twentyfour_seed_figure_png: "paper/figures/figure_scenebal2_24seed_evidence.png"
+      twentyfour_seed_table: "paper/tables/scenebal2_24seed_staticnorm_macro_summary.tex"
+      rebuilt_manuscript_pdf: "paper/main.pdf"
+    key_margins:
+      true_static_step_margin_min: 0.0284981032996256
+      true_static_step_margin_median: 0.07742619426983305
+      true_static_step_margin_mean: 0.07690084084785549
+      true_static_step_margin_max: 0.119145455942089
+      operational_step_margin_min: 0.0314454520184881
+      operational_step_margin_median: 0.10601020728631724
+      operational_step_margin_mean: 0.14937873744005017
+      learned_macro_margin_vs_true_static_reference_mean: 0.0709905819344724
+      explicit_replay_macro_margin_vs_true_static_reference_mean: 0.07734514374333584
+    paper_migration:
+      status: complete
+      sources_changed:
+        - "paper/sections/05_simulation_setup.tex"
+        - "paper/sections/06_results.tex"
+      verification: "latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex succeeded; pdftotext confirms SCENEBAL-2, 24/24, seed 117, 0.0285, 0.0710, 0.0773, and seeds 117--140; active sections have no checked SCENEBAL-1/93--116/seed95 stale-result residuals"
+    claim_framing_audit:
+      status: complete
+      report: "reports/aggregate/scenebal2_24seed_claim_framing_audit_20260621.md"
+      supervisor_summary: "reports/aggregate/scenebal2_24seed_supervisor_summary_20260621.md"
+      completion_audit: "reports/aggregate/pdppo_strongclaim_completion_audit_20260621.md"
+      manuscript_sources_changed:
+        - "paper/sections/01_introduction.tex"
+        - "paper/sections/05_simulation_setup.tex"
+      verification: "paper/main.pdf rebuilt successfully; pdftotext confirms the deployment-relevant backbone-plus-specialist abstraction wording and the SCENEBAL-2 24/24 evidence remain present"
+      judgment: "narrower than the original broad scheduling claim, but natural for an ESWA microclimate specialist-budget benchmark; do not present as a universal theorem"
+    claim_strength: "24-seed all-strict manuscript mainline result"
+    paper_fit_judgment: "natural specialist-bottleneck mainline; not a universal sensor-scheduling theorem"
+  scenebal1_24seed_paper_claim_mapping:
+    status: complete
+    timestamp: "2026-06-21T14:36:00+08:00"
+    report: "reports/aggregate/scenebal1_24seed_93_116_paper_claim_mapping_20260621.md"
+    manuscript_source: "paper/main.tex"
+    figure_script: "paper/figures/gen_fig_scenebal1_18seed_evidence.py"
+    figure_outputs:
+      - "paper/figures/figure_scenebal1_24seed_evidence.pdf"
+      - "paper/figures/figure_scenebal1_24seed_evidence.png"
+    pdf: "paper/main.pdf"
+    verification: "latexmk -pdf succeeded; pdftotext confirms 24/24 and 23/24 wording with no checked 18/18, 17/18, 18-seed, or 93--110 residual claim text"
+    claim_boundary: "operational step/macro, explicit replay, behavior, true-static macro, and true-static step sign all 24/24; strict-margin true-static step is 23/24 with seed95 as the only boundary"
+  pdppo_next_layer_pivot_designs:
+    status: complete
+    timestamp: "2026-06-21T13:40:05+08:00"
+    report: "reports/aggregate/pdppo_next_layer_pivot_designs_20260621.md"
+    purpose: "pre-register simulator, oracle/teacher, PPO observation/auxiliary, reward/evaluation, and moderate sensor/noise pivots if the 111-116 stress wave fails any strong-claim gate"
+    decision_boundary: "do not run another same-configuration seed wave after 111-116 unless it answers a concrete unresolved uncertainty; pivot on true-static sign failure, replay headroom loss, behavior collapse, or repeated thin strict-margin boundary"
+  scenebal1_next_action_protocol_script:
+    status: complete
+    timestamp: "2026-06-21T13:54:06+08:00"
+    script: "scripts/76_v31_write_next_action_protocol.py"
+    local_regression_output: "reports/aggregate/scenebal1_18seed_93_110_next_action_protocol_20260621.md"
+    remote_regression_output: "reports/aggregate/scenebal1_18seed_93_110_next_action_protocol_remotecheck_20260621.md"
+    watcher_integration: "scripts/watch_scenebal1_24seed_postcollect_20260621.sh now materializes scenebal1_24seed_93_116_next_action_protocol_20260621.md after the 24-seed decision audit"
+    verification: "local and remote py_compile/bash -n/regression passed; postcollect watcher restarted and wrote a complete status page at 2026-06-21T13:53:53+08:00"
+  scenebal1_postcollect_training_progress:
+    status: complete
+    timestamp: "2026-06-21T14:08:37+08:00"
+    file: "scripts/watch_scenebal1_24seed_postcollect_20260621.sh"
+    purpose: "show per-seed latest PPO timestep, log size, and key log line while the 111-116 stress wave is running"
+    verification: "local/remote bash -n passed; refreshed status shows seed111-116 oracle bits 100000 and PPO timesteps around 26624-28672 of 200000"
+  scenebal1_sync_path_repair:
+    status: complete
+    timestamp: "2026-06-21T13:57:58+08:00"
+    issue: "a two-source rsync sent plan progress.md to the remote project root, temporarily overwriting the root progress.md"
+    fix: "resynced root progress.md to the project root and plan progress.md to the active plan directory separately"
+    verification: "remote root progress.md size=124845, active-plan progress.md size=306627, research-state last_updated parsed under conda darts"
+  pdppo_goal_alignment_and_pivot_protocol:
+    status: complete
+    timestamp: "2026-06-21T13:20:52+08:00"
+    report: "reports/aggregate/pdppo_strongclaim_goal_alignment_and_pivot_protocol_20260621.md"
+    purpose: "align active API goal with latest user constraints, preserve PPO/sensor boundaries, and define the 10-unit anti-stall pivot protocol"
+  scenebal1_paper_claim_integration:
+    status: complete
+    timestamp: "2026-06-21T12:36:00+08:00"
+    report: "reports/aggregate/scenebal1_18seed_93_110_paper_claim_mapping_20260621.md"
+    manuscript_source: "paper/main.tex"
+    verification: "latexmk xelatex succeeded; pdftotext confirmed 18-seed numbers and no checked 13/14 or 10/14 residual"
+    claim_boundary: "operational step/macro, explicit replay, behavior, and true-static macro 18/18; true-static step positive 18/18 but strict-margin 17/18"
+  scenebal1_seed_margin_risk:
+    status: complete
+    timestamp: "2026-06-21T12:43:00+08:00"
+    report: "reports/aggregate/scenebal1_18seed_93_110_seed_margin_risk_20260621.md"
+    finding: "seed95 is isolated; it is the only true-static step margin below 0.005 and 0.02"
+    decision: "continue SCENEBAL-1 stress wave; pivot only on repeated sign failures, behavior collapse, or loss of explicit replay headroom"
+  scenebal1_18seed_paper_figure:
+    status: complete
+    timestamp: "2026-06-21T12:54:48+08:00"
+    script: "paper/figures/gen_fig_scenebal1_18seed_evidence.py"
+    outputs:
+      - "paper/figures/figure_scenebal1_18seed_evidence.pdf"
+      - "paper/figures/figure_scenebal1_18seed_evidence.png"
+    manuscript_section: "paper/sections/06_results.tex"
+    verification: "latexmk rebuilt main.pdf; pdftotext confirms Table 3 and Figure 5 reference, figure caption, and 18/18,17/18 boundaries with no checked stale 13/14 or 10/14 wording"
+  scenebal1_watcher_printf_fix:
+    status: complete
+    timestamp: "2026-06-21T12:54:48+08:00"
+    files:
+      - "scripts/watch_scenebal1_pilot_20260621.sh"
+      - "scripts/watch_scenebal1_24seed_postcollect_20260621.sh"
+    issue: "bash printf treated markdown list formats beginning with '-' as options, producing watcher log noise"
+    fix: "use printf -- for leading-hyphen Markdown list lines; restarted local watcher tmux sessions and synced scripts to remote-gpu"
+  scenebal1_watcher_sync_rule_fix:
+    status: complete
+    timestamp: "2026-06-21T13:07:36+08:00"
+    files:
+      - "scripts/watch_scenebal1_pilot_20260621.sh"
+    issue: "pilot watcher rsync include rules were broad enough to pull stale remote postcollect/local-watch status markdown back to local reports/aggregate"
+    fix: "exclude *local_watch* and *postcollect_status* before aggregate includes; removed stale remote status markdown and restarted both local watcher tmux sessions"
+  scenebal1_postcollect_artifact_gate_fix:
+    status: complete
+    timestamp: "2026-06-21T13:24:42+08:00"
+    file: "scripts/watch_scenebal1_24seed_postcollect_20260621.sh"
+    issue: "postcollect status did not show per-seed artifact readiness and could retry 24-seed collection after a failed remote session without making missing artifacts obvious"
+    fix: "added artifact bitset to the status file and an all_artifacts_ready gate before remote 24-seed collection; restarted local postcollect watcher"
+    verification: "local and remote bash -n passed; refreshed status shows seeds93-110 as 111111 and seeds111-116 as 000000"
+  scenebal1_decision_audit_script:
+    status: complete
+    timestamp: "2026-06-21T13:30:40+08:00"
+    script: "scripts/75_v31_decide_scenebal1_stress_claim.py"
+    local_regression_outputs:
+      - "reports/aggregate/scenebal1_18seed_93_110_decision_audit_20260621.json"
+      - "reports/aggregate/scenebal1_18seed_93_110_decision_audit_20260621.md"
+    remote_regression_outputs:
+      - "reports/aggregate/scenebal1_18seed_93_110_decision_audit_remotecheck_20260621.json"
+      - "reports/aggregate/scenebal1_18seed_93_110_decision_audit_remotecheck_20260621.md"
+    watcher_integration: "scripts/watch_scenebal1_24seed_postcollect_20260621.sh now runs the decision audit after 24-seed macro/raw/oldclaim collection and syncs the root decision JSON/Markdown"
+    recommendation_mapping: "decision audit JSON/Markdown/stdout now includes recommended next layer and action, pointing to the next-layer pivot protocol for failures and no-blind-expansion wording for sign-bounded upgrades"
+    verification: "local and remote regression both return decision=upgrade_sign_bounded, recommendation.next_layer=claim_update_no_blind_expansion, and true_static_step_strict_fail_seeds=[95]"
+  scenebal1_24seed_decision_protocol:
+    status: complete
+    timestamp: "2026-06-21T13:10:06+08:00"
+    report: "reports/aggregate/scenebal1_24seed_decision_protocol_20260621.md"
+    purpose: "pre-register post-111-116 decision rules and prevent blind same-configuration seed expansion"
+  scenebal1_waitfree_runner_preflight:
+    status: complete
+    timestamp: "2026-06-21T13:11:42+08:00"
+    files:
+      - "/tmp/scenebal1_waitfree_111_116.sh on remote-gpu"
+      - "scripts/run_v31_scenebal1_pilot_parallel_20260621.sh"
+    finding: "waitfree runner activates darts, waits for busy_gpus=0, assigns SCENEBAL1_GPU_IDS over six GPUs, propagates seed failures via nonzero rc, and collects macro/raw/oldclaim aggregate after successful seed completion"
+latest_results:
+  scenebal2_24seed_117_140:
+    complete_seeds: 24
+    decision: "upgrade_allseed_strict"
+    old_claim_step_gate: "24/24"
+    old_claim_macro_gate: "24/24"
+    behavior_gate: "24/24"
+    replay_step_gate: "24/24"
+    replay_macro_gate: "24/24"
+    learned_true_static_step_gate: "24/24"
+    learned_true_static_macro_gate: "24/24"
+    true_static_step_positive: "24/24"
+    true_static_step_margin_min: 0.0284981032996256
+    true_static_step_margin_median: 0.07742619426983305
+    true_static_step_margin_mean: 0.07690084084785549
+    operational_step_margin_min: 0.0314454520184881
+    operational_step_margin_mean: 0.14937873744005017
+    learned_macro_margin_vs_true_static_reference_mean: 0.0709905819344724
+    explicit_replay_macro_margin_vs_true_static_reference_mean: 0.07734514374333584
+    one_sided_sign_test_p_old_claim_step_gate: 0.00000005960464477539063
+    one_sided_sign_test_p_old_claim_macro_gate: 0.00000005960464477539063
+    one_sided_sign_test_p_learned_true_static_step_gate: 0.00000005960464477539063
+    one_sided_sign_test_p_learned_true_static_macro_gate: 0.00000005960464477539063
+    claim_strength: "24-seed all-strict strong manuscript mainline"
+    interpretation: "SCENEBAL-2 replaces SCENEBAL-1 as the main paper result: PPO/PD-PPO wins operational static and rule-dynamic references and true fixed-static references in every tested seed while passing non-fixed/non-cyclic behaviour gates. The claim is a regime-balanced backbone-plus-one-specialist microclimate benchmark result, not a universal theorem."
+  bo_41_66:
+    complete_seeds: 26
+    learned_step_wins: "24/26"
+    learned_macro_wins: "26/26"
+    strict_replay_step_gate: "20/26"
+    strict_replay_macro_gate: "26/26"
+    behavior_gate: "26/26"
+    interpretation: "Strong macro claim; unqualified step claim still bounded"
+  bo_67_77_odd_interim:
+    complete_seeds: 6
+    seeds: "67,69,71,73,75,77"
+    strict_replay_step_gate: "6/6"
+    strict_replay_macro_gate: "6/6"
+    behavior_gate: "6/6"
+    fixed_like: "0/6"
+    simple_cycle_like: "0/6"
+    interpretation: "Interim positive signal; wait for even seeds 68,70,72,74,76,78 and aggregate before upgrading claim"
+  bo_41_78:
+    complete_seeds: 38
+    learned_step_wins: "36/38"
+    learned_macro_wins: "38/38"
+    strict_replay_step_gate: "32/38"
+    strict_replay_macro_gate: "38/38"
+    behavior_gate: "38/38"
+    latest_wave_67_78_old_step_gate: "12/12"
+    latest_wave_67_78_true_static_step_gate: "12/12"
+    mean_step_margin_vs_best_operational_baseline: 0.310320
+    mean_macro_margin_vs_best_operational_baseline: 0.085936
+    step_sign_test_p: 0.0000121713
+    macro_sign_test_p: 0.00000000000363798
+    interpretation: "Effective BO-1 improvement; supports strong statistical old-step and macro claims, but not an all-seed/unqualified zero-failure step claim"
+  bo_79_89_odd_interim:
+    complete_seeds: 6
+    seeds: "79,81,83,85,87,89"
+    strict_replay_step_gate: "5/6"
+    strict_replay_macro_gate: "6/6"
+    behavior_gate: "5/6"
+    boundary_cases:
+      - "seed83: strict replay step gate fails, macro and behavior pass"
+      - "seed87: replay gates pass, behavior audit fails as fixed-like/not state-dependent"
+    interpretation: "BO-1 remains improved but not stable zero-failure; consider teacher/PPO behavior robustness pivot if full 79-90 aggregate is mixed"
+  bo_41_90:
+    complete_seeds: 50
+    learned_step_wins: "45/50"
+    learned_macro_wins: "50/50"
+    strict_replay_step_gate: "40/50"
+    strict_replay_macro_gate: "49/50"
+    behavior_gate: "49/50"
+    learned_true_static_step_gate: "41/50"
+    step_sign_test_p: 0.0000119307
+    macro_sign_test_p: 0.0000000000000452971
+    interpretation: "Strong statistical macro and old-step claim, but not the desired stable zero-failure claim; pivoted away from same-config seed expansion"
+  at1_autoteacher_83_92:
+    complete_seeds: 6
+    old_claim_step_gate: "2/6"
+    old_claim_macro_gate: "3/6"
+    behavior_gate: "3/6"
+    repaired_known_step_failures: "seed83 and seed86 pass; seed84 remains slightly negative"
+    behavior_failures: "seed87, seed91, seed92"
+    interpretation: "Failed as a strong-claim direction; do not continue autoteacher training without a behavior mechanism change"
+  rt1_router_sweep:
+    labels: "conf00,conf05"
+    status: failed
+    conf00_old_step_gate: "2/6"
+    conf00_behavior_gate: "3/6"
+    conf05_behavior_gate: "0/6"
+    interpretation: "Deployment threshold alone does not fix behavior; proceed to PPO training-signal change"
+  br1_behaviorreg_83_92:
+    complete_seeds: 6
+    old_claim_step_gate: "3/6"
+    old_claim_macro_gate: "4/6"
+    behavior_gate: "4/6"
+    replay_gate: "5/6"
+    replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "2/6"
+    failed_step_seeds: "83,87,92"
+    failed_macro_seeds: "87,92"
+    failed_behavior_seeds: "87,92"
+    interpretation: "Failed as a strong-claim direction; do not expand. Pivot to explicit state-dependent behavior training signal or PPO architecture change."
+  bd1_behavior_action_83_92:
+    complete_seeds: 6
+    old_claim_step_gate: "2/6"
+    old_claim_macro_gate: "4/6"
+    behavior_gate: "4/6"
+    replay_gate: "5/6"
+    replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "3/6"
+    learned_true_static_macro_gate: "4/6"
+    failed_step_seeds: "83,84,87,92"
+    failed_macro_seeds: "87,92"
+    failed_behavior_seeds: "87,92"
+    interpretation: "Failed as a strong-claim direction. Subtype action CE/margin is active but does not prevent fixed-like learned deployment on hard seeds."
+  brg1_observable_regime_83_92:
+    complete_seeds: 6
+    old_claim_step_gate: "3/6"
+    old_claim_macro_gate: "5/6"
+    behavior_gate: "5/6"
+    replay_gate: "4/6"
+    replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "4/6"
+    learned_true_static_macro_gate: "4/6"
+    failed_step_seeds: "83,87,92"
+    failed_macro_seeds: "87"
+    failed_behavior_seeds: "87"
+    interpretation: "Effective improvement over BD-1/BR-1 on macro and behavior, but not a strong-claim breakthrough; BRG-2 warranted as one bounded follow-up."
+  brg2_matched_router_83_92:
+    complete_seeds: 6
+    old_claim_step_gate: "5/6"
+    old_claim_macro_gate_default_behavior: "5/6"
+    old_claim_macro_gate_subtypeaware: "6/6"
+    behavior_gate_default_event_binary: "5/6"
+    behavior_gate_subtypeaware: "6/6"
+    replay_gate: "6/6"
+    replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "5/6"
+    learned_true_static_macro_gate: "5/6"
+    failed_step_seeds: "92"
+    remaining_blocker: "seed92 custom_ppo_loss 3.046497 vs validation_selected_static 3.024605"
+    interpretation: "Strong effective improvement and best hard/control pilot so far, but not final unqualified old-step claim; proceed to BRG-3 action-fidelity follow-up."
+  brg3_action_fidelity_83_92:
+    complete_seeds: 6
+    old_claim_step_gate: "3/6"
+    old_claim_macro_gate: "6/6"
+    behavior_gate_subtypeaware: "6/6"
+    replay_gate: "3/6"
+    replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "2/6"
+    learned_true_static_macro_gate: "5/6"
+    failed_step_seeds: "83,84,92"
+    interpretation: "Failed as a step-claim direction; direct action CE/margin on top of BRG hurts step performance. Pivot to temporal/lead-aware PPO or reward-credit modification."
+  temporal1_83_92:
+    complete_seeds: 6
+    old_claim_step_gate: "6/6"
+    old_claim_macro_gate: "5/6"
+    behavior_gate: "6/6"
+    replay_gate: "6/6"
+    replay_macro_gate: "6/6"
+    macro_seed_gate: "6/6"
+    raw_macro_seed_gate: "6/6"
+    seed92_step: "custom_ppo 2.777641 vs validation_selected_static 2.845988"
+    interpretation: "Breakthrough hard/control pilot. Needs fresh-seed expansion before final strong claim."
+  temporal1_93_98:
+    complete_seeds: 6
+    old_claim_step_gate: "4/6"
+    old_claim_macro_gate: "6/6"
+    behavior_gate: "6/6"
+    replay_gate: "5/6"
+    replay_macro_gate: "6/6"
+    dedicated_macro_seed_gate: "6/6"
+    dedicated_raw_macro_seed_gate: "6/6"
+    failed_step_seeds: "95,96"
+    boundary_true_static_step_seed: "97"
+    interpretation: "Fresh-seed expansion preserves dynamic behavior and macro gates but not zero-failure step dominance; diagnose seed95 structural/replay headroom and seed96/97 learned-credit gaps."
+  temporal1_wide_replay_diag_95_97:
+    seed95_gate_pass: false
+    seed95_best_replay_loss: 3.600575
+    seed95_static_reference_loss: 3.520518
+    seed95_margin_vs_static: -0.080057
+    seed96_gate_pass: true
+    seed96_margin_vs_static: 0.048074
+    seed97_gate_pass: true
+    seed97_margin_vs_static: 0.032034
+    interpretation: "Seed95 confirms a real met+fc4 fixed-static step shortcut; seeds96/97 retain explicit dynamic headroom. Same TEMPORAL-1 expansion is closed; pivot to simulator/target-generation balancing."
+  scenebal1_93_98:
+    complete_seeds: 6
+    old_claim_step_gate: "6/6"
+    old_claim_macro_gate: "6/6"
+    behavior_gate: "6/6"
+    strict_replay_step_gate: "6/6"
+    strict_replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "5/6"
+    learned_true_static_macro_gate: "3/6"
+    mean_step_margin_vs_best_operational_baseline: 0.102988
+    median_step_margin_vs_best_operational_baseline: 0.045900
+    mean_learned_macro_margin_abs: 0.079286
+    claim_strength: "moderate_old_claim_step"
+    macro_claim_strength: "moderate_old_claim_macro"
+    interpretation: "Major SCENEBAL-1 pilot breakthrough: fixes fresh seed95 operational step failure and passes all operational step/macro, replay, and behavior gates on 6/6 seeds; true-static macro remains bounded"
+  scenebal1_99_104:
+    complete_seeds: 6
+    old_claim_step_gate: "6/6"
+    old_claim_macro_gate: "6/6"
+    behavior_gate: "6/6"
+    strict_replay_step_gate: "6/6"
+    strict_replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "6/6"
+    learned_true_static_macro_gate: "2/6"
+    mean_step_margin_vs_best_operational_baseline: 0.164979
+    median_step_margin_vs_best_operational_baseline: 0.149297
+    mean_learned_macro_margin_abs: 0.124034
+    claim_strength: "moderate_old_claim_step"
+    macro_claim_strength: "moderate_old_claim_macro"
+    interpretation: "Fresh SCENEBAL-1 expansion confirms 6/6 operational step/macro, replay, and behavior gates; true-static step improves to 6/6 but true-static macro remains bounded"
+  scenebal1_12seed_93_104:
+    complete_seeds: 12
+    old_claim_step_gate: "12/12"
+    old_claim_macro_gate: "12/12"
+    behavior_gate: "12/12"
+    strict_replay_step_gate: "12/12"
+    strict_replay_macro_gate: "12/12"
+    learned_true_static_step_gate: "11/12"
+    learned_true_static_macro_gate: "5/12"
+    mean_step_margin_vs_best_operational_baseline: 0.133984
+    median_step_margin_vs_best_operational_baseline: 0.088511
+    mean_learned_macro_margin_abs: 0.101660
+    step_sign_test_p: 0.000244140625
+    macro_sign_test_p: 0.000244140625
+    claim_strength: "strong_old_claim_step"
+    macro_claim_strength: "strong_old_claim_macro"
+    interpretation: "Strong operational claim now supported over 12 fresh seeds: PPO beats operational static and rule dynamic baselines on step/macro and passes behavior/replay gates on all seeds; unconditional true-static macro dominance is not yet supported"
+  scenebal1_105_110:
+    complete_seeds: 6
+    old_claim_step_gate: "6/6"
+    old_claim_macro_gate: "6/6"
+    behavior_gate: "6/6"
+    strict_replay_step_gate: "6/6"
+    strict_replay_macro_gate: "6/6"
+    learned_true_static_step_gate: "6/6"
+    learned_true_static_macro_gate: "2/6"
+    mean_step_margin_vs_best_operational_baseline: 0.120780
+    median_step_margin_vs_best_operational_baseline: 0.077552
+    mean_macro_margin_vs_best_operational_baseline: 0.077998
+    median_macro_margin_vs_best_operational_baseline: 0.074590
+    step_sign_test_p: 0.015625
+    macro_sign_test_p: 0.015625
+    claim_strength: "moderate_old_claim_step"
+    macro_claim_strength: "moderate_old_claim_macro"
+    interpretation: "Third SCENEBAL-1 wave independently preserves all operational step/macro, replay, and behavior gates; true-static macro remains the main boundary"
+  scenebal1_18seed_93_110:
+    complete_seeds: 18
+    old_claim_step_gate: "18/18"
+    old_claim_macro_gate: "18/18"
+    behavior_gate: "18/18"
+    strict_replay_step_gate: "18/18"
+    strict_replay_macro_gate: "18/18"
+    learned_true_static_step_gate: "17/18"
+    learned_true_static_step_positive: "18/18"
+    learned_true_static_macro_gate: "18/18"
+    mean_step_margin_vs_best_operational_baseline: 0.129583
+    median_step_margin_vs_best_operational_baseline: 0.077552
+    mean_macro_margin_vs_best_operational_baseline: 0.081816
+    median_macro_margin_vs_best_operational_baseline: 0.071503
+    mean_learned_margin_abs_vs_selected_static: 0.130587
+    mean_replay_margin_abs_vs_static_reference: 0.097732
+    step_sign_test_p: 0.000003814697265625
+    macro_sign_test_p: 0.000003814697265625
+    learned_true_static_step_sign_test_p: 0.000072479248046875
+    learned_true_static_macro_sign_test_p: 0.000003814697265625
+    claim_strength: "strong_old_claim_step"
+    macro_claim_strength: "strong_old_claim_macro"
+    interpretation: "Strongest current evidence: 18/18 operational step/macro, replay, behavior, replay-normalized true-static macro, and positive true-static step margins; remaining boundary is seed95 strict-margin true-static step"
+diagnostics:
+  seed55_subtype_auto_stepdiag:
+    gate_pass: true
+    best_replay_oracle_loss_mean: 3.214754
+    static_reference_oracle_loss_mean: 3.372207
+    margin_abs_vs_static_reference: 0.157453
+    margin_rel_vs_static_reference: 0.046691
+  seed59_subtype_auto_stepdiag:
+    gate_pass: true
+    best_replay_oracle_loss_mean: 3.106645
+    static_reference_oracle_loss_mean: 3.379619
+    margin_abs_vs_static_reference: 0.272974
+    margin_rel_vs_static_reference: 0.080771
+    best_replay_policy: "split_subtype_auto_top2_c0_p0_f0_t0_l10"
+    static_reference_policy: "static_action5"
+hypothesis_rounds:
+  current_round: "SCENEBAL-2"
+  completed_units_in_current_direction: 5
+  active_unit: "completed strong-claim experiment; remaining work is manuscript polishing/submission packaging"
+  current_direction_effective_improvement_observed: true
+  no_breakthrough_limit_per_direction: 10
+  pivot_if_no_breakthrough: "switch to another layer: teacher/framework/simulator/reward/moderate sensor calibration"
+  final_scheduler_must_remain: "PPO"
+  completed_direction_units:
+    bo1_same_config_expansion: 3
+    at1_autoteacher: 1
+    rt1_router_threshold: 1
+    br1_behavior_regularization: 1
+    bd1_subtype_action_regularization: 1
+    brg_observable_regime: 3
+    temporal_lead_credit: 3
+    scenebal1_scene_balance: 5
+    scenebal2_scene_balance: 5
+next_actions:
+  - "Do not launch more same-direction seed expansion unless a concrete new uncertainty appears; current 24/24 SCENEBAL-2 evidence satisfies the strong-claim experiment objective."
+  - "If continuing the project, focus on manuscript polishing, submission packaging, and supervisor-facing presentation rather than additional exploratory seed waves."
+  - "Preserve the bounded claim wording: regime-balanced backbone-plus-one-specialist microclimate benchmark, not universal sensor-scheduling dominance."
+  - "Record every keep/pivot decision in reports, research-state.yaml, research-log.md, progress.md, and MEMORY_LOG.md"

@@ -1,0 +1,15 @@
+[split-grid] tasks=3 skipped=0 pending=3 workers=3
+[run] worker=0 budget0p65_seed41 -> reports/v31_static_break_v14_eventgate_probe_20260608/logs/budget0p65_seed41.log
+[run] worker=1 budget0p65_seed42 -> reports/v31_static_break_v14_eventgate_probe_20260608/logs/budget0p65_seed42.log
+[run] worker=2 budget0p65_seed43 -> reports/v31_static_break_v14_eventgate_probe_20260608/logs/budget0p65_seed43.log
+complete_seeds=3/3
+reports/v31_static_break_v14_eventgate_probe_20260608/v14_eventgate_b0p65_operational_summary.csv
+reports/v31_static_break_v14_eventgate_probe_20260608/v14_eventgate_b0p65_operational_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  3                3                         0.034657                        0.008956                        0.053906
+               best_static  3                1                         0.000220                       -0.004282                        0.008384
+           selected_static  3                2                         0.003164                       -0.004282                        0.008660
+deployable_selected_static  3                1                         0.002942                       -0.006414                        0.019346
+    best_deployable_static  3                1                        -0.002417                       -0.006414                        0.003268
+     best_original_dynamic  3                0                        -0.004719                       -0.010034                       -0.001208
+       best_duty_non_pdppo  3                1                        -0.001913                       -0.006113                        0.001347

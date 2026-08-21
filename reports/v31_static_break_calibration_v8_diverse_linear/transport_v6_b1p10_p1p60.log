@@ -1,0 +1,107 @@
+{
+  "budget": 1.1,
+  "candidate_count": 129,
+  "truth_event_rate": 0.25475,
+  "eval_start_indices": [
+    5441,
+    10929,
+    7265
+  ],
+  "event_loss_min": 0.293784356146103,
+  "non_event_loss_min": 0.22647576351380866,
+  "best_overall": {
+    "action_idx": 88,
+    "sensor_ids": "met_station_core|surface_temp_ir|fc4_flux",
+    "oracle_loss_mean": 0.2761492515880908,
+    "power_mean": 0.7400000000000001,
+    "peak_max": 0.96
+  },
+  "best_event_laser": {
+    "action_idx": 64,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|laser_disdrometer",
+    "oracle_loss_event": 0.313158644507048,
+    "power_mean": 1.0399999999999998,
+    "peak_max": 1.45
+  },
+  "best_event_no_laser": {
+    "action_idx": 15,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|ultrasonic_anemometer_hd",
+    "oracle_loss_event": 0.293784356146103,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_event_fc4": {
+    "action_idx": 88,
+    "sensor_ids": "met_station_core|surface_temp_ir|fc4_flux",
+    "oracle_loss_event": 0.29422320344572883,
+    "power_mean": 0.7400000000000001,
+    "peak_max": 0.96
+  },
+  "best_event_no_fc4": {
+    "action_idx": 15,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|ultrasonic_anemometer_hd",
+    "oracle_loss_event": 0.293784356146103,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_non_event_laser": {
+    "action_idx": 72,
+    "sensor_ids": "shielded_thermo_hygro|laser_disdrometer",
+    "oracle_loss_non_event": 0.27179683070441857,
+    "power_mean": 0.8099999999999999,
+    "peak_max": 1.17
+  },
+  "best_non_event_no_laser": {
+    "action_idx": 20,
+    "sensor_ids": "surface_temp_ir|shielded_thermo_hygro",
+    "oracle_loss_non_event": 0.22647576351380866,
+    "power_mean": 0.16999999999999996,
+    "peak_max": 0.22
+  },
+  "laser_event_lift": -0.019374288360945013,
+  "fc4_event_lift": -0.0004388472996258441,
+  "laser_non_event_lift": -0.04532106719060991,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v8_intermittent_laser_tradeoff.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_v8_diverse_linear/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.2,
+    0.2,
+    0.3,
+    0.05,
+    0.05,
+    0.05,
+    8.0,
+    4.0,
+    4.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.1,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  },
+  "eval_start_selection": "event_fraction",
+  "eval_selection_stride": 64
+}
+reports/v31_static_break_calibration_v8_diverse_linear/transport_v6_b1p10_p1p60/oracle_lift_candidate_table.csv

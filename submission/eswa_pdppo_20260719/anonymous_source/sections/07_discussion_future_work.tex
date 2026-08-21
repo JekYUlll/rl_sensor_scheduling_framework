@@ -1,0 +1,197 @@
+\section{Discussion}
+\label{sec:discussion_future_work}
+
+\subsection{Primary comparison with the fixed-schedule baseline}
+
+Across the 22 post-selection evaluation seeds, the complete PD-PPO training
+configuration achieved lower mean forecast loss and lower macro-averaged
+normalized forecast loss than the validation-selected fixed-schedule baseline in
+every seed. The separate 24-seed descriptive
+aggregate, which includes two pilot/model-selection seeds, retains the same
+direction. With the ridge forecaster, the paired difference against the fixed
+baseline selected for that forecaster is positive in 21 of the 22 post-selection
+seeds and 23 of 24 seeds in the descriptive aggregate. Evaluation over all
+scoreable test steps also
+retains lower values of both co-primary endpoints in every seed, so the observed
+difference is not confined to the event-balanced evaluation windows.
+Executed-action analysis shows that the scheduler activates the corresponding
+specialist channel for each of the particle, flux, and thermal event types while
+retaining a broader mixture during calm periods. This pattern was observed for
+the complete training configuration, which includes simulated warning inputs and
+future-condition supervision; it cannot be attributed to the scalar objective
+alone.
+
+The reported system has a mandatory meteorological core channel and an optional-channel
+capacity of one. The underlying design problem extends to settings in which only
+$q<n_{\mathrm{opt}}$ optional
+channels can operate. In such systems, a scheduler must decide whether to
+reserve the available capacity for one generally useful measurement or
+reallocate it as forecast requirements change. The present $q=1$ optional-channel capacity makes that trade-off directly observable and
+prevents simultaneous low-cost optional channels. The meteorological core channel
+costs 0.25 normalized units and each event-specific channel costs 0.49. Although
+two event-specific channels would exceed the 0.75 budget, such subsets are absent
+from the candidate set. Every listed candidate has steady-state demand at most
+0.74 and startup-peak demand at most 0.92, below the corresponding 0.75 and 0.95
+limits. Both instantaneous power limits are enforced, but the feasible-action
+mask therefore excludes no candidate in this instance. The empirical result is
+established under the optional-channel cardinality constraint and minimum
+dwell-time constraint, not under observed binding of the two power limits
+(Supplementary Table S14).
+
+\subsection{Condition-dependent activation relative to the fixed schedule}
+
+Calibration/validation selects a strong fixed optional channel. The FC4 snow
+mass-flux channel is selected in more than half of the seeds, and the infrared
+snow-surface-temperature channel in most of the remainder. Such a schedule
+avoids switching and can perform well when the evaluation distribution is
+dominated by one measurement requirement. Its weakness appears when particle,
+flux, and thermal event types all contribute to the forecasting objective. The
+optional channel preferred for one event type is nearly absent from another, so
+no single subset can preserve the three event-specific benefits. This pattern
+instantiates the proposition's motivation, but the empirical table does not
+verify all of its policy-by-condition assumptions.
+
+The PD-PPO scheduler obtains the observed difference with sparse executed-action
+changes. The mean normalized Hamming distance per transition is 0.00369,
+consistent with the minimum dwell-time constraint and below the corresponding
+rate for the one-step look-ahead reference under its one-step rule. Executed
+changes mainly coincide with changes in operating condition, and no optional
+channel dominates the sequence across event types. Nonzero
+condition--executed-action mutual information and the behavior-complexity gate
+distinguish these executed sequences from fixed-like or simple-cycle-like
+schedules under the frozen thresholds. These quantities are descriptive and
+include boundaries between the eight separately reset event-balanced evaluation
+windows.
+
+\subsection{Scalar-objective and training-configuration comparisons}
+
+The matched AoI-objective and uncertainty-objective PPO configurations replace
+forecast loss with AoI or a bounded diagonal uncertainty proxy while retaining
+the shared PPO algorithm. \Cref{prop:non_equivalence} establishes a mathematical
+distinction among the theoretical forecast-loss, AoI, and covariance-trace
+objectives; the empirical uncertainty configuration uses a bounded diagonal
+proxy rather than the full covariance trace. All three PPO configurations
+receive the same condition-specific training weights, training-only supervised
+target actions, and auxiliary future-condition classification labels. Each
+scalar objective also changes the value target, advantage, PPO surrogate, and
+advantage weights used in the continuing behavior cloning term. The feasible
+action set is small, and four optional-channel choices have nonzero activation
+frequency under the main policy. The 95\% percentile bootstrap confidence
+intervals for the mean paired differences include zero for both matched
+scalar-objective PPO configurations. These comparisons concern matched PPO
+training configurations with different scalar objectives; they are not
+reward-only ablations.
+
+The Double DQN training configuration uses the same scheduler observation,
+reward based on forecast loss, action set, and constraints. It has higher
+macro-averaged loss in all 22 post-selection seeds and higher
+mean forecast loss in 21 of 22 seeds than PD-PPO. Under the channel-use
+acceptance criterion, Double DQN meets the criterion in 5 of 22 seeds;
+no channel is deactivated before warm-up completes, as structurally required by
+$D_{\min}=6$. The PD-PPO configuration also
+contains behavior cloning pretraining, continuing advantage-weighted behavior
+cloning, and an auxiliary future-condition classifier. The comparison therefore
+concerns complete training configurations and does not establish a general
+advantage of policy-gradient learning over value-based learning.
+
+The privileged one-step look-ahead reference using next-step test targets can
+inspect next-step forecast loss on the test partition and therefore has more
+information per decision than the deployed scheduler. It still has higher loss
+in every seed and a mean normalized Hamming distance about 7.6 times as large.
+The minimum dwell-time constraint, warm-up delay, and persistence of stale
+observations couple consecutive actions, but the reference objective omits
+their longer-term consequences. The result shows that next-step target access
+under this one-step rule does not yield lower multi-step loss; it does not
+isolate the value of sequential decision making or compare PD-PPO with a
+constrained model-predictive controller.
+
+\subsection{Effects of warning signals and true labels}
+
+The warning-rule baseline and privileged true-label baseline test scheduler
+behavior under different sources of condition-related information. The
+simulated warning signals are leading scores generated from the simulated
+operating-condition process. The warning-rule baseline applies the predeclared
+threshold and a condition-to-action mapping selected on the
+calibration/validation partition. The privileged true-label baseline removes
+warning uncertainty by using the exact sequence $c_t,\ldots,c_{t+16}$. Neither
+paired confidence interval excludes zero; the intervals establish neither a
+population-level directional difference nor equivalence. The PD-PPO scheduler
+instead combines simulated warning signals with partial observations, channel
+sampling ages, channel operating states, and the previous executed channel
+subset.
+
+Both baselines depend on explicit condition-to-action mappings selected on the
+calibration/validation partition. The true-label baseline uses condition labels
+that are unavailable during deployment. The policy selects a proposed action
+index from the feasible index set using current observations, channel operating states, and
+recent-history features, and can retain information from observations between
+warning transitions. Robustness to warning quality remains untested.
+Over the continuous scoreable test partitions of the 22 post-selection seeds,
+the thresholded four-class warning rule has 0.909 accuracy, a 0.916
+macro-averaged F1 score, and 1.471 bits of mutual information with the current
+condition label. Subtype-wise one-vs-rest ROC AUC is 0.997--0.999, and all 1,262
+event onsets cross the 0.5 threshold within the preceding 16 steps, with median
+lead time nine steps. These diagnostics establish that the simulator-generated
+warning features are highly informative within the reported simulation; they do
+not validate a field detector or test weak-warning conditions.
+Supplementary Table S13 gives the component
+metrics and analysis scope.
+
+\subsection{Online computation and scaling}
+
+The frozen primary forecaster is used for policy training and offline evaluation.
+Online execution requires one policy forward pass
+followed by a feasibility check and one check of the
+minimum dwell-time constraint. It neither
+simulates future observation sequences nor evaluates every candidate with a
+forecaster. In the six-channel system, the categorical policy scores six
+candidate indices; no runtime benchmark against instrument sampling and
+estimation is reported.
+
+With several simultaneously active optional channels, explicit enumeration can
+grow combinatorially. A larger action space could retain the downstream
+forecast-loss objective while requiring a different feasible-action
+parameterization, such as sequential channel selection or direct feasible-subset
+construction. The appropriate parameterization depends on the number of
+channels and on whether several channel combinations carry distinct forecast
+value.
+
+\subsection{Limitations}
+
+The study uses a controlled simulation for cold-region monitoring,
+including simulated warning signals and six logical channels. The experiment was
+designed with three event types, three corresponding specialist
+channels, prescribed target weights, and leading warnings. It tests whether a
+scheduler recovers a designed condition-dependent sensing allocation under the
+specified information and execution structure. The 22 post-selection seeds and
+two pilot seeds cover new event realizations from one generator, not different
+sites, hardware assemblies, power systems, channel configurations, or warning
+systems. Field use requires measured power and warm-up
+profiles, warning signals derived from available instruments, and evaluation
+under real missingness and faults. The privileged true-label baseline uses
+evaluation-only information and is not part of the scheduler input.
+
+The macro-averaged normalized forecast loss uses event-balanced evaluation
+windows constructed from test truth using event coverage and transport intensity
+so that all three event-specific measurement requirements receive explicit
+support. Evaluation over all scoreable time steps in the test partition retains
+the paired difference between the complete PD-PPO training configuration and the
+validation-selected fixed-schedule baseline, but it does not replace evaluation
+across different sites or event-generation processes outside the simulation
+model. The reported result is established for mean forecast loss and
+macro-averaged normalized forecast loss; invariance to alternative target or
+event-type weightings is not claimed.
+
+The primary comparison uses the frozen primary forecaster. The
+alternative-forecaster analysis uses a separately fitted, frozen ridge
+forecaster to evaluate existing observation sequences without policy retraining.
+The scalar-objective comparisons also
+retain behavior cloning pretraining, continuing advantage-weighted behavior
+cloning, and auxiliary future-condition classification labels. The reported
+implementation stores sampled proposed-action log probabilities even when the
+previous action is executed, and the proposal-override rate was not logged; the
+result therefore supports the complete implementation rather than an idealized
+executed-action likelihood convention. Both power limits are non-excluding,
+and the warm-up-interruption penalty is structurally zero in the reported
+instance. Further work should test hardware, other channel sets, warning quality,
+and joint scheduler--forecaster adaptation.

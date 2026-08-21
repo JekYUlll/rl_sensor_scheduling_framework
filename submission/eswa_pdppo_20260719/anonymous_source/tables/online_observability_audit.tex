@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Information availability for scheduler inputs, policy training, and evaluation.}
+  \label{tab:online_observability_audit}
+  \scriptsize
+  \setlength{\tabcolsep}{2.5pt}
+  \begin{tabularx}{\linewidth}{@{}p{0.20\linewidth}p{0.23\linewidth}c X@{}}
+    \toprule
+    Quantity & Source & Available to PD-PPO at decision time & Use in the protocol \\
+    \midrule
+    Sample-and-hold values & Valid measurements with last-value carry-forward & Yes & Scheduler and frozen-primary-forecaster input \\
+    Observation mask and channel sampling age & Channel operating state and valid-observation log & Yes & Scheduler input; also used by rule-based baselines \\
+    Recent-history features & Last 16 sample-and-hold values and observation masks & Yes & Scheduler input; no condition label required \\
+    Previously executed channel subset and channel operating state & Scheduler execution record & Yes & Scheduler input, feasible-action check, switching cost, and execution history \\
+    Remaining required activation time $r_t$ & Scheduler execution record & No & Environment execution guard; omitted from the active actor and critic inputs \\
+    Simulated warning signals & Noisy lead signals from the simulated blowing-snow event process & Yes & Scheduler input under the simulation assumption \\
+    Current condition label $c_t$ & Simulator ground truth at time $t$ & No & Training-loss weighting; offline evaluation weights and grouping \\
+    Future-condition supervision label $c_t^{\mathrm{sup}}$ & First non-calm label in $[t,t+16]$, or calm if none occurs & No & Behavior cloning pretraining, continuing advantage-weighted behavior cloning, and auxiliary future-condition classification during policy training \\
+    Label sequence $c_t,\ldots,c_{t+16}$ & Exact current and future simulator labels & No & Privileged decision-time input used only by the true-label baseline \\
+    Future target values & Simulated ground-truth time series & No & Training-only information for forecaster training and the reward; evaluation-only information for forecast loss \\
+    Normalization factors, condition-to-action mapping, and fixed schedule & Calibration/validation partition & No & Training-loss normalization, supervised-target construction, fixed-schedule selection, and metric normalization \\
+    \bottomrule
+  \end{tabularx}
+\end{table}

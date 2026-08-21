@@ -1,0 +1,466 @@
+{
+  "status": "passed",
+  "positive_margin_definition": "DQN loss minus forecast-PPO loss",
+  "dqn_date_tag": "20260718cuda",
+  "ppo_date_tag": "20260718cleanpilot",
+  "seeds": [
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140
+  ],
+  "protocol_by_seed": {
+    "117": {
+      "truth_sha256": "e3a6f9687236ed3c2d9782e818a37b683e1649167dcfdb0bfabc72e653fd4acd",
+      "oracle_sha256": "e773ce680ad2bac2076fcb5453602d2e146b4894e62e4448b30bab52e4dd1468",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        66158,
+        66670,
+        67182,
+        67694,
+        68206,
+        68718
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "118": {
+      "truth_sha256": "dc51121368fb9bcdf0a6af2701fef57b4506646514ab88a3100d20c038215573",
+      "oracle_sha256": "dac94d62e5fc237dd73a1d8b65e2d1125f2a65a8df719c67c15275dc41a2108c",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        65774,
+        66542,
+        67054,
+        67566,
+        68078,
+        69294
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "119": {
+      "truth_sha256": "af1404d49f60b900412ae6b74e6a96c736ec3517cd802a9cb49ae2d11a0c0165",
+      "oracle_sha256": "d34e0095a7be929b9996f54b66d2832675e54456a3b47e7636debdaeb81e302c",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        65262,
+        65774,
+        66286,
+        66798,
+        67630,
+        68142,
+        68654,
+        69479
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "120": {
+      "truth_sha256": "b99666da4e1cb1d45d3b3d7248a5d11e7137fe7f9c41d1a7f1b61fe25cece476",
+      "oracle_sha256": "ae08a82910a58fe04334b2178ddaa67433d5b5ff4b55d6cceb8c03e6ff69b443",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        65774,
+        66286,
+        66798,
+        67950,
+        68462,
+        68974
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "121": {
+      "truth_sha256": "5c6f91c446292290321f7c2124e61f2d3827d44b85b54bb19745815f37e35c63",
+      "oracle_sha256": "adb7d2df7e18308d1400d09c5e7f75d19a8d2679d710c0b94d86a740f009bd6c",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64878,
+        65390,
+        66414,
+        66926,
+        67438,
+        67950,
+        68462,
+        68974
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "122": {
+      "truth_sha256": "1d860e346017a1fbe3ac62e236feedb21cb4238a1214cfe098ab5030058c60f8",
+      "oracle_sha256": "35bd814f03e1689b003f72b2ab2b8f7c8973c3334d67e79a60438ade05b59ffe",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64942,
+        65454,
+        65966,
+        67182,
+        67694,
+        68206,
+        68910,
+        69479
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "123": {
+      "truth_sha256": "9d3e6ae5016d933b992407f5b244becc00b11daa5c0811580d00c189d805feb0",
+      "oracle_sha256": "b4500d1749a776150f347661e4eac1540b894f352cd6741a9d99120ff4db0400",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        66030,
+        66542,
+        67054,
+        67566,
+        68398,
+        68910,
+        69479
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "124": {
+      "truth_sha256": "b7f78292b5144439b3949fde351cd24e9fe4173549aad72b8a1502f118378060",
+      "oracle_sha256": "b2cb94eeabc3541a9b40a3e32f6357feb4df3d712c01a539495b9a1d6aaedcdb",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65902,
+        66414,
+        66926,
+        67438,
+        68334,
+        68846,
+        69358
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "125": {
+      "truth_sha256": "16b14699912cd5c1fd90c4a30ccb80d1adee3898120260a598455035ddf0892e",
+      "oracle_sha256": "7661d2e7f31efd72329623c96060bdc71cef47399a0a222303eb188e972f548a",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65326,
+        65838,
+        66670,
+        67374,
+        67886,
+        68398,
+        69479
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "126": {
+      "truth_sha256": "b5ca9cf7dfdcc5cc0b21ae791d376b962be70791d5b404be1f4bb31b156767cf",
+      "oracle_sha256": "36408eaa4a6472963979bf662bd2280ae8f26924b0e417ebc2bde10988dbdce1",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64878,
+        65454,
+        65966,
+        67118,
+        67694,
+        68206,
+        68718,
+        69230
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "127": {
+      "truth_sha256": "76b9dcfe262ece75c71433070440fe257add3456bc6b6cbaf90c23d520c2f5fa",
+      "oracle_sha256": "987dc1b8bb5ed343d9da26c0538378b45d22109883c24c49f8d183bb4aa3adf1",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        65326,
+        65838,
+        66350,
+        66862,
+        67374,
+        68206,
+        68718,
+        69230
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "128": {
+      "truth_sha256": "1c1bb32171a151cd7e5f5d3e26adfac6d5d256e5557f30e402a34c1ebc75991a",
+      "oracle_sha256": "683e0f09a12e59441f9a41fdaf4b22014ee315e908fa5d85824c3424969fcaac",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        65390,
+        65902,
+        66414,
+        66926,
+        67438,
+        67950,
+        68462,
+        68974
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "129": {
+      "truth_sha256": "206763de315f2c659fb8796488713c0ef76a50bb0703afde01467e6bd00bb04b",
+      "oracle_sha256": "68be64bbd350a773f2c703c5615584047daa9cb0ff46850d3e0c2ab4ca9b37a0",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64814,
+        65326,
+        65838,
+        66862,
+        67374,
+        67950,
+        68590,
+        69479
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "130": {
+      "truth_sha256": "2357d45b70a9b70fdbf8f464803216ca2f1aaaefda404f0bcc700b5ee0b9c2ea",
+      "oracle_sha256": "e1c8719f77358dfefb18769336b43d3985125d6acd8afd1cc3e37e385fc147d2",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65838,
+        66350,
+        66862,
+        67630,
+        68142,
+        68654,
+        69294
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "131": {
+      "truth_sha256": "bf0144805af00852bb2d6db8f61e1c3f4387b7ffc22a265eaf897382fae51a1e",
+      "oracle_sha256": "7283096c91ae9dd76635622f1c68c832cd0da3ec71ad6920af115e6fc6b8ce16",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        65966,
+        66478,
+        66990,
+        67502,
+        68782,
+        69294
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "132": {
+      "truth_sha256": "243b3856018d81cf247dc5b550a05c3f55c489545759701b3b338dabcc787c2d",
+      "oracle_sha256": "eac2d63604510965e332c5a628b249fd7abdb63de4b619477cfc7d8d15199563",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64942,
+        65454,
+        65966,
+        66478,
+        67566,
+        68078,
+        68654,
+        69358
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "133": {
+      "truth_sha256": "02b09dcfbd4e3b334ebc4865b4626b70de3767a181dd11bd807246a38dc8bd93",
+      "oracle_sha256": "3aa294ed30cd425af02e5b1f72ea0ab15ac80fe780e1838db50f39f74331decc",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        65774,
+        66286,
+        66798,
+        67310,
+        68590,
+        69294
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "134": {
+      "truth_sha256": "9c5f9cfc517cea7120b96718cf13a41025b3c912268e7443cb56cb5310c87c4c",
+      "oracle_sha256": "cabaa57f5b6dc462dcbe9a3a7046e9085c9154f25a0ff75d565a8d5a8337bd83",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        66030,
+        66542,
+        67054,
+        67822,
+        68334,
+        68846,
+        69358
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "135": {
+      "truth_sha256": "1c9710be8c0ad005dbbb847b15ec16a4da7e83d25c7c9fb7f9d399f8d16c5294",
+      "oracle_sha256": "195958aa003488095f95dc8d68f17b6951db50216f913f5761195990f819b67c",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        65198,
+        65710,
+        66222,
+        66734,
+        67246,
+        67758,
+        68270,
+        68782
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "136": {
+      "truth_sha256": "0b103b410c5ff6e8b473b12835c91146f850d78d4b94774575868efc0a360c60",
+      "oracle_sha256": "27f7a3e498b718d0757c7f927c5f73677cc27221131ff4054be2c75ce0f7957d",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65710,
+        66222,
+        66734,
+        67246,
+        68206,
+        68846,
+        69358
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "137": {
+      "truth_sha256": "2b55e1ca70cae8c9749d8371ebd6c389ef5e033017d1f2920f3fb53a267ad5c9",
+      "oracle_sha256": "89e782700357c990ae4387f75278b8dde2b9cc6a61832caf2ef393636e508c90",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        65774,
+        67374,
+        67886,
+        68398,
+        68910,
+        69479
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "138": {
+      "truth_sha256": "1aa8999e7e9f8aea4b4f11b179c1a0e9901bf3eb5f583be96b7b37da037a59fa",
+      "oracle_sha256": "519d1a21f4d2fd8cd665746208429361033d86662c4c5a926d23c844e6c96f4d",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        65774,
+        66862,
+        67374,
+        67886,
+        68910,
+        69422
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "139": {
+      "truth_sha256": "558e7f31dd2d3da28590b6c2b87bb1341e2e8ba1fd3bbf37d449033df715cd9f",
+      "oracle_sha256": "601a8902526c00cf91afe14ce7451cf7129a0456d3f182614719b16e75ad7793",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64750,
+        65262,
+        65774,
+        66286,
+        67054,
+        67566,
+        68078,
+        68590
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    },
+    "140": {
+      "truth_sha256": "9e90d66bb69d3c218ebb2dba77dd19d398c34814e5ec8586fafd3d83031c3873",
+      "oracle_sha256": "a2af13f69a02798160cc45bbae7f617d4489a0c1a62037a7baaba4af4de40724",
+      "candidate_mask_count": 6,
+      "eval_start_indices": [
+        64878,
+        65390,
+        66542,
+        67054,
+        67566,
+        68078,
+        68910,
+        69422
+      ],
+      "eval_steps": 512,
+      "training_evaluator_device": "cuda",
+      "evaluation_evaluator_device": "cpu"
+    }
+  }
+}

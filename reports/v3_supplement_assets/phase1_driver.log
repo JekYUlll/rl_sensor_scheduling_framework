@@ -1,0 +1,134 @@
+[start] Thu May 14 03:33:12 CST 2026
+[phase1] tasks=110 skipped=0 pending=110 workers=3
+[run] worker=0 A1_ablation_v31_no_action_emb_budget1p70_seed41 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed41.log
+[run] worker=1 A1_ablation_v31_no_action_emb_budget1p70_seed42 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed42.log
+[run] worker=2 A1_ablation_v31_no_action_emb_budget1p70_seed43 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed43.log
+[run] worker=0 A1_ablation_v31_no_action_emb_budget1p70_seed44 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed44.log
+[run] worker=1 A1_ablation_v31_no_action_emb_budget1p70_seed45 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed45.log
+[run] worker=2 A1_ablation_v31_no_action_emb_budget1p70_seed46 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed46.log
+[run] worker=1 A1_ablation_v31_no_action_emb_budget1p70_seed47 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed47.log
+[run] worker=2 A1_ablation_v31_no_action_emb_budget1p70_seed48 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed48.log
+[run] worker=0 A1_ablation_v31_no_action_emb_budget1p70_seed49 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed49.log
+[run] worker=1 A1_ablation_v31_no_action_emb_budget1p70_seed50 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_emb_budget1p70_seed50.log
+[run] worker=2 A1_ablation_v31_no_event_critic_budget1p70_seed41 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed41.log
+[run] worker=0 A1_ablation_v31_no_event_critic_budget1p70_seed42 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed42.log
+[run] worker=1 A1_ablation_v31_no_event_critic_budget1p70_seed43 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed43.log
+[run] worker=2 A1_ablation_v31_no_event_critic_budget1p70_seed44 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed44.log
+[run] worker=0 A1_ablation_v31_no_event_critic_budget1p70_seed45 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed45.log
+[run] worker=1 A1_ablation_v31_no_event_critic_budget1p70_seed46 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed46.log
+[run] worker=0 A1_ablation_v31_no_event_critic_budget1p70_seed47 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed47.log
+[run] worker=2 A1_ablation_v31_no_event_critic_budget1p70_seed48 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed48.log
+[run] worker=1 A1_ablation_v31_no_event_critic_budget1p70_seed49 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed49.log
+[run] worker=2 A1_ablation_v31_no_event_critic_budget1p70_seed50 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_event_critic_budget1p70_seed50.log
+[run] worker=0 A1_ablation_v31_no_awbc_budget1p70_seed41 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed41.log
+[run] worker=0 A1_ablation_v31_no_awbc_budget1p70_seed42 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed42.log
+[run] worker=0 A1_ablation_v31_no_awbc_budget1p70_seed43 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed43.log
+[run] worker=0 A1_ablation_v31_no_awbc_budget1p70_seed44 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed44.log
+[run] worker=1 A1_ablation_v31_no_awbc_budget1p70_seed45 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed45.log
+[run] worker=2 A1_ablation_v31_no_awbc_budget1p70_seed46 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed46.log
+[run] worker=0 A1_ablation_v31_no_awbc_budget1p70_seed47 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed47.log
+[run] worker=1 A1_ablation_v31_no_awbc_budget1p70_seed48 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed48.log
+[run] worker=2 A1_ablation_v31_no_awbc_budget1p70_seed49 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed49.log
+[run] worker=0 A1_ablation_v31_no_awbc_budget1p70_seed50 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_budget1p70_seed50.log
+[run] worker=1 A1_ablation_v31_no_oracle_budget1p70_seed41 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed41.log
+[run] worker=2 A1_ablation_v31_no_oracle_budget1p70_seed42 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed42.log
+[run] worker=0 A1_ablation_v31_no_oracle_budget1p70_seed43 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed43.log
+[run] worker=2 A1_ablation_v31_no_oracle_budget1p70_seed44 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed44.log
+[run] worker=1 A1_ablation_v31_no_oracle_budget1p70_seed45 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed45.log
+[run] worker=0 A1_ablation_v31_no_oracle_budget1p70_seed46 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed46.log
+[run] worker=2 A1_ablation_v31_no_oracle_budget1p70_seed47 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed47.log
+[run] worker=1 A1_ablation_v31_no_oracle_budget1p70_seed48 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed48.log
+[run] worker=0 A1_ablation_v31_no_oracle_budget1p70_seed49 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed49.log
+[run] worker=2 A1_ablation_v31_no_oracle_budget1p70_seed50 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_oracle_budget1p70_seed50.log
+[run] worker=1 A1_ablation_v31_no_awbc_oracle_budget1p70_seed41 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed41.log
+[run] worker=0 A1_ablation_v31_no_awbc_oracle_budget1p70_seed42 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed42.log
+[run] worker=1 A1_ablation_v31_no_awbc_oracle_budget1p70_seed43 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed43.log
+[run] worker=0 A1_ablation_v31_no_awbc_oracle_budget1p70_seed44 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed44.log
+[run] worker=1 A1_ablation_v31_no_awbc_oracle_budget1p70_seed45 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed45.log
+[run] worker=0 A1_ablation_v31_no_awbc_oracle_budget1p70_seed46 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed46.log
+[run] worker=1 A1_ablation_v31_no_awbc_oracle_budget1p70_seed47 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed47.log
+[run] worker=2 A1_ablation_v31_no_awbc_oracle_budget1p70_seed48 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed48.log
+[run] worker=0 A1_ablation_v31_no_awbc_oracle_budget1p70_seed49 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed49.log
+[run] worker=1 A1_ablation_v31_no_awbc_oracle_budget1p70_seed50 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_awbc_oracle_budget1p70_seed50.log
+[run] worker=2 A1_ablation_v31_no_action_mask_budget1p70_seed41 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed41.log
+[run] worker=0 A1_ablation_v31_no_action_mask_budget1p70_seed42 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed42.log
+[run] worker=1 A1_ablation_v31_no_action_mask_budget1p70_seed43 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed43.log
+[run] worker=2 A1_ablation_v31_no_action_mask_budget1p70_seed44 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed44.log
+[run] worker=1 A1_ablation_v31_no_action_mask_budget1p70_seed45 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed45.log
+[run] worker=0 A1_ablation_v31_no_action_mask_budget1p70_seed46 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed46.log
+[run] worker=2 A1_ablation_v31_no_action_mask_budget1p70_seed47 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed47.log
+[run] worker=1 A1_ablation_v31_no_action_mask_budget1p70_seed48 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed48.log
+[run] worker=0 A1_ablation_v31_no_action_mask_budget1p70_seed49 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed49.log
+[run] worker=2 A1_ablation_v31_no_action_mask_budget1p70_seed50 -> reports/v3_supplement_assets/logs/A1_ablation_v31_no_action_mask_budget1p70_seed50.log
+[run] worker=1 A1_ablation_v31_masked_only_budget1p70_seed41 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed41.log
+[run] worker=0 A1_ablation_v31_masked_only_budget1p70_seed42 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed42.log
+[run] worker=1 A1_ablation_v31_masked_only_budget1p70_seed43 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed43.log
+[run] worker=0 A1_ablation_v31_masked_only_budget1p70_seed44 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed44.log
+[run] worker=1 A1_ablation_v31_masked_only_budget1p70_seed45 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed45.log
+[run] worker=0 A1_ablation_v31_masked_only_budget1p70_seed46 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed46.log
+[run] worker=2 A1_ablation_v31_masked_only_budget1p70_seed47 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed47.log
+[run] worker=1 A1_ablation_v31_masked_only_budget1p70_seed48 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed48.log
+[run] worker=0 A1_ablation_v31_masked_only_budget1p70_seed49 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed49.log
+[run] worker=2 A1_ablation_v31_masked_only_budget1p70_seed50 -> reports/v3_supplement_assets/logs/A1_ablation_v31_masked_only_budget1p70_seed50.log
+[run] worker=1 H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed41.log
+[run] worker=0 H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed42.log
+[run] worker=2 H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed43.log
+[run] worker=1 H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed44.log
+[run] worker=0 H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl0p50_budget1p70_seed45.log
+[run] worker=2 H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed41.log
+[run] worker=1 H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed42.log
+[run] worker=0 H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed43.log
+[run] worker=2 H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed44.log
+[run] worker=1 H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl1p00_budget1p70_seed45.log
+[run] worker=0 H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed41.log
+[run] worker=2 H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed42.log
+[run] worker=1 H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed43.log
+[run] worker=0 H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed44.log
+[run] worker=2 H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p05_kl2p00_budget1p70_seed45.log
+[run] worker=1 H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed41.log
+[run] worker=0 H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed42.log
+[run] worker=2 H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed43.log
+[run] worker=1 H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed44.log
+[run] worker=0 H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl0p50_budget1p70_seed45.log
+[run] worker=2 H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed41.log
+[run] worker=1 H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed42.log
+[run] worker=0 H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed43.log
+[run] worker=2 H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed44.log
+[run] worker=1 H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p10_kl2p00_budget1p70_seed45.log
+[run] worker=0 H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed41.log
+[run] worker=2 H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed42.log
+[run] worker=1 H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed43.log
+[run] worker=0 H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed44.log
+[run] worker=2 H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl0p50_budget1p70_seed45.log
+[run] worker=1 H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed41.log
+[run] worker=0 H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed42.log
+[run] worker=2 H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed43.log
+[run] worker=1 H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed44.log
+[run] worker=0 H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl1p00_budget1p70_seed45.log
+[run] worker=2 H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed41 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed41.log
+[run] worker=1 H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed42 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed42.log
+[run] worker=0 H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed43 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed43.log
+[run] worker=2 H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed44 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed44.log
+[run] worker=1 H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed45 -> reports/v3_supplement_assets/logs/H1_hyperparam_v31_awbc0p20_kl2p00_budget1p70_seed45.log
+[collect] Thu May 14 19:00:49 CST 2026
+reports/v3_supplement_assets
+        variant               label  budget     mean      std  ci_lower  ci_upper  n  delta_vs_full  delta_pct_vs_full  p_vs_full  significant    test_method  bonferroni_alpha
+           full         Full PD-PPO     1.7 0.391075 0.024033  0.377105  0.405659 10       0.000000           0.000000        NaN        False      reference          0.007143
+  no_action_emb  No ActionEmbedding     1.7 0.399804 0.028161  0.384238  0.417263 10       0.008728           2.231892   0.001953         True scipy_wilcoxon          0.007143
+no_event_critic No EventAwareCritic     1.7 0.400388 0.030586  0.382896  0.418404 10       0.009313           2.381349   0.019531        False scipy_wilcoxon          0.007143
+        no_awbc             No AWBC     1.7 0.403136 0.028834  0.386168  0.420647 10       0.012060           3.083861   0.001953         True scipy_wilcoxon          0.007143
+      no_oracle     No oracle prior     1.7 0.412005 0.025896  0.396971  0.427143 10       0.020930           5.351815   0.001953         True scipy_wilcoxon          0.007143
+ no_awbc_oracle       No AWBC/prior     1.7 0.445695 0.059660  0.418486  0.486060 10       0.054620          13.966590   0.001953         True scipy_wilcoxon          0.007143
+ no_action_mask      No action mask     1.7 0.400554 0.030275  0.382996  0.419099 10       0.009479           2.423850   0.003906         True scipy_wilcoxon          0.007143
+    masked_only    MaskedActor only     1.7 0.437606 0.029979  0.419936  0.454868 10       0.046531          11.898216   0.001953         True scipy_wilcoxon          0.007143
+ awbc_coef  prior_kl_coef     mean      std  ci_lower  ci_upper  n  delta_pct  is_baseline  within_5pct
+      0.05            0.5 0.401914 0.043385  0.370483  0.439573  5   3.028529        False         True
+      0.05            1.0 0.392380 0.032862  0.369251  0.417930  5   0.584543        False         True
+      0.05            2.0 0.392682 0.035826  0.367044  0.423884  5   0.662049        False         True
+      0.10            0.5 0.408444 0.047023  0.376409  0.445144  5   4.702479        False         True
+      0.10            1.0 0.390100 0.033978  0.365658  0.419036  5   0.000000         True         True
+      0.10            2.0 0.397028 0.038126  0.368256  0.426985  5   1.776045        False         True
+      0.20            0.5 0.397769 0.035226  0.372026  0.426743  5   1.966056        False         True
+      0.20            1.0 0.394104 0.039194  0.366769  0.425862  5   1.026509        False         True
+      0.20            2.0 0.393638 0.035183  0.367306  0.422587  5   0.907083        False         True
+[done] Thu May 14 19:00:51 CST 2026

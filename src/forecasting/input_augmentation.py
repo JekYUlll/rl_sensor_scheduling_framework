@@ -1,6 +1,9 @@
 from __future__ import annotations
+from collections.abc import Mapping
 import math
 import numpy as np
+
+DEFAULT_STALENESS_CAP_STEPS = 600
 
 def compute_time_since_observed(observed_mask: np.ndarray) -> np.ndarray:
     mask = np.asarray(observed_mask, dtype=float)
@@ -11,6 +14,44 @@ def compute_time_since_observed(observed_mask: np.ndarray) -> np.ndarray:
         delta[t] = (delta[t - 1] + 1.0) * (1.0 - mask[t - 1])
         delta[t, mask[t] > 0.5] = 0.0
     return delta
+
+
+def transform_time_since_observed(
+    delta: np.ndarray,
+    time_delta_cfg: Mapping[str, object] | None = None,
+) -> tuple[np.ndarray, str]:
+    """Convert raw missingness age into a stable model feature.
+
+    Raw step counts are not comparable across short RL episodes and long final
+    evaluation rollouts.  The default representation is therefore bounded to
+    [0, 1], where 0 means fresh and 1 means "stale enough that extra elapsed
+    time should not create a new extrapolation regime".
+    """
+
+    cfg = dict(time_delta_cfg or {})
+    encoding = str(cfg.get("encoding", cfg.get("mode", "log_capped"))).strip().lower()
+    raw = np.asarray(delta, dtype=float)
+    if encoding in {"raw", "steps"}:
+        return np.array(raw, dtype=float, copy=True), str(cfg.get("prefix", "delta"))
+    if encoding in {"binary", "indicator"}:
+        return (raw > 0.0).astype(float), str(cfg.get("prefix", "staleness"))
+
+    raw_cap = cfg.get("cap_steps", cfg.get("cap", DEFAULT_STALENESS_CAP_STEPS))
+    if not isinstance(raw_cap, (int, float, str)):
+        raise ValueError("time_delta.cap_steps must be an int-like value")
+    cap_steps = float(raw_cap)
+    if cap_steps <= 0.0:
+        raise ValueError("time_delta.cap_steps must be positive")
+    capped = np.minimum(np.maximum(raw, 0.0), cap_steps)
+    prefix = str(cfg.get("prefix", "staleness"))
+    if encoding in {"capped", "linear_capped"}:
+        return capped / cap_steps, prefix
+    if encoding in {"log", "log_capped", "log1p_capped"}:
+        return np.log1p(capped) / np.log1p(cap_steps), prefix
+    raise ValueError(
+        f"Unsupported time_delta encoding '{encoding}'. "
+        "Supported encodings: log_capped, capped, binary, raw"
+    )
 
 def _safe_col(series: np.ndarray, names: list[str], name: str) -> np.ndarray | None:
     if name not in names:
@@ -182,6 +223,7 @@ def augment_input_series(
     base_freq_s: int = 1,
     context_series: dict[str, np.ndarray] | None = None,
     context_features: list[str] | None = None,
+    time_delta_cfg: Mapping[str, object] | None = None,
 ) -> tuple[np.ndarray, list[str]]:
     series, names, mask = augment_physical_state_series(np.asarray(input_series, dtype=float), list(feature_names), None if observed_mask is None else np.asarray(observed_mask, dtype=float), time_index=None if time_index is None else np.asarray(time_index, dtype=float), base_freq_s=int(base_freq_s))
     parts = [series]
@@ -201,7 +243,11 @@ def augment_input_series(
             parts.append(mask)
             names.extend([f'is_observed_{name}' for name in mask_feature_names])
         if use_time_delta:
-            delta = compute_time_since_observed(mask)
-            parts.append(delta)
-            names.extend([f'delta_{name}' for name in mask_feature_names])
+            delta_raw = compute_time_since_observed(mask)
+            delta_features, delta_prefix = transform_time_since_observed(
+                delta_raw,
+                time_delta_cfg,
+            )
+            parts.append(delta_features)
+            names.extend([f'{delta_prefix}_{name}' for name in mask_feature_names])
     return (np.concatenate(parts, axis=1), names)

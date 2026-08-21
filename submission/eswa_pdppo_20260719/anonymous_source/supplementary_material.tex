@@ -1,0 +1,368 @@
+\documentclass[preprint,12pt]{elsarticle}
+
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[margin=0.78in]{geometry}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\graphicspath{{figures/}}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds}
+\setlength{\emergencystretch}{2em}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!70!black,
+  citecolor=blue!70!black,
+  urlcolor=blue!70!black,
+  pdfauthor={},
+  pdftitle={Supplementary material for Reinforcement learning with forecast-loss rewards for sensor scheduling under power constraints}
+}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thesubsection}{S\arabic{section}.\arabic{subsection}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\begin{document}
+
+\begin{frontmatter}
+\title{Supplementary material for\\
+Reinforcement learning with forecast-loss rewards for sensor scheduling under power constraints}
+\end{frontmatter}
+
+This document provides implementation details for the Prediction-Driven
+Proximal Policy Optimization (PD-PPO) scheduler, baseline definitions,
+additional protocol diagnostics, and the 24-seed descriptive aggregate
+referenced by the anonymous manuscript. It introduces no additional training
+or model selection.
+
+\section*{Terminology guide}
+
+The following terms are used consistently in the manuscript and this
+supplement.
+
+\input{tables/supplementary_terminology}
+
+\section{Recent-history features and policy encoding}
+
+The scheduler input contains ten deterministic recent-history features. Let
+\(\bar{x}_{t,j}\) be the sample-and-hold value normalized by
+forecaster training statistics and clipped to \([-5,5]\), let
+\(\Delta_{16}\bar{x}_{t,j}=\bar{x}_{t,j}-\bar{x}_{t-15,j}\), and let
+\(C_{16}(\mathcal{J})\) be the largest 16-step observation fraction among
+variables in \(\mathcal{J}\). Three event-related recent-history features are
+\begin{align}
+ b_t^{\mathrm{part}} &=
+ \tanh(0.45\bar v_{p,t}+0.25\bar d_{p,t}+0.15\bar f_t),\\
+ b_t^{\mathrm{flux}} &=
+ \tanh(0.55\bar f_t+0.25\bar v_{\mathrm{wind},t}+0.10\Delta_{16}\bar f_t),\\
+ b_t^{\mathrm{therm}} &=
+ \tanh\!\left(0.45(\bar T_{a,t}-\bar T_{s,t})
+ -0.10\Delta_{16}\bar T_{s,t}\right).
+\end{align}
+Here \(v_{\mathrm{wind}}\), \(f\), \(v_p\), \(d_p\), \(T_a\), and \(T_s\) denote wind
+speed, snow mass flux, particle velocity, particle diameter, air temperature,
+and snow-surface temperature. The three indicators are concatenated with current
+normalized wind speed, snow mass flux, particle velocity, the air--surface
+temperature difference, and the particle, flux, and thermal coverage terms.
+Every component is computed from sample-and-hold values and observation masks;
+this information is available at decision time.
+
+The policy uses the aggregate warning signal \(q_t^{\max}\) to combine two observation-history
+encoders,
+\begin{equation}
+  h_t=(1-g_t)f_0(o_t)+g_t f_1(o_t),\qquad
+  g_t=\operatorname{sigmoid}(\alpha q_t^{\max}+\beta),
+\end{equation}
+where \(\alpha\), \(\beta\), and both encoders are learned. A candidate
+activation vector \(a^{(u)}\) is represented by the sum of learned embeddings of
+its active channels. Its policy score is the scaled inner product between the
+subset embedding and \(h_t\), plus a learned subset bias. The
+feasible-action mask excludes infeasible action indices before categorical sampling. The critic receives \(o_t\) and
+\(q_t^{\max}\) through a separate multilayer perceptron.
+
+\section{Forecaster and policy training protocol}
+
+The primary forecaster is fitted on 78 rollouts containing 53,274 time steps,
+all drawn from the forecaster-training partition. Its parameters are then frozen
+during policy training and evaluation. The full-observation baseline contributes
+18 rollouts. A feasible fixed-schedule source and the round-robin, AoI-priority,
+and random-feasible baselines contribute six each, as does each of the six fixed
+channel subsets. Each rollout contains 683 time steps. For each schedule, three
+starts are event centered and three are sampled uniformly from the
+forecaster-training partition. At reset, all channels are off, the 20-step
+observation history is initialized to the
+mean of that partition, and its observation masks are zero. No
+calibration/validation or test observation enters the training mixture.
+
+\input{tables/main_protocol_hyperparameters}
+
+Each event-balanced test window is evaluated as a separate rollout. At its
+start, all channel runtimes are off, the previous activation vector and
+remaining required activation time are zero, the sample-and-hold values and 20-step history are
+initialized to the configured state mean, and observation masks are zero. The
+policy or minimum dwell-time wrapper state is also reset.
+No pre-roll context is supplied. Metrics concatenate the eight 512-step
+rollouts; action-transition diagnostics therefore include the seven boundaries
+between separately reset windows. Continuous full-partition evaluation instead
+uses one reset at time step 64,750 followed by one 5,242-step rollout.
+
+\begin{figure}[htbp]
+  \centering
+  \resizebox{\linewidth}{!}{\input{figures/data_split_timeline_tikz}}
+  \caption{Chronological data partitions used in the experiments. Forecaster training,
+  policy training, calibration/validation, and testing occupy separate intervals.
+  The calibration/validation partition is used to select the fixed baseline and
+  compute normalization factors and the supervised-action mapping before policy optimization;
+  the test partition supplies the event-balanced test windows and evaluation over all
+  scoreable test time steps. The two pilot/model-selection seeds use selected
+  test-window metrics for the prespecified architecture comparison; the other 22
+  seeds are evaluated after that configuration is fixed.}
+\end{figure}
+
+\FloatBarrier
+\section{Matched scalar-objective PPO configurations}
+
+For the configured observed-variable set $\mathcal{J}$ and history length $H$,
+the AoI-objective PPO configuration
+uses
+\begin{equation}
+  \mathcal{L}_{\mathrm{AoI}}(t)
+  =\frac{1}{|\mathcal{J}|}\sum_{j\in\mathcal{J}}
+  \min\left(\frac{A^{\mathrm{var}}_{t,j}}{H-1},1\right),
+\end{equation}
+where $A^{\mathrm{var}}_{t,j}$ is the variable-level AoI, measured in time steps
+since the latest valid observation of
+variable $j$ in the input history. A variable with no valid observation in the
+history receives unit loss.
+
+The uncertainty-objective PPO configuration maintains a bounded diagonal predict--update
+variance proxy only for its reward. For
+each variable, it applies
+\begin{equation}
+  P^-_{t,j}=\min(P_{t-1,j}+Q_j,P_{\max}),\qquad
+  P_{t,j}=\left[(P^-_{t,j})^{-1}+R_{t,j}^{-1}\right]^{-1}
+\end{equation}
+when a valid observation is available, and $P_{t,j}=P^-_{t,j}$ otherwise.
+$R_{t,j}$ is the inverse-variance fused measurement variance. Its bounded
+reward proxy is
+\begin{equation}
+  \mathcal{L}_{\mathrm{unc}}(t)
+  =\frac{1}{|\mathcal{J}|}\sum_{j\in\mathcal{J}}
+  \frac{P_{t,j}}{1+P_{t,j}} .
+\end{equation}
+Both scalar-objective PPO variants retain the same condition-specific training
+weights, behavior cloning pretraining, continuing advantage-weighted behavior
+cloning loss, and auxiliary future-condition classification loss
+as PD-PPO. The current operating-condition label $c_t$ supplies the training
+weight. The future-condition supervision label $c_t^{\mathrm{sup}}$ is the first
+non-calm label from $t$ through $t+16$, or calm if no event occurs in that window;
+it supplies the supervised target action and auxiliary future-condition classification
+target. Under the reported stride-one configuration both labeled-example
+indicators are one at every PPO step, so $\eta_t=\ell_t$; the general
+implementation constructs them separately.
+Neither label is available to the policy or critic at decision time. The diagonal uncertainty
+proxy is distinct from the general estimator covariance trace analyzed in
+Proposition 2 of the main manuscript.
+
+\section{Physical platform motivation}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.78\linewidth]{aws_deployment.png}
+  \caption{Rendered automatic weather station platform motivating the reported
+  sensing abstraction. The logical channel table in the main manuscript defines
+  the experimental sensing system.}
+\end{figure}
+
+\FloatBarrier
+\section{Simulation model and observation specification}
+
+The meteorological background series is generated by phase-randomizing contiguous
+reference time series from Antarctic AWS stations and matching the empirical
+marginal distribution of each variable. An alternating calm/storm semi-Markov
+process supplies longer calm and storm intervals. Their durations are sampled from a lognormal
+distribution, after which event pulses with bounded duration and gap are placed
+inside storm intervals. Wind credibility and hysteresis convert candidate
+pulses into event intervals. One of the particle, flux, or thermal event
+types is sampled for each complete event run.
+
+Within an event run, each event-type process follows a first-order
+low-pass process
+\begin{equation}
+  z_{t,c}=(1-\alpha)z_{t-1,c}+\alpha\epsilon_{t,c},
+  \qquad \epsilon_{t,c}\sim\mathcal{N}(0,1),
+\end{equation}
+and is standardized over its active interval. Event-type effects enter the
+target variables after a six-time-step lag. Table S3 lists the simulation-model parameters used
+in the reported experiment.
+
+\input{tables/simulator_event_parameters}
+
+Table S4 records the target scales and task weights used by the primary and ridge
+forecasters. The current operating-condition label $c_t$ selects a predeclared weight vector after an
+observation sequence has been produced by a schedule; it never changes the
+scheduler input.
+
+\input{tables/forecast_target_weights}
+
+For each event type $c$, the simulated warning signal is
+\begin{equation}
+  q_{t,c}=\operatorname{clip}_{[0,1]}
+  \left(b_{t,c}+\varepsilon_{t,c}\right),
+\end{equation}
+where $b_{t,c}=1$ during the event interval, increases linearly during the 16
+time steps before onset, and is zero otherwise; $\varepsilon_{t,c}$ is Gaussian
+noise with standard deviation 0.01. The aggregate warning signal is
+$\max_c q_{t,c}$. The PD-PPO scheduler receives these four simulated warning
+signals but neither $c_t$ nor $c_t^{\mathrm{sup}}$. This is a simulation assumption
+and has not been validated as a field detector.
+
+An active and ready channel observes variable $j$ with configured probability
+$p_{i,j,c}$ and adds independent Gaussian noise with standard deviation
+$\sigma_{i,j,c}$. Table S5 gives the event-dependent values of the three
+specialist channels. The meteorological core channel uses standard deviations
+0.18 m s$^{-1}$ for wind speed, 1.8
+degrees for wind direction, 0.18 $^{\circ}$C for air temperature, 0.90
+percentage points for relative humidity, and 14 Pa for pressure. The radiometer
+uses 8 W m$^{-2}$, while the shielded temperature--humidity channel uses 0.06 $^{\circ}$C
+and 0.30 percentage points.
+
+\input{tables/specialist_observation_model}
+
+\FloatBarrier
+\section{Executable baseline definitions}
+
+The fixed channel subset selected on the calibration/validation partition is
+\begin{equation}
+  a_{\mathrm{fixed}}
+  =\arg\min_{a\in\mathcal{A}}
+  \left(L_{\mathrm{macro,val}}(a),
+        L_{\mathrm{val}}(a),
+        \operatorname{index}(a)\right),
+\end{equation}
+with lexicographic ordering. This fixed channel subset is selected before test
+evaluation. The warning-rule baseline uses the same calibration/validation procedure
+separately for calm, particle, flux, and thermal windows. At time step $t$, it chooses
+\begin{equation}
+  \widehat{c}_t=
+  \begin{cases}
+    \arg\max_c q_{t,c}, & \max_c q_{t,c}\geq 0.5,\\
+    \mathrm{calm}, & \text{otherwise},
+  \end{cases}
+\end{equation}
+and requests the channel subset selected on the calibration/validation partition
+for $\widehat{c}_t$.
+
+The privileged one-step look-ahead reference using next-step test targets
+snapshots the complete environment, executes each candidate once, restores the
+snapshot, and minimizes
+\begin{equation}
+  \left(
+  L_{\mathrm{step}}(t;a),
+  \frac{1}{N}\lVert a-a_{t-1}\rVert_1,
+  \operatorname{index}(a)
+  \right).
+\end{equation}
+It uses next-step test targets that are unavailable to the deployed scheduler.
+The privileged true-label baseline receives the exact label sequence
+$c_t,\ldots,c_{t+16}$ at each decision; this sequence is also unavailable to the
+deployed scheduler and differs from the single derived supervision label
+$c_t^{\mathrm{sup}}$. Table S6 states all baseline procedures and their information
+availability.
+
+\input{tables/executable_baseline_definitions}
+
+\FloatBarrier
+\section{Simulation validation and additional results}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figure3_synthetic_statistics.pdf}
+  \caption{Simulation-validation diagnostics covering agreement between
+  simulated and Antarctic-reference distributions, the wind-speed
+  autocorrelation function (ACF), and event fractions.}
+\end{figure}
+
+\input{tables/clean_full_partition_sensitivity}
+
+\input{tables/clean_secondary_forecaster}
+
+\input{tables/static_mask_selection_ledger}
+
+\input{tables/online_observability_audit}
+
+\input{tables/baseline_reference_taxonomy}
+
+\input{tables/clean_reported_24seed_descriptive}
+
+The warning diagnostics use receiver operating characteristic area under the
+curve (ROC AUC), precision--recall area under the curve (PR AUC), and the
+macro-averaged F1 score.
+
+\begin{table}[H]
+  \centering
+  \caption{Information content of the simulated warning signals over the
+  continuous test partitions of the 22 post-selection evaluation seeds.}
+  \label{tab:warning_information_diagnostics}
+  \scriptsize
+  \setlength{\tabcolsep}{3.0pt}
+  \begin{tabular}{@{}p{0.48\linewidth}p{0.43\linewidth}@{}}
+    \toprule
+    Diagnostic & Value \\
+    \midrule
+    Thresholded four-class warning rule & Accuracy 0.9094; macro-averaged F1 score 0.9156 \\
+    Mutual information with current condition label & 1.4711 bits \\
+    Particle warning & ROC AUC 0.9971; PR AUC 0.9855 \\
+    Flux warning & ROC AUC 0.9988; PR AUC 0.9881 \\
+    Thermal warning & ROC AUC 0.9971; PR AUC 0.9832 \\
+    Event-onset warning lead & 1,262 of 1,262 onsets detected in the preceding 16 steps; median 9 steps \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.3ex}
+
+  \noindent\scriptsize
+  Diagnostics are computed directly from hash-verified frozen truth CSVs; they do
+  not execute a policy. The rule selects the largest event warning when it is at
+  least 0.5 and calm otherwise.
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Constraint and execution diagnostics for the reported $q=1$
+  candidate-action instance.}
+  \label{tab:constraint_activation_diagnostics}
+  \scriptsize
+  \setlength{\tabcolsep}{3.0pt}
+  \begin{tabular}{@{}p{0.48\linewidth}p{0.43\linewidth}@{}}
+    \toprule
+    Diagnostic & Value \\
+    \midrule
+    Candidate / feasible action count & 6 / 6 at every step \\
+    $\Pr(|\mathcal{I}_t|<6)$ & 0 \\
+    Maximum steady demand / limit & 0.74 / 0.75; zero exclusions \\
+    Maximum startup-peak demand / limit & 0.92 / 0.95; zero exclusions \\
+    Minimum dwell time / maximum warm-up & 6 / 2 time steps \\
+    Warm-up interruptions and $\Pr(W_t>0)$ & 0 and 0, structurally \\
+    Mean normalized Hamming distance per transition & 0.00369 over concatenated event-balanced evaluation windows \\
+    Nominal $\lambda_{\mathrm{sw}}S_t$ from that diagnostic & $3.69\times10^{-6}$; not a logged training-reward contribution \\
+    Training-time proposal override rate & Not recorded; counterfactual proposals are absent from logs \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\FloatBarrier
+\end{document}

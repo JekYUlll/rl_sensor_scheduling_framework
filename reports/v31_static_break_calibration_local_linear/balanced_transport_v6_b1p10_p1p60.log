@@ -1,0 +1,95 @@
+reports/v31_static_break_calibration_local_linear/truth_static_break_calibration.csv
+reports/v31_static_break_calibration_local_linear/balanced_transport_v6_b1p10_p1p60/dataset_validation/synthetic_validation.csv
+{
+  "budget": 1.1,
+  "candidate_count": 119,
+  "truth_event_rate": 0.25475,
+  "eval_start_indices": [
+    5441,
+    10929,
+    7265
+  ],
+  "event_loss_min": 0.2925709744865686,
+  "non_event_loss_min": 0.23433744924241823,
+  "best_overall": {
+    "action_idx": 15,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|ultrasonic_anemometer_hd",
+    "oracle_loss_mean": 0.27749508418019253,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_event_laser": null,
+  "best_event_no_laser": {
+    "action_idx": 15,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|ultrasonic_anemometer_hd",
+    "oracle_loss_event": 0.2925709744865686,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_event_fc4": {
+    "action_idx": 64,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|fc4_flux",
+    "oracle_loss_event": 0.30911131931321895,
+    "power_mean": 0.62,
+    "peak_max": 0.76
+  },
+  "best_event_no_fc4": {
+    "action_idx": 15,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|ultrasonic_anemometer_hd",
+    "oracle_loss_event": 0.2925709744865686,
+    "power_mean": 0.4100000000000001,
+    "peak_max": 0.52
+  },
+  "best_non_event_laser": null,
+  "best_non_event_no_laser": {
+    "action_idx": 64,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir|fc4_flux",
+    "oracle_loss_non_event": 0.23433744924241823,
+    "power_mean": 0.62,
+    "peak_max": 0.76
+  },
+  "laser_event_lift": NaN,
+  "fc4_event_lift": -0.016540344826650344,
+  "laser_non_event_lift": NaN,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v6_static_break.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_local_linear/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.4,
+    0.4,
+    0.6,
+    0.1,
+    0.1,
+    0.1,
+    6.0,
+    3.0,
+    3.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.1,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  }
+}
+reports/v31_static_break_calibration_local_linear/balanced_transport_v6_b1p10_p1p60/oracle_lift_candidate_table.csv

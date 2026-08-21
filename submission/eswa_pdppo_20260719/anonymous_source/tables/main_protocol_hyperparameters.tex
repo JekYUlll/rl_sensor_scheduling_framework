@@ -1,0 +1,68 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Main protocol and PD-PPO scheduler hyperparameters for the reported experiment.}
+  \label{tab:main_protocol_hyperparameters}
+  \scriptsize
+  \renewcommand{\arraystretch}{0.82}
+  \setlength{\tabcolsep}{3.2pt}
+  \begin{tabular}{@{}p{0.38\linewidth}p{0.55\linewidth}@{}}
+    \toprule
+    Item & Value \\
+    \midrule
+    Reported seeds & 117--140: pilot/model-selection seeds 117--118; post-selection evaluation seeds 119--140 \\
+    Simulated series length & 70,000 hourly time steps per seed \\
+    Chronological partitions & [0,24500) forecaster training; [24500,59500) policy training; [59500,64750) calibration/validation (normalization-factor computation and fixed-baseline selection); [64750,70000) test \\
+    Forecast lookback / horizon & 20 / 8 time steps; uniform horizon weights \\
+    Event-balanced test windows & 8 windows selected from test truth to balance event types and emphasize transport periods, 512 time steps each; selection uses no policy losses \\
+    Full test-partition evaluation & All 5,242 scoreable test time steps; same trained policies, channel subsets, and normalization factors \\
+    Candidate action set & 6 candidate channel subsets \\
+    Mandatory channel & Meteorological core channel \\
+    Steady-state / startup-peak power limits & 0.75 / 0.95 \\
+    Constraint activation in the reported candidate set & Maximum steady/startup demand 0.74/0.92; all six candidates feasible at every step; optional-channel cardinality and minimum dwell time are the active restrictions \\
+    Policy timesteps & 200,000 \\
+    PPO rollout / batch / update epochs & 1024 / 128 / 8 \\
+    Recent-history features & 16-step normalized values, slopes, and observation coverage; 10 features \\
+    Policy/critic network & two 128-unit feature encoders combined by the aggregate warning signal; 32-dimensional embeddings of candidate channel subsets; separate warning-aware critic \\
+    Learning rate, discount, GAE & 0.0003, 0.99, 0.95 \\
+    Clip, entropy, value coef. & 0.2, 0.0075, 0.5 \\
+    Continuing advantage-weighted behavior cloning and auxiliary future-condition classifier weights & $\beta_{\mathrm{BC}}=2.5$; $\beta_{\mathrm{cond}}=5.0$ \\
+    Condition-specific training weights & particle/flux/thermal = 1.55/0.95/1.65; calm = 1.0 \\
+    Calibration/validation-based normalization factors & event-type-specific median over fixed channel subsets for particle/flux/thermal; default overall-loss median for calm \\
+    Future-condition supervision label & first non-calm condition label from $t$ through $t+16$, or calm if none occurs; training only \\
+    Minimum dwell time / normalized switching-cost weight / warm-up interruption-cost weight & 6 time steps; 0.001; 1.0 \\
+    Fixed-baseline selection metric & macro-averaged normalized forecast loss \\
+    Event-type mix & particle/flux/thermal = 0.40/0.20/0.40 \\
+    Event coverage target & 0.68 \\
+    Statistical resampling & 100,000 percentile-bootstrap samples over paired seed differences; seed 20,260,718 \\
+    Behavior cloning pretraining & 10,000 steps; 18 epochs; batch size 256 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.2ex}
+
+  \noindent\scriptsize
+  Partitions are fixed before test evaluation; fixed-baseline selection and
+  normalization factors use only the calibration/validation partition.
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Scalar-objective PPO configurations, Double DQN training configuration, and primary-forecaster
+  training protocol.}
+  \label{tab:control_protocol_hyperparameters}
+  \scriptsize
+  \renewcommand{\arraystretch}{0.86}
+  \setlength{\tabcolsep}{3.2pt}
+  \begin{tabular}{@{}p{0.38\linewidth}p{0.55\linewidth}@{}}
+    \toprule
+    Item & Value \\
+    \midrule
+    Scalar-objective PPO variants & Same PPO policy and critic architecture, scheduler input, action set, constraints, behavior cloning pretraining, continuing advantage-weighted behavior cloning, and auxiliary future-condition classifier; replace forecast loss with normalized target AoI or a bounded diagonal uncertainty proxy \\
+    Double DQN training configuration & Dueling 128-unit network; 200,000 steps; experience replay 100,000; learning starts 5,000; batch 128; 3-step return; target update 1,000; $\epsilon$ 1.0 to 0.05 over 20\%; learning rate $10^{-4}$; no behavior cloning pretraining, continuing advantage-weighted behavior cloning term, or auxiliary future-condition classifier \\
+    Primary forecaster architecture & residual TCN, 3 levels, 64 channels, kernel size 3, dropout 0.05 \\
+    Forecaster-training mixture & 78 rollouts (53,274 time steps). The mixture contains 18 full-observation rollouts, six for each dynamic baseline or feasible fixed-schedule source, and six for each fixed channel subset. \\
+    Normalization & forecaster input/target scales fitted before policy updates; calibration/validation-based normalization factors computed before policy optimization \\
+    Checkpoint/baseline handling & final policy checkpoint saved after the prescribed PPO updates; fixed baseline selected by lowest calibration/validation macro-averaged loss \\
+    Computation & GPU policy optimization; the same frozen primary forecaster for all test metrics \\
+    \bottomrule
+  \end{tabular}
+\end{table}

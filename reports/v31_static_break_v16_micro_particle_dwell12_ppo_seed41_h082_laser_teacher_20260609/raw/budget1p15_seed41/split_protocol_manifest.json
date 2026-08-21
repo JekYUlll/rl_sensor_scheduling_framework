@@ -1,0 +1,149 @@
+{
+  "protocol": "chronological_split_v31_retraining",
+  "truth_steps": 60000,
+  "seed": 41,
+  "budget": 1.15,
+  "split_ratios": [
+    0.35,
+    0.5,
+    0.075,
+    0.075
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      21000
+    ],
+    "rl_train": [
+      21000,
+      51000
+    ],
+    "validation": [
+      51000,
+      55500
+    ],
+    "final_test": [
+      55500,
+      60000
+    ]
+  },
+  "truth_event_design": {
+    "event_coverage": 0.34,
+    "min_duration": 12,
+    "max_duration": 28,
+    "min_gap": 4,
+    "lead_steps": 6,
+    "wind_margin_ms": 1.2,
+    "cred_hysteresis_on": 0.6,
+    "cred_hysteresis_off": 0.3,
+    "flux_wind_exponent": 4.0,
+    "event_microstructure_sigma": 0.45,
+    "event_microstructure_alpha": 0.2,
+    "event_microstructure_diameter_scale": 0.08,
+    "event_microstructure_velocity_scale": 1.0,
+    "event_particle_microstructure_correlation": 0.2
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      21000
+    ]
+  },
+  "rl_train": {
+    "range": [
+      21000,
+      51000
+    ],
+    "ppo_start_min": 21000,
+    "ppo_start_max": 50479,
+    "normalization_range": [
+      21000,
+      51000
+    ],
+    "candidate_prior_starts": [
+      26567,
+      32762,
+      38823,
+      44957
+    ],
+    "candidate_prior_steps": 512
+  },
+  "validation": {
+    "static_selection_starts": [
+      51485,
+      52489,
+      53508,
+      54525
+    ],
+    "static_selection_steps": 512
+  },
+  "final_test": {
+    "eval_starts": [
+      55588,
+      56696,
+      57793,
+      58894
+    ],
+    "eval_steps": 1024,
+    "selection": "uniform_random_non_overlapping_without_event_filtering",
+    "skip_rollout_evaluation": true
+  },
+  "operational_baselines": {
+    "eval_duty_constrained_baselines": true,
+    "baseline_duty_hard_low": 0.12,
+    "baseline_duty_hard_high": 0.75,
+    "baseline_duty_hard_score": 12.0,
+    "baseline_duty_score_feedback": 2.5
+  },
+  "reward_shaping": {
+    "lambda_warmup_abort": 1.0,
+    "lambda_switch": 0.002,
+    "event_reward_multiplier": 3.0,
+    "energy_account": true,
+    "energy_capacity": 180.0,
+    "initial_energy": 180.0,
+    "harvest_per_step": 0.82,
+    "reserve_energy": 20.0,
+    "lambda_energy_deficit": 1.0,
+    "soc_soft_penalty_buffer": 40.0,
+    "lambda_soc_soft_penalty": 0.08,
+    "lambda_duty_balance": 0.8,
+    "duty_balance_low": 0.12,
+    "duty_balance_high": 0.75,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 2.5,
+    "duty_score_target": 0.4,
+    "duty_hard_guard": true,
+    "duty_hard_low": 0.12,
+    "duty_hard_high": 0.75,
+    "duty_hard_score": 12.0,
+    "min_dwell_steps": 12
+  },
+  "ppo_controls": {
+    "ent_coef": 0.001,
+    "awbc_coef": 0.4,
+    "awbc_label_stride": 1,
+    "awbc_teacher_mode": "event_pair",
+    "awbc_teacher_calm_sensors": [
+      "surface_temp_ir",
+      "ultrasonic_anemometer_hd",
+      "shielded_thermo_hygro",
+      "snow_particle_counter"
+    ],
+    "awbc_teacher_event_sensors": [
+      "met_station_core",
+      "radiometer_basic",
+      "laser_disdrometer"
+    ],
+    "awbc_teacher_event_lookahead_steps": 0,
+    "prior_kl_coef": 0.0,
+    "greedy_lookahead_steps": 4,
+    "event_start_prob": 0.9,
+    "event_aware_critic": true,
+    "event_gated_actor": true,
+    "soc_aux_horizon": 32,
+    "soc_aux_coef": 0.03,
+    "use_candidate_prior": false,
+    "candidate_prior_scale": 0.0
+  }
+}

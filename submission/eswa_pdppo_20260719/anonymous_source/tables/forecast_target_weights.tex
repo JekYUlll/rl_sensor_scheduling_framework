@@ -1,0 +1,24 @@
+\begin{table}[H]
+  \centering
+  \caption{Target scales and event-type-dependent weights used with the primary
+  forecaster. Zero-weight variables remain forecaster inputs but
+  do not enter the reported loss.}
+  \label{tab:forecast_target_weights}
+  \scriptsize
+  \setlength{\tabcolsep}{3.0pt}
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    Forecast target & Scale & Calm/default & Particle & Flux & Thermal \\
+    \midrule
+    Air temperature & 5 & 0.10 & 0 & 0 & 0.22 \\
+    Snow-surface temperature & 5 & 0.26 & 0 & 0 & 85 \\
+    Wind speed & 5 & 0.08 & 0.08 & 0.04 & 0.08 \\
+    Wind direction sine & 1 & 0 & 0 & 0 & 0 \\
+    Wind direction cosine & 1 & 0 & 0 & 0 & 0 \\
+    Solar radiation & 100 & 0 & 0 & 0 & 0 \\
+    Snow mass flux & $10^{-4}$ & 4.5 & 0.5 & 7 & 0.2 \\
+    Particle diameter & 0.2 & 42 & 105 & 5 & 1 \\
+    Particle velocity & 5 & 42 & 105 & 5 & 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

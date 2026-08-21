@@ -1,0 +1,20 @@
+scheduler_name: dqn
+device: auto
+network:
+  hidden_dims: [64, 64]
+training:
+  gamma: 0.99
+  lr: 0.001
+  batch_size: 32
+  replay_size: 10000
+  warmup_steps: 64
+  target_update_interval: 50
+  train_interval: 1
+  grad_clip: 5.0
+exploration:
+  eps_start: 1.0
+  eps_end: 0.05
+  eps_decay_steps: 800
+reward_normalization:
+  enabled: false
+  clip: 10.0

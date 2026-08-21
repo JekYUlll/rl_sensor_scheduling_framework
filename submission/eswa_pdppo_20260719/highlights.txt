@@ -1,0 +1,5 @@
+Prediction-Driven Proximal Policy Optimization (PD-PPO) schedules channels.
+The complete PD-PPO configuration had lower co-primary losses in all 22 seeds.
+Both losses remained lower over 5,242 scoreable test steps in all 22 seeds.
+PD-PPO had lower macro-averaged normalized loss than Double DQN in all 22 seeds.
+Future-condition supervision labels guide training, not online decisions.

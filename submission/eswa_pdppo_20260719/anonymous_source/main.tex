@@ -1,0 +1,153 @@
+%% ============================================================
+%%  Main manuscript source for Expert Systems with Applications
+%%  Promoted from the earlier standalone rewrite; canonical edits belong here
+%% ============================================================
+
+\documentclass[review,authoryear,12pt]{elsarticle}
+
+\newif\ifanonymoussubmission
+\ifdefined\ANONYMOUSSUBMISSION
+  \anonymoussubmissiontrue
+\else
+  \anonymoussubmissionfalse
+\fi
+
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}
+\usepackage{DejaVuSans}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{newtxmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{xspace}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\captionsetup{labelsep=period}
+
+\graphicspath{{figures/}}
+\setlength{\emergencystretch}{2em}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds}
+
+\ifanonymoussubmission
+  \hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=blue!70!black,
+    urlcolor=blue!70!black,
+    pdfauthor={},
+    pdftitle={Reinforcement learning with forecast-loss rewards for sensor scheduling under power constraints},
+    pdfkeywords={Sensor scheduling; Power constraints; Time series forecasting; Reinforcement learning; Adaptive sensing; Antarctic monitoring}
+  }
+\else
+  \input{author_pdf_metadata}
+  \hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=blue!70!black,
+    urlcolor=blue!70!black,
+    pdftitle={Reinforcement learning with forecast-loss rewards for sensor scheduling under power constraints},
+    pdfkeywords={Sensor scheduling; Power constraints; Time series forecasting; Reinforcement learning; Adaptive sensing; Antarctic monitoring}
+  }
+\fi
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+\newcommand{\PPO}{\textsc{ppo}\xspace}
+\newcommand{\AWS}{\textsc{aws}\xspace}
+\newcommand{\AoI}{\textsc{aoi}\xspace}
+\newcommand{\SOC}{\textsc{soc}\xspace}
+
+\journal{Expert Systems with Applications}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Reinforcement learning with forecast-loss rewards for sensor scheduling under power constraints}
+
+\ifanonymoussubmission
+\else
+  \input{author_frontmatter}
+\fi
+
+\begin{abstract}
+Under power constraints, the forecast value of a channel changes over time. Prediction-Driven Proximal Policy Optimization (PD-PPO) is a complete online scheduler whose training configuration combines a forecast-loss policy reward, behavior cloning pretraining, continuing advantage-weighted behavior cloning during PPO, and auxiliary future-condition classification. A feasibility check enforces steady-state and startup-peak power limits, while a minimum dwell-time constraint determines the executed activation vector. The scheduler input comprises observation histories, channel states, the previous executed activation vector, and simulated warning signals. A frozen primary forecaster supplies the multi-step forecast loss used to construct the training loss and evaluate policies offline; it is absent from online action selection.
+
+After pilot/model-selection seeds 117--118, the primary analysis used event-balanced evaluation windows for 22 post-selection evaluation seeds (119--140). Across these seeds, the complete PD-PPO training configuration achieved lower macro-averaged normalized forecast loss than the validation-selected fixed-schedule baseline in every seed. The same configuration also achieved lower mean forecast loss than that baseline in every seed; the respective reductions were 8.0\% and 10.6\%. Both endpoints remained lower in every seed over the continuous 5,242-step scoreable test partition. The PD-PPO scheduler also had lower losses than the AoI-priority, round-robin, random-feasible, and privileged one-step look-ahead reference using next-step test targets in every seed, and lower macro-averaged loss than the Double DQN training configuration in every seed. Confidence intervals for matched PPO training configurations with age of information (AoI) and uncertainty objectives, and for the warning-rule baseline, included zero. All six candidate actions satisfy both power limits in this $q=1$ instance, so the optional-channel cardinality and minimum dwell-time constraints provide the active scheduling restrictions. Evidence is limited to a controlled simulation with informative warnings and does not isolate the reward, PPO update, warning signals, or training-only supervision.
+\end{abstract}
+
+\begin{keyword}
+Sensor scheduling \sep
+Power constraints \sep
+Time series forecasting \sep
+Reinforcement learning \sep
+Adaptive sensing \sep
+Antarctic monitoring
+\end{keyword}
+
+\end{frontmatter}
+
+\section*{Abbreviations}
+\noindent
+AoI, age of information; AWS, Antarctic automatic weather station; DRL, deep
+reinforcement learning; PD-PPO, Prediction-Driven Proximal Policy Optimization;
+PPO, proximal policy optimization; SOC, state of charge.
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_problem_formulation}
+\input{sections/04_framework_protocol}
+\input{sections/05_simulation_setup}
+\input{sections/06_results}
+\input{sections/07_discussion_future_work}
+\input{sections/08_conclusion}
+
+\appendix
+\input{sections/appendix_theory}
+
+\ifanonymoussubmission
+\else
+  \input{author_identity_statements}
+\fi
+
+\section*{Funding}
+This research received no specific grant from any funding agency in the public,
+commercial, or not-for-profit sectors.
+
+\section*{Declaration of Competing Interest}
+The authors declare that they have no known competing financial interests or
+personal relationships that could have appeared to influence the work reported in
+this paper.
+
+\section*{Data Availability}
+A versioned repository containing the code, aggregate tables, seed summaries,
+generated figure assets, and reproduction scripts will be made publicly
+available upon acceptance. An anonymous review archive contains the code and
+evidence needed to verify the reported aggregate results. All reported empirical
+evidence comes from simulated data; field measurements are outside the
+evaluation set.
+
+\section*{Declaration of Generative AI and AI-Assisted Technologies}
+During preparation of this manuscript the authors used OpenAI Codex and Hermes
+Agent for code inspection, consistency checks, and language-editing assistance.
+The authors reviewed and edited all generated material and take full responsibility for the
+content of the manuscript. No figure or other graphical asset in the manuscript
+was created or modified using a generative image tool.
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
+
+\end{document}

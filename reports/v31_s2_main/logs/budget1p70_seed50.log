@@ -1,0 +1,67 @@
+reports/v31_s2_main/raw/budget1p70_seed50/truth_v31.csv
+reports/v31_s2_main/raw/budget1p70_seed50/dataset_validation/synthetic_validation.csv
+custom_ppo_update update=1 timesteps=2048 loss=0.565390 entropy=1.999083 adv_std=1.357900 awbc_label_rate=0.250
+custom_ppo_update update=2 timesteps=4096 loss=0.549956 entropy=2.009169 adv_std=1.179950 awbc_label_rate=0.250
+custom_ppo_update update=3 timesteps=6144 loss=1.170864 entropy=2.011649 adv_std=2.767172 awbc_label_rate=0.250
+custom_ppo_update update=4 timesteps=8192 loss=1.147454 entropy=2.018106 adv_std=2.435665 awbc_label_rate=0.250
+custom_ppo_update update=5 timesteps=10240 loss=1.144274 entropy=2.045027 adv_std=2.466830 awbc_label_rate=0.250
+custom_ppo_update update=6 timesteps=12288 loss=1.038801 entropy=2.044686 adv_std=2.602616 awbc_label_rate=0.250
+custom_ppo_update update=7 timesteps=14336 loss=0.871385 entropy=2.025711 adv_std=2.346204 awbc_label_rate=0.250
+custom_ppo_update update=8 timesteps=16384 loss=0.885614 entropy=2.028452 adv_std=2.575244 awbc_label_rate=0.250
+custom_ppo_update update=9 timesteps=18432 loss=1.071537 entropy=2.042551 adv_std=3.680212 awbc_label_rate=0.250
+custom_ppo_update update=10 timesteps=20480 loss=0.839241 entropy=2.043713 adv_std=2.899254 awbc_label_rate=0.250
+custom_ppo_update update=11 timesteps=22528 loss=0.681286 entropy=2.039003 adv_std=2.267090 awbc_label_rate=0.250
+custom_ppo_update update=12 timesteps=24576 loss=0.570723 entropy=2.022734 adv_std=2.433281 awbc_label_rate=0.250
+custom_ppo_update update=13 timesteps=26624 loss=0.710661 entropy=2.028379 adv_std=2.780945 awbc_label_rate=0.250
+custom_ppo_update update=14 timesteps=28672 loss=1.163666 entropy=2.021222 adv_std=2.949950 awbc_label_rate=0.250
+custom_ppo_update update=15 timesteps=30720 loss=1.554148 entropy=2.035810 adv_std=3.566858 awbc_label_rate=0.250
+custom_ppo_update update=16 timesteps=32768 loss=0.815414 entropy=2.033685 adv_std=2.644440 awbc_label_rate=0.250
+custom_ppo_update update=17 timesteps=34816 loss=0.982625 entropy=2.042468 adv_std=2.690159 awbc_label_rate=0.250
+custom_ppo_update update=18 timesteps=36864 loss=0.935716 entropy=2.031192 adv_std=3.267567 awbc_label_rate=0.250
+custom_ppo_update update=19 timesteps=38912 loss=1.007802 entropy=2.031839 adv_std=3.135806 awbc_label_rate=0.250
+custom_ppo_update update=20 timesteps=40960 loss=1.050070 entropy=2.025827 adv_std=3.072388 awbc_label_rate=0.250
+custom_ppo_update update=21 timesteps=43008 loss=0.755178 entropy=2.020291 adv_std=2.850391 awbc_label_rate=0.250
+custom_ppo_update update=22 timesteps=45056 loss=0.819018 entropy=2.022474 adv_std=2.911242 awbc_label_rate=0.250
+custom_ppo_update update=23 timesteps=47104 loss=0.653995 entropy=2.026682 adv_std=2.343817 awbc_label_rate=0.250
+custom_ppo_update update=24 timesteps=49152 loss=0.944368 entropy=2.046659 adv_std=3.078388 awbc_label_rate=0.250
+custom_ppo_update update=25 timesteps=51200 loss=0.631289 entropy=2.035288 adv_std=2.359966 awbc_label_rate=0.250
+custom_ppo_update update=26 timesteps=53248 loss=0.896915 entropy=2.017579 adv_std=2.754964 awbc_label_rate=0.250
+custom_ppo_update update=27 timesteps=55296 loss=0.968352 entropy=2.035074 adv_std=2.176652 awbc_label_rate=0.250
+custom_ppo_update update=28 timesteps=57344 loss=0.947775 entropy=2.035373 adv_std=3.270204 awbc_label_rate=0.250
+custom_ppo_update update=29 timesteps=59392 loss=1.270728 entropy=2.030457 adv_std=3.642763 awbc_label_rate=0.250
+custom_ppo_update update=30 timesteps=61440 loss=0.899366 entropy=2.028489 adv_std=3.594568 awbc_label_rate=0.250
+custom_ppo_update update=31 timesteps=63488 loss=0.802579 entropy=2.029470 adv_std=2.686927 awbc_label_rate=0.250
+custom_ppo_update update=32 timesteps=65536 loss=1.424905 entropy=2.037797 adv_std=3.635300 awbc_label_rate=0.250
+custom_ppo_update update=33 timesteps=67584 loss=0.930598 entropy=2.031580 adv_std=3.385384 awbc_label_rate=0.250
+custom_ppo_update update=34 timesteps=69632 loss=0.894762 entropy=2.028842 adv_std=2.971904 awbc_label_rate=0.250
+custom_ppo_update update=35 timesteps=71680 loss=0.684615 entropy=2.026901 adv_std=2.866271 awbc_label_rate=0.250
+custom_ppo_update update=36 timesteps=73728 loss=1.295541 entropy=2.028359 adv_std=3.835718 awbc_label_rate=0.250
+custom_ppo_update update=37 timesteps=75776 loss=0.941267 entropy=2.032447 adv_std=3.032315 awbc_label_rate=0.250
+custom_ppo_update update=38 timesteps=77824 loss=0.877392 entropy=2.023914 adv_std=2.498676 awbc_label_rate=0.250
+custom_ppo_update update=39 timesteps=79872 loss=0.889437 entropy=2.003106 adv_std=2.776798 awbc_label_rate=0.250
+custom_ppo_update update=40 timesteps=81920 loss=0.869024 entropy=2.022307 adv_std=3.215570 awbc_label_rate=0.250
+custom_ppo_update update=41 timesteps=83968 loss=0.913906 entropy=2.026955 adv_std=2.944347 awbc_label_rate=0.250
+custom_ppo_update update=42 timesteps=86016 loss=0.937215 entropy=2.042698 adv_std=2.813019 awbc_label_rate=0.250
+custom_ppo_update update=43 timesteps=88064 loss=0.815717 entropy=2.020825 adv_std=3.146983 awbc_label_rate=0.250
+custom_ppo_update update=44 timesteps=90112 loss=1.179419 entropy=2.029880 adv_std=3.056447 awbc_label_rate=0.250
+custom_ppo_update update=45 timesteps=92160 loss=1.018630 entropy=2.011045 adv_std=3.711730 awbc_label_rate=0.250
+custom_ppo_update update=46 timesteps=94208 loss=0.879006 entropy=2.011029 adv_std=2.870741 awbc_label_rate=0.250
+custom_ppo_update update=47 timesteps=96256 loss=0.912715 entropy=2.009523 adv_std=3.132114 awbc_label_rate=0.250
+custom_ppo_update update=48 timesteps=98304 loss=0.870682 entropy=2.009609 adv_std=3.084706 awbc_label_rate=0.250
+custom_ppo_update update=49 timesteps=100000 loss=0.786244 entropy=2.015484 adv_std=3.015825 awbc_label_rate=0.250
+reports/v31_s2_main/raw/budget1p70_seed50/evaluation/v2_eval_overall.csv
+                   policy  steps  weighted_normalized_mae      mae     rmse    smape  pearson      dtw  oracle_loss_mean  reward_mean  power_mean  power_max  peak_power_max  steady_violation_rate  peak_violation_rate  event_rate  warmup_abort_count  warmup_abort_rate  obs_reconstruction_mae  forecast_samples  forecast_weighted_mae_overall  forecast_raw_mae_overall  forecast_weighted_mae_event  forecast_weighted_mae_non_event  forecast_weighted_mae_low_temp  forecast_weighted_mae_normal
+feasible_static_projected   6144                 0.202882 1.602212 3.920187 0.808231 0.929577 1.558819          0.148578    -0.148579    1.460000       1.46            1.95                    0.0                  0.0    0.374023                   0           0.000000                0.202882              6144                       0.148578                  1.793031                     0.151035                         0.113861                        0.113235                      0.144785
+  full_open_unconstrained   6144                 0.065529 0.784097 2.699978 0.737359 0.898651 0.747445          0.149597    -0.149598    4.620000       4.62            6.28                    1.0                  1.0    0.374023                   0           0.000000                0.065529              6144                       0.149597                  1.786492                     0.152129                         0.113803                        0.113831                      0.135295
+               custom_ppo   6144                 0.200649 1.620846 3.945753 0.810696 0.920640 1.560004          0.152011    -0.153743    1.530501       1.60            1.95                    0.0                  0.0    0.374023                 129           0.020996                0.200649              6144                       0.152011                  1.798536                     0.154553                         0.116092                        0.113137                      0.151102
+              round_robin   6144                 0.221263 1.742827 4.440798 0.809118 0.894781 1.634594          0.160684    -0.181106    1.555000       1.64            1.98                    0.0                  0.0    0.374023                1530           0.249023                0.221263              6144                       0.160684                  1.861450                     0.163360                         0.122869                        0.119257                      0.152368
+                   random   6144                 0.145764 1.802246 8.940984 0.820860 0.857744 1.225165          0.191091    -0.218961    1.607402       1.70            2.33                    0.0                  0.0    0.374023                2076           0.337891                0.145764              6144                       0.191091                  2.453619                     0.194894                         0.137343                        0.139375                      0.185675
+                      aoi   6144                 0.148316 1.770367 7.912985 0.809357 0.855692 1.216108          0.198147    -0.234216    1.622780       1.70            2.33                    0.0                  0.0    0.374023                2700           0.439453                0.148316              6144                       0.198147                  2.262281                     0.202172                         0.141268                        0.141748                      0.215119
+reports/v31_s2_main/raw/budget1p70_seed50/v2_custom_ppo_metrics.csv
+                   policy  steps  reward_mean  instant_mae  oracle_loss_mean  dtw_mean  power_mean  peak_power_max  event_rate  warmup_abort_count
+feasible_static_projected   6144    -0.148579     2.652667          0.148578  2.547184    1.460000            1.95    0.374023                   0
+  full_open_unconstrained   6144    -0.149598     1.655831          0.149597  1.609975    4.620000            6.28    0.374023                   0
+               custom_ppo   6144    -0.153743     2.666803          0.152011  2.550128    1.530501            1.95    0.374023                 129
+              round_robin   6144    -0.181106    13.078233          0.160684  6.592605    1.555000            1.98    0.374023                1530
+                   random   6144    -0.218961    27.626443          0.191091 10.664855    1.607402            2.33    0.374023                2076
+                      aoi   6144    -0.234216    31.561824          0.198147 13.884760    1.622780            2.33    0.374023                2700

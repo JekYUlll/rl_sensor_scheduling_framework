@@ -1,0 +1,38 @@
+reports/aggregate/scenebal1_prefixed_conf05_117_118_119_120_121_122_decision_audit_20260621.json
+reports/aggregate/scenebal1_prefixed_conf05_117_118_119_120_121_122_decision_audit_20260621.md
+{
+  "decision": "pivot_true_static_step_sign_failure",
+  "rationale": "PPO loses in sign to true fixed static on at least one seed",
+  "recommendation": {
+    "next_layer": "SCENEBAL-2 simulator/data generation",
+    "next_action": "Start a bounded simulator/data-balance pilot on failing seeds plus a clean control seed while preserving PPO and the met-plus-one-specialist sensing premise.",
+    "protocol_report": "reports/aggregate/pdppo_next_layer_pivot_designs_20260621.md"
+  },
+  "gates": {
+    "complete_seeds": 6,
+    "step_operational_gate_count": 6,
+    "macro_operational_gate_count": 6,
+    "replay_step_gate_count": 6,
+    "replay_macro_gate_count": 6,
+    "behavior_gate_count": 6,
+    "true_static_macro_gate_count": 6,
+    "true_static_step_strict_gate_count": 5,
+    "true_static_step_positive_count": 5,
+    "old_claim_step_gate_count": 6,
+    "old_claim_macro_gate_count": 6
+  },
+  "failures": {
+    "step_operational_fail_seeds": [],
+    "macro_operational_fail_seeds": [],
+    "replay_step_fail_seeds": [],
+    "replay_macro_fail_seeds": [],
+    "behavior_fail_seeds": [],
+    "true_static_step_sign_fail_seeds": [
+      122
+    ],
+    "true_static_step_strict_fail_seeds": [
+      122
+    ],
+    "true_static_macro_fail_seeds": []
+  }
+}

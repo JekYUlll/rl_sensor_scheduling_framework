@@ -1,0 +1,1967 @@
+diff --git a/figures/figure_behavior_audit.pdf b/figures/figure_behavior_audit.pdf
+index e8e2896..0aa250d 100644
+Binary files a/figures/figure_behavior_audit.pdf and b/figures/figure_behavior_audit.pdf differ
+diff --git a/figures/figure_behavior_audit.png b/figures/figure_behavior_audit.png
+index 69c8adb..0ea35c9 100644
+Binary files a/figures/figure_behavior_audit.png and b/figures/figure_behavior_audit.png differ
+diff --git a/figures/figure_event_type_diagnostics.pdf b/figures/figure_event_type_diagnostics.pdf
+index 443e74a..e9b2457 100644
+Binary files a/figures/figure_event_type_diagnostics.pdf and b/figures/figure_event_type_diagnostics.pdf differ
+diff --git a/figures/figure_event_type_diagnostics.png b/figures/figure_event_type_diagnostics.png
+index 00452b3..0d6b5db 100644
+Binary files a/figures/figure_event_type_diagnostics.png and b/figures/figure_event_type_diagnostics.png differ
+diff --git a/figures/figure_mechanism_robustness.pdf b/figures/figure_mechanism_robustness.pdf
+index 262149c..653ba3c 100644
+Binary files a/figures/figure_mechanism_robustness.pdf and b/figures/figure_mechanism_robustness.pdf differ
+diff --git a/figures/figure_mechanism_robustness.png b/figures/figure_mechanism_robustness.png
+index 99c52e6..38411d2 100644
+Binary files a/figures/figure_mechanism_robustness.png and b/figures/figure_mechanism_robustness.png differ
+diff --git a/figures/figure_pdppo_framework_image2.pdf b/figures/figure_pdppo_framework_image2.pdf
+index 5e64240..042d403 100644
+Binary files a/figures/figure_pdppo_framework_image2.pdf and b/figures/figure_pdppo_framework_image2.pdf differ
+diff --git a/figures/figure_pdppo_framework_image2.png b/figures/figure_pdppo_framework_image2.png
+index 2b222f4..101998e 100644
+Binary files a/figures/figure_pdppo_framework_image2.png and b/figures/figure_pdppo_framework_image2.png differ
+diff --git a/figures/figure_regime_balanced_24seed_evidence.pdf b/figures/figure_regime_balanced_24seed_evidence.pdf
+index ebad8ab..048e1f2 100644
+Binary files a/figures/figure_regime_balanced_24seed_evidence.pdf and b/figures/figure_regime_balanced_24seed_evidence.pdf differ
+diff --git a/figures/figure_regime_balanced_24seed_evidence.png b/figures/figure_regime_balanced_24seed_evidence.png
+index 10aa7ef..d423b27 100644
+Binary files a/figures/figure_regime_balanced_24seed_evidence.png and b/figures/figure_regime_balanced_24seed_evidence.png differ
+diff --git a/figures/figure_scenebal2_behavior_audit.pdf b/figures/figure_scenebal2_behavior_audit.pdf
+index d029722..0aa250d 100644
+Binary files a/figures/figure_scenebal2_behavior_audit.pdf and b/figures/figure_scenebal2_behavior_audit.pdf differ
+diff --git a/figures/figure_scenebal2_behavior_audit.png b/figures/figure_scenebal2_behavior_audit.png
+index 69c8adb..0ea35c9 100644
+Binary files a/figures/figure_scenebal2_behavior_audit.png and b/figures/figure_scenebal2_behavior_audit.png differ
+diff --git a/figures/figure_scenebal2_metric_boundary.pdf b/figures/figure_scenebal2_metric_boundary.pdf
+index 0c2123f..d4753b3 100644
+Binary files a/figures/figure_scenebal2_metric_boundary.pdf and b/figures/figure_scenebal2_metric_boundary.pdf differ
+diff --git a/figures/gen_fig_event_type_diagnostics.py b/figures/gen_fig_event_type_diagnostics.py
+index e09d280..71a36d0 100644
+--- a/figures/gen_fig_event_type_diagnostics.py
++++ b/figures/gen_fig_event_type_diagnostics.py
+@@ -202,7 +202,8 @@ def collect() -> tuple[pd.DataFrame, pd.DataFrame, list[dict[str, object]], list
+                 "power_mean": float(selected["candidate_prior_power_mean"]),
+             }
+         )
+-        normalizers = norm_from_static_candidates(base / STATIC_DIR / "split_static_candidate_event_table.csv")
++        # The macro definition fixes subtype denominators on validation windows.
++        normalizers = norm_from_static_candidates(base / "validation_static_candidates.csv")
+         for policy_key in POLICY_FILES:
+             loss_rows.extend(load_policy_losses(seed, policy_key, normalizers))
+         action_rows.extend(load_custom_action_rows(seed))
+diff --git a/figures/gen_fig_framework_and_support.py b/figures/gen_fig_framework_and_support.py
+index a6ea424..f38908b 100644
+--- a/figures/gen_fig_framework_and_support.py
++++ b/figures/gen_fig_framework_and_support.py
+@@ -105,7 +105,7 @@ def generate_framework() -> None:
+     low_y = 0.548
+     box(0.070, top_y, 0.105, 0.075, "Truth\nsequence", "#DCEAF7")
+     box(0.205, top_y, 0.080, 0.075, "Fixed\nforecaster", "#DCEAF7")
+-    box(0.070, low_y, 0.215, 0.078, "Learned, fixed, rule-based, and\ndiagnostic schedules", "#E9F2FA")
++    box(0.070, low_y, 0.215, 0.078, "Learned, fixed, rule-based, and\nsupplementary references", "#E9F2FA")
+     arrow(ax, (0.175, top_y + 0.038), (0.205, top_y + 0.038), color=PALETTE["blue"])
+     arrow(ax, (0.178, low_y + 0.077), (0.208, top_y), color=PALETTE["blue"], rad=0.12)
+ 
+diff --git a/figures/gen_fig_mechanism_continuous.py b/figures/gen_fig_mechanism_continuous.py
+index 36d89ed..e096f93 100644
+--- a/figures/gen_fig_mechanism_continuous.py
++++ b/figures/gen_fig_mechanism_continuous.py
+@@ -16,6 +16,7 @@ def short_label(label: str) -> str:
+     replacements = {
+         "Full PD-PPO": "Full",
+         "No imitation guide": "No imitation",
++        "No event context auxiliary": "No event context\nauxiliary",
+         "No event-context auxiliary signal": "No event context\nauxiliary",
+         "No balanced training loss": "No balanced\ntraining loss",
+     }
+@@ -45,7 +46,7 @@ def main() -> None:
+ 
+     data = [
+         pd.to_numeric(
+-            seeds.loc[seeds["variant"] == variant, "learned_macro_margin_abs_vs_macro_static_reference"],
++            seeds.loc[seeds["variant"] == variant, "macro_margin_pdppo_vs_validation_selected_static"],
+             errors="coerce",
+         )
+         .dropna()
+@@ -87,7 +88,7 @@ def main() -> None:
+     ax1.set_yticks(positions)
+     ax1.set_yticklabels(labels)
+     ax1.invert_yaxis()
+-    ax1.set_xlabel("Macro score difference vs fixed schedule")
++    ax1.set_xlabel("Validation-static macro loss minus PD-PPO loss")
+     ax1.set_title("(a) Macro score differences by seed", loc="left")
+ 
+     delta_summary = summary[summary["variant"] != "full_reference"].copy()
+@@ -111,7 +112,7 @@ def main() -> None:
+     ax2.set_yticks(y)
+     ax2.set_yticklabels([short_label(str(label)) for label in delta_summary["variant_label"]])
+     ax2.invert_yaxis()
+-    ax2.set_xlabel(r"$\Delta$ mean macro score difference vs full")
++    ax2.set_xlabel(r"$\Delta$ mean macro margin vs full")
+     ax2.set_title("(b) Paired bootstrap 95% CI", loc="left")
+     for yi, (_, row) in enumerate(delta_summary.iterrows()):
+         anchor = hi[yi] if mean[yi] >= 0 else lo[yi]
+@@ -120,7 +121,7 @@ def main() -> None:
+         ax2.text(
+             anchor + pad,
+             yi,
+-            f"step {int(row['strict_true_static_step_count'])}/{int(row['complete_seeds'])}",
++            f"step {int(row['step_win_count'])}/{int(row['complete_seeds'])}",
+             va="center",
+             ha=ha,
+             fontsize=6.8,
+diff --git a/figures/gen_fig_scenebal2_diagnostics.py b/figures/gen_fig_scenebal2_diagnostics.py
+index 8754313..2c110ca 100644
+--- a/figures/gen_fig_scenebal2_diagnostics.py
++++ b/figures/gen_fig_scenebal2_diagnostics.py
+@@ -223,8 +223,6 @@ def build_behavior_audit(static_rows: list[dict[str, str]]) -> None:
+     mask_entropy = np.array([item["mask_entropy"] for item in records])
+     event_mi = np.array([item["event_mi"] for item in records])
+     event_l1 = np.array([item["event_l1"] for item in records])
+-    heat = load_action_heatmap(ACTION_ROWS_CSV)
+-
+     gate_counts = np.array(
+         [
+             sum(item["gate"] for item in records),
+@@ -233,14 +231,15 @@ def build_behavior_audit(static_rows: list[dict[str, str]]) -> None:
+             sum(not item["simple_cycle_like"] for item in records),
+         ]
+     )
++    gate_labels = ["All gates", "State dep.", "Non-fixed", "Non-cyclic"]
+     fig, (ax1, ax2) = plt.subplots(
+         1,
+         2,
+-        figsize=(7.15, 2.85),
++        figsize=(5.35, 2.65),
+         constrained_layout=False,
+-        gridspec_kw={"width_ratios": [0.95, 1.55]},
++        gridspec_kw={"width_ratios": [1.2, 0.9]},
+     )
+-    fig.subplots_adjust(left=0.080, right=0.935, bottom=0.245, top=0.865, wspace=0.34)
++    fig.subplots_adjust(left=0.090, right=0.970, bottom=0.235, top=0.865, wspace=0.34)
+     box_data = [mask_entropy, event_mi, event_l1]
+     box = ax1.boxplot(
+         box_data,
+@@ -285,22 +284,34 @@ def build_behavior_audit(static_rows: list[dict[str, str]]) -> None:
+         bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.72, "pad": 1.4},
+     )
+ 
+-    im = ax2.imshow(heat, vmin=0.0, vmax=1.0, cmap="YlGnBu", aspect="auto")
+-    ax2.set_xticks(np.arange(len(SPECIALIST_LABELS)))
+-    ax2.set_xticklabels(SPECIALIST_LABELS, rotation=28, ha="right")
+-    ax2.set_yticks(np.arange(len(EVENT_LABELS)))
+-    ax2.set_yticklabels(EVENT_LABELS)
+-    ax2.set_title("(b) Specialist use by event type", loc="left")
+-    ax2.grid(False)
+-    for i in range(heat.shape[0]):
+-        for j in range(heat.shape[1]):
+-            value = heat[i, j]
+-            if not np.isfinite(value):
+-                continue
+-            color = "white" if value > 0.55 else COLORS["dark"]
+-            ax2.text(j, i, f"{value:.2f}", ha="center", va="center", fontsize=6.7, color=color)
+-    cbar = fig.colorbar(im, ax=ax2, fraction=0.035, pad=0.025)
+-    cbar.set_label("Mean selection frequency")
++    y = np.arange(len(gate_labels))
++    ax2.barh(y, gate_counts, color=COLORS["staticnorm"], edgecolor="white", linewidth=0.4, height=0.58)
++    ax2.barh(
++        y,
++        len(records) - gate_counts,
++        left=gate_counts,
++        color=COLORS["light"],
++        edgecolor="white",
++        linewidth=0.4,
++        height=0.58,
++    )
++    ax2.set_yticks(y)
++    ax2.set_yticklabels(gate_labels)
++    ax2.invert_yaxis()
++    ax2.set_xlim(0, len(records))
++    ax2.set_xticks([0, 8, 16, 24])
++    ax2.set_xlabel("Passing seeds")
++    ax2.set_title("(b) Audit gates", loc="left")
++    for yi, value in enumerate(gate_counts):
++        ax2.text(
++            min(value + 0.25, len(records) - 0.2),
++            yi,
++            f"{value}/{len(records)}",
++            va="center",
++            ha="left" if value < len(records) else "right",
++            fontsize=7.8,
++            color=COLORS["text"],
++        )
+     save_figure(fig, "figure_scenebal2_behavior_audit")
+     save_figure(fig, "figure_behavior_audit")
+ 
+diff --git a/figures/gen_fig_scenebal_evidence.py b/figures/gen_fig_scenebal_evidence.py
+index aef60fd..d6c626f 100644
+--- a/figures/gen_fig_scenebal_evidence.py
++++ b/figures/gen_fig_scenebal_evidence.py
+@@ -1,185 +1,76 @@
+ #!/usr/bin/env python3
+-"""Generate a seed-level evidence figure for the final benchmark aggregate."""
++"""Generate the validation-frozen seed-level evidence figure."""
+ from __future__ import annotations
+ 
+ import argparse
+-import csv
+ from pathlib import Path
+ 
+ import matplotlib.pyplot as plt
+ import numpy as np
++import pandas as pd
+ 
+ from paper_plot_style import PALETTE, apply_paper_style, save_pdf_png
+ 
+-apply_paper_style()
+ 
+ COLORS = {
+-    "pass": PALETTE["teal"],
+-    "miss": PALETTE["light"],
++    "step": PALETTE["teal"],
++    "macro": PALETTE["vermillion"],
+     "threshold": PALETTE["dark"],
+-    "strict": PALETTE["vermillion"],
+     "text": PALETTE["dark"],
+ }
+ 
+ 
+-def as_float(value: str) -> float:
+-    try:
+-        return float(value)
+-    except (TypeError, ValueError):
+-        return float("nan")
+-
+-
+-def as_bool(value: str) -> bool:
+-    return str(value).strip().lower() in {"1", "true", "yes"}
+-
+-
+-def load_rows(path: Path) -> list[dict[str, str]]:
+-    with path.open(newline="", encoding="utf-8") as handle:
+-        return list(csv.DictReader(handle))
+-
+-
+-def gate_count(rows: list[dict[str, str]], column: str) -> int:
+-    return sum(as_bool(row.get(column, "")) for row in rows)
+-
+-
+ def main() -> None:
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("--oldclaim-csv", type=Path, required=True)
+-    parser.add_argument("--macro-csv", type=Path, required=True)
+-    parser.add_argument("--title", required=True)
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--seed-csv", type=Path, required=True)
+     parser.add_argument("--out-prefix", type=Path, required=True)
+     args = parser.parse_args()
+ 
+-    old_rows = load_rows(args.oldclaim_csv)
+-    macro_rows = {int(row["seed"]): row for row in load_rows(args.macro_csv)}
+-    n_seeds = len(old_rows)
+-    if n_seeds == 0:
+-        raise ValueError("oldclaim CSV contains no seed rows")
++    rows = pd.read_csv(args.seed_csv).copy()
++    rows["step_margin"] = pd.to_numeric(rows["step_margin_pdppo_vs_validation_selected_static"], errors="coerce")
++    rows["macro_margin"] = pd.to_numeric(rows["macro_margin_pdppo_vs_validation_selected_static"], errors="coerce")
++    rows["reference_step_loss"] = pd.to_numeric(rows["validation_selected_static_step_loss"], errors="coerce")
++    rows = rows.dropna(subset=["seed", "step_margin", "macro_margin", "reference_step_loss"]).sort_values("step_margin")
++    if rows.empty:
++        raise ValueError("No complete seed rows.")
+ 
+-    records = []
+-    for row in old_rows:
+-        seed = int(row["seed"])
+-        step_margin = as_float(row["step_margin_vs_replay_static_reference"])
+-        reference_loss = as_float(row["replay_static_reference_loss"])
+-        strict_threshold = max(0.001, 0.002 * reference_loss)
+-        records.append(
+-            {
+-                "seed": seed,
+-                "step_margin": step_margin,
+-                "step_selected_margin": as_float(row["step_margin_vs_best_operational_baseline"]),
+-                "strict_threshold": strict_threshold,
+-                "strict_pass": as_bool(row["learned_true_static_step_gate_pass"]),
+-                "macro_selected_margin": as_float(
+-                    macro_rows[seed]["learned_macro_margin_abs_vs_selected_static"]
+-                ),
+-                "true_macro_margin": as_float(
+-                    macro_rows[seed]["learned_macro_margin_abs_vs_macro_static_reference"]
+-                ),
+-            }
+-        )
+-
+-    records = sorted(records, key=lambda item: item["step_margin"])
+-    seeds = [record["seed"] for record in records]
++    thresholds = np.maximum(0.001, 0.002 * rows["reference_step_loss"].to_numpy(dtype=float))
++    records = rows.reset_index(drop=True)
+     x = np.arange(len(records))
+-    step_margins = np.array([record["step_margin"] for record in records])
+-    true_macro_margins = np.array([record["true_macro_margin"] for record in records])
+-    thresholds = np.array([record["strict_threshold"] for record in records])
+-    bar_colors = [COLORS["pass"] if record["strict_pass"] else COLORS["miss"] for record in records]
+-    margin_groups = [
+-        (
+-            "Forecast loss\nvs selected",
+-            np.array([record["step_selected_margin"] for record in records], dtype=float),
+-            COLORS["pass"],
+-        ),
+-        (
+-            "Macro score\nvs selected",
+-            np.array([record["macro_selected_margin"] for record in records], dtype=float),
+-            COLORS["strict"],
+-        ),
+-        (
+-            "Macro score\nvs fixed",
+-            np.array([record["true_macro_margin"] for record in records], dtype=float),
+-            COLORS["threshold"],
+-        ),
+-    ]
++    step = records["step_margin"].to_numpy(dtype=float)
++    macro = records["macro_margin"].to_numpy(dtype=float)
++    seeds = records["seed"].astype(int).to_numpy()
+ 
++    apply_paper_style(base_size=8.8)
+     fig, (ax1, ax2) = plt.subplots(
+         1,
+         2,
+         figsize=(5.35, 2.4),
+         constrained_layout=True,
+-        gridspec_kw={"width_ratios": [1.55, 1.1]},
++        gridspec_kw={"width_ratios": [1.55, 1.0]},
+     )
+ 
+-    ax1.scatter(
+-        x,
+-        step_margins,
+-        s=18,
+-        marker="o",
+-        color=bar_colors,
+-        edgecolor="white",
+-        linewidth=0.35,
+-        label="Forecast loss difference",
+-        zorder=3,
+-    )
+-    ax1.scatter(
+-        x,
+-        true_macro_margins,
+-        s=20,
+-        marker="s",
+-        color=COLORS["strict"],
+-        edgecolor="white",
+-        linewidth=0.35,
+-        label="Macro score difference",
+-        alpha=0.85,
+-        zorder=3,
+-    )
+-    threshold_min = float(np.nanmin(thresholds))
+-    threshold_max = float(np.nanmax(thresholds))
+-    ax1.axhspan(
+-        threshold_min,
+-        threshold_max,
+-        color=COLORS["threshold"],
+-        alpha=0.13,
+-        zorder=0,
+-        label="Threshold range",
+-    )
++    ax1.scatter(x, step, s=18, color=COLORS["step"], edgecolor="white", linewidth=0.35, label="Step loss", zorder=3)
++    ax1.scatter(x, macro, s=20, marker="s", color=COLORS["macro"], edgecolor="white", linewidth=0.35, label="Macro score", zorder=3)
++    ax1.axhspan(float(np.min(thresholds)), float(np.max(thresholds)), color=COLORS["threshold"], alpha=0.13, label="Step threshold", zorder=0)
+     ax1.axhline(0.0, color="#555555", linewidth=0.7)
+     tick_idx = list(range(0, len(seeds), 4))
+     if tick_idx[-1] != len(seeds) - 1:
+         tick_idx.append(len(seeds) - 1)
+     ax1.set_xticks(tick_idx)
+     ax1.set_xticklabels([seeds[idx] for idx in tick_idx], rotation=45, ha="right")
+-    ax1.set_ylabel("Loss difference")
+-    ax1.set_xlabel("Seed, sorted by forecast loss difference")
+-    ax1.set_title("(a) Forecast and macro score differences", loc="left")
+-    ax1.set_xlim(-0.6, len(records) + 2.2)
+-    ax1.text(len(records) + 0.15, step_margins[-1], "Forecast", va="center", ha="left", fontsize=6.9, color=COLORS["pass"])
+-    ax1.text(
+-        len(records) + 0.15,
+-        true_macro_margins[-1],
+-        "Macro score",
+-        va="center",
+-        ha="left",
+-        fontsize=6.9,
+-        color=COLORS["strict"],
+-    )
+-    ax1.text(
+-        len(records) + 0.15,
+-        threshold_max + 0.0025,
+-        f"Threshold range\n{threshold_min:.4f}-{threshold_max:.4f}",
+-        va="center",
+-        ha="left",
+-        fontsize=6.2,
+-        color=COLORS["threshold"],
+-    )
+-
+-    positions = np.arange(1, len(margin_groups) + 1)
+-    data = [values[np.isfinite(values)] for _, values, _ in margin_groups]
++    ax1.set_xlabel("Seed, sorted by step margin")
++    ax1.set_ylabel("Validation-static loss minus PD-PPO loss")
++    ax1.set_title("(a) Paired margins by seed", loc="left")
++    ax1.legend(loc="upper left", fontsize=6.6, frameon=False, handletextpad=0.4)
++
++    values = [step, macro]
++    labels = ["Step loss", "Macro score"]
++    colors = [COLORS["step"], COLORS["macro"]]
+     box = ax2.boxplot(
+-        data,
+-        positions=positions,
+-        widths=0.48,
++        values,
++        positions=[1, 2],
++        widths=0.5,
+         patch_artist=True,
+         showfliers=False,
+         medianprops={"color": COLORS["text"], "linewidth": 1.0},
+@@ -187,40 +78,21 @@ def main() -> None:
+         whiskerprops={"linewidth": 0.8, "color": COLORS["text"]},
+         capprops={"linewidth": 0.8, "color": COLORS["text"]},
+     )
+-    for patch, (_, _, color) in zip(box["boxes"], margin_groups):
++    for patch, color in zip(box["boxes"], colors):
+         patch.set_facecolor(color)
+-        patch.set_alpha(0.30)
++        patch.set_alpha(0.32)
+     rng = np.random.default_rng(17)
+-    for pos, (_, values, color) in zip(positions, margin_groups):
+-        finite = values[np.isfinite(values)]
+-        jitter = rng.normal(0.0, 0.045, size=len(finite))
+-        ax2.scatter(
+-            np.full_like(finite, pos, dtype=float) + jitter,
+-            finite,
+-            s=9,
+-            color=color,
+-            edgecolor="white",
+-            linewidth=0.25,
+-            alpha=0.92,
+-            zorder=3,
+-        )
++    for position, value, color in zip([1, 2], values, colors):
++        ax2.scatter(position + rng.normal(0.0, 0.045, size=len(value)), value, s=10, color=color, edgecolor="white", linewidth=0.25, alpha=0.9, zorder=3)
+     ax2.axhline(0.0, color="#555555", linewidth=0.7)
+-    ax2.set_xticks(positions)
+-    ax2.set_xticklabels([label for label, _, _ in margin_groups])
+-    ax2.set_ylabel("Loss difference")
+-    ax2.set_title("(b) Paired seed distributions", loc="left")
+-    ax2.text(
+-        0.98,
+-        0.05,
+-        "positive favors PD-PPO",
+-        transform=ax2.transAxes,
+-        ha="right",
+-        va="bottom",
+-        fontsize=6.8,
+-        color=COLORS["text"],
+-    )
++    ax2.set_xticks([1, 2])
++    ax2.set_xticklabels(labels)
++    ax2.set_ylabel("Validation-static loss minus PD-PPO loss")
++    ax2.set_title("(b) Paired distributions", loc="left")
++    ax2.text(0.98, 0.05, "positive favors PD-PPO", transform=ax2.transAxes, ha="right", va="bottom", fontsize=6.8, color=COLORS["text"])
+ 
+     save_pdf_png(fig, args.out_prefix)
++    plt.close(fig)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/main.pdf b/main.pdf
+index 9e334f4..25fca72 100644
+Binary files a/main.pdf and b/main.pdf differ
+diff --git a/main.tex b/main.tex
+index e71e1ce..69b423d 100644
+--- a/main.tex
++++ b/main.tex
+@@ -38,7 +38,7 @@
+   citecolor=blue!70!black,
+   urlcolor=blue!70!black,
+   pdfauthor={Yongzhe Li and Zhuyu Zhang},
+-  pdftitle={Prediction-driven reinforcement learning for contextual specialist sensor scheduling under power constraints},
++  pdftitle={Prediction-driven reinforcement learning for sensing system scheduling under a power constraint},
+   pdfkeywords={Adaptive sensor scheduling; Forecasting; Power budget; Time series forecasting; Deep reinforcement learning; Antarctic monitoring}
+ }
+ 
+@@ -57,7 +57,7 @@
+ 
+ \begin{frontmatter}
+ 
+-\title{Prediction-Driven Reinforcement Learning for Contextual Specialist Sensor Scheduling under Power Constraints}
++\title{Prediction-driven reinforcement learning for sensing system scheduling under a power constraint}
+ 
+ \author[aff1]{Yongzhe Li\corref{cor1}}
+ \ead{yongzheli@seu.edu.cn}
+@@ -72,29 +72,29 @@ Nanjing, China}
+ 
+ \begin{abstract}
+ Remote sensing stations can contain more measurement channels than can be
+-powered at the same time. This paper studies contextual specialist scheduling:
+-a low-power weather backbone remains active, while one specialist channel is
+-chosen under power, start-up, and minimum-duration operating rules. The schedule
+-is judged by its effect on later forecasts, not only by state-estimation error
+-or age of information. PD-PPO is a masked PPO scheduler for this setting. It
+-observes state estimates, uncertainty, channel freshness, previous channel
+-selection, budget state, and event cues, then samples only executable channel
+-masks. Training uses forecast loss from a fixed forecasting model, while
+-forecaster fitting, policy learning, fixed schedule selection, and final testing
+-are kept on separate chronological partitions. The evaluation uses a controlled
+-Antarctic blowing-snow benchmark in which particle, flux, and thermal regimes
+-favor different specialist instruments. Across 24 independent held-out seeds,
+-PD-PPO improves both ordinary forecast loss and a macro score across regimes
+-over validation-selected fixed schedules and rule-based schedules. Fixed-schedule
+-replay and action-trace checks show that the learned traces use multiple
+-specialists and depend on event context. Supplementary diagnostics sharpen the
+-claim boundary: PD-PPO is consistently better than a one-step forecast-greedy
+-diagnostic, but a hand-coded context-alert bandit remains a serious challenge
+-baseline. A context-aware PD-PPO extension improves competitiveness in
+-development tests but is not promoted to the main method. The contribution is a
+-forecasting reward for sensor scheduling, a feasible-mask PPO implementation,
+-and a replay protocol that separates adaptive scheduling from fixed schedules
+-and rotation effects.
++powered at the same time. This paper formulates contextual specialist scheduling
++as a prediction-driven constrained decision problem. A low-power weather
++backbone remains active, while one specialist channel is chosen under power,
++startup, and minimum-duration operating rules. The schedule is scored by later
++forecast quality, with state-estimation error and age of information treated as
++different objectives. PD-PPO implements this formulation as masked PPO over
++executable channel masks. It observes state estimates, uncertainty, channel
++freshness, previous channel selection, budget state, and event cues, then samples
++only feasible masks. Training uses forecast loss from a fixed forecasting model,
++and forecaster fitting, policy learning, fixed schedule selection, and final
++testing are kept on separate chronological partitions. The evaluation uses a
++controlled Antarctic blowing-snow benchmark in which particle, flux, and thermal
++regimes favor different specialist instruments. Across 24 held-out seeds, PD-PPO
++improves ordinary forecast loss and a regime-balanced macro score over
++validation-selected fixed schedules and rule-based references. Fixed-schedule
++replay and action-trace checks support the interpretation that the gain comes
++from state-dependent specialist allocation, with hidden rotations and nearly
++constant choices excluded. Supplementary references further localize the claim.
++PD-PPO remains better than a one-step forecast-greedy reference, while a
++handcrafted context-alert stress-test reference remains competitive. The contribution is a
++prediction-driven constrained scheduling formulation, a feasible-mask PPO
++implementation, and a replay protocol that separates adaptive scheduling from
++fixed schedules, myopic selection, and privileged references.
+ \end{abstract}
+ 
+ \begin{keyword}
+diff --git a/sections/01_introduction.tex b/sections/01_introduction.tex
+index 391f4ee..822c543 100644
+--- a/sections/01_introduction.tex
++++ b/sections/01_introduction.tex
+@@ -4,9 +4,9 @@ Remote sensing stations rarely face a choice between ``measure everything'' and
+ ``measure nothing''. A practical cold-region platform may keep a compact weather
+ backbone online while choosing, at each scheduling interval, which specialist
+ sensor receives the remaining power budget. This paper studies that operating
+-regime as contextual specialist scheduling: the scheduler must obey hardware
+-rules, but the choice is evaluated by the downstream forecast that the selected
+-measurements support.
++regime as contextual specialist scheduling. The scheduler must obey hardware
++rules, and the selected measurements are evaluated through the downstream
++forecast they support.
+ 
+ This forecast objective changes the value of a sensor. Age of information and
+ covariance objectives favor fresh or uncertain variables, which is appropriate
+@@ -19,9 +19,9 @@ the average case while leaving other regimes poorly covered.
+ The problem is formulated as sensor scheduling with a forecasting objective under
+ a power budget. A weather backbone provides stable context. One selectable
+ specialist sensor is allocated among event-sensitive channels. The central
+-question is whether a learned scheduler that uses the current state can produce
+-useful specialist schedules under these operating rules when all policies are
+-evaluated by the same downstream forecasting model.
++question is whether a learned scheduler that uses the current state can learn
++effective state-dependent specialist schedules under these operating rules when
++all policies are evaluated by the same downstream forecasting model.
+ 
+ \begin{figure}[t]
+   \centering
+@@ -29,66 +29,62 @@ evaluated by the same downstream forecasting model.
+   \caption{Overview of the forecast-based scheduling protocol. A fixed
+   forecaster is fitted first, PD-PPO is trained later under operational
+   constraints with forecast loss as the reward signal, fixed schedules are
+-  selected on validation windows, and all learned, fixed, rule-based, and
+-  diagnostic schedules are replayed on held-out test windows.}
++  selected on validation windows, and learned, fixed, rule-based, myopic, and
++  privileged references are replayed on held-out test windows.}
+   \label{fig:pdppo_framework}
+ \end{figure}
+ 
+-The evaluation tests three linked requirements. A state-dependent schedule should
+-reduce forecast loss across event regimes relative to any fixed schedule. The
+-advantage should remain when the fixed schedule is replayed as a truly constant
+-choice, with fallback rotations removed. The learned action traces should also
+-use more than one specialist sensor and avoid a simple cycle.
++The evaluation tests three conditions: improvement over a validation-selected
++fixed specialist schedule, improvement over rule-based schedules, and learned
++traces that depend on state instead of collapsing to a constant mask or simple
++cycle.
+ 
+ PD-PPO is the implementation used to test these hypotheses. It is a masked PPO
+ policy over candidate channel masks \citep{Schulman2017}. At each epoch, the
+ policy observes the
+ current estimator summary, uncertainty, channel freshness, previous selection,
+ budget state, and event context. Online feasibility checks remove masks
+-that violate the power, start-up, or minimum-duration constraints before sampling or
++that violate the power, startup, or minimum-duration constraints before sampling or
+ greedy execution. During policy learning, a fixed evaluation forecaster assigns
+ multi-step forecast loss to the partial observation trajectory induced by the
+ schedule. Behavior cloning and event context auxiliary terms provide training
+-regularisation; they are aids to the masked PPO learner, not separate decision
++regularization; they are aids to the masked PPO learner, not separate decision
+ modules.
+ 
+ The evaluation case is an Antarctic blowing-snow benchmark with a fixed weather
+-backbone and one selectable specialist sensor. This construction
+-is deliberately narrow. It isolates a design tension that appears in
+-power-limited stations. Basic weather context is always useful, while particle,
+-flux, radiation, and surface-temperature sensors compete for scarce active
+-time. The same generated truth sequence can be replayed under learned schedules,
+-fixed schedules, and diagnostic schedules, so differences in forecast loss are
+-attributable to the schedule under test.
++backbone and one selectable specialist sensor. This scoped construction isolates
++a design tension that appears in power-limited stations. Basic weather context is
++needed throughout, while particle, flux, radiation, and surface-temperature
++sensors compete for scarce active time. The same generated truth sequence can be
++replayed under learned schedules, fixed schedules, and supplementary references,
++so differences in forecast loss are attributable to the schedule under test.
+ 
+ In the reported benchmark, the result is specific to this setting and consistent.
+ Across 24 independent held-out seeds, PD-PPO improves both ordinary forecast
+-loss and a fixed-schedule-normalized macro score over validation-selected fixed schedules
+-and rule-based schedules. The fixed-schedule replay check and action-trace
++loss and a validation-frozen macro score over validation-selected fixed schedules
++and rule-based schedules. The constant fixed-schedule replay diagnostic and action-trace
+ analysis attribute the gain to specialist allocation that changes with state,
+ with hidden rotations and nearly constant specialist choices excluded.
+ 
+-Two supplementary diagnostics bound this interpretation. First, a one-step
+-forecast-greedy diagnostic does not explain the result: PD-PPO remains better
+-across the 24-seed supplement, even though the diagnostic has final-test
+-future-loss privilege. Second, a hand-coded context-alert bandit is a strong
+-challenge baseline and can outperform the original PD-PPO on average. The paper
+-therefore does not claim dominance over the whole class of context-aware
+-handcrafted policies.
+-The claim is narrower: under the reported fixed-backbone, one-specialist
+-operating rules, forecast-loss-trained masked PPO learns useful
+-state-dependent specialist schedules and passes replay and behavior diagnostics.
++Two supplementary references further locate the claim. A one-step
++forecast-greedy reference does not explain the result. PD-PPO remains better
++across the 24-seed supplement despite the reference's future-loss privilege. A
++handcrafted context-alert stress-test reference is more competitive and prevents
++any claim of universal superiority over context-aware heuristics. Under the
++reported fixed-backbone, one-specialist operating rules, forecast-loss-trained
++masked PPO learns effective state-dependent specialist schedules and passes
++replay and behavior checks.
+ 
+ The paper makes three contributions.
+ \begin{enumerate}[leftmargin=1.4em]
+-  \item a forecasting objective for contextual specialist scheduling in systems
+-  with a weather backbone, limited specialist capacity, and operational
+-  constraints;
+-  \item a masked PPO implementation for the forecast scheduling problem that
+-  enforces operational constraints through online feasibility masking and uses
+-  forecast loss from a fixed evaluation forecaster as the training signal;
+-  \item an evaluation protocol combining chronological separation,
+-  fixed-schedule replay, a fixed-schedule-normalized macro score, rule-based
+-  schedules, forecast-greedy and context-alert diagnostics, event-label
+-  diagnostic schedules, and action-trace checks.
++  \item It formulates contextual specialist scheduling as a prediction-driven
++  constrained decision problem with a mandatory backbone, limited specialist
++  capacity, and explicit operating rules.
++  \item It implements this formulation with masked PPO over executable channel
++  masks, using online feasibility masking and forecast loss from a fixed
++  forecaster as the training signal.
++  \item It establishes a replay-based evaluation protocol and empirical evidence
++  showing consistent gains over validation-selected fixed schedules, rule-based
++  schedules, and a one-step forecast-greedy reference, while also reporting a
++  handcrafted context-alert stress-test reference.
+ \end{enumerate}
+diff --git a/sections/02_related_work.tex b/sections/02_related_work.tex
+index 8e632b9..ba6f447 100644
+--- a/sections/02_related_work.tex
++++ b/sections/02_related_work.tex
+@@ -15,9 +15,9 @@ future predictions over the evaluation horizon.
+ That change matters for heterogeneous sensing systems. Background channels can
+ be cheap and broadly informative, while specialist channels can be valuable only
+ near particular physical regimes. A strong fixed subset is therefore an
+-important comparator, not a weak baseline. The evaluation must distinguish a true
+-adaptive schedule from a fixed design, a rotation, or a diagnostic policy with
+-privileged event labels.
++important reference, not a weak baseline. The evaluation must distinguish a true
++adaptive schedule from a fixed design, a rotation, or a privileged event-label
++reference.
+ 
+ \input{tables/related_work_positioning}
+ 
+diff --git a/sections/03_problem_formulation.tex b/sections/03_problem_formulation.tex
+index 6b2c3e7..b8fef2f 100644
+--- a/sections/03_problem_formulation.tex
++++ b/sections/03_problem_formulation.tex
+@@ -13,8 +13,8 @@ independently.
+ \input{tables/notation_summary}
+ 
+ The benchmark uses two channel classes. A required weather backbone
+-remains active because it supplies the minimum weather context required by the
+-digital twin. The remaining budget allows at most one specialist channel from a
++remains active because it supplies the minimum context needed by the downstream
++forecast task. The remaining budget allows at most one specialist channel from a
+ set containing radiation, thermal, particle, and flux measurements. The feasible
+ action set is
+ \begin{equation}
+@@ -32,8 +32,8 @@ action set is
+   \label{eq:mask_feasible_set}
+ \end{equation}
+ where $\mathcal{S}$ is the specialist set. These are the operating rules of the
+-benchmark: one weather backbone is mandatory, at most one specialist can be
+-active, and start-up peaks remain bounded. This geometry makes the comparison
++benchmark. One weather backbone is mandatory, at most one specialist can be
++active, and startup peaks stay within limits. This geometry makes the comparison
+ identifiable because a fixed design can choose one specialist but cannot observe
+ all specialist streams simultaneously.
+ 
+@@ -93,8 +93,8 @@ can make dynamic specialist allocation valuable.
+   \node[low] at (5.5,-2.14) {matched};
+   \node[high] at (7.8,-2.14) {mismatch};
+   \node[high] at (10.1,-2.14) {mismatch};
+-  \node[anchor=west] at (2.08,-3.0) {\scriptsize qualitative guide:
+-    green cells indicate the low-loss specialist for a regime; grey cells
++  \node[anchor=west] at (2.08,-3.0) {\scriptsize Qualitative guide. Green cells
++    indicate the low-loss specialist for a regime; grey cells
+     indicate a fixed-specialist mismatch.};
+ \end{tikzpicture}
+ }
+@@ -113,7 +113,7 @@ regime label and selects $S_c^\star$ accordingly.
+ 
+ A proof is given in \ref{apx:specialist_bottleneck_proof}. The label-informed policy
+ $\pi^\star$ requires direct access to the regime label $c_t$ at each step and is
+-therefore not deployable; it corresponds to the event-label diagnostic schedule in
++therefore not deployable; it corresponds to the event-label reference in
+ \Cref{tab:baseline_reference_taxonomy}. The proposition establishes a
+ theoretical upper bound on the macro advantage available from dynamic specialist
+ allocation. Whether a learned policy can approach this bound from observable
+@@ -124,29 +124,25 @@ benchmark geometry; it is not a claim that the same channel set or event mixture
+ is universal.
+ 
+ \begin{remark}
+-The event-label diagnostic schedule implements $\pi^\star$ on held-out test
+-windows. Its mean macro margin over the fixed-schedule replay reference is 0.0773
+-(\Cref{tab:regime_balanced_24seed_summary}). The learned PD-PPO mean macro
+-margin is 0.0710, capturing approximately 92\% of the label-informed advantage from the
+-available scheduler observation. This proximity confirms that the benchmark
+-contains exploitable adaptive structure and that the observable event context
+-proxies (\Cref{tab:online_observability_audit}) carry sufficient regime
+-information for a learned policy to approach the label-informed bound. The gap between
+-$\pi^\star$ and PD-PPO, 0.0063 normalized units, represents the residual cost of
+-inferring regime context from noisy proxy signals without direct label access.
++The event-label reference implements $\pi^\star$ as a privileged held-out
++diagnostic. Its mean macro margin over the validation-selected fixed-schedule
++replay is 0.0824 (\Cref{tab:regime_balanced_24seed_summary}), compared with
++0.0770 for PD-PPO under the same replay check. The event-label policy has lower
++macro loss in 19 of 24 seeds, with a mean advantage of 0.0054. The comparison
++shows that the benchmark contains adaptive opportunity and quantifies the
++remaining benefit of direct labels beyond the noisy online context features.
+ \end{remark}
+ 
+ \paragraph{Benchmark verification of the incompatibility condition}
+ The incompatibility condition in \Cref{prop:specialist_bottleneck} requires that
+ no single fixed specialist achieves the lowest event type loss across all three
+ regimes simultaneously. \Cref{tab:event_type_loss_decomposition} provides direct
+-evidence: the fixed-schedule reference has normalized losses of 0.993, 0.870, and
+-0.906 for particle, flux, and thermal regimes, respectively, while the event-label
+-diagnostic schedule, which selects the regime-matched specialist at each step,
+-achieves 0.968, 0.747, and 0.797. The event-label diagnostic schedule improves over
+-the fixed schedule in all three regimes and improves the macro score in all 24 seeds
+-(\Cref{tab:regime_balanced_24seed_summary}). The incompatibility condition is
+-therefore supported empirically in this benchmark, not only by construction.
++evidence. The validation-selected fixed schedule has different normalized losses
++across the particle, flux, and thermal regimes, and PD-PPO reduces their macro
++average in all 24 seeds. The privileged event-label reference also improves the
++validation-selected fixed-schedule replay in all 24 seeds. The incompatibility
++condition is therefore supported empirically in this benchmark as well as by
++construction.
+ 
+ \subsection{Forecast loss and macro scoring across regimes}
+ 
+@@ -198,7 +194,7 @@ fixed schedules.
+ 
+ \subsection{Why forecast loss is not an AoI or covariance proxy}
+ 
+-AoI and covariance trace remain useful scheduling objectives, but they optimize
++AoI and covariance trace remain valid scheduling objectives, but they optimize
+ different quantities. Let $\pi$ be a feasible scheduling policy. Its forecast
+ value is
+ \begin{equation}
+@@ -249,10 +245,10 @@ as equivalent optimization targets.
+ The non-equivalence result applies when the event sensitive variable contributes
+ substantially to forecast loss during event periods. In the reported benchmark,
+ the event type decomposition in \Cref{tab:event_type_loss_decomposition} shows
+-that the fixed-schedule reference has normalized losses of 0.870 and 0.906 in flux
+-and thermal regimes, while the event label replay diagnostic achieves 0.747 and
+-0.797. The gaps, 0.123 and 0.109 normalized units, are large relative to the
+-particle gap of 0.025, consistent with the construction in
++that the validation-selected fixed schedule has normalized losses of 0.871 and
++1.123 in flux and thermal regimes. PD-PPO reduces these values by 0.117 and
++0.091 normalized units on average, compared with a particle-regime reduction of
++0.026. This pattern is consistent with the construction in
+ \ref{apx:non_equivalence_proof} where the event-period loss gap is proportional
+ to $M$. The proof is a sufficient-condition argument using a linear-Gaussian
+ model; it does not require the benchmark to match that structure exactly, but the
+diff --git a/sections/04_framework_protocol.tex b/sections/04_framework_protocol.tex
+index 145781e..f52f199 100644
+--- a/sections/04_framework_protocol.tex
++++ b/sections/04_framework_protocol.tex
+@@ -9,7 +9,7 @@ receives an estimator summary containing the current state estimate,
+ uncertainty, channel freshness, previous action mask, budget state, and
+ event context. In the benchmark implementation, the action space is the
+ finite set of candidate masks in \Cref{tab:action_space_instantiation}. Online
+-checks remove masks that would violate power, start-up, or minimum-duration
++checks remove masks that would violate power, startup, or minimum-duration
+ constraints.
+ The actor assigns logits to the remaining masks and samples, or greedily selects,
+ one executable mask.
+@@ -60,8 +60,8 @@ pattern, not retraining a different forecaster for each policy.
+ 
+ \Cref{tab:online_observability_audit} separates quantities available to the
+ online scheduler from labels and future values used only for training,
+-diagnostics, or final scoring. This distinction prevents the event-label
+-diagnostic schedule from being confused with the learned controller.
++supplementary analysis, or final scoring. This distinction prevents the
++event-label reference from being confused with the learned controller.
+ 
+ \input{tables/online_observability_audit}
+ 
+@@ -132,7 +132,7 @@ where
+        {\pi_{\theta_{\mathrm{old}}}(u_t\mid o_t)} .
+ \end{equation}
+ The reported PD-PPO loss contains the PPO surrogate, value loss, entropy
+-regularisation, and two auxiliary terms tied to the forecast training setup.
++regularization, and two auxiliary terms tied to the forecast training setup.
+ \begin{equation}
+   \mathcal{L}_{\mathrm{PD}\text{-}\mathrm{PPO}}
+   =
+@@ -180,7 +180,7 @@ training. With labelled state indicator $\eta_t$, the term is
+   \label{eq:event_aux_loss}
+ \end{equation}
+ 
+-\input{tables/pdppo_training_hyperparameters}
++Full protocol and training hyperparameters are listed in \ref{apx:protocol_hyperparameters}.
+ 
+ \subsection{Chronological separation and comparison references}
+ 
+@@ -189,28 +189,20 @@ forecaster fitting, policy training, fixed-schedule selection, and final
+ testing. Final test windows are not used for forecaster fitting, policy updates,
+ imitation-label generation, fixed-schedule selection, or normalizer fitting.
+ 
+-\begin{figure}[htbp]
+-  \centering
+-  \resizebox{\linewidth}{!}{\input{figures/data_split_timeline_tikz}}
+-  \caption{Chronological split used by the benchmark. Forecaster fitting, policy
+-  learning, fixed-schedule selection, and final testing are separated before
+-  any reported comparison is computed. The split makes the reported held-out
+-  comparison a replay test rather than a final-window tuning procedure.}
+-  \label{fig:data_split}
+-\end{figure}
+-
+-The main fixed design reference is a validation-selected mask that is replayed as
+-a constant selection on final test windows. Rule-based dynamic schedules provide
+-non-learned dynamic comparators. Event label replay is a privileged information
+-diagnostic that quantifies the adaptive opportunity in the benchmark; it is not
+-a deployable learned controller. Forecast-greedy and context-alert diagnostics
+-further test whether the learned policy is merely myopic or whether a strong
+-hand-coded context rule remains competitive. Behavioral diagnostics report
+-action diversity, event--action dependence, and non-periodicity.
+-
+-\Cref{tab:baseline_reference_taxonomy} fixes the role of each comparator before
+-the results section: fixed schedules test static design strength, rule-based policies
+-test non-learned dynamics, and event-label replay is retained only as a
+-privileged diagnostic upper reference.
++The chronological split is summarized in \ref{apx:protocol_hyperparameters}.
++
++The comparison families serve different roles. Validation-selected fixed
++schedules test whether adaptation is needed at all. Rule-based references test
++simple non-learned adaptation under the same operating rules. The one-step
++forecast-greedy reference chooses the currently best feasible mask under the
++fixed forecaster and therefore probes whether the learned policy has sequential
++value. The handcrafted context-alert stress-test reference uses station-side
++alert proxies. It locates the claim against strong memoryless context rules and
++does not define the primary confirmatory comparison. The privileged event-label
++reference measures adaptive opportunity in the benchmark; it is not a deployable
++learned controller.
++
++\Cref{tab:baseline_reference_taxonomy} fixes the role of each reference before
++the results section.
+ 
+ \input{tables/baseline_reference_taxonomy}
+diff --git a/sections/05_simulation_setup.tex b/sections/05_simulation_setup.tex
+index 144562d..80ea892 100644
+--- a/sections/05_simulation_setup.tex
++++ b/sections/05_simulation_setup.tex
+@@ -4,29 +4,18 @@
+ \subsection{Benchmark sensing system}
+ 
+ The benchmark is a controlled cold-region sensing-system simulation motivated by
+-Antarctic automatic weather stations (AWSs). \Cref{fig:aws_deployment} shows the
+-rendered platform that motivated the channel design. The final experiment uses
+-six logical channels, consisting of one required weather backbone and
+-five candidate specialists. \Cref{tab:sensor_specs} lists the channels and their
+-normalized scheduling costs.
++Antarctic automatic weather stations (AWSs). The final experiment uses six
++logical channels, consisting of one required weather backbone and five candidate
++specialists. \Cref{tab:sensor_specs} lists the channels and their normalized
++scheduling costs. A platform rendering is retained in
++\ref{apx:aws_motivation} as physical motivation, while the channel table defines
++the schedulable abstraction used in the experiments.
+ 
+ The fixed backbone with one selectable specialist is a benchmark design, not a
+ claim about a single station wiring diagram. It isolates the practical choice of
+ keeping basic weather context available while allocating the remaining active
+ slot among specialist instruments whose forecast value changes across
+-blowing-snow regimes. The platform rendering anchors the physical motivation,
+-whereas the channel table defines the schedulable abstraction used in the
+-experiments.
+-
+-\begin{figure}[htbp]
+-  \centering
+-  \includegraphics[width=0.78\linewidth]{aws_deployment.png}
+-  \caption{Author-rendered AWS platform used to motivate the benchmark sensing
+-  system. The simulator represents the platform as a required weather
+-  backbone plus one specialist sensing slot, so the image is a physical anchor
+-  rather than the experimental wiring diagram.}
+-  \label{fig:aws_deployment}
+-\end{figure}
++blowing-snow regimes.
+ 
+ \input{tables/sensor_specs}
+ 
+@@ -45,14 +34,14 @@ reliably by a different specialist channel. The laser disdrometer is the
+ particle specialist, the FC4 flux sensor is the flux specialist, and the surface infrared
+ temperature sensor is the thermal specialist. Event balance, event weighted targets, and the single
+ specialist action rule make all three regimes matter in the forecast score. One
+-fixed specialist can be useful, but no single specialist covers the full
++fixed specialist can be effective on average, but no single specialist covers the full
+ benchmark objective.
+ 
+ Generator checks cover meteorological structure and blowing-snow behavior,
+ including wind autocorrelation, event frequency, scalar-distribution agreement
+ with station anchors, event durations, flux--wind scaling, particle correlation,
+ and wind-speed spectra \citep{Aloni2024}. All eight criteria pass their
+-prespecified acceptance rules; the full check table and diagnostic figure are
++prespecified acceptance rules; the full check table and generator-validation figure are
+ reported in \ref{apx:generator_validation}. These checks document the
+ simulation construction and remain separate from final test policy selection.
+ 
+@@ -67,15 +56,18 @@ and training setup are described in \Cref{sec:framework_protocol}.
+ 
+ The reported main aggregate uses 24 independent seeds, numbered 117--140. For
+ each seed, the same truth sequence is used for PD-PPO, fixed-schedule references,
+-rule-based schedules, and diagnostic schedules. The selected fixed schedule is
++rule-based schedules, and supplementary references. The selected fixed schedule is
+ listed before final testing and then replayed as a constant schedule without duty
+ guards or fallback rotations.
+ 
+-\input{tables/main_protocol_hyperparameters}
++Seeds 117 and 122 were used during the preliminary configuration pivot. The
++configuration was then fixed and evaluated unchanged on the remaining 22 seeds.
++That post-pilot subset retains positive primary macro margins in 22/22 seeds
++(mean 0.0780; 95\% interval [0.0670, 0.0896]); it is reported as a replication
++check alongside the full 24-seed aggregate in the evidence archive.
+ 
+-\input{tables/static_mask_selection_summary}
+-
+-The per-seed selected fixed schedules and validation scores are listed in
++The main protocol hyperparameters are listed in \ref{apx:protocol_hyperparameters}.
++Per-seed selected fixed schedules and validation scores are listed in
+ \ref{apx:fixed_mask_selection}.
+ 
+ Seed statistical summaries use paired differences because each scheduler
+diff --git a/sections/06_results.tex b/sections/06_results.tex
+index 9450573..216c260 100644
+--- a/sections/06_results.tex
++++ b/sections/06_results.tex
+@@ -1,17 +1,9 @@
+ \section{Results}
+ \label{sec:results}
+ 
+-The results are organised around the three checks stated in the introduction.
+-\Cref{sec:main_result} reports the main aggregate comparisons: whether PD-PPO
+-improves forecast loss and the fixed-schedule-normalized macro score over fixed and
+-rule-based schedules. \Cref{sec:fixed_mask_replay} reports fixed-schedule replay and event type
+-decomposition: whether the gain is tied to adaptive specialist allocation under
+-a constant specialist reference. \Cref{sec:behavioral_diagnostics,sec:mechanism_ablation,sec:robustness_checks}
+-report action-trace checks, an ablation study, and sensitivity checks:
+-whether the learned policy avoids degenerate behavior and remains stable under
+-bounded benchmark changes. \Cref{sec:framework_diagnostics} then summarizes
+-supplementary diagnostics that sharpen the claim boundary without replacing the
+-main 24-seed result.
++The main evidence is the held-out paired comparison against fixed and rule-based
++references, followed by regime decomposition, behavior checks, ablation, local
++sensitivity, and short claim-boundary references.
+ 
+ \subsection{Main held-out comparisons}
+ \label{sec:main_result}
+@@ -19,15 +11,15 @@ main 24-seed result.
+ \Cref{tab:regime_balanced_24seed_summary} and
+ \Cref{fig:regime_balanced_24seed_evidence}
+ show the final held-out aggregate. PD-PPO reduces ordinary forecast loss and the
+-fixed-schedule-normalized macro score against the validation-selected fixed
+-schedule and rule-based schedules in all 24 seeds. The one-sided sign test
+-for the same direction in all seeds gives $p=5.96\times10^{-8}$. The mean
+-learned macro margin over the fixed-schedule replay reference is 0.0710 normalized
+-loss units.
++validation-frozen macro score against the validation-selected fixed schedule in
++all 24 seeds. It also improves the macro score against each named rule-based
++schedule in all 24 seeds. The one-sided sign test for the fixed-schedule
++comparison gives $p=5.96\times10^{-8}$. The mean macro margin is 0.0778
++normalized loss units, with a 95\% bootstrap interval of [0.0665, 0.0896].
+ 
+ The table also reports the prespecified step margin check. PD-PPO exceeds the
+ fixed-schedule step margin threshold in every seed, with the smallest positive
+-margin equal to 0.0285 loss units in seed 117. The step metric and the macro
++margin equal to 0.0314 loss units in seed 131. The step metric and the macro
+ metric therefore support the same direction of evidence in the reported
+ benchmark.
+ 
+@@ -37,8 +29,8 @@ benchmark.
+   \centering
+   \includegraphics[width=\linewidth]{figure_regime_balanced_24seed_evidence.pdf}
+   \caption{Final held-out comparison over 24 independent seeds. Panel A sorts
+-  seeds by forecast loss difference against the fixed-schedule replay and
+-  overlays the corresponding macro score difference and the prespecified
++  seeds by forecast loss difference against the validation-selected fixed schedule and
++  overlays the corresponding validation-frozen macro score difference and the prespecified
+   threshold range. Panel B shows paired seed distributions for the main forecast
+   loss and macro score comparisons. All 24 seeds remain positive in the reported
+   comparisons, and all forecast loss differences exceed the threshold range in
+@@ -46,11 +38,11 @@ benchmark.
+   \label{fig:regime_balanced_24seed_evidence}
+ \end{figure}
+ 
+-\subsection{Event type decomposition and event-label diagnostic schedule}
++\subsection{Event type decomposition and event-label reference}
+ \label{sec:fixed_mask_replay}
+ 
+-\Cref{tab:event_type_loss_decomposition} is the bridge from the aggregate result
+-to the regime mechanism: it shows which event types drive the macro margin and
++\Cref{tab:event_type_loss_decomposition} connects the aggregate result to the
++regime mechanism. It shows which event types drive the macro margin and
+ why a single fixed specialist remains an incomplete design.
+ 
+ \input{tables/event_type_loss_decomposition}
+@@ -77,7 +69,7 @@ event context is consistent with the benchmark design because a single
+ validation-selected specialist can be a strong average design while still losing
+ on the macro objective across regimes.
+ 
+-The individual event rows serve as diagnostics and are not separate dominance
++The individual event rows support interpretation and are not separate dominance
+ claims across all seeds. Per-event positive seed counts are lower than the macro
+ count because
+ seeds contain different numbers of particle, flux, and thermal windows, and a
+@@ -85,13 +77,12 @@ local loss increase in one event type can be offset by larger gains in the other
+ positive weight event types. The main claim is the held-out macro and ordinary
+ step comparison under the reported operating-rule benchmark.
+ 
+-The event-label diagnostic schedule supplies a privileged reference. It selects
+-the specialist from event labels and improves the macro objective over the
+-fixed-schedule reference in all seeds, with mean and median macro margins of
+-0.0773 and 0.0726.
+-The learned PD-PPO mean macro margin is 0.0710. The proximity of these margins
+-shows that the benchmark contains exploitable adaptive opportunity and that the
+-learned policy captures much of it from the available scheduler observation.
++The privileged event-label reference supplies a diagnostic with direct event
++labels. It improves the validation-selected fixed-schedule replay in all 24
++seeds, with a mean macro margin of 0.0824. As expected, it has lower macro loss
++than PD-PPO in 19/24 seeds; its mean advantage is 0.0054. This gap measures the
++remaining value of direct regime labels beyond the scheduler's online state
++features, while the fixed-schedule comparison remains the confirmatory result.
+ 
+ \subsection{Action-trace checks}
+ \label{sec:behavioral_diagnostics}
+@@ -100,22 +91,25 @@ learned policy captures much of it from the available scheduler observation.
+   \centering
+   \includegraphics[width=\linewidth]{figure_behavior_audit.pdf}
+   \caption{Checks on learned specialist choices in the final 24-seed benchmark.
+-  Panel A reports seed distributions of three scalar checks: mask entropy for
+-  action diversity, event--mask mutual information for state dependence of
+-  specialist choice, and sensor-use separation for event-conditioned specialist
+-  concentration. Panel B shows the specialist selection frequency heatmap, the
+-  same quantity as \Cref{fig:event_type_diagnostics} Panel A, alongside the
+-  scalar checks. The combined evidence rules out a
+-  constant mask or a simple periodic rotation as the explanation for the result.}
++  Panel A reports seed distributions of mask entropy, event--mask mutual
++  information, and event-conditioned specialist separation. Panel B reports the
++  number of seeds passing the action-trace gates for diversity, state dependence,
++  non-fixed traces, and non-cyclic traces. The checks rule out a constant mask or
++  a simple periodic rotation as the explanation for the result.}
+   \label{fig:behavior_audit}
+ \end{figure}
+ 
+-\Cref{fig:behavior_audit} rules out the two main action-trace shortcuts. The
+-learned traces use multiple specialist masks with nonzero entropy. They are not
++\Cref{fig:behavior_audit} rules out the two main action-trace shortcuts. All four
++action-trace gates pass in 24/24 seeds. The learned traces use multiple
++specialist masks with nonzero entropy. They are not
+ simple cycles, because event--mask dependence and specialist separation by event
+ context are present in every seed. The fixed
+ weather backbone is not expected to switch; the learned decision is the
+-specialist allocation.
++specialist allocation. The radiometer channel has zero duty in this benchmark,
++whereas the thermo-hygrometer, surface infrared, laser, and flux specialists all
++have intermediate duty in every seed. The result therefore concerns adaptive
++allocation among the four forecast-relevant specialist channels, not a claim
++that every available channel is selected in every calibrated setting.
+ 
+ \subsection{Ablation study}
+ \label{sec:mechanism_ablation}
+@@ -127,54 +121,31 @@ paired macro-margin effect sizes under the same held-out protocol.
+ \input{tables/mechanism_ablation_summary}
+ 
+ \Cref{tab:mechanism_ablation_summary} and the supplementary distribution plot in
+-\Cref{fig:mechanism_robustness} report the
+-24-seed mechanism ablation under the same final evaluation protocol. Removing
+-imitation guidance, event context auxiliary supervision, or balanced training
+-loss does not eliminate the macro and action-trace criteria. The stricter fixed-schedule
+-step-margin count is more sensitive. The full policy passes 24/24 seeds,
+-removing imitation guidance passes 23/24, and removing event context auxiliary
+-supervision passes 21/24. The paired macro margin confidence intervals overlap
+-zero for the three deltas against the full policy. The ablation therefore
+-supports a reliability role for the auxiliary signals, with no evidence of a
+-large separable macro margin effect from any one component.
+-
+-\subsection{Sensitivity to event mixture}
++\Cref{fig:mechanism_robustness} report the 24-seed mechanism ablation under the
++same validation-frozen evaluation protocol. Each variant retains positive macro
++margins in all 24 seeds. The no-event-context-auxiliary variant reduces step
++wins from 24/24 to 22/24, whereas the other two variants retain 24/24 step wins.
++The paired macro-margin intervals overlap zero for all three changes from the
++full policy. Thus, the auxiliary terms do not yield a large isolated macro
++effect in this benchmark, but the event-context auxiliary signal improves the
++reliability of the ordinary step-loss comparison.
++
++\subsection{Local event-mixture sensitivity}
+ \label{sec:robustness_checks}
+ 
+-\Cref{tab:event_mix_robustness_summary} is the bounded sensitivity check: it
+-repeats the full protocol under two changed event mixtures rather than only
+-replaying the final trained policy.
++A fresh six-seed higher-flux sensitivity check repeats the full protocol and
++retains positive step and validation-frozen macro margins in all seeds. The
++full table is reported in \ref{apx:event_mix_sensitivity}.
+ 
+-\input{tables/event_mix_robustness_summary}
+-
+-\Cref{tab:event_mix_robustness_summary} reports two changed mixture sensitivity
+-checks. The full training and evaluation protocol is repeated on fresh six-seed
+-settings with more common and rarer flux events. PD-PPO preserves the ordinary
+-step-loss criterion, macro criterion, strict fixed-schedule step criterion, and action-trace criterion in both
+-settings. Margins remain positive in the lower-flux setting, although the step
+-margin is tighter than in the main benchmark. These checks support bounded
+-robustness within the same benchmark family; they do not establish robustness to
+-arbitrary event prevalence, different event detectors, different channel sets, or
+-uniformly mixed regimes.
+-
+-\subsection{Supplementary framework diagnostics}
++\subsection{Supplementary framework references}
+ \label{sec:framework_diagnostics}
+ 
+-The main result above compares PD-PPO with fixed schedules, rule-based
+-schedules, and privileged event-label replay under the final 24-seed protocol.
+-Additional diagnostics, summarized in \Cref{tab:framework_diagnostics_summary},
+-address two different questions. The one-step forecast-greedy diagnostic asks
+-whether PD-PPO is only a myopic selector of the currently best forecast mask.
+-PD-PPO remains better in all 24 supplement seeds, so the learned schedule has
+-sequential value beyond that one-step diagnostic.
+-
+-The context-alert bandit asks a harder question: can a hand-coded context-aware
+-rule using station-side alert proxies match or beat the learned policy? In the
+-supplement, this bandit is stronger than the original PD-PPO on average. This is
+-a diagnostic challenge baseline, not a failure of the fixed-backbone result. It
+-means the paper should not claim that PD-PPO dominates the whole class of
+-context-aware
+-handcrafted policies. A context-aware PD-PPO extension improves competitiveness
+-on development seeds and continues to beat forecast-greedy, but it does not pass
+-the predeclared final-expansion gate. It is therefore treated as an appendix
+-extension rather than as the main method.
++Supplementary references further localize the claim. PD-PPO remains better than
++the one-step forecast-greedy reference across the 24-seed supplement, supporting
++sequential value beyond myopic selection. A handcrafted context-alert stress-test
++reference remains competitive, so the paper does not claim universal superiority
++over context-aware heuristics. A context-aware PD-PPO extension substantially
++narrows the gap to this stress-test reference on development seeds, but neither
++this extension nor the dev2 variants pass the prespecified
++expansion gate for fresh confirmatory testing. These runs are therefore reported
++only in \ref{apx:framework_diagnostics} and do not redefine the primary method.
+diff --git a/sections/07_discussion_future_work.tex b/sections/07_discussion_future_work.tex
+index 2d5997e..927282d 100644
+--- a/sections/07_discussion_future_work.tex
++++ b/sections/07_discussion_future_work.tex
+@@ -3,14 +3,15 @@
+ 
+ \subsection{What the result establishes}
+ 
+-The final experiment establishes a scheduling result for this benchmark. In a
+-sensing system with a required weather backbone and one specialist slot,
+-PD-PPO learns a specialist policy that uses state information and improves both
+-average forecast loss and the macro score across regimes over fixed-schedule
+-allocation and rule-based schedules. The evidence includes more than a
+-score difference. Fixed-schedule replay keeps the fixed reference constant, and event
+-type diagnostics show which specialists are selected under each regime.
+-Action-trace checks rule out nearly constant or simple cycle explanations.
++The final experiment establishes a prediction-driven constrained scheduling
++result for the reported one-specialist setting. In a sensing system with a
++required weather backbone and one specialist slot, PD-PPO learns a specialist
++policy that uses state information and improves both average forecast loss and
++the macro score across regimes over fixed-schedule allocation and rule-based
++schedules. The evidence includes more than a score difference. Fixed-schedule
++replay keeps the fixed reference constant, event type decomposition shows which
++specialists are selected under each regime, and action-trace checks rule out
++nearly constant or simple cycle explanations.
+ 
+ The single specialist rule is a transparent instance of a broader setting with
+ limited specialist capacity. Any system with $r<K$ active specialist slots faces
+@@ -20,73 +21,57 @@ The reported benchmark uses
+ $r=1$ because it makes the alternatives observable and matches a common station
+ pattern in which low-power weather context remains online while higher-cost
+ specialists compete for the remaining power budget. \Cref{tab:sensor_specs} and
+-\Cref{tab:action_space_instantiation} define the concrete budget: the
++\Cref{tab:action_space_instantiation} define the concrete budget. The
+ weather backbone costs 0.25 normalized units, and each high-value
+ specialist costs 0.49. One specialist stays within the 0.75 budget, while two high-value
+ specialists exceed it.
+ 
+-\subsection{Why the protocol is part of the contribution}
++\subsection{Comparator roles and claim scope}
+ 
+-A nominally static comparator can become dynamic if duty guards or fallback
+-rotations are left active. Fixed-schedule replay removes that ambiguity by executing
+-the selected mask as a constant final test schedule. Event label
+-replay plays a different role. It uses privileged event labels and therefore
+-measures adaptive opportunity in the scenario, not deployable policy quality.
+-Reporting both comparisons separates the strength of fixed designs, the adaptive
+-structure in the benchmark, and the ability of a learned policy to capture that
+-structure from available observations.
++The validation-selected fixed schedule, its constant replay, and the privileged
++event-label diagnostic serve different purposes. The validation-selected schedule
++defines the confirmatory comparison. Constant replay verifies that the same
++choice remains fixed on held-out windows, while the event-label diagnostic
++measures adaptive opportunity under direct regime information. Reporting these
++roles separately avoids conflating a deployable learned policy with a label-aware
++reference.
+ 
+-The supplementary diagnostics show why the claim must stay bounded. The
+-one-step forecast-greedy reference supports the value of sequential policy
+-learning, because PD-PPO consistently improves over that diagnostic. The
+-context-alert bandit is different: it is a strong hand-coded context-aware rule
+-that challenges a broad ``RL beats all context rules'' interpretation. The
+-present paper therefore claims a useful forecast-driven constrained RL
+-scheduling framework under the reported operating rules, not universal
+-superiority over every handcrafted context-aware policy. Future work should
+-extend the comparator set with additional threshold rules, bandit variants, and
+-learned policies under the same feasibility and replay protocol.
+-
+-The evaluation does not include comparisons against other learned RL methods
+-such as DQN or SAC. The primary reason is that the evaluation protocol,
+-including chronological separation, fixed-schedule replay, and the macro score
+-normalized by fixed-schedule references, is itself part of the contribution. Applying
+-this protocol to alternative RL implementations requires careful
+-re-implementation of the feasibility masking interface, the fixed forecaster
+-reward, and the replay comparison, which is outside the scope of the present
+-paper. The relevant comparison for the core claim is between a learned adaptive
+-policy and the best available fixed and rule-based references; that comparison is
+-reported in full. Whether PD-PPO outperforms other RL methods under the same
+-protocol is a natural next question.
++These comparisons support a specific framework-level claim. PD-PPO establishes
++sequential forecast-driven specialist scheduling value under the reported
++operating rules. It remains stronger than a one-step forecast-greedy reference,
++while the handcrafted context-alert stress-test reference shows that part of the
++instantaneous context structure can also be exploited by memoryless rules. The
++evidence therefore supports a prediction-driven constrained RL scheduling
++framework, not universal dominance over every context-aware heuristic.
+ 
+ \subsection{Role of the auxiliary training signals}
+ 
+-The ablation results assign the auxiliary losses a reliability role. Removing
+-event context auxiliary supervision or imitation guidance preserves the macro
+-result but weakens the stricter fixed schedule step margin count. The auxiliary
+-terms help the masked PPO learner search a small but regime-dependent action
+-space; they are not independent controllers and do not change the final test
+-observation interface.
++Removing event context auxiliary supervision, imitation guidance, or the
++balanced training loss preserves the validation-frozen macro result. Removing
++the event-context auxiliary signal reduces ordinary step wins to 22/24, whereas
++the remaining variants retain 24/24. The auxiliary terms help the masked PPO
++learner search a small but regime-dependent action space; they are not
++independent controllers and do not change the final-test observation interface.
+ 
+-The context-aware PD-PPO development line belongs in the same bounded category.
+-Adding online alert features and a small context encoder improves the learned
+-policy's competitiveness against the context-alert bandit, but the completed
+-development and bounded dev2 runs do not pass the predeclared final-expansion
+-gate.
+-For that reason, CA-PD-PPO is reported as an exploratory extension rather than
+-as the paper's primary scheduler.
++A context-aware PD-PPO extension narrows the gap to the handcrafted
++context-alert stress-test reference on development seeds, but neither this
++extension nor the dev2 variants pass the prespecified expansion gate for fresh
++confirmatory testing. They are therefore reported only as exploratory appendix
++evidence and do not redefine the primary scheduler. The context-aware extension
++is evidence of a clean improvement direction, not confirmatory evidence for
++replacing the primary scheduler.
+ 
+ \subsection{Limitations and next steps}
+ 
+ The framework uses a fixed evaluation forecaster. This choice makes schedule
+-comparisons controlled, but it is not joint optimization of the
+-scheduler and forecaster. A fixed forecaster can favor observation patterns that
+-match its training distribution and undervalue patterns that would support a
+-better retrained model. The comparison is fair in the sense that PD-PPO, fixed
+-schedules, and rule-based references are scored by the same model on held-out
+-rollouts; the absolute claim remains bounded to the fixed forecasting model. A
+-future study should retrain or jointly adapt forecasters under learned schedules
+-and test whether the macro advantage persists.
++comparisons controlled, but it is not joint optimization of the scheduler and
++forecaster. A fixed forecaster can favor observation patterns that match its
++training distribution and undervalue patterns that would support a better
++retrained model. The comparison is fair because PD-PPO, fixed schedules, and
++rule-based references are scored by the same model on held-out rollouts; the
++absolute claim is tied to this frozen forecasting model. A future study should
++retrain or jointly adapt forecasters under learned schedules and test whether the
++macro advantage persists.
+ 
+ The simulator is designed to expose a scheduling mechanism, not to replace field
+ validation. Generator checks document scalar distributions, wind-process
+@@ -94,11 +79,7 @@ structure, event duration, and blowing-snow scaling against the Antarctic AWS an
+ blowing-snow literature used to define the benchmark domain. They do not prove
+ deployment transfer. Moving to field data will require measured instrument
+ costs, activation latencies, station-side event proxies, and missingness patterns
+-from actual hardware.
+-
+-The changed mixture experiments are also local. They show that the result
+-survives two bounded shifts in flux-event prevalence within the same generator
+-family. They do not establish robustness to arbitrary event prevalence,
+-different event detectors, different channel sets, or uniformly mixed regimes.
+-Those quantities should be re-estimated when the framework is moved to a new
+-sensing system.
++from actual hardware. The changed-mixture experiment is also local; it tests a
++higher flux prevalence within the same generator family, not arbitrary event
++prevalence, different event detectors, different channel sets, or uniformly
++mixed regimes.
+diff --git a/sections/08_conclusion.tex b/sections/08_conclusion.tex
+index 178c6da..ca686eb 100644
+--- a/sections/08_conclusion.tex
++++ b/sections/08_conclusion.tex
+@@ -1,27 +1,18 @@
+ \section{Conclusion}
+ 
+-This paper studied sensor scheduling for microclimate forecasting under a power
+-budget. The setting keeps a mandatory backbone online and allocates one
+-specialist channel at each scheduling step. PD-PPO implements the scheduling
+-policy as masked PPO over feasible channel subsets and uses forecast loss from a
+-fixed evaluation forecaster as the training signal.
++This paper formulates specialist sensor scheduling under power, startup, and
++minimum-duration constraints as a prediction-driven constrained sequential
++decision problem. PD-PPO implements this formulation with masked policy
++optimization over executable channel masks and, in the reported fixed-backbone
++one-specialist setting, consistently improves ordinary forecast loss and a
++regime-balanced macro score over validation-selected fixed schedules, rule-based
++policies, and a one-step forecast-greedy reference. Constant fixed-schedule replay and
++action-trace checks support the interpretation that the gain comes from
++state-dependent specialist allocation, with hidden rotations and nearly constant
++choices excluded.
+ 
+-On a controlled Antarctic blowing-snow benchmark, the learned scheduler improves
+-both ordinary forecast loss and a macro score normalized by fixed-schedule references
+-over fixed schedules and rule-based references across 24 held-out seeds. Fixed-schedule
+-replay and action-trace checks support the interpretation that the
+-improvement comes from specialist allocation that changes with state, with
+-hidden rotations and nearly constant specialist choices excluded.
+-
+-Supplementary diagnostics further define the boundary of the result. PD-PPO is
+-not explained by one-step forecast-greedy selection, but a context-alert bandit
+-remains a serious handcrafted challenge baseline. A context-aware PD-PPO
+-extension improves development-seed competitiveness without passing the
+-final-expansion gate, so it is not the main result.
+-
+-The evidence is tied to a fixed evaluation forecaster, generated benchmark data,
+-and a fixed backbone with one selectable specialist. Within that setting, the
+-study shows that reinforcement learning trained from forecast loss can turn
+-event context into useful specialist schedules. The next step is to test the
+-same protocol with retrained forecasters, additional adaptive baselines, other
+-learned policies, and field-derived station traces.
++A strong handcrafted context-alert stress-test reference remains competitive.
++The paper instead
++establishes that forecast-loss-trained constrained RL can produce effective
++specialist schedules under a common frozen forecaster and strict replay protocol,
++and that this value is measurable in the reported held-out setting.
+diff --git a/sections/appendix_theory.tex b/sections/appendix_theory.tex
+index b560d88..0756993 100644
+--- a/sections/appendix_theory.tex
++++ b/sections/appendix_theory.tex
+@@ -71,11 +71,12 @@ specialist subset has strictly higher macro forecast loss than the label-informe
+ $\pi^\star$ under the stated sufficient conditions.
+ 
+ The gap between $\pi^\star$ and a deployable learned policy depends on how much
+-regime information is recoverable from the observable scheduler state. The event-label
+-diagnostic schedule implements $\pi^\star$ empirically on held-out test
+-windows. The proximity of its macro margin, 0.0773, to the PD-PPO margin,
+-0.0710, provides empirical evidence that the observable event context proxies
+-carry sufficient information to approach the label-informed bound in this benchmark.
++regime information is recoverable from the observable scheduler state. The
++event-label reference implements $\pi^\star$ as a privileged held-out diagnostic.
++Its mean macro margin over the validation-selected fixed-schedule replay is
++0.0824, compared with 0.0770 for PD-PPO under the same replay check. The
++event-label diagnostic has lower macro loss in 19 of 24 seeds, which quantifies
++the remaining benefit of direct labels beyond the observable scheduler state.
+ 
+ \subsection{Scheduling from state evidence and simple cycles}
+ 
+@@ -95,7 +96,7 @@ In the reported benchmark, blowing-snow events are generated by a semi-Markov
+ process coupled to wind exceedance (\Cref{sec:simulator_construction}), which
+ produces stochastic, non-periodic regime arrivals. The cycle-optimality condition
+ is therefore not satisfied. The action-trace checks in \Cref{sec:results}
+-confirm that the learned policy is not a simple cycle: event--mask mutual
++confirm that the learned policy is not a simple cycle. Event--mask mutual
+ information is positive in every seed, and the policies do not collapse to the
+ cycle-like patterns excluded by the audit rules in \Cref{sec:simulation_setup}.
+ 
+@@ -134,6 +135,35 @@ $g_{\phi}(u\mid o_t)$. When enabled, this term can be written as
+ The reported 24-seed configuration sets this component to zero and therefore
+ uses \Cref{eq:pdppo_loss} as the main training objective.
+ 
++\clearpage
++\section{Benchmark Platform Rendering}
++\label{apx:aws_motivation}
++
++\begin{figure}[htbp]
++  \centering
++  \includegraphics[width=0.78\linewidth]{aws_deployment.png}
++  \caption{Author-rendered AWS platform motivating the reported sensing
++  abstraction. The main experiment uses the logical channel table in
++  \Cref{tab:sensor_specs} as the experimental definition.}
++  \label{fig:aws_deployment}
++\end{figure}
++
++\clearpage
++\section{Protocol Hyperparameters}
++\label{apx:protocol_hyperparameters}
++
++\input{tables/main_protocol_hyperparameters}
++
++\begin{figure}[htbp]
++  \centering
++  \resizebox{\linewidth}{!}{\input{figures/data_split_timeline_tikz}}
++  \caption{Chronological split used by the benchmark. Forecaster fitting, policy
++  learning, fixed-schedule selection, and final testing are separated before
++  any reported comparison is computed. The split makes the reported held-out
++  comparison a replay test and not a final-window tuning procedure.}
++  \label{fig:data_split}
++\end{figure}
++
+ \clearpage
+ \section{Generator Validation Checks}
+ \label{apx:generator_validation}
+@@ -170,9 +200,9 @@ criteria.
+   \caption{Mechanism ablation over 24 seeds. Panel A shows seed macro margin
+   distributions for the full policy and three training variants. Panel B reports
+   paired bootstrap confidence intervals for the change in mean macro margin
+-  against the full policy; the labels also report the strict fixed-schedule step
+-  margin count. Removing auxiliary signals weakens reliability on the stricter
+-  step-margin criterion more than it changes the mean macro margin.}
++  against the full policy; the labels also report ordinary step-loss wins against
++  the validation-selected fixed schedule. Removing auxiliary signals changes
++  step-loss reliability more than it changes the mean macro margin.}
+   \label{fig:mechanism_robustness}
+ \end{figure}
+ 
+@@ -204,12 +234,12 @@ held-out final test comparisons in \Cref{sec:results}.
+ \section{Framework Diagnostics and Context-Aware Extension}
+ \label{apx:framework_diagnostics}
+ 
+-\Cref{tab:framework_diagnostics_summary} reports the supplementary diagnostics
+-used to bound the manuscript claim. These diagnostics do not extend the primary
++\Cref{tab:framework_diagnostics_summary} reports the supplementary references
++used to localize the manuscript claim. These references do not extend the primary
+ evidence set. The forecast-greedy row supports the interpretation that PD-PPO is
+ not merely a one-step selector. The context-alert rows show that a strong
+-hand-coded context-aware rule remains a challenge and that the context-aware
+-extension is exploratory rather than the primary scheduler in this paper.
++handcrafted context-aware rule remains competitive and that the context-aware
++extension is exploratory and is not the primary scheduler in this paper.
+ 
+ \input{tables/framework_diagnostics_summary}
+ 
+@@ -218,3 +248,10 @@ extension is exploratory rather than the primary scheduler in this paper.
+ \label{apx:fixed_mask_selection}
+ 
+ \input{tables/static_mask_selection_ledger}
++\clearpage
++
++\section{Event-Mixture Sensitivity}
++\label{apx:event_mix_sensitivity}
++
++\input{tables/event_mix_robustness_summary}
++\clearpage
+diff --git a/tables/baseline_reference_taxonomy.tex b/tables/baseline_reference_taxonomy.tex
+index b963003..f265139 100644
+--- a/tables/baseline_reference_taxonomy.tex
++++ b/tables/baseline_reference_taxonomy.tex
+@@ -9,18 +9,24 @@
+     \toprule
+     Schedule family & Role in the protocol & Interpretation \\
+     \midrule
+-    Validation-selected fixed schedule
++    Fixed schedule reference
+       & Select one feasible constant schedule before final testing.
+-      & Main fixed-schedule comparator. \\
+-    Rule-based schedule
++      & Main fixed-schedule reference. \\
++    Rule-based references
+       & Use feasible cycling, stale-channel priority, or random rules.
+-      & Non-learned dynamic comparators. \\
++      & Non-learned dynamic references. \\
+     Fixed-schedule replay
+       & Replay one constant schedule without duty guards or fallback rotation.
+       & Constant-schedule comparison under matched replay. \\
+-    Event-label diagnostic schedule
++    Privileged event-label reference
+       & Choose specialists from event type during replay.
+       & Uses privileged event labels; not the learned controller. \\
++    One-step forecast-greedy reference
++      & Choose the currently best feasible mask under the fixed forecaster.
++      & Myopic reference for sequential policy value. \\
++    Handcrafted context-alert stress-test reference
++      & Use station-side alert proxies in a handcrafted memoryless rule.
++      & Stress-test reference for context-aware heuristics. \\
+     Action-trace checks
+       & Measure mask diversity, event--mask dependence, and fixed/cycle patterns.
+       & Describes non-fixed, non-cycle action traces. \\
+diff --git a/tables/event_mix_robustness_summary.tex b/tables/event_mix_robustness_summary.tex
+index e10517d..501e6c5 100644
+--- a/tables/event_mix_robustness_summary.tex
++++ b/tables/event_mix_robustness_summary.tex
+@@ -1,25 +1,25 @@
+ \begin{table}[htbp]
+   \centering
+-  \caption{Sensitivity to changed event mixtures.}
++  \caption{Validation-frozen sensitivity to a changed event mixture.}
+   \label{tab:event_mix_robustness_summary}
+   \footnotesize
+   \setlength{\tabcolsep}{3pt}
+   \begin{tabular}{@{}p{0.20\linewidth}p{0.16\linewidth}c c c c@{}}
+     \toprule
+-    Setting & Event mix & Seeds & Step margin & Macro margin & Strict / action trace \\
++    Setting & Event mix & Seeds & Step margin & Macro margin & Step / zero abort \\
+     \midrule
+-    Main benchmark & 0.40/0.20/0.40 & 24 & 0.149 / 0.106 & 0.084 / 0.088 & 24/24 / 24/24 \\
+-    Higher-flux mixture & 0.35/0.30/0.35 & 6 & 0.169 / 0.102 & 0.094 / 0.094 & 6/6 / 6/6 \\
+-    Lower-flux mixture & 0.45/0.10/0.45 & 6 & 0.092 / 0.102 & 0.088 / 0.098 & 6/6 / 6/6 \\
++    Main benchmark & 0.40/0.20/0.40 & 24 & 0.153 / 0.106 & 0.0778 / 0.0744 & 24/24 / 24/24 \\
++    Higher-flux mixture & 0.35/0.30/0.35 & 6 & 0.172 / 0.102 & 0.0764 / 0.0651 & 6/6 / 6/6 \\
+     \bottomrule
+   \end{tabular}
+   \vspace{0.4ex}
+ 
+   \noindent\footnotesize
+   Event mix is particle/flux/thermal. Margins are mean / median paired
+-  improvements over the strongest operational reference in each aggregate.
+-  Strict / action trace reports the fixed-schedule step criterion and the
+-  action-trace criterion. The changed mixture policies are retrained and
+-  evaluated on fresh seeds 141--146 and 147--152 while keeping the same sensors,
+-  power budget, and evaluation protocol.
++  improvements over the validation-selected fixed schedule. The changed-mixture
++  policy is retrained and evaluated on fresh seeds 141--146 with the same
++  channels, power budget, and protocol. The lower-flux setting is retained in
++  the evidence archive but omitted here: seed 147 has no validation flux
++  windows, so the setting cannot define the three-regime validation-frozen macro
++  score for all six seeds.
+ \end{table}
+diff --git a/tables/event_type_loss_decomposition.tex b/tables/event_type_loss_decomposition.tex
+index ce483fc..a898498 100644
+--- a/tables/event_type_loss_decomposition.tex
++++ b/tables/event_type_loss_decomposition.tex
+@@ -8,10 +8,10 @@
+     \toprule
+     Event type & PD-PPO & Fixed schedule & Best rule & Diff. vs fixed & Positive \\
+     \midrule
+-    Particle & 0.968 $\pm$ 0.010 & 0.993 $\pm$ 0.009 & 1.005 $\pm$ 0.003 & 0.025 $\pm$ 0.006 & 18/24 \\
+-    Flux & 0.747 $\pm$ 0.009 & 0.870 $\pm$ 0.029 & 0.970 $\pm$ 0.004 & 0.123 $\pm$ 0.032 & 12/24 \\
+-    Thermal & 0.797 $\pm$ 0.016 & 0.906 $\pm$ 0.029 & 0.946 $\pm$ 0.014 & 0.109 $\pm$ 0.026 & 16/24 \\
+-    Macro average & 0.837 $\pm$ 0.007 & 0.923 $\pm$ 0.006 & 0.974 $\pm$ 0.005 & 0.086 $\pm$ 0.006 & 24/24 \\
++    Particle & 1.042 $\pm$ 0.305 & 1.068 $\pm$ 0.310 & 1.079 $\pm$ 0.310 & 0.026 $\pm$ 0.007 & 18/24 \\
++    Flux & 0.754 $\pm$ 0.030 & 0.871 $\pm$ 0.036 & 0.977 $\pm$ 0.034 & 0.117 $\pm$ 0.030 & 12/24 \\
++    Thermal & 1.032 $\pm$ 0.125 & 1.123 $\pm$ 0.117 & 1.222 $\pm$ 0.145 & 0.091 $\pm$ 0.024 & 16/24 \\
++    Macro average & 0.943 $\pm$ 0.093 & 1.021 $\pm$ 0.095 & 1.093 $\pm$ 0.096 & 0.078 $\pm$ 0.006 & 24/24 \\
+     \bottomrule
+   \end{tabular*}
+   \vspace{0.4ex}
+diff --git a/tables/framework_diagnostics_summary.tex b/tables/framework_diagnostics_summary.tex
+index e103f91..b4131fd 100644
+--- a/tables/framework_diagnostics_summary.tex
++++ b/tables/framework_diagnostics_summary.tex
+@@ -1,6 +1,6 @@
+ \begin{table}[htbp]
+   \centering
+-  \caption{Supplementary diagnostics used to bound the PD-PPO claim.}
++  \caption{Supplementary references used to localize the PD-PPO claim.}
+   \label{tab:framework_diagnostics_summary}
+   \scriptsize
+   \setlength{\tabcolsep}{3.0pt}
+@@ -9,14 +9,14 @@
+     \toprule
+     Evidence block & Seed set & Macro result & Interpretation \\
+     \midrule
+-    Forecast-greedy diagnostic
++    Forecast-greedy reference
+       & Seeds 117--140
+       & 24/24 wins; mean margin 0.1552
+       & Supports sequential, non-myopic policy value. \\
+-    Context-alert bandit diagnostic
++    Handcrafted context-alert stress-test reference
+       & Seeds 117--140
+       & 6/24 wins; mean margin -0.0045
+-      & Strong context-aware challenge baseline; no dominance claim over the full handcrafted-rule class. \\
++      & Strong handcrafted context reference; no dominance claim over the full context-aware heuristic class. \\
+     AoI reward proxy pilot
+       & Seeds 117--118
+       & Proxy worse than forecast reward by 0.0087 step-loss units
+@@ -25,20 +25,20 @@
+       & Seeds 117--118
+       & Proxy not worse than forecast reward by -0.0021 step-loss units
+       & Mixed reward-specificity evidence; forecast reward alone should not be treated as the only source of the gain. \\
+-    CA-PD-PPO development diagnostic
++    CA-PD-PPO development reference
+       & Seeds 201--224
+       & 13/24 wins; mean margin 0.0083
+-      & Method-consistent extension becomes competitive but fails the 15/24 final-expansion gate. \\
++      & Method-consistent extension narrows the gap but fails the 15/24 final-expansion gate. \\
+     Bounded CA-PD-PPO dev2 variants
+       & Seeds 201--224
+       & 10--14/24 wins; mean margins 0.0028--0.0067
+-      & No dev2 variant passes the predeclared final-expansion gate; not promoted to the primary scheduler. \\
++      & No dev2 variant passes the predeclared final-expansion gate; not adopted as the primary scheduler. \\
+     \bottomrule
+   \end{tabular*}
+   \vspace{0.4ex}
+ 
+   \noindent\footnotesize
+-  Margins are reported from the aggregate diagnostic files. For the first,
++  Margins are reported from the aggregate supplementary files. For the first,
+   second, fifth, and sixth rows, positive macro margins mean baseline loss minus
+   PD-PPO loss is positive. The reward-proxy rows report the step-loss delta
+   versus the forecast-reward configuration from the two-seed pilot. CA-PD-PPO
+diff --git a/tables/gen_mechanism_ablation_table.py b/tables/gen_mechanism_ablation_table.py
+index 41b6dc5..1263145 100644
+--- a/tables/gen_mechanism_ablation_table.py
++++ b/tables/gen_mechanism_ablation_table.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python
+-"""Generate the mechanism-ablation table from continuous-margin summaries."""
++"""Generate the validation-frozen mechanism-ablation table."""
+ from __future__ import annotations
+ 
+ import argparse
+@@ -9,52 +9,27 @@ from pathlib import Path
+ import pandas as pd
+ 
+ 
+-def finite(value: object) -> float:
++def number(value: object) -> float:
+     try:
+-        out = float(value)
+-    except Exception:
++        result = float(value)
++    except (TypeError, ValueError):
+         return float("nan")
+-    return out if math.isfinite(out) else float("nan")
++    return result if math.isfinite(result) else float("nan")
+ 
+ 
+-def value_text(row: pd.Series, column: str) -> str:
+-    value = finite(row[column])
+-    return f"{value:.4f}"
+-
+-
+-def ci_interval_text(row: pd.Series, lo_column: str, hi_column: str) -> str:
+-    lo = finite(row[lo_column])
+-    hi = finite(row[hi_column])
+-    return f"$[{lo:.4f}, {hi:.4f}]$"
+-
+-
+-def delta_text(row: pd.Series) -> str:
+-    delta = finite(row.get("paired_delta_macro_margin_mean_vs_full"))
+-    if not math.isfinite(delta):
+-        return "--"
+-    return f"{delta:.4f}"
+-
++def count(row: pd.Series, column: str) -> str:
++    return f"{int(row[column])}/{int(row['complete_seeds'])}"
+ 
+-def delta_ci_text(row: pd.Series) -> str:
+-    delta = finite(row.get("paired_delta_macro_margin_mean_vs_full"))
+-    if not math.isfinite(delta):
+-        return "--"
+-    lo = finite(row.get("paired_delta_macro_margin_ci_low_vs_full"))
+-    hi = finite(row.get("paired_delta_macro_margin_ci_high_vs_full"))
+-    return f"$[{lo:.4f}, {hi:.4f}]$"
+ 
++def interval(row: pd.Series, low: str, high: str) -> str:
++    return f"$[{number(row[low]):.4f}, {number(row[high]):.4f}]$"
+ 
+-def count_text(row: pd.Series, column: str) -> str:
+-    return f"{int(row[column])}/{int(row['complete_seeds'])}"
+ 
+-
+-def escape(text: str) -> str:
+-    return (
+-        text.replace("&", r"\&")
+-        .replace("%", r"\%")
+-        .replace("_", r"\_")
+-        .replace("#", r"\#")
+-    )
++def delta(row: pd.Series) -> tuple[str, str]:
++    value = number(row["paired_delta_macro_margin_mean_vs_full"])
++    if not math.isfinite(value):
++        return "--", "--"
++    return f"{value:.4f}", interval(row, "paired_delta_macro_margin_ci_low_vs_full", "paired_delta_macro_margin_ci_high_vs_full")
+ 
+ 
+ def main() -> None:
+@@ -63,39 +38,39 @@ def main() -> None:
+     parser.add_argument("--out-tex", default="paper/tables/mechanism_ablation_summary.tex")
+     args = parser.parse_args()
+ 
+-    summary = pd.read_csv(args.summary_csv)
++    rows = pd.read_csv(args.summary_csv)
+     lines = [
+         r"\begin{table}[htbp]",
+         r"  \centering",
+-        r"  \caption{Mechanism ablation over 24 seeds with continuous macro margins.}",
++        r"  \caption{Ablation study with validation-frozen macro scoring over 24 seeds.}",
+         r"  \label{tab:mechanism_ablation_summary}",
+         r"  \scriptsize",
+         r"  \setlength{\tabcolsep}{3.0pt}",
+         r"  \renewcommand{\arraystretch}{1.10}",
+         r"  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}p{0.27\linewidth}ccccc@{}}",
+         r"    \toprule",
+-        r"    Policy variant & Strict step & Behaviour & \shortstack{Mean macro\\margin} & \shortstack{Median macro\\margin} & \shortstack{$\Delta$ vs full} \\",
++        r"    Policy variant & Macro wins & Step wins & Zero abort & \shortstack{Mean macro\\margin} & \shortstack{$\Delta$ vs full} \\",
+         r"    \midrule",
+     ]
+-    for _, row in summary.iterrows():
+-        lines.append(
+-            "    {variant} & {strict} & {behaviour} & {mean_margin} & {median_margin} & {delta} \\\\".format(
+-                variant=escape(str(row["variant_label"])),
+-                strict=count_text(row, "strict_true_static_step_count"),
+-                behaviour=count_text(row, "behavior_gate_count"),
+-                mean_margin=value_text(row, "macro_margin_mean"),
+-                median_margin=value_text(row, "macro_margin_median"),
+-                delta=delta_text(row),
+-            )
+-        )
+-        lines.append(
+-            "    \\multicolumn{{3}}{{r}}{{\\emph{{95\\% CI}}}} & {mean_ci} & {median_ci} & {delta_ci} \\\\".format(
+-                mean_ci=ci_interval_text(row, "macro_margin_mean_ci_low", "macro_margin_mean_ci_high"),
+-                median_ci=ci_interval_text(row, "macro_margin_median_ci_low", "macro_margin_median_ci_high"),
+-                delta_ci=delta_ci_text(row),
+-            )
++    for _, row in rows.iterrows():
++        delta_value, delta_interval = delta(row)
++        lines.extend(
++            [
++                "    {label} & {macro} & {step} & {abort} & {mean:.4f} & {delta} \\\\".format(
++                    label=str(row["variant_label"]),
++                    macro=count(row, "macro_win_count"),
++                    step=count(row, "step_win_count"),
++                    abort=count(row, "zero_abort_count"),
++                    mean=number(row["macro_margin_mean"]),
++                    delta=delta_value,
++                ),
++                "    \\multicolumn{{4}}{{r}}{{\\emph{{95\\% CI}}}} & {mean_ci} & {delta_ci} \\\\".format(
++                    mean_ci=interval(row, "macro_margin_mean_ci_low", "macro_margin_mean_ci_high"),
++                    delta_ci=delta_interval,
++                ),
++                r"    \addlinespace[0.25ex]",
++            ]
+         )
+-        lines.append(r"    \addlinespace[0.25ex]")
+     lines.extend(
+         [
+             r"    \bottomrule",
+@@ -104,12 +79,12 @@ def main() -> None:
+             r"  \vspace{0.4ex}",
+             "",
+             r"  \noindent\footnotesize",
+-            r"  Macro margins use the event type macro score normalised by static references.",
+-            r"  The second row for each variant reports non-parametric bootstrap 95\%",
+-            r"  confidence intervals over seeds; $\Delta$ is the paired mean difference",
+-            r"  against the full PD-PPO configuration. Delta intervals crossing zero",
+-            r"  concern macro margin effect size, whereas the strict step counts report",
+-            r"  the separate reliability check against the fixed mask margin threshold.",
++            r"  Margins are validation-selected fixed-schedule loss minus PD-PPO loss,",
++            r"  using event-type denominators fixed from validation candidates. The second",
++            r"  row for each variant gives percentile bootstrap 95\% confidence intervals",
++            r"  over seeds; $\Delta$ is the paired mean change from the full policy.",
++            r"  Zero abort reports final-test rollouts with no warm-up aborts. The intervals",
++            r"  do not identify a large isolated macro contribution from one auxiliary term.",
+             r"\end{table}",
+             "",
+         ]
+diff --git a/tables/mechanism_ablation_summary.tex b/tables/mechanism_ablation_summary.tex
+index 2d58f2f..3def858 100644
+--- a/tables/mechanism_ablation_summary.tex
++++ b/tables/mechanism_ablation_summary.tex
+@@ -1,25 +1,25 @@
+ \begin{table}[htbp]
+   \centering
+-  \caption{Ablation study over 24 seeds with continuous macro margins.}
++  \caption{Ablation study with validation-frozen macro scoring over 24 seeds.}
+   \label{tab:mechanism_ablation_summary}
+   \scriptsize
+   \setlength{\tabcolsep}{3.0pt}
+   \renewcommand{\arraystretch}{1.10}
+   \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}p{0.27\linewidth}ccccc@{}}
+     \toprule
+-    Policy variant & Strict step & Behavior & \shortstack{Mean macro\\margin} & \shortstack{Median macro\\margin} & \shortstack{$\Delta$ vs full} \\
++    Policy variant & Macro wins & Step wins & Zero abort & \shortstack{Mean macro\\margin} & \shortstack{$\Delta$ vs full} \\
+     \midrule
+-    Full PD-PPO & 24/24 & 24/24 & 0.0710 & 0.0673 & -- \\
+-    \multicolumn{3}{r}{\emph{95\% CI}} & $[0.0624, 0.0796]$ & $[0.0603, 0.0805]$ & -- \\
++    Full PD-PPO & 24/24 & 24/24 & 24/24 & 0.0778 & -- \\
++    \multicolumn{4}{r}{\emph{95\% CI}} & $[0.0665, 0.0896]$ & -- \\
+     \addlinespace[0.25ex]
+-    No imitation guide & 23/24 & 24/24 & 0.0689 & 0.0753 & -0.0020 \\
+-    \multicolumn{3}{r}{\emph{95\% CI}} & $[0.0603, 0.0773]$ & $[0.0612, 0.0802]$ & $[-0.0103, 0.0061]$ \\
++    No imitation guide & 24/24 & 24/24 & 24/24 & 0.0739 & -0.0040 \\
++    \multicolumn{4}{r}{\emph{95\% CI}} & $[0.0623, 0.0858]$ & $[-0.0159, 0.0069]$ \\
+     \addlinespace[0.25ex]
+-    No event context auxiliary signal & 21/24 & 24/24 & 0.0665 & 0.0713 & -0.0045 \\
+-    \multicolumn{3}{r}{\emph{95\% CI}} & $[0.0537, 0.0792]$ & $[0.0469, 0.0882]$ & $[-0.0130, 0.0037]$ \\
++    No event context auxiliary & 24/24 & 22/24 & 24/24 & 0.0748 & -0.0030 \\
++    \multicolumn{4}{r}{\emph{95\% CI}} & $[0.0596, 0.0914]$ & $[-0.0149, 0.0108]$ \\
+     \addlinespace[0.25ex]
+-    No balanced training loss & 24/24 & 24/24 & 0.0703 & 0.0711 & -0.0007 \\
+-    \multicolumn{3}{r}{\emph{95\% CI}} & $[0.0605, 0.0800]$ & $[0.0559, 0.0819]$ & $[-0.0071, 0.0059]$ \\
++    No balanced training loss & 24/24 & 24/24 & 24/24 & 0.0703 & -0.0075 \\
++    \multicolumn{4}{r}{\emph{95\% CI}} & $[0.0585, 0.0827]$ & $[-0.0186, 0.0018]$ \\
+     \addlinespace[0.25ex]
+     \bottomrule
+   \end{tabular*}
+@@ -27,17 +27,10 @@
+   \vspace{0.4ex}
+ 
+   \noindent\footnotesize
+-  Macro margins use the event type macro score normalized by fixed-schedule references.
+-  The second row for each variant reports non-parametric bootstrap 95\%
+-  confidence intervals over seeds; $\Delta$ is the paired mean difference
+-  against the full PD-PPO configuration. The $\Delta$ confidence intervals
+-  address macro-margin effect size: all three intervals cross zero, indicating
+-  that the 24-seed sample does not provide evidence for a large separable
+-  macro-margin contribution from any single component. The strict step counts
+-  address a different dimension, reliability of the fixed-schedule step-margin
+-  criterion, and are more sensitive: removing event context auxiliary
+-  supervision reduces the count from 24/24 to 21/24. These are complementary
+-  evidence dimensions. The ablation supports a reliability role for the
+-  auxiliary signals; it does not support the conclusion that the components are
+-  ineffective.
++  Margins are validation-selected fixed-schedule loss minus PD-PPO loss,
++  using event-type denominators fixed from validation candidates. The second
++  row for each variant gives percentile bootstrap 95\% confidence intervals
++  over seeds; $\Delta$ is the paired mean change from the full policy.
++  Zero abort reports final-test rollouts with no warm-up aborts. The intervals
++  do not identify a large isolated macro contribution from one auxiliary term.
+ \end{table}
+diff --git a/tables/regime_balanced_24seed_summary.tex b/tables/regime_balanced_24seed_summary.tex
+index 63acc37..cb17562 100644
+--- a/tables/regime_balanced_24seed_summary.tex
++++ b/tables/regime_balanced_24seed_summary.tex
+@@ -1,6 +1,6 @@
+ \begin{table}[htbp]
+   \centering
+-  \caption{Final comparison with the validation-selected fixed schedule.}
++  \caption{Final 24-seed comparison using validation-frozen macro scoring.}
+   \label{tab:regime_balanced_24seed_summary}
+   \scriptsize
+   \renewcommand{\arraystretch}{0.88}
+@@ -9,39 +9,26 @@
+     Quantity & Result \\
+     \midrule
+     Evaluated test seeds & 24 \\
+-    Step-loss wins vs. validation-selected schedules & 24/24 \\
+-    Macro-score wins vs. validation-selected schedules & 24/24 \\
+-    Event-label diagnostic improves over fixed-schedule replay, step loss & 24/24 \\
+-    Event-label diagnostic improves over fixed-schedule replay, macro score & 24/24 \\
+-    Action-trace checks support non-degenerate scheduling & 24/24 \\
+-    PD-PPO step-loss wins vs. fixed-schedule replay & 24/24 \\
+-    PD-PPO macro-score wins vs. fixed-schedule replay & 24/24 \\
+-    Prespecified fixed-schedule step-margin criterion & 24/24 \\
+-    Mean step margin vs. best selected baseline & 0.1494 \\
+-    Median step margin vs. best selected baseline & 0.1060 \\
+-    95\% CI, step margin vs. best selected baseline & [0.1124, 0.1892] \\
+-    Mean macro margin vs. best selected baseline & 0.0841 \\
+-    Median macro margin vs. best selected baseline & 0.0884 \\
+-    95\% CI, macro margin vs. best selected baseline & [0.0738, 0.0948] \\
+-    Mean learned macro margin vs. fixed-schedule replay & 0.0710 \\
+-    Median learned macro margin vs. fixed-schedule replay & 0.0673 \\
+-    95\% CI, learned macro margin vs. fixed-schedule replay & [0.0625, 0.0798] \\
+-    Mean event-label diagnostic macro margin vs. fixed-schedule replay & 0.0773 \\
+-    Median event-label diagnostic macro margin vs. fixed-schedule replay & 0.0726 \\
+-    Sign test, selected-baseline paired improvements & $p=5.96\times10^{-8}$ \\
+-    Sign test, fixed-schedule step margin result & $p=5.96\times10^{-8}$ \\
+-    Minimum fixed-schedule step margin & 0.0285 \\
++    Step-loss wins vs. validation-selected fixed schedule & 24/24 \\
++    Macro-score wins vs. validation-selected fixed schedule & 24/24 \\
++    Macro-score wins vs. each named rule-based schedule & 24/24 \\
++    Mean step margin vs. validation-selected fixed schedule & 0.1531 \\
++    95\% CI, step margin & [0.1141, 0.1971] \\
++    Mean macro margin vs. validation-selected fixed schedule & 0.0778 \\
++    95\% CI, macro margin & [0.0665, 0.0896] \\
++    Sign test & $p=5.96\times10^{-8}$ \\
++    Minimum fixed-schedule step margin & 0.0314 \\
+     \bottomrule
+   \end{tabular*}
+   \vspace{0.4ex}
+ 
+   \noindent\footnotesize
+-  Margins are fixed-schedule reference loss minus scheduler loss, so positive values
+-  favor PD-PPO. Fixed schedules are replayed as constant schedules without
+-  duty guards or fallback rotations. Confidence intervals are percentile
+-  bootstrap intervals over seed-level paired margins. The minimum fixed-schedule
+-  step margin, 0.0285 in seed 117, exceeds the prespecified threshold
+-  $\epsilon_{117}=\max\{0.001,0.002 L^{\mathrm{ref}}_{\mathrm{step},117}\}$
+-  for that seed. Per-seed fixed-schedule selection scores are listed in
+-  \ref{apx:fixed_mask_selection}.
++  Margins are validation-selected fixed-schedule loss minus scheduler loss, so
++  positive values favor PD-PPO. The fixed schedule is selected on validation
++  windows and replayed unchanged on final-test windows. Macro-score denominators
++  are the validation-candidate medians for particle, flux, and thermal windows.
++  Confidence intervals are percentile bootstrap intervals over seed-level paired
++  margins. The minimum step margin, 0.0314 in seed 131, exceeds the prespecified
++  threshold $\epsilon_{131}=\max\{0.001,0.002 L^{\mathrm{ref}}_{\mathrm{step},131}\}$.
++  Per-seed fixed-schedule selection scores are listed in \ref{apx:fixed_mask_selection}.
+ \end{table}
+diff --git a/tables/related_work_positioning.tex b/tables/related_work_positioning.tex
+index ccf5766..d0444cb 100644
+--- a/tables/related_work_positioning.tex
++++ b/tables/related_work_positioning.tex
+@@ -16,7 +16,7 @@
+     Active perception and POMDP-style sensing
+       & Task information under partial observability
+       & Observation actions chosen from belief or context
+-      & The paper studies a fixed backbone benchmark with limited specialist capacity and replayable references. \\
++      & The paper studies a fixed-backbone scheduling setting with limited specialist capacity and replayable references. \\
+     DRL-based adaptive sensing and sensor steering
+       & Information gain, coverage, data acquisition utility, or monitoring reward
+       & Learned adaptive policies, often with soft or task-specific constraints
+diff --git a/tables/sensor_specs.tex b/tables/sensor_specs.tex
+index c54eabb..da2a26a 100644
+--- a/tables/sensor_specs.tex
++++ b/tables/sensor_specs.tex
+@@ -37,5 +37,5 @@
+   are high-value specialists for thermal, particle, and flux event regimes,
+   respectively; the low-cost radiometer and thermo-hygrometer channels are retained as
+   plausible non-event alternatives. Event type labels are simulator-derived
+-  training and diagnostic labels, not direct sensor observations.
++  training and offline analysis labels, not direct sensor observations.
+ \end{table}

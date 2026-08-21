@@ -1,0 +1,98 @@
+{
+  "metric": "equal-weight event-subtype macro loss normalized by validation static-candidate medians",
+  "normalizer_source": "validation_static_candidates.csv",
+  "primary_reference": "validation_selected_static",
+  "seed_count": 6,
+  "bootstrap_samples": 100000,
+  "bootstrap_seed": 20260710,
+  "pdppo_vs_validation_selected_static": {
+    "available_seeds": 6,
+    "wins": 6,
+    "mean_margin": 0.07638791031495816,
+    "median_margin": 0.06512766049665,
+    "minimum_margin": 0.050715947201063,
+    "bootstrap_95_ci": [
+      0.05688608847189666,
+      0.10132513849410918
+    ],
+    "one_sided_sign_test_p": 0.015625
+  },
+  "pdppo_vs_aoi": {
+    "available_seeds": 6,
+    "wins": 6,
+    "mean_margin": 0.1864469954377522,
+    "median_margin": 0.1717338490032445,
+    "minimum_margin": 0.093791333119577,
+    "bootstrap_95_ci": [
+      0.12503529777167585,
+      0.25016697052770737
+    ],
+    "one_sided_sign_test_p": 0.015625
+  },
+  "pdppo_vs_round_robin": {
+    "available_seeds": 6,
+    "wins": 6,
+    "mean_margin": 0.1966784592666613,
+    "median_margin": 0.190162187967099,
+    "minimum_margin": 0.091937507374135,
+    "bootstrap_95_ci": [
+      0.12987655908029466,
+      0.26416754540071846
+    ],
+    "one_sided_sign_test_p": 0.015625
+  },
+  "pdppo_vs_random": {
+    "available_seeds": 6,
+    "wins": 6,
+    "mean_margin": 0.18840323843739068,
+    "median_margin": 0.177110409528594,
+    "minimum_margin": 0.104837660850924,
+    "bootstrap_95_ci": [
+      0.13199410687373467,
+      0.24871513560379863
+    ],
+    "one_sided_sign_test_p": 0.015625
+  },
+  "pdppo_vs_posthoc_best_rule_dynamic": {
+    "available_seeds": 6,
+    "wins": 6,
+    "mean_margin": 0.18092243876579536,
+    "median_margin": 0.1717338490032445,
+    "minimum_margin": 0.091937507374135,
+    "bootstrap_95_ci": [
+      0.1237337794256765,
+      0.24067661818099248
+    ],
+    "one_sided_sign_test_p": 0.015625
+  },
+  "step_pdppo_vs_validation_selected_static": {
+    "available_seeds": 6,
+    "wins": 6,
+    "mean_margin": 0.1715506217760775,
+    "median_margin": 0.1018454222605665,
+    "minimum_margin": 0.053462018323444,
+    "bootstrap_95_ci": [
+      0.07302262038888317,
+      0.27912178198683535
+    ],
+    "one_sided_sign_test_p": 0.015625
+  },
+  "behavior_available_seeds": 6,
+  "behavior_all_zero_abort": true,
+  "behavior_mid_duty_sensor_range": [
+    3.0,
+    4.0
+  ],
+  "behavior_always_on_sensor_range": [
+    1.0,
+    1.0
+  ],
+  "behavior_always_off_sensor_range": [
+    1.0,
+    1.0
+  ],
+  "behavior_switches_per_step_range": [
+    0.004314204314204,
+    0.006837606837607
+  ]
+}

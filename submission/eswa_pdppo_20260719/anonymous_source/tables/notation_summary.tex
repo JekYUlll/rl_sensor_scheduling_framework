@@ -1,0 +1,55 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Notation used for scheduler inputs, actions, and constraints.}
+  \label{tab:notation_summary}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}p{0.18\linewidth}p{0.72\linewidth}@{}}
+    \toprule
+    Symbol & Meaning \\
+    \midrule
+    $x_t$ & Simulated physical state at time step $t$ \\
+    $o_t$ & Scheduler observation built from observation histories, channel modes, channel sampling ages, the previous executed activation vector, budget/time features, and simulated warning signals \\
+    $\mathcal{A}$ & Candidate action set satisfying the core-channel and optional-channel capacity rules \\
+    $K$ & Number of candidate activation vectors in $\mathcal{A}$ \\
+    $n_{\mathrm{opt}}$ & Number of optional channels, $|\mathcal{S}|$ \\
+    $\mathcal{F}_t$ & Feasible activation-vector set satisfying the steady-state and startup-peak power limits at time step $t$ \\
+    $r_t$ & Remaining required activation time for the previous executed activation vector \\
+    $a^{(k)}$ & Candidate activation vector indexed by $k$ \\
+    $\mathcal{I}_t$ & Feasible action indices $\{k:a^{(k)}\in\mathcal{F}_t\}$ \\
+    $u_t$ & Proposed action index sampled or selected from $\mathcal{I}_t$ \\
+    $\bar a_t=a^{(u_t)}$ & Proposed activation vector \\
+    $a_t$ & Executed activation vector after the minimum dwell-time constraint \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Notation used for forecast losses, supervision, and policy training.}
+  \label{tab:notation_objectives}
+  \scriptsize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}p{0.18\linewidth}p{0.72\linewidth}@{}}
+    \toprule
+    Symbol & Meaning \\
+    \midrule
+    $L_{\mathrm{step}}$ & Per-step multi-step forecast loss with component-wise clipping at 10 \\
+    $L_{\mathrm{train}}$ & Condition-weighted, calibration/validation-normalized training loss used in the policy reward \\
+    $L_c$ & Event-type-specific forecast loss for event type $c$ \\
+    $s_c$ & Median calibration/validation event-type-specific forecast loss across candidate fixed channel subsets for $c\in\{\mathrm{particle},\mathrm{flux},\mathrm{thermal}\}$ \\
+    $s_{\mathrm{calm}}$ & Median overall calibration/validation forecast loss across the same candidate fixed channel subsets; default normalization factor for calm time steps \\
+    $L_{\mathrm{macro}}$ & Macro-averaged normalized forecast loss with equal weights for the three event types \\
+    $L_{\rho}$ & Weighted normalized forecast loss used in Proposition~\ref{prop:specialist_bottleneck} \\
+    $\mathcal{V}_{\mathrm{AoI}}$ & Observed variables whose ages enter the theoretical AoI objective; not necessarily the forecast-target set $\mathcal{Y}$ \\
+    $\pi_{\text{label}}$ & Theoretical privileged policy with access to condition labels \\
+    $\pi_s$ & Fixed-channel policy that selects optional channel $s$ \\
+    $c_t$ & Current condition label used for training-loss weighting on the policy-training partition and offline loss computation and grouping on the test partition; never a policy or critic input at decision time \\
+    $c_t^{\mathrm{sup}}$ & Future-condition supervision label: the first non-calm condition label in $[t,t+16]$, or calm if none occurs; used only for behavior cloning and auxiliary classification during policy training \\
+    $\ell_t$ & Indicator of a valid supervised target action; $\ell_t=1$ at every PPO step in the reported stride-one configuration \\
+    $\eta_t$ & Indicator of an available future-condition supervision label for the auxiliary classifier; $\eta_t=\ell_t=1$ at every PPO step in the reported stride-one configuration \\
+    $S_t$ & Normalized Hamming distance $m^{-1}\lVert a_t-a_{t-1}\rVert_1$; fraction of executed channel activation bits that change \\
+    $W_t$ & Number of warm-up interruptions at time step $t$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

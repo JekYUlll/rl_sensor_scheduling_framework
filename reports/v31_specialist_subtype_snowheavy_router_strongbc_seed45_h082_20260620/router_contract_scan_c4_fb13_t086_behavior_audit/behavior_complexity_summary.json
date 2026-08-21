@@ -1,0 +1,30 @@
+[
+  {
+    "path": "reports/v31_specialist_subtype_snowheavy_router_strongbc_seed45_h082_20260620/router_contract_scan_c4_fb13_t086/budget1p05_seed45/rollout_custom_ppo.npz",
+    "policy": "custom_ppo",
+    "steps": 4096,
+    "sensors": 6,
+    "event_rate": 0.53662109375,
+    "unique_mask_count": 5,
+    "unique_mask_fraction": 0.001220703125,
+    "top1_mask_fraction": 0.5390625,
+    "top2_mask_fraction": 0.709716796875,
+    "top3_mask_fraction": 0.828125,
+    "mask_entropy_bits": 1.8880467721763068,
+    "transition_count": 25,
+    "transition_entropy_bits": 2.223967509761329,
+    "switches_per_step": 0.011884411884411883,
+    "best_period": 1,
+    "best_period_match": 0.9550671550671551,
+    "event_mask_mi_bits": 0.3861619260861118,
+    "event_sensor_l1": 0.8302331557283134,
+    "event_sensor_linf": 0.2713876299078289,
+    "fixed_like": false,
+    "simple_cycle_like": false,
+    "low_complexity": false,
+    "weak_state_dependence": false,
+    "behavior_complexity_gate_pass": true,
+    "top_masks_json": "[{\"mask\": \"001000\", \"count\": 2208, \"fraction\": 0.5390625}, {\"mask\": \"001010\", \"count\": 699, \"fraction\": 0.170654296875}, {\"mask\": \"101100\", \"count\": 485, \"fraction\": 0.118408203125}, {\"mask\": \"001001\", \"count\": 381, \"fraction\": 0.093017578125}, {\"mask\": \"001100\", \"count\": 323, \"fraction\": 0.078857421875}]",
+    "sensor_duty_json": "[{\"sensor\": \"met_station_core\", \"duty\": 0.118408203125, \"event_duty\": 0.1851683348498635, \"non_event_duty\": 0.0410958904109589, \"event_abs_delta\": 0.1440724444389046}, {\"sensor\": \"radiometer_basic\", \"duty\": 0.0, \"event_duty\": 0.0, \"non_event_duty\": 0.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"shielded_thermo_hygro\", \"duty\": 1.0, \"event_duty\": 1.0, \"non_event_duty\": 1.0, \"event_abs_delta\": 0.0}, {\"sensor\": \"surface_temp_ir\", \"duty\": 0.197265625, \"event_duty\": 0.32302092811646954, \"non_event_duty\": 0.051633298208640675, \"event_abs_delta\": 0.2713876299078289}, {\"sensor\": \"laser_disdrometer\", \"duty\": 0.170654296875, \"event_duty\": 0.29253867151956325, \"non_event_duty\": 0.029504741833508957, \"event_abs_delta\": 0.2630339296860543}, {\"sensor\": \"fc4_flux\", \"duty\": 0.093017578125, \"event_duty\": 0.16333030027297543, \"non_event_duty\": 0.011591148577449948, \"event_abs_delta\": 0.1517391516955255}]"
+  }
+]

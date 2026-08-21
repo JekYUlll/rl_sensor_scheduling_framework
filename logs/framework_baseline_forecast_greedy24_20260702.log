@@ -1,0 +1,73 @@
+framework_baseline_start seed=117 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed117_h075ctxolscbal2_20260621
+framework_baseline_done seed=117 rows=1
+framework_baseline_start seed=118 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed118_h075ctxolscbal2_20260621
+framework_baseline_done seed=118 rows=1
+framework_baseline_start seed=119 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed119_h075ctxolscbal2_20260621
+framework_baseline_done seed=119 rows=1
+framework_baseline_start seed=120 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed120_h075ctxolscbal2_20260621
+framework_baseline_done seed=120 rows=1
+framework_baseline_start seed=121 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed121_h075ctxolscbal2_20260621
+framework_baseline_done seed=121 rows=1
+framework_baseline_start seed=122 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed122_h075ctxolscbal2_20260621
+framework_baseline_done seed=122 rows=1
+framework_baseline_start seed=123 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed123_h075ctxolscbal2_20260621
+framework_baseline_done seed=123 rows=1
+framework_baseline_start seed=124 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed124_h075ctxolscbal2_20260621
+framework_baseline_done seed=124 rows=1
+framework_baseline_start seed=125 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed125_h075ctxolscbal2_20260621
+framework_baseline_done seed=125 rows=1
+framework_baseline_start seed=126 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed126_h075ctxolscbal2_20260621
+framework_baseline_done seed=126 rows=1
+framework_baseline_start seed=127 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed127_h075ctxolscbal2_20260621
+framework_baseline_done seed=127 rows=1
+framework_baseline_start seed=128 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed128_h075ctxolscbal2_20260621
+framework_baseline_done seed=128 rows=1
+framework_baseline_start seed=129 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed129_h075ctxolscbal2_20260621
+framework_baseline_done seed=129 rows=1
+framework_baseline_start seed=130 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed130_h075ctxolscbal2_20260621
+framework_baseline_done seed=130 rows=1
+framework_baseline_start seed=131 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed131_h075ctxolscbal2_20260621
+framework_baseline_done seed=131 rows=1
+framework_baseline_start seed=132 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed132_h075ctxolscbal2_20260621
+framework_baseline_done seed=132 rows=1
+framework_baseline_start seed=133 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed133_h075ctxolscbal2_20260621
+framework_baseline_done seed=133 rows=1
+framework_baseline_start seed=134 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed134_h075ctxolscbal2_20260621
+framework_baseline_done seed=134 rows=1
+framework_baseline_start seed=135 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed135_h075ctxolscbal2_20260621
+framework_baseline_done seed=135 rows=1
+framework_baseline_start seed=136 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed136_h075ctxolscbal2_20260621
+framework_baseline_done seed=136 rows=1
+framework_baseline_start seed=137 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed137_h075ctxolscbal2_20260621
+framework_baseline_done seed=137 rows=1
+framework_baseline_start seed=138 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed138_h075ctxolscbal2_20260621
+framework_baseline_done seed=138 rows=1
+framework_baseline_start seed=139 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed139_h075ctxolscbal2_20260621
+framework_baseline_done seed=139 rows=1
+framework_baseline_start seed=140 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_seed140_h075ctxolscbal2_20260621
+framework_baseline_done seed=140 rows=1
+{
+  "complete_rows": 24,
+  "policies": [
+    {
+      "policy": "forecast_greedy_one_step",
+      "complete_seeds": 24,
+      "mean_oracle_loss": 1.670268670986739,
+      "mean_loss_margin_vs_custom_ppo": 0.26415153714881967,
+      "median_loss_margin_vs_custom_ppo": 0.2606066089765591,
+      "pdppo_step_win_count": 24,
+      "pdppo_step_loss_count": 0,
+      "mean_staticnorm_macro": 0.9924938335553705,
+      "mean_staticnorm_macro_margin_vs_custom_ppo": 0.15523174469705364,
+      "pdppo_staticnorm_macro_win_count": 24,
+      "diagnostic_privilege": "final_future_loss",
+      "mean_switches_per_step": 0.027988061321394652,
+      "mean_mid_duty_sensor_count": 2.0,
+      "mean_warmup_abort_count": 0.0
+    }
+  ],
+  "interpretation": "Positive margins mean the supplementary baseline has higher loss than PD-PPO. forecast_greedy_one_step is a privileged myopic diagnostic because it chooses masks using final-test future loss; context_alert_bandit uses station-side context proxy columns."
+}
+real 1291.67
+user 130071.96
+sys 4255.66

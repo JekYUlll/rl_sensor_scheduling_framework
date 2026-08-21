@@ -1,0 +1,1587 @@
+{
+  "C01_method_name_pdppo_prediction_driven": [
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/03_problem_formulation.tex",
+      "line": 3,
+      "text": "Forecast objective for sensor scheduling",
+      "matched_pattern": "forecast(?:ing)? objective"
+    },
+    {
+      "source": "tex",
+      "role": "heading:section",
+      "file": "sections/04_framework_protocol.tex",
+      "line": 1,
+      "text": "PD-PPO Scheduler and Evaluation Protocol",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/04_framework_protocol.tex",
+      "line": 7,
+      "text": "Forecasting reward scheduling framework. Forecaster fitting, policy training, static-reference selection, and final evaluation are separated chronologically. The diagram shows where forecast loss enters training and where held-out final comparisons are computed.",
+      "matched_pattern": "forecast(?:ing)?[- ]reward"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/04_framework_protocol.tex",
+      "line": 39,
+      "text": "Masked PD-PPO training",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/pdppo_training_hyperparameters.tex",
+      "line": 3,
+      "text": "PD-PPO training hyperparameters for the final benchmark.",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/baseline_reference_taxonomy.tex",
+      "line": 28,
+      "text": "& Retrain PD-PPO variants with selected components removed.",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 17,
+      "text": "PD-PPO step-loss wins vs. fixed mask replay & 24/24 \\\\",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 18,
+      "text": "PD-PPO macro-score wins vs. fixed mask replay & 24/24 \\\\",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/event_type_loss_decomposition.tex",
+      "line": 9,
+      "text": "Event type & PD-PPO & Fixed mask & Best rule & Margin vs. fixed & Positive seeds \\\\",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/mechanism_ablation_summary.tex",
+      "line": 12,
+      "text": "Full PD-PPO & 24/24 & 24/24 & 0.0710 & 0.0673 & - \\\\",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 4,
+      "text": "1. a forecasting objective for sensor scheduling in systems with a mandatory",
+      "matched_pattern": "forecast(?:ing)? objective"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 8,
+      "text": "3.1. Forecast objective for sensor scheduling",
+      "matched_pattern": "forecast(?:ing)? objective"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 15,
+      "text": "4. PD-PPO Scheduler and Evaluation Protocol",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 15,
+      "text": "Figure 1. Forecasting reward scheduling framework. Forecaster fitting, policy training, static-",
+      "matched_pattern": "forecast(?:ing)?[- ]reward"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 21,
+      "text": "Table 5. PD-PPO training hyperparameters for the final benchmark.",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 29,
+      "text": "Table 10 and Figure 4 show the final held-out aggregate. PD-PPO reduces",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+      "included_from": "sections/06_results.tex",
+      "line": 36,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "positive favours PD-PPO",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_training_diagnostics.pdf",
+      "included_from": "sections/appendix_theory.tex",
+      "line": 185,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "Full PD-PPO",
+      "matched_pattern": "\\bPD[- ]PPO\\b"
+    }
+  ],
+  "C07_operational_feasibility_rules": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/notation_summary.tex",
+      "line": 14,
+      "text": "MATH & Candidate-index set that remains feasible at epoch MATH after power, startup, and minimum-duration checks \\\\",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/notation_summary.tex",
+      "line": 19,
+      "text": "MATH & Switching or minimum-duration penalty term used during policy learning \\\\",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/04_framework_protocol.tex",
+      "line": 14,
+      "text": "State, action, and feasibility masking",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 3,
+      "text": "Feasible action masks in the final single specialist benchmark.",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/online_observability_audit.tex",
+      "line": 13,
+      "text": "Previous mask and warm-up state & Scheduler runtime & Yes & Feasibility mask and switching/minimum-duration accounting \\\\",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/pdppo_training_hyperparameters.tex",
+      "line": 18,
+      "text": "Minimum on-time / switch cost & 6 epochs / 0.001 \\\\",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/main_protocol_hyperparameters.tex",
+      "line": 20,
+      "text": "Minimum on-time & 6 epochs \\\\",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 15,
+      "text": "4.1. State, action, and feasibility masking",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 16,
+      "text": "Table 3. Feasible action masks in the final single specialist benchmark.",
+      "matched_pattern": "operating rules|operational constraints|hard feasibility rules|hard operating rules|feasible[- ]action|feasibility mask|online feasibility|minimum[- ]duration|minimum activation|minimum on[- ]time|duty cycle|duty[- ]cycle"
+    }
+  ],
+  "C02_macro_staticnorm_margin": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/notation_summary.tex",
+      "line": 18,
+      "text": "MATH & Macro score normalised by static references across event regimes \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/main_protocol_hyperparameters.tex",
+      "line": 25,
+      "text": "Checkpoint/reference selection & final policy checkpoint fixed after policy learning; fixed mask selected by lowest static selection macro score \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 37,
+      "text": "Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step margin and overlays the corresponding macro margin and the range of prespecified step margin thresholds. Panel B shows seed paired margin distributions for the main step and macro comparisons. All 24 seeds remain positive in the reported comparisons, and all step margins exceed the threshold range shown in Panel A.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 58,
+      "text": "Event type diagnostics for the final benchmark. Panel A is the primary specialist selection frequency heatmap: each cell reports the mean fraction of steps, averaged over 24 seeds, in which the learned policy selects the column specialist during windows of the row event type. Panel B shows per-seed macro margins normalised by static references against the validation-selected fixed mask reference, with each point representing one seed. The heatmap shows regime-dependent specialist use rather than a fixed specialist shortcut.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 3,
+      "text": "Final 24-seed evidence for the macro score across regimes.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 15,
+      "text": "Event label replay improves over fixed mask replay, macro score & 24/24 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 20,
+      "text": "Mean step margin vs. best selected baseline & 0.1494 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 21,
+      "text": "Median step margin vs. best selected baseline & 0.1060 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 23,
+      "text": "Mean macro margin vs. best selected baseline & 0.0841 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 24,
+      "text": "Median macro margin vs. best selected baseline & 0.0884 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 26,
+      "text": "Mean learned macro margin vs. fixed mask replay & 0.0710 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 27,
+      "text": "Median learned macro margin vs. fixed mask replay & 0.0673 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 29,
+      "text": "Mean event label diagnostic macro margin vs. fixed mask replay & 0.0773 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 30,
+      "text": "Median event label diagnostic macro margin vs. fixed mask replay & 0.0726 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 32,
+      "text": "Sign test, fixed mask step margin result & MATH \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 33,
+      "text": "Minimum fixed mask step margin & 0.0285 \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/mechanism_ablation_summary.tex",
+      "line": 3,
+      "text": "Mechanism ablation over 24 seeds with continuous macro margins.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/event_mix_robustness_summary.tex",
+      "line": 9,
+      "text": "Setting & Event mix & Seeds & Step margin & Macro margin & Strict / behaviour \\\\",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/appendix_theory.tex",
+      "line": 170,
+      "text": "Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for the full policy and three training variants. Panel B reports paired bootstrap confidence intervals for the change in mean macro margin against the full policy; the labels also report the strict fixed mask step margin count. Removing auxiliary signals weakens reliability on the stricter step-margin gate more than it changes the mean macro margin.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/appendix_theory.tex",
+      "line": 186,
+      "text": "PPO training diagnostics over the 24 final benchmark seeds and the 24 no-imitation ablation seeds. Curves show mean MATH one standard deviation over seeds. These are optimisation traces from the policy-training partition, not held-out validation macro score curves; they are included to document training behaviour; they do not support a separate efficiency claim.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 30,
+      "text": "Table 10. Final 24-seed evidence for the macro score across regimes.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 35,
+      "text": "Table 12. Mechanism ablation over 24 seeds with continuous macro margins.",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 47,
+      "text": "Figure C.8. Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_regime_balanced_24seed_evidence.pdf",
+      "included_from": "sections/06_results.tex",
+      "line": 36,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "(a) Step and macro margins",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_mechanism_robustness.pdf",
+      "included_from": "sections/appendix_theory.tex",
+      "line": 169,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "(a) Seed-level macro margins",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_mechanism_robustness.pdf",
+      "included_from": "sections/appendix_theory.tex",
+      "line": 169,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "Macro margin vs fixed reference",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_mechanism_robustness.pdf",
+      "included_from": "sections/appendix_theory.tex",
+      "line": 169,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "Δ mean macro margin vs full",
+      "matched_pattern": "static[- ]normalised|static[- ]normalized|staticnorm|Mstaticnorm|macro score|macro margin|step margin|ordinary step|normalised loss|normalized loss"
+    }
+  ],
+  "C06_specialist_backbone_slot": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 11,
+      "text": "0 & Weather backbone & 0.25 & Backbone only & 0/24 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 12,
+      "text": "1 & Weather backbone + Radiometer & 0.33 & Radiation context & 0/24 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 13,
+      "text": "2 & Weather backbone + Thermo-hygro & 0.43 & Non-event thermo-hygro context & 0/24 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 14,
+      "text": "3 & Weather backbone + Surface IR & 0.74 & Thermal-event specialist & 9/24 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 15,
+      "text": "4 & Weather backbone + Laser disdrometer & 0.74 & Particle-event specialist & 2/24 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 16,
+      "text": "5 & Weather backbone + FC4 flux & 0.74 & Flux-event specialist & 13/24 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/05_simulation_setup.tex",
+      "line": 24,
+      "text": "Author-rendered AWS platform used to motivate the benchmark sensing system. The simulator represents the platform as a required meteorological backbone plus one specialist sensing slot, so the image is a physical anchor rather than the experimental wiring diagram.",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/sensor_specs.tex",
+      "line": 12,
+      "text": "1 & Meteorological backbone",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/main_protocol_hyperparameters.tex",
+      "line": 18,
+      "text": "Required channel & meteorological backbone \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_summary.tex",
+      "line": 10,
+      "text": "5 & Weather backbone + FC4 flux & 13/24 & 0.899 & 0.74 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_summary.tex",
+      "line": 11,
+      "text": "3 & Weather backbone + Surface IR & 9/24 & 0.859 & 0.74 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_summary.tex",
+      "line": 12,
+      "text": "4 & Weather backbone + Laser disdrometer & 2/24 & 0.905 & 0.74 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 11,
+      "text": "117 & Weather backbone + FC4 flux & 0.907 & 129 & Weather backbone + FC4 flux & 0.892 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 12,
+      "text": "118 & Weather backbone + FC4 flux & 0.928 & 130 & Weather backbone + Surface IR & 0.820 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 13,
+      "text": "119 & Weather backbone + Surface IR & 0.804 & 131 & Weather backbone + FC4 flux & 0.873 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 14,
+      "text": "120 & Weather backbone + FC4 flux & 0.901 & 132 & Weather backbone + FC4 flux & 0.915 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 15,
+      "text": "121 & Weather backbone + FC4 flux & 0.859 & 133 & Weather backbone + Surface IR & 0.825 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 16,
+      "text": "122 & Weather backbone + Surface IR & 0.844 & 134 & Weather backbone + Surface IR & 0.940 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 17,
+      "text": "123 & Weather backbone + FC4 flux & 0.905 & 135 & Weather backbone + Laser disdrometer & 0.930 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 18,
+      "text": "124 & Weather backbone + Surface IR & 0.847 & 136 & Weather backbone + FC4 flux & 0.892 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 19,
+      "text": "125 & Weather backbone + Surface IR & 0.926 & 137 & Weather backbone + Laser disdrometer & 0.880 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 20,
+      "text": "126 & Weather backbone + FC4 flux & 0.887 & 138 & Weather backbone + FC4 flux & 0.888 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 21,
+      "text": "127 & Weather backbone + FC4 flux & 0.904 & 139 & Weather backbone + Surface IR & 0.821 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 22,
+      "text": "128 & Weather backbone + FC4 flux & 0.933 & 140 & Weather backbone + Surface IR & 0.905 \\\\",
+      "matched_pattern": "mandatory backbone|weather backbone|meteorological backbone|background channel|background weather|specialist slot|specialist channel|specialist instrument|selectable specialist|event[- ]sensitive channel|expert sensor|expert instrument"
+    }
+  ],
+  "C08_instrument_dataset_names": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 13,
+      "text": "2 & Weather backbone + Thermo-hygro & 0.43 & Non-event thermo-hygro context & 0/24 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 15,
+      "text": "4 & Weather backbone + Laser disdrometer & 0.74 & Particle-event specialist & 2/24 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/action_space_instantiation.tex",
+      "line": 16,
+      "text": "5 & Weather backbone + FC4 flux & 0.74 & Flux-event specialist & 13/24 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/05_simulation_setup.tex",
+      "line": 24,
+      "text": "Author-rendered AWS platform used to motivate the benchmark sensing system. The simulator represents the platform as a required meteorological backbone plus one specialist sensing slot, so the image is a physical anchor rather than the experimental wiring diagram.",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/sensor_specs.tex",
+      "line": 18,
+      "text": "3 & Shielded thermo-hygro",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/sensor_specs.tex",
+      "line": 24,
+      "text": "5 & Laser disdrometer",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/sensor_specs.tex",
+      "line": 27,
+      "text": "6 & FC4 flux",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_summary.tex",
+      "line": 10,
+      "text": "5 & Weather backbone + FC4 flux & 13/24 & 0.899 & 0.74 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_summary.tex",
+      "line": 12,
+      "text": "4 & Weather backbone + Laser disdrometer & 2/24 & 0.905 & 0.74 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/g1_generator_validation.tex",
+      "line": 9,
+      "text": "Max KS statistic for AntAWS scalar variables & MATH & MATH & yes \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 11,
+      "text": "117 & Weather backbone + FC4 flux & 0.907 & 129 & Weather backbone + FC4 flux & 0.892 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 12,
+      "text": "118 & Weather backbone + FC4 flux & 0.928 & 130 & Weather backbone + Surface IR & 0.820 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 13,
+      "text": "119 & Weather backbone + Surface IR & 0.804 & 131 & Weather backbone + FC4 flux & 0.873 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 14,
+      "text": "120 & Weather backbone + FC4 flux & 0.901 & 132 & Weather backbone + FC4 flux & 0.915 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 15,
+      "text": "121 & Weather backbone + FC4 flux & 0.859 & 133 & Weather backbone + Surface IR & 0.825 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 17,
+      "text": "123 & Weather backbone + FC4 flux & 0.905 & 135 & Weather backbone + Laser disdrometer & 0.930 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 18,
+      "text": "124 & Weather backbone + Surface IR & 0.847 & 136 & Weather backbone + FC4 flux & 0.892 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 19,
+      "text": "125 & Weather backbone + Surface IR & 0.926 & 137 & Weather backbone + Laser disdrometer & 0.880 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 20,
+      "text": "126 & Weather backbone + FC4 flux & 0.887 & 138 & Weather backbone + FC4 flux & 0.888 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 21,
+      "text": "127 & Weather backbone + FC4 flux & 0.904 & 139 & Weather backbone + Surface IR & 0.821 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 22,
+      "text": "128 & Weather backbone + FC4 flux & 0.933 & 140 & Weather backbone + Surface IR & 0.905 \\\\",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 24,
+      "text": "Figure 3. Author-rendered AWS platform used to motivate the benchmark sensing system. The",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/aws_deployment.png",
+      "included_from": "sections/05_simulation_setup.tex",
+      "line": 23,
+      "extractor": "tesseract-psm11",
+      "text": "FC4 Blowing-Snow",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure3_synthetic_statistics.pdf",
+      "included_from": "sections/appendix_theory.tex",
+      "line": 157,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "AntAWS anchor",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure3_synthetic_statistics.pdf",
+      "included_from": "sections/appendix_theory.tex",
+      "line": 157,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "AntAWS anchor",
+      "matched_pattern": "\\bAntAWS\\b|\\bAWS\\b|\\bFC4\\b|FlowCapt|SPC|\\bSPC\\b|thermo[- ]hygro|thermohygro|laser disdrometer|particle counter"
+    }
+  ],
+  "C10_ai_style_chart_titles": [
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/online_observability_audit.tex",
+      "line": 3,
+      "text": "Online observability audit for scheduler inputs and diagnostics.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/online_observability_audit.tex",
+      "line": 15,
+      "text": "Event type labels & Simulator truth sequence & No & Training auxiliary labels and diagnostic grouping only \\\\",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/baseline_reference_taxonomy.tex",
+      "line": 23,
+      "text": "& Privileged-information diagnostic, not the learned controller. \\\\",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/sensor_specs.tex",
+      "line": 22,
+      "text": "& snow-surface temperature, thermal-regime evidence",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/sensor_specs.tex",
+      "line": 25,
+      "text": "& particle diameter, particle velocity, particle microstructure evidence",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/sensor_specs.tex",
+      "line": 28,
+      "text": "& snow mass flux, snow-flux evidence",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/06_results.tex",
+      "line": 46,
+      "text": "Event type decomposition and diagnostic replay",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/06_results.tex",
+      "line": 93,
+      "text": "Behavioural diagnostics",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/06_results.tex",
+      "line": 118,
+      "text": "Mechanism ablation",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/06_results.tex",
+      "line": 139,
+      "text": "Robustness checks",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 37,
+      "text": "Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step margin and overlays the corresponding macro margin and the range of prespecified step margin thresholds. Panel B shows seed paired margin distributions for the main step and macro comparisons. All 24 seeds remain positive in the reported comparisons, and all step margins exceed the threshold range shown in Panel A.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 58,
+      "text": "Event type diagnostics for the final benchmark. Panel A is the primary specialist selection frequency heatmap: each cell reports the mean fraction of steps, averaged over 24 seeds, in which the learned policy selects the column specialist during windows of the row event type. Panel B shows per-seed macro margins normalised by static references against the validation-selected fixed mask reference, with each point representing one seed. The heatmap shows regime-dependent specialist use rather than a fixed specialist shortcut.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 99,
+      "text": "Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions of three scalar diagnostics: mask entropy for action diversity, event-mask mutual information for state dependence of specialist choice, and sensor-use separation for regime-conditioned specialist concentration. Panel B shows the specialist selection frequency heatmap, the same quantity as Panel A, alongside the scalar diagnostics. The repetition co-locates the visual selection pattern with the quantitative behavioural metrics. The combined evidence rules out a constant mask or a simple periodic rotation as the explanation for the result.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 3,
+      "text": "Final 24-seed evidence for the macro score across regimes.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 16,
+      "text": "Behavioural diagnostics support non-degenerate scheduling & 24/24 \\\\",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 29,
+      "text": "Mean event label diagnostic macro margin vs. fixed mask replay & 0.0773 \\\\",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 30,
+      "text": "Median event label diagnostic macro margin vs. fixed mask replay & 0.0726 \\\\",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/event_type_loss_decomposition.tex",
+      "line": 3,
+      "text": "Event type diagnostic loss decomposition on final test rollouts.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/mechanism_ablation_summary.tex",
+      "line": 3,
+      "text": "Mechanism ablation over 24 seeds with continuous macro margins.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/appendix_theory.tex",
+      "line": 80,
+      "text": "Scheduling from state evidence and simple cycles",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "heading:section",
+      "file": "sections/appendix_theory.tex",
+      "line": 164,
+      "text": "Mechanism Ablation Distribution",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "heading:section",
+      "file": "sections/appendix_theory.tex",
+      "line": 180,
+      "text": "Training Diagnostics",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/appendix_theory.tex",
+      "line": 170,
+      "text": "Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for the full policy and three training variants. Panel B reports paired bootstrap confidence intervals for the change in mean macro margin against the full policy; the labels also report the strict fixed mask step margin count. Removing auxiliary signals weakens reliability on the stricter step-margin gate more than it changes the mean macro margin.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/appendix_theory.tex",
+      "line": 186,
+      "text": "PPO training diagnostics over the 24 final benchmark seeds and the 24 no-imitation ablation seeds. Curves show mean MATH one standard deviation over seeds. These are optimisation traces from the policy-training partition, not held-out validation macro score curves; they are included to document training behaviour; they do not support a separate efficiency claim.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 18,
+      "text": "Table 4. Online observability audit for scheduler inputs and diagnostics.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 29,
+      "text": "6.2. Event type decomposition and diagnostic replay",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 30,
+      "text": "Table 10. Final 24-seed evidence for the macro score across regimes.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 31,
+      "text": "Figure 4. Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 31,
+      "text": "Table 11. Event type diagnostic loss decomposition on final test rollouts.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 32,
+      "text": "Figure 5. Event type diagnostics for the final benchmark. Panel A is the primary specialist selection",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 33,
+      "text": "6.3. Behavioural diagnostics",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 33,
+      "text": "6.4. Mechanism ablation",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 34,
+      "text": "Figure 6. Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 34,
+      "text": "Figure 5 Panel A, alongside the scalar diagnostics. The repetition co-locates the visual selection",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 35,
+      "text": "Table 12. Mechanism ablation over 24 seeds with continuous macro margins.",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 36,
+      "text": "6.5. Robustness checks",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 43,
+      "text": "Appendix A.3. Scheduling from state evidence and simple cycles",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 47,
+      "text": "Appendix C. Mechanism Ablation Distribution",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 47,
+      "text": "Figure C.8. Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 48,
+      "text": "Appendix D. Training Diagnostics",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 48,
+      "text": "Figure D.9. PPO training diagnostics over the 24 final benchmark seeds and the 24 no-imitation",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_behavior_audit.pdf",
+      "included_from": "sections/06_results.tex",
+      "line": 98,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "Diagnostic statistic",
+      "matched_pattern": "behavio[u]?r(?:al)? audit|mechanism ablation|robustness checks|regime[- ]balanced|event[- ]type decomposition|diagnostic|evidence|boundary|main protocol|reference taxonomy|supporting figure"
+    }
+  ],
+  "C03_fixed_static_reference": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/online_observability_audit.tex",
+      "line": 17,
+      "text": "Static normalisers and selected fixed mask & Validation/static selection partition & No & Reference selection and metric normalisation only \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/baseline_reference_taxonomy.tex",
+      "line": 13,
+      "text": "& Select one feasible fixed mask before final testing.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/baseline_reference_taxonomy.tex",
+      "line": 19,
+      "text": "& Replay one constant mask without duty guards or fallback rotation.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/main_protocol_hyperparameters.tex",
+      "line": 25,
+      "text": "Checkpoint/reference selection & final policy checkpoint fixed after policy learning; fixed mask selected by lowest static selection macro score \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/static_mask_selection_summary.tex",
+      "line": 3,
+      "text": "Validation-selected fixed mask references over the final seeds.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 37,
+      "text": "Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step margin and overlays the corresponding macro margin and the range of prespecified step margin thresholds. Panel B shows seed paired margin distributions for the main step and macro comparisons. All 24 seeds remain positive in the reported comparisons, and all step margins exceed the threshold range shown in Panel A.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 58,
+      "text": "Event type diagnostics for the final benchmark. Panel A is the primary specialist selection frequency heatmap: each cell reports the mean fraction of steps, averaged over 24 seeds, in which the learned policy selects the column specialist during windows of the row event type. Panel B shows per-seed macro margins normalised by static references against the validation-selected fixed mask reference, with each point representing one seed. The heatmap shows regime-dependent specialist use rather than a fixed specialist shortcut.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 99,
+      "text": "Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions of three scalar diagnostics: mask entropy for action diversity, event-mask mutual information for state dependence of specialist choice, and sensor-use separation for regime-conditioned specialist concentration. Panel B shows the specialist selection frequency heatmap, the same quantity as Panel A, alongside the scalar diagnostics. The repetition co-locates the visual selection pattern with the quantitative behavioural metrics. The combined evidence rules out a constant mask or a simple periodic rotation as the explanation for the result.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 14,
+      "text": "Event label replay improves over fixed mask replay, step loss & 24/24 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 15,
+      "text": "Event label replay improves over fixed mask replay, macro score & 24/24 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 17,
+      "text": "PD-PPO step-loss wins vs. fixed mask replay & 24/24 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 18,
+      "text": "PD-PPO macro-score wins vs. fixed mask replay & 24/24 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 26,
+      "text": "Mean learned macro margin vs. fixed mask replay & 0.0710 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 27,
+      "text": "Median learned macro margin vs. fixed mask replay & 0.0673 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 29,
+      "text": "Mean event label diagnostic macro margin vs. fixed mask replay & 0.0773 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 30,
+      "text": "Median event label diagnostic macro margin vs. fixed mask replay & 0.0726 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 32,
+      "text": "Sign test, fixed mask step margin result & MATH \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 33,
+      "text": "Minimum fixed mask step margin & 0.0285 \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/event_type_loss_decomposition.tex",
+      "line": 9,
+      "text": "Event type & PD-PPO & Fixed mask & Best rule & Margin vs. fixed & Positive seeds \\\\",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "heading:section",
+      "file": "sections/appendix_theory.tex",
+      "line": 204,
+      "text": "Fixed mask reference selection",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/appendix_theory.tex",
+      "line": 170,
+      "text": "Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for the full policy and three training variants. Panel B reports paired bootstrap confidence intervals for the change in mean macro margin against the full policy; the labels also report the strict fixed mask step margin count. Removing auxiliary signals weakens reliability on the stricter step-margin gate more than it changes the mean macro margin.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/static_mask_selection_ledger.tex",
+      "line": 3,
+      "text": "Per-seed validation-selected fixed mask reference.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 4,
+      "text": "3. an evaluation protocol combining chronological separation, fixed mask replay, a",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 27,
+      "text": "Table 9. Validation-selected fixed mask references over the final seeds.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 31,
+      "text": "Figure 4. Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 49,
+      "text": "Appendix E. Fixed mask reference selection",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 49,
+      "text": "Table E.15. Per-seed validation-selected fixed mask reference.",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_pdppo_framework_image2.pdf",
+      "included_from": "sections/04_framework_protocol.tex",
+      "line": 6,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "59,500--64,750, choose fixed mask references and static normalisers; no final test labels",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_event_type_diagnostics.pdf",
+      "included_from": "sections/06_results.tex",
+      "line": 57,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "(b) Margin vs. fixed mask",
+      "matched_pattern": "fixed[- ]mask replay|fixed mask replay|fixed mask|static mask|fixed specialist|static specialist|validation[- ]selected fixed|validation[- ]selected static|selected static|true[- ]static|constant mask"
+    }
+  ],
+  "C05_rule_dynamic_rotation": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/baseline_reference_taxonomy.tex",
+      "line": 19,
+      "text": "& Replay one constant mask without duty guards or fallback rotation.",
+      "matched_pattern": "rule[- ]based dynamic|rule[- ]based scheduling|rotation|rotating specialist|cyclic|simple cycle|static[- ]priority"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 99,
+      "text": "Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions of three scalar diagnostics: mask entropy for action diversity, event-mask mutual information for state dependence of specialist choice, and sensor-use separation for regime-conditioned specialist concentration. Panel B shows the specialist selection frequency heatmap, the same quantity as Panel A, alongside the scalar diagnostics. The repetition co-locates the visual selection pattern with the quantitative behavioural metrics. The combined evidence rules out a constant mask or a simple periodic rotation as the explanation for the result.",
+      "matched_pattern": "rule[- ]based dynamic|rule[- ]based scheduling|rotation|rotating specialist|cyclic|simple cycle|static[- ]priority"
+    },
+    {
+      "source": "tex",
+      "role": "heading:subsection",
+      "file": "sections/appendix_theory.tex",
+      "line": 80,
+      "text": "Scheduling from state evidence and simple cycles",
+      "matched_pattern": "rule[- ]based dynamic|rule[- ]based scheduling|rotation|rotating specialist|cyclic|simple cycle|static[- ]priority"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 43,
+      "text": "Appendix A.3. Scheduling from state evidence and simple cycles",
+      "matched_pattern": "rule[- ]based dynamic|rule[- ]based scheduling|rotation|rotating specialist|cyclic|simple cycle|static[- ]priority"
+    }
+  ],
+  "C04_event_label_privileged_diagnostic": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/baseline_reference_taxonomy.tex",
+      "line": 23,
+      "text": "& Privileged-information diagnostic, not the learned controller. \\\\",
+      "matched_pattern": "event[- ]label replay|event[- ]aware diagnostic replay|privileged(?:[- ]information)? diagnostic|oracle dynamic policy|oracle policy|event[- ]type oracle|oracle reference"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 14,
+      "text": "Event label replay improves over fixed mask replay, step loss & 24/24 \\\\",
+      "matched_pattern": "event[- ]label replay|event[- ]aware diagnostic replay|privileged(?:[- ]information)? diagnostic|oracle dynamic policy|oracle policy|event[- ]type oracle|oracle reference"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 15,
+      "text": "Event label replay improves over fixed mask replay, macro score & 24/24 \\\\",
+      "matched_pattern": "event[- ]label replay|event[- ]aware diagnostic replay|privileged(?:[- ]information)? diagnostic|oracle dynamic policy|oracle policy|event[- ]type oracle|oracle reference"
+    },
+    {
+      "source": "pdf-native",
+      "role": "heading-or-numbered-line",
+      "page": 12,
+      "text": "0.968, 0.747, and 0.797. The event label replay strictly improves over the fixed",
+      "matched_pattern": "event[- ]label replay|event[- ]aware diagnostic replay|privileged(?:[- ]information)? diagnostic|oracle dynamic policy|oracle policy|event[- ]type oracle|oracle reference"
+    }
+  ],
+  "C09_internal_experiment_versions": [
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 37,
+      "text": "Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step margin and overlays the corresponding macro margin and the range of prespecified step margin thresholds. Panel B shows seed paired margin distributions for the main step and macro comparisons. All 24 seeds remain positive in the reported comparisons, and all step margins exceed the threshold range shown in Panel A.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 58,
+      "text": "Event type diagnostics for the final benchmark. Panel A is the primary specialist selection frequency heatmap: each cell reports the mean fraction of steps, averaged over 24 seeds, in which the learned policy selects the column specialist during windows of the row event type. Panel B shows per-seed macro margins normalised by static references against the validation-selected fixed mask reference, with each point representing one seed. The heatmap shows regime-dependent specialist use rather than a fixed specialist shortcut.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/06_results.tex",
+      "line": 99,
+      "text": "Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions of three scalar diagnostics: mask entropy for action diversity, event-mask mutual information for state dependence of specialist choice, and sensor-use separation for regime-conditioned specialist concentration. Panel B shows the specialist selection frequency heatmap, the same quantity as Panel A, alongside the scalar diagnostics. The repetition co-locates the visual selection pattern with the quantitative behavioural metrics. The combined evidence rules out a constant mask or a simple periodic rotation as the explanation for the result.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/regime_balanced_24seed_summary.tex",
+      "line": 3,
+      "text": "Final 24-seed evidence for the macro score across regimes.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "tables/mechanism_ablation_summary.tex",
+      "line": 3,
+      "text": "Mechanism ablation over 24 seeds with continuous macro margins.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/event_mix_robustness_summary.tex",
+      "line": 13,
+      "text": "Lower-flux mixture & 0.45/0.10/0.45 & 6 & 0.092 / 0.102 & 0.088 / 0.098 & 6/6 / 6/6 \\\\",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "tex",
+      "role": "caption",
+      "file": "sections/appendix_theory.tex",
+      "line": 170,
+      "text": "Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for the full policy and three training variants. Panel B reports paired bootstrap confidence intervals for the change in mean macro margin against the full policy; the labels also report the strict fixed mask step margin count. Removing auxiliary signals weakens reliability on the stricter step-margin gate more than it changes the mean macro margin.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 30,
+      "text": "Table 10. Final 24-seed evidence for the macro score across regimes.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 31,
+      "text": "Figure 4. Seed evidence for the final 24-seed benchmark. Panel A sorts seeds by fixed mask step",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 34,
+      "text": "Figure 6. Behavioural diagnostics for the final 24-seed benchmark. Panel A reports seed distributions",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 35,
+      "text": "Table 12. Mechanism ablation over 24 seeds with continuous macro margins.",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "pdf-native",
+      "role": "caption-or-table-title",
+      "page": 47,
+      "text": "Figure C.8. Mechanism ablation over 24 seeds. Panel A shows seed macro margin distributions for",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_behavior_audit.pdf",
+      "included_from": "sections/06_results.tex",
+      "line": 98,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "(a) Distribution over 24 seeds",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    },
+    {
+      "source": "figure-asset",
+      "role": "figure-visible-text",
+      "figure_path": "figures/figure_behavior_audit.pdf",
+      "included_from": "sections/06_results.tex",
+      "line": 98,
+      "extractor": "pdftotext-figure-pdf",
+      "text": "All four behaviour checks passed in 24/24 seeds",
+      "matched_pattern": "SCENEBAL|V3\\.1|metpair|Scenario\\s*Bal|H75|h75|seed\\s*sweep|24[- ]seed|18[- ]seed|12[- ]seed|6[- ]seed|Lower[- ]flux mixture|lower[- ]flux mixture"
+    }
+  ],
+  "C11_training_internal_regularizers": [
+    {
+      "source": "tex",
+      "role": "table-row/source",
+      "file": "tables/mechanism_ablation_summary.tex",
+      "line": 18,
+      "text": "No event context auxiliary signal & 21/24 & 24/24 & 0.0665 & 0.0713 & -0.0045 \\\\",
+      "matched_pattern": "AWBC|BC|auxiliary loss|event context auxiliary|candidate[- ]policy|behaviour cloning|behavior cloning|entropy coefficient|clip range"
+    }
+  ]
+}

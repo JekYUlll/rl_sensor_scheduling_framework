@@ -1,0 +1,41 @@
+{
+  "source_run_dir": "reports/v31_energy_account_subtype_energympc_smoke_seed45_h082_20260620",
+  "replay_family": "subtype_auto",
+  "eval_steps": 512,
+  "eval_start_indices": [
+    33300,
+    34260,
+    34964,
+    35476
+  ],
+  "reference_policy": "validation_selected_static",
+  "reference_oracle_loss_mean": 1.16468955205346,
+  "required_margin_abs": 0.011646895520534599,
+  "source_reference_gate_pass": false,
+  "static_reference_policy": "static_action20",
+  "static_reference_oracle_loss_mean": 1.1645222404549713,
+  "static_required_margin_abs": 0.011645222404549713,
+  "best_static_reference_event_loss": 1.2152452511127505,
+  "best_static_reference_non_event_loss": 1.0549354890338432,
+  "enforce_static_candidate_reference": true,
+  "best_replay_policy": "split_subtype_auto_top1_c0_p0_f0_t0_l0",
+  "best_replay_oracle_loss_mean": 1.2049257914768532,
+  "best_replay_event_loss": 1.3010664109885692,
+  "best_replay_non_event_loss": 0.9972145764824049,
+  "margin_abs_vs_reference": -0.04023623942339327,
+  "margin_rel_vs_reference": -0.034546750550353014,
+  "margin_abs_vs_static_reference": -0.04040355102188187,
+  "margin_rel_vs_static_reference": -0.034695388046944005,
+  "static_reference_gate_pass": false,
+  "gate_pass": false,
+  "top_sizes": [
+    2
+  ],
+  "subtype_top_size_cap": 1,
+  "lead_steps": [
+    0
+  ],
+  "dwell_steps": [
+    8
+  ]
+}

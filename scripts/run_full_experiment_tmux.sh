@@ -4,6 +4,7 @@ set -euo pipefail
 CONDA_ENV_NAME="darts"
 RUN_TAG=""
 PREDICTOR_GPUS=""
+SCHEDULERS=""
 REWARD_CFG="configs/reward/lstm_aux.yaml"
 BASE_CFG="configs/base.yaml"
 ENV_CFG="configs/env/windblown_case.yaml"
@@ -22,6 +23,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --gpus)
       PREDICTOR_GPUS="$2"
+      shift 2
+      ;;
+    --schedulers)
+      SCHEDULERS="$2"
       shift 2
       ;;
     --reward-cfg)
@@ -132,10 +137,19 @@ print(1 if any(int(item.get("warmup_steps", 0)) > 0 for item in cfg.get("sensors
 PY
 )"
 
-SCHED_ORDER=(full_open random periodic round_robin info_priority dqn cmdp_dqn ppo)
-if [[ "${HAS_SENSOR_WARMUP}" == "1" && -f "configs/scheduler/warmup_round_robin.yaml" ]]; then
-  SCHED_ORDER=(full_open random periodic round_robin warmup_round_robin info_priority dqn cmdp_dqn ppo)
+if [[ -n "${SCHEDULERS}" ]]; then
+  IFS=',' read -r -a SCHED_ORDER <<< "${SCHEDULERS}"
+else
+  SCHED_ORDER=(full_open random periodic round_robin info_priority dqn cmdp_dqn ppo)
+  if [[ "${HAS_SENSOR_WARMUP}" == "1" && -f "configs/scheduler/warmup_round_robin.yaml" ]]; then
+    SCHED_ORDER=(full_open random periodic round_robin warmup_round_robin info_priority dqn cmdp_dqn ppo)
+  fi
 fi
+EVAL_SCHEDULERS="$(
+  IFS=','
+  echo "${SCHED_ORDER[*]}"
+)"
+echo "SCHEDULERS=${EVAL_SCHEDULERS}"
 
 for sched_name in "${SCHED_ORDER[@]}"; do
   RUN_ID="${RUN_TAG}_${sched_name}"
@@ -208,6 +222,7 @@ for sched_name in "${SCHED_ORDER[@]}"; do
 done
 
 PREDICTOR_CMD=(bash scripts/04_eval_frozen_predictors_multi_gpu.sh --run-tag "${RUN_TAG}" --reward-artifact "${REWARD_ARTIFACT}")
+PREDICTOR_CMD+=(--schedulers "${EVAL_SCHEDULERS}")
 if [[ -n "${PREDICTOR_GPUS}" ]]; then
   PREDICTOR_CMD+=(--gpus "${PREDICTOR_GPUS}")
 fi

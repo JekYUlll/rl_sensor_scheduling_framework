@@ -1,0 +1,1126 @@
+{
+  "AlAhdab2025": {
+    "bib": {
+      "author": "Ahdab, Mohamad Al and Leth, John-Josef and Tan, Zheng-Hua",
+      "title": "Optimal Sensor Scheduling and Selection for Continuous-Discrete {Kalman} Filtering with Auxiliary Dynamics",
+      "booktitle": "Proc. 42nd Int. Conf. Mach. Learn. (ICML 2025)",
+      "series": "Proceedings of Machine Learning Research",
+      "volume": "267",
+      "pages": "703--729",
+      "publisher": "PMLR",
+      "year": "2025",
+      "url": "https://proceedings.mlr.press/v267/ahdab25a.html"
+    },
+    "crossref": {
+      "error": "missing"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "error": "HTTP Error 503: Service Unavailable"
+    },
+    "evidence_quotes": []
+  },
+  "Alali2024": {
+    "bib": {
+      "author": "Alali, Mohammad and Kazeminajafabadi, Armita and Imani, Mahdi",
+      "title": "Deep Reinforcement Learning Sensor Scheduling for Effective Monitoring of Dynamical Systems",
+      "journal": "Syst. Sci. Control Eng.",
+      "volume": "12",
+      "number": "1",
+      "pages": "2329260",
+      "year": "2024",
+      "doi": "10.1080/21642583.2024.2329260"
+    },
+    "crossref": {
+      "title": "Deep reinforcement learning sensor scheduling for effective monitoring of dynamical systems",
+      "authors": [
+        "Mohammad Alali",
+        "Armita Kazeminajafabadi",
+        "Mahdi Imani"
+      ],
+      "year": 2024,
+      "container": "Systems Science & Control Engineering",
+      "volume": "12",
+      "issue": "1",
+      "page": "",
+      "article_number": "2329260",
+      "doi": "10.1080/21642583.2024.2329260",
+      "type": "journal-article",
+      "publisher": "Informa UK Limited",
+      "abstract": "",
+      "url": "https://doi.org/10.1080/21642583.2024.2329260"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Deep reinforcement learning sensor scheduling for effective monitoring of dynamical systems",
+      "authors": [
+        "Mohammad Alali",
+        "Armita Kazeminajafabadi",
+        "Mahdi Imani"
+      ],
+      "year": 2024,
+      "source": "Systems Science & Control Engineering",
+      "doi": "10.1080/21642583.2024.2329260",
+      "type": "article",
+      "abstract": "Advances in technology have enabled the use of sensors with varied modalities to monitor different parts of systems, each providing diverse levels of information about the underlying system. However, resource limitations and computational power restrict the number of sensors/data that can be processed in real-time in most complex systems. These challenges necessitate the need for selecting/scheduling a subset of sensors to obtain measurements that guarantee the best monitoring objectives. This paper focuses on sensor scheduling for systems modeled by hidden Markov models. Despite the development of several sensor selection and scheduling methods, existing methods tend to be greedy and do not take into account the long-term impact of selected sensors on monitoring objectives. This paper formulates optimal sensor scheduling as a reinforcement learning problem defined over the posterior distribution of system states. Further, the paper derives a deep reinforcement learning policy for offline learning of the sensor scheduling policy, which can then be executed in real-time as new information unfolds. The proposed method applies to any monitoring objective that can be expressed in terms of the posterior distribution of the states (e.g., state estimation, information gain, etc.). The performance of the proposed method in terms of accuracy and robustness is investigated for monitoring the security of networked systems and the health monitoring of gene regulatory networks.",
+      "cited_by_count": 19
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Advances in technology have enabled the use of sensors with varied modalities to monitor different parts of systems, each providing diverse levels of information about the underlying system. However, resource limitations and computational power restrict the number of sensors/data that can be processed in real-time in most complex systems. These challenges necessitate the need for selecting/scheduling a subset of sensors to obtain measurements that guarantee the best monitoring objectives. This paper focuses on sensor scheduling for systems modeled by hidden Markov models. Despite the development of several sensor selection and scheduling methods, existing methods tend to be greedy and do not take into account the long-term impact of selected sensors on monitoring objectives. This paper formulates optimal sensor scheduling as a reinforcement learning problem defined over the posterior dis"
+      }
+    ]
+  },
+  "Aloni2024": {
+    "bib": {
+      "author": "Aloni, Ofek and Perelman, Gal and Fishbain, Barak",
+      "title": "Synthetic Random Environmental Time Series Generation with Similarity Control, Preserving Original Signal's Statistical Characteristics",
+      "journal": "Environmental Modelling \\& Software",
+      "volume": "185",
+      "pages": "106283",
+      "year": "2025",
+      "doi": "10.1016/j.envsoft.2024.106283"
+    },
+    "crossref": {
+      "title": "Synthetic random environmental time series generation with similarity control, preserving original signal’s statistical characteristics",
+      "authors": [
+        "Ofek Aloni",
+        "Gal Perelman",
+        "Barak Fishbain"
+      ],
+      "year": 2025,
+      "container": "Environmental Modelling & Software",
+      "volume": "185",
+      "issue": "",
+      "page": "106283",
+      "article_number": "106283",
+      "doi": "10.1016/j.envsoft.2024.106283",
+      "type": "journal-article",
+      "publisher": "Elsevier BV",
+      "abstract": "",
+      "url": "https://doi.org/10.1016/j.envsoft.2024.106283"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Synthetic random environmental time series generation with similarity control, preserving original signal’s statistical characteristics",
+      "authors": [
+        "Ofek Aloni",
+        "Gal Perelman",
+        "Barak Fishbain"
+      ],
+      "year": 2024,
+      "source": "Environmental Modelling & Software",
+      "doi": "10.1016/j.envsoft.2024.106283",
+      "type": "article",
+      "abstract": "",
+      "cited_by_count": 1
+    },
+    "evidence_quotes": []
+  },
+  "Amory2020": {
+    "bib": {
+      "author": "Amory, Charles",
+      "title": "Drifting-snow statistics from multiple-year autonomous measurements in {Ad\\'{e}lie Land}, {East Antarctica}",
+      "journal": "The Cryosphere",
+      "volume": "14",
+      "pages": "1713--1725",
+      "year": "2020",
+      "doi": "10.5194/tc-14-1713-2020"
+    },
+    "crossref": {
+      "title": "Drifting-snow statistics from multiple-year autonomous measurements in Adélie Land, East Antarctica",
+      "authors": [
+        "Charles Amory"
+      ],
+      "year": 2020,
+      "container": "The Cryosphere",
+      "volume": "14",
+      "issue": "5",
+      "page": "1713-1725",
+      "article_number": "",
+      "doi": "10.5194/tc-14-1713-2020",
+      "type": "journal-article",
+      "publisher": "Copernicus GmbH",
+      "abstract": "Abstract. Drifting snow is a widespread feature over the Antarctic ice sheet, whose climatological and hydrological significance at the continental scale have been consequently investigated through modelling and satellite approaches. While field measurements are needed to evaluate and interpret model and satellite products, most drifting-snow observation campaigns in Antarctica involved data collected at a single location and over short time periods. With the aim of acquiring new data relevant to the observation and modelling of drifting snow in Antarctic conditions, two remote locations in coastal Adélie Land (East Antarctica) that are 100 km apart were instrumented in January 2010 with meteorological and second-generation IAV Engineering acoustic FlowCapt™ sensors. The data, provided nearly continuously so far, constitute the longest dataset of autonomous near-surface (i.e. within 2 m) measurements of drifting snow currently available over the Antarctic continent. This paper presents an assessment of drifting-snow occurrences and snow mass transport from up to 9 years (2010–2018) of half-hourly observational records collected in one of the Antarctic regions most prone to snow transport by wind. The dataset is freely available to the scientific community and can be used to complement satellite products and evaluate snow-transport models close to the surface and at high temporal frequency.",
+      "url": "https://doi.org/10.5194/tc-14-1713-2020"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Drifting-snow statistics from multiple-year autonomous measurements in Adélie Land, East Antarctica",
+      "authors": [
+        "Charles Amory"
+      ],
+      "year": 2020,
+      "source": "The cryosphere",
+      "doi": "10.5194/tc-14-1713-2020",
+      "type": "article",
+      "abstract": "Abstract. Drifting snow is a widespread feature over the Antarctic ice sheet, whose climatological and hydrological significance at the continental scale have been consequently investigated through modelling and satellite approaches. While field measurements are needed to evaluate and interpret model and satellite products, most drifting-snow observation campaigns in Antarctica involved data collected at a single location and over short time periods. With the aim of acquiring new data relevant to the observation and modelling of drifting snow in Antarctic conditions, two remote locations in coastal Adélie Land (East Antarctica) that are 100 km apart were instrumented in January 2010 with meteorological and second-generation IAV Engineering acoustic FlowCapt™ sensors. The data, provided nearly continuously so far, constitute the longest dataset of autonomous near-surface (i.e. within 2 m) measurements of drifting snow currently available over the Antarctic continent. This paper presents an assessment of drifting-snow occurrences and snow mass transport from up to 9 years (2010–2018) of half-hourly observational records collected in one of the Antarctic regions most prone to snow transport by wind. The dataset is freely available to the scientific community and can be used to complement satellite products and evaluate snow-transport models close to the surface and at high temporal frequency.",
+      "cited_by_count": 43
+    },
+    "evidence_quotes": [
+      {
+        "source": "crossref",
+        "quote": "Abstract. Drifting snow is a widespread feature over the Antarctic ice sheet, whose climatological and hydrological significance at the continental scale have been consequently investigated through modelling and satellite approaches. While field measurements are needed to evaluate and interpret model and satellite products, most drifting-snow observation campaigns in Antarctica involved data collected at a single location and over short time periods. With the aim of acquiring new data relevant to the observation and modelling of drifting snow in Antarctic conditions, two remote locations in coastal Adélie Land (East Antarctica) that are 100 km apart were instrumented in January 2010 with meteorological and second-generation IAV Engineering acoustic FlowCapt™ sensors. The data, provided nearly continuously so far, constitute the longest dataset of autonomous near-surface (i.e. within 2 m)"
+      },
+      {
+        "source": "openalex",
+        "quote": "Abstract. Drifting snow is a widespread feature over the Antarctic ice sheet, whose climatological and hydrological significance at the continental scale have been consequently investigated through modelling and satellite approaches. While field measurements are needed to evaluate and interpret model and satellite products, most drifting-snow observation campaigns in Antarctica involved data collected at a single location and over short time periods. With the aim of acquiring new data relevant to the observation and modelling of drifting snow in Antarctic conditions, two remote locations in coastal Adélie Land (East Antarctica) that are 100 km apart were instrumented in January 2010 with meteorological and second-generation IAV Engineering acoustic FlowCapt™ sensors. The data, provided nearly continuously so far, constitute the longest dataset of autonomous near-surface (i.e. within 2 m)"
+      }
+    ]
+  },
+  "AntAWS2023": {
+    "bib": {
+      "author": "Wang, Yetang and Zhang, Xueying and Ning, Wentao and Lazzara, Matthew A. and others",
+      "title": "The {AntAWS} dataset: a compilation of {Antarctic} automatic weather station observations",
+      "journal": "Earth Syst. Sci. Data",
+      "volume": "15",
+      "pages": "411--429",
+      "year": "2023",
+      "doi": "10.5194/essd-15-411-2023"
+    },
+    "crossref": {
+      "title": "The AntAWS dataset: a compilation of Antarctic automatic weather station observations",
+      "authors": [
+        "Yetang Wang",
+        "Xueying Zhang",
+        "Wentao Ning",
+        "Matthew A. Lazzara",
+        "Minghu Ding",
+        "Carleen H. Reijmer",
+        "Paul C. J. P. Smeets",
+        "Paolo Grigioni",
+        "Petra Heil",
+        "Elizabeth R. Thomas",
+        "David Mikolajczyk",
+        "Lee J. Welhouse",
+        "Linda M. Keller",
+        "Zhaosheng Zhai",
+        "Yuqi Sun",
+        "Shugui Hou"
+      ],
+      "year": 2023,
+      "container": "Earth System Science Data",
+      "volume": "15",
+      "issue": "1",
+      "page": "411-429",
+      "article_number": "",
+      "doi": "10.5194/essd-15-411-2023",
+      "type": "journal-article",
+      "publisher": "Copernicus GmbH",
+      "abstract": "Abstract. A new meteorological dataset derived from records of Antarctic automatic weather stations (here called the AntAWS dataset) at 3 h, daily and monthly resolutions including quality control information is presented here. This dataset integrates the measurements of air temperature, air pressure, relative humidity, and wind speed and direction from 267 Antarctic AWSs obtained from 1980 to 2021. The AWS spatial distribution remains heterogeneous, with the majority of instruments located in near-coastal areas and only a few inland on the East Antarctic Plateau. Among these 267 AWSs, 63 have been operating for more than 20 years and 27 of them in excess of more than 30 years. Of the five meteorological parameters, the measurements of air temperature have the best continuity and the highest data integrity. The overarching aim of this comprehensive compilation of AWS observations is to make these data easily and widely accessible for efficient use in local, regional and continental studies; it may be accessed at https://doi.org/10.48567/key7-ch19 (Wang et al., 2022). This dataset is invaluable for improved characterization of the surface climatology across the Antarctic continent, to improve our understanding of Antarctic surface snow–atmosphere interactions including precipitation events associated with atmospheric rivers and to evaluate regional climate models or meteorological reanalysis products.",
+      "url": "https://doi.org/10.5194/essd-15-411-2023"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "The AntAWS dataset: a compilation of Antarctic automatic weather station observations",
+      "authors": [
+        "Yetang Wang",
+        "Xueying Zhang",
+        "Wentao Ning",
+        "Matthew A. Lazzara",
+        "Minghu Ding",
+        "Carleen H. Reijmer",
+        "Paul C. J. P. Smeets",
+        "Paolo Grigioni",
+        "Petra Heil",
+        "Elizabeth R. Thomas",
+        "David E. Mikolajczyk",
+        "Lee J. Welhouse",
+        "Linda M. Keller",
+        "Zhaosheng Zhai",
+        "Yuqi Sun",
+        "Shugui Hou"
+      ],
+      "year": 2023,
+      "source": "Earth system science data",
+      "doi": "10.5194/essd-15-411-2023",
+      "type": "article",
+      "abstract": "Abstract. A new meteorological dataset derived from records of Antarctic automatic weather stations (here called the AntAWS dataset) at 3 h, daily and monthly resolutions including quality control information is presented here. This dataset integrates the measurements of air temperature, air pressure, relative humidity, and wind speed and direction from 267 Antarctic AWSs obtained from 1980 to 2021. The AWS spatial distribution remains heterogeneous, with the majority of instruments located in near-coastal areas and only a few inland on the East Antarctic Plateau. Among these 267 AWSs, 63 have been operating for more than 20 years and 27 of them in excess of more than 30 years. Of the five meteorological parameters, the measurements of air temperature have the best continuity and the highest data integrity. The overarching aim of this comprehensive compilation of AWS observations is to make these data easily and widely accessible for efficient use in local, regional and continental studies; it may be accessed at https://doi.org/10.48567/key7-ch19 (Wang et al., 2022). This dataset is invaluable for improved characterization of the surface climatology across the Antarctic continent, to improve our understanding of Antarctic surface snow–atmosphere interactions including precipitation events associated with atmospheric rivers and to evaluate regional climate models or meteorological reanalysis products.",
+      "cited_by_count": 33
+    },
+    "evidence_quotes": [
+      {
+        "source": "crossref",
+        "quote": "Abstract. A new meteorological dataset derived from records of Antarctic automatic weather stations (here called the AntAWS dataset) at 3 h, daily and monthly resolutions including quality control information is presented here. This dataset integrates the measurements of air temperature, air pressure, relative humidity, and wind speed and direction from 267 Antarctic AWSs obtained from 1980 to 2021. The AWS spatial distribution remains heterogeneous, with the majority of instruments located in near-coastal areas and only a few inland on the East Antarctic Plateau. Among these 267 AWSs, 63 have been operating for more than 20 years and 27 of them in excess of more than 30 years. Of the five meteorological parameters, the measurements of air temperature have the best continuity and the highest data integrity. The overarching aim of this comprehensive compilation of AWS observations is to m"
+      },
+      {
+        "source": "openalex",
+        "quote": "Abstract. A new meteorological dataset derived from records of Antarctic automatic weather stations (here called the AntAWS dataset) at 3 h, daily and monthly resolutions including quality control information is presented here. This dataset integrates the measurements of air temperature, air pressure, relative humidity, and wind speed and direction from 267 Antarctic AWSs obtained from 1980 to 2021. The AWS spatial distribution remains heterogeneous, with the majority of instruments located in near-coastal areas and only a few inland on the East Antarctic Plateau. Among these 267 AWSs, 63 have been operating for more than 20 years and 27 of them in excess of more than 30 years. Of the five meteorological parameters, the measurements of air temperature have the best continuity and the highest data integrity. The overarching aim of this comprehensive compilation of AWS observations is to m"
+      }
+    ]
+  },
+  "Bai2018": {
+    "bib": {
+      "author": "Bai, Shaojie and Kolter, J. Zico and Koltun, Vladlen",
+      "title": "An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling",
+      "journal": "arXiv preprint arXiv:1803.01271",
+      "year": "2018",
+      "eprint": "1803.01271",
+      "archiveprefix": "arXiv",
+      "primaryclass": "cs.LG",
+      "doi": "10.48550/arXiv.1803.01271"
+    },
+    "crossref": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "openalex": {
+      "title": "An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling",
+      "authors": [
+        "Shaojie Bai",
+        "J. Zico Kolter",
+        "Vladlen Koltun"
+      ],
+      "year": 2018,
+      "source": "arXiv (Cornell University)",
+      "doi": "10.48550/arxiv.1803.01271",
+      "type": "preprint",
+      "abstract": "For most deep learning practitioners, sequence modeling is synonymous with recurrent networks. Yet recent results indicate that convolutional architectures can outperform recurrent networks on tasks such as audio synthesis and machine translation. Given a new sequence modeling task or dataset, which architecture should one use? We conduct a systematic evaluation of generic convolutional and recurrent architectures for sequence modeling. The models are evaluated across a broad range of standard tasks that are commonly used to benchmark recurrent networks. Our results indicate that a simple convolutional architecture outperforms canonical recurrent networks such as LSTMs across a diverse range of tasks and datasets, while demonstrating longer effective memory. We conclude that the common association between sequence modeling and recurrent networks should be reconsidered, and convolutional networks should be regarded as a natural starting point for sequence modeling tasks. To assist related work, we have made code available at http://github.com/locuslab/TCN .",
+      "cited_by_count": 4347
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "For most deep learning practitioners, sequence modeling is synonymous with recurrent networks. Yet recent results indicate that convolutional architectures can outperform recurrent networks on tasks such as audio synthesis and machine translation. Given a new sequence modeling task or dataset, which architecture should one use? We conduct a systematic evaluation of generic convolutional and recurrent architectures for sequence modeling. The models are evaluated across a broad range of standard tasks that are commonly used to benchmark recurrent networks. Our results indicate that a simple convolutional architecture outperforms canonical recurrent networks such as LSTMs across a diverse range of tasks and datasets, while demonstrating longer effective memory. We conclude that the common association between sequence modeling and recurrent networks should be reconsidered, and convolutional "
+      }
+    ]
+  },
+  "Bajcsy2018": {
+    "bib": {
+      "author": "Bajcsy, Ruzena and Aloimonos, Yiannis and Tsotsos, John K.",
+      "title": "Revisiting Active Perception",
+      "journal": "Auton. Robots",
+      "volume": "42",
+      "number": "2",
+      "pages": "177--196",
+      "year": "2018",
+      "doi": "10.1007/s10514-017-9615-3",
+      "url": "http://dx.doi.org/10.1007/s10514-017-9615-3"
+    },
+    "crossref": {
+      "title": "Revisiting active perception",
+      "authors": [
+        "Ruzena Bajcsy",
+        "Yiannis Aloimonos",
+        "John K. Tsotsos"
+      ],
+      "year": 2017,
+      "container": "Autonomous Robots",
+      "volume": "42",
+      "issue": "2",
+      "page": "177-196",
+      "article_number": "",
+      "doi": "10.1007/s10514-017-9615-3",
+      "type": "journal-article",
+      "publisher": "Springer Science and Business Media LLC",
+      "abstract": "",
+      "url": "https://doi.org/10.1007/s10514-017-9615-3"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Revisiting active perception",
+      "authors": [
+        "Růžena Bajcsy",
+        "Yiannis Aloimonos",
+        "John K. Tsotsos"
+      ],
+      "year": 2017,
+      "source": "Autonomous Robots",
+      "doi": "10.1007/s10514-017-9615-3",
+      "type": "article",
+      "abstract": "Despite the recent successes in robotics, artificial intelligence and computer vision, a complete artificial agent necessarily must include active perception. A multitude of ideas and methods for how to accomplish this have already appeared in the past, their broader utility perhaps impeded by insufficient computational power or costly hardware. The history of these ideas, perhaps selective due to our perspectives, is presented with the goal of organizing the past literature and highlighting the seminal contributions. We argue that those contributions are as relevant today as they were decades ago and, with the state of modern computational tools, are poised to find new life in the robotic perception systems of the next decade.",
+      "cited_by_count": 310
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Despite the recent successes in robotics, artificial intelligence and computer vision, a complete artificial agent necessarily must include active perception. A multitude of ideas and methods for how to accomplish this have already appeared in the past, their broader utility perhaps impeded by insufficient computational power or costly hardware. The history of these ideas, perhaps selective due to our perspectives, is presented with the goal of organizing the past literature and highlighting the seminal contributions. We argue that those contributions are as relevant today as they were decades ago and, with the state of modern computational tools, are poised to find new life in the robotic perception systems of the next decade."
+      }
+    ]
+  },
+  "FernandezBes2015": {
+    "bib": {
+      "author": "Fern\\'{a}ndez-Bes, Jes\\'{u}s and Cid-Sueiro, Jes\\'{u}s and Marques, Antonio G.",
+      "title": "An {MDP} Model for Censoring in Harvesting Sensors: Optimal and Approximated Solutions",
+      "journal": "IEEE J. Sel. Areas Commun.",
+      "volume": "33",
+      "number": "8",
+      "pages": "1717--1729",
+      "year": "2015",
+      "doi": "10.1109/JSAC.2015.2430512"
+    },
+    "crossref": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "evidence_quotes": []
+  },
+  "Golovin2011": {
+    "bib": {
+      "author": "Golovin, Daniel and Krause, Andreas",
+      "title": "Adaptive Submodularity: Theory and Applications in Active Learning and Stochastic Optimization",
+      "journal": "J. Artif. Intell. Res.",
+      "volume": "42",
+      "pages": "427--486",
+      "year": "2011",
+      "doi": "10.1613/jair.3278"
+    },
+    "crossref": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Adaptive Submodularity: Theory and Applications in Active Learning and Stochastic Optimization",
+      "authors": [
+        "Daniel Golovin",
+        "Andreas Krause"
+      ],
+      "year": 2011,
+      "source": "CaltechAUTHORS (California Institute of Technology)",
+      "doi": "10.1613/jair.3278",
+      "type": "article",
+      "abstract": "Many problems in artificial intelligence require adaptively making a sequence of decisions with uncertain outcomes under partial observability. Solving such stochastic optimization problems is a fundamental but notoriously difficult challenge. In this paper, we introduce the concept of adaptive submodularity, generalizing submodular set functions to adaptive policies. We prove that if a problem satisfies this property, a simple adaptive greedy algorithm is guaranteed to be competitive with the optimal policy. In addition to providing performance guarantees for both stochastic maximization and coverage, adaptive submodularity can be exploited to drastically speed up the greedy algorithm by using lazy evaluations. We illustrate the usefulness of the concept by giving several examples of adaptive submodular objectives arising in diverse AI applications including management of sensing resources, viral marketing and active learning. Proving adaptive submodularity for these problems allows us to recover existing results in these applications as special cases, improve approximation guarantees and handle natural generalizations.",
+      "cited_by_count": 429
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Many problems in artificial intelligence require adaptively making a sequence of decisions with uncertain outcomes under partial observability. Solving such stochastic optimization problems is a fundamental but notoriously difficult challenge. In this paper, we introduce the concept of adaptive submodularity, generalizing submodular set functions to adaptive policies. We prove that if a problem satisfies this property, a simple adaptive greedy algorithm is guaranteed to be competitive with the optimal policy. In addition to providing performance guarantees for both stochastic maximization and coverage, adaptive submodularity can be exploited to drastically speed up the greedy algorithm by using lazy evaluations. We illustrate the usefulness of the concept by giving several examples of adaptive submodular objectives arising in diverse AI applications including management of sensing resour"
+      }
+    ]
+  },
+  "Jonah2026": {
+    "bib": {
+      "author": "Jonah, Sokipriala and Yoo, Seong Ki and Sthapit, Saurav",
+      "title": "Adaptive Scheduling: A Reinforcement Learning {Whittle} Index Approach for Wireless Sensor Networks",
+      "journal": "IEEE Access",
+      "volume": "14",
+      "pages": "40042--40059",
+      "year": "2026",
+      "doi": "10.1109/ACCESS.2026.3673220"
+    },
+    "crossref": {
+      "title": "Adaptive Scheduling: A Reinforcement Learning Whittle Index Approach for Wireless Sensor Networks",
+      "authors": [
+        "Sokipriala Jonah",
+        "Seong Ki Yoo",
+        "Saurav Sthapit"
+      ],
+      "year": 2026,
+      "container": "IEEE Access",
+      "volume": "14",
+      "issue": "",
+      "page": "40042-40059",
+      "article_number": "",
+      "doi": "10.1109/access.2026.3673220",
+      "type": "journal-article",
+      "publisher": "Institute of Electrical and Electronics Engineers (IEEE)",
+      "abstract": "",
+      "url": "https://doi.org/10.1109/access.2026.3673220"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Adaptive Scheduling: A Reinforcement Learning Whittle Index Approach for Wireless Sensor Networks",
+      "authors": [
+        "Sokipriala Jonah",
+        "Seong Ki Yoo",
+        "Saurav Sthapit"
+      ],
+      "year": 2026,
+      "source": "IEEE Access",
+      "doi": "10.1109/access.2026.3673220",
+      "type": "article",
+      "abstract": "We propose a Reinforcement Learning (RL)-based scheduling framework for Restless Multi-Armed Bandit (RMAB) problems, centred on a Whittle Index Q-Learning policy with Upper Confidence Bound (Whittle index Q-Learning (WIQL)-upper confidence bound (UCB)) exploration. Unlike existing approaches that rely on fixed or adaptive ϵ-greedy strategies and require careful hyperparameter tuning, the proposed method eliminates problem-specific tuning and is therefore more generalisable across diverse RMAB settings. We evaluate WIQL-UCB on standard RMAB benchmarks and on a practical sensor scheduling application based on the Age of Incorrect Information (AoII), using an edge-based estimation scheme that requires no prior knowledge of system dynamics. Experimental results show that WIQL-UCB achieves near-optimal reward performance and strong generalisation across different RMAB settings, consistently outperforming both non–Whittle-based reinforcement learning policies and existing Whittle-index learning baselines. In terms of efficiency, the proposed method exhibits memory and computational requirements comparable to other Whittle-index-based approaches, while remaining orders of magnitude more efficient than non–Whittle-based deep RL methods. At a representative problem size ( N = 15, M = 3), WIQL-UCB requires approximately 600 bytes of memory, compared to several kilobytes for tabular Q-learning and hundreds of kilobytes to megabytes for deep RL baselines, and achieves sub-millisecond perdecision runtimes. These results demonstrate that WIQL-UCB consistently outperforms both non–Whittle-based and Whittle-index learning baselines across diverse RMAB settings.",
+      "cited_by_count": 0
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "We propose a Reinforcement Learning (RL)-based scheduling framework for Restless Multi-Armed Bandit (RMAB) problems, centred on a Whittle Index Q-Learning policy with Upper Confidence Bound (Whittle index Q-Learning (WIQL)-upper confidence bound (UCB)) exploration. Unlike existing approaches that rely on fixed or adaptive ϵ-greedy strategies and require careful hyperparameter tuning, the proposed method eliminates problem-specific tuning and is therefore more generalisable across diverse RMAB settings. We evaluate WIQL-UCB on standard RMAB benchmarks and on a practical sensor scheduling application based on the Age of Incorrect Information (AoII), using an edge-based estimation scheme that requires no prior knowledge of system dynamics. Experimental results show that WIQL-UCB achieves near-optimal reward performance and strong generalisation across different RMAB settings, consistently o"
+      }
+    ]
+  },
+  "Kaul_2012": {
+    "bib": {
+      "author": "Kaul, Sanjit and Yates, Roy and Gruteser, Marco",
+      "title": "Real-Time Status: How Often Should One Update?",
+      "booktitle": "Proc. IEEE INFOCOM 2012",
+      "pages": "2731--2735",
+      "publisher": "IEEE",
+      "year": "2012",
+      "doi": "10.1109/INFCOM.2012.6195689",
+      "url": "http://dx.doi.org/10.1109/INFCOM.2012.6195689"
+    },
+    "crossref": {
+      "title": "Real-time status: How often should one update?",
+      "authors": [
+        "Sanjit Kaul",
+        "Roy Yates",
+        "Marco Gruteser"
+      ],
+      "year": 2012,
+      "container": "2012 Proceedings IEEE INFOCOM",
+      "volume": "",
+      "issue": "",
+      "page": "2731-2735",
+      "article_number": "",
+      "doi": "10.1109/infcom.2012.6195689",
+      "type": "proceedings-article",
+      "publisher": "IEEE",
+      "abstract": "",
+      "url": "https://doi.org/10.1109/infcom.2012.6195689"
+    },
+    "semantic_scholar": {
+      "title": "Real-time status: How often should one update?",
+      "authors": [
+        "S. Kaul",
+        "R. Yates",
+        "M. Gruteser"
+      ],
+      "year": 2012,
+      "venue": "2012 Proceedings IEEE INFOCOM",
+      "externalIds": {
+        "DBLP": "conf/infocom/KaulYG12",
+        "MAG": "1993918491",
+        "DOI": "10.1109/INFCOM.2012.6195689",
+        "CorpusId": 12810772
+      },
+      "abstract": "",
+      "citationCount": 2228,
+      "openAccessPdf": {
+        "url": "http://www.winlab.rutgers.edu/%7Egruteser/papers/sanjitnew.pdf",
+        "status": "GREEN",
+        "license": null,
+        "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1109/INFCOM.2012.6195689?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1109/INFCOM.2012.6195689, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+      }
+    },
+    "openalex": {
+      "title": "Real-time status: How often should one update?",
+      "authors": [
+        "Sanjit K. Kaul",
+        "Roy D. Yates",
+        "Marco Gruteser"
+      ],
+      "year": 2012,
+      "source": "",
+      "doi": "10.1109/infcom.2012.6195689",
+      "type": "article",
+      "abstract": "Increasingly ubiquitous communication networks and connectivity via portable devices have engendered a host of applications in which sources, for example people and environmental sensors, send updates of their status to interested recipients. These applications desire status updates at the recipients to be as timely as possible; however, this is typically constrained by limited network resources. In this paper, we employ a time-average age metric for the performance evaluation of status update systems. We derive general methods for calculating the age metric that can be applied to a broad class of service systems. We apply these methods to queue-theoretic system abstractions consisting of a source, a service facility and monitors, with the model of the service facility (physical constraints) a given. The queue discipline of first-come-first-served (FCFS) is explored. We show the existence of an optimal rate at which a source must generate its information to keep its status as timely as possible at all its monitors. This rate differs from those that maximize utilization (throughput) or minimize status packet delivery delay. While our abstractions are simpler than their real-world counterparts, the insights obtained, we believe, are a useful starting point in understanding and designing systems that support real time status updates.",
+      "cited_by_count": 2393
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Increasingly ubiquitous communication networks and connectivity via portable devices have engendered a host of applications in which sources, for example people and environmental sensors, send updates of their status to interested recipients. These applications desire status updates at the recipients to be as timely as possible; however, this is typically constrained by limited network resources. In this paper, we employ a time-average age metric for the performance evaluation of status update systems. We derive general methods for calculating the age metric that can be applied to a broad class of service systems. We apply these methods to queue-theoretic system abstractions consisting of a source, a service facility and monitors, with the model of the service facility (physical constraints) a given. The queue discipline of first-come-first-served (FCFS) is explored. We show the existenc"
+      }
+    ]
+  },
+  "Lauri_2023": {
+    "bib": {
+      "author": "Lauri, Mikko and Hsu, David and Pajarinen, Joni",
+      "title": "Partially Observable {Markov} Decision Processes in Robotics: A Survey",
+      "journal": "IEEE Trans. Robot.",
+      "volume": "39",
+      "number": "1",
+      "pages": "21--40",
+      "year": "2023",
+      "doi": "10.1109/TRO.2022.3200138",
+      "url": "http://dx.doi.org/10.1109/TRO.2022.3200138"
+    },
+    "crossref": {
+      "title": "Partially Observable Markov Decision Processes in Robotics: A Survey",
+      "authors": [
+        "Mikko Lauri",
+        "David Hsu",
+        "Joni Pajarinen"
+      ],
+      "year": 2023,
+      "container": "IEEE Transactions on Robotics",
+      "volume": "39",
+      "issue": "1",
+      "page": "21-40",
+      "article_number": "",
+      "doi": "10.1109/tro.2022.3200138",
+      "type": "journal-article",
+      "publisher": "Institute of Electrical and Electronics Engineers (IEEE)",
+      "abstract": "",
+      "url": "https://doi.org/10.1109/tro.2022.3200138"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Partially Observable Markov Decision Processes in Robotics: A Survey",
+      "authors": [
+        "Mikko Lauri",
+        "David Hsu",
+        "Joni Pajarinen"
+      ],
+      "year": 2022,
+      "source": "IEEE Transactions on Robotics",
+      "doi": "10.1109/tro.2022.3200138",
+      "type": "article",
+      "abstract": "Noisy sensing, imperfect control, and environment changes are defining characteristics of many real-world robot tasks. The partially observable Markov decision process (POMDP) provides a principled mathematical framework for modeling and solving robot decision and control tasks under uncertainty. Over the last decade, it has seen many successful applications, spanning localization and navigation, search and tracking, autonomous driving, multirobot systems, manipulation, and human–robot interaction. This survey aims to bridge the gap between the development of POMDP models and algorithms at one end and application to diverse robot decision tasks at the other. It analyzes the characteristics of these tasks and connects them with the mathematical and algorithmic properties of the POMDP framework for effective modeling and solution. For practitioners, the survey provides some of the key task characteristics in deciding when and how to apply POMDPs to robot tasks successfully. For POMDP algorithm designers, the survey provides new insights into the unique challenges of applying POMDPs to robot systems and points to promising new directions for further research.",
+      "cited_by_count": 157
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Noisy sensing, imperfect control, and environment changes are defining characteristics of many real-world robot tasks. The partially observable Markov decision process (POMDP) provides a principled mathematical framework for modeling and solving robot decision and control tasks under uncertainty. Over the last decade, it has seen many successful applications, spanning localization and navigation, search and tracking, autonomous driving, multirobot systems, manipulation, and human–robot interaction. This survey aims to bridge the gap between the development of POMDP models and algorithms at one end and application to diverse robot decision tasks at the other. It analyzes the characteristics of these tasks and connects them with the mathematical and algorithmic properties of the POMDP framework for effective modeling and solution. For practitioners, the survey provides some of the key task"
+      }
+    ]
+  },
+  "Lim2021": {
+    "bib": {
+      "author": "Lim, Bryan and Ar{\\i}k, Sercan \\\"{O}. and Loeff, Nicolas and Pfister, Tomas",
+      "title": "Temporal Fusion Transformers for Interpretable Multi-horizon Time Series Forecasting",
+      "journal": "Int. J. Forecast.",
+      "volume": "37",
+      "number": "4",
+      "pages": "1748--1764",
+      "year": "2021",
+      "doi": "10.1016/j.ijforecast.2021.03.012"
+    },
+    "crossref": {
+      "title": "Temporal Fusion Transformers for interpretable multi-horizon time series forecasting",
+      "authors": [
+        "Bryan Lim",
+        "Sercan Ö. Arık",
+        "Nicolas Loeff",
+        "Tomas Pfister"
+      ],
+      "year": 2021,
+      "container": "International Journal of Forecasting",
+      "volume": "37",
+      "issue": "4",
+      "page": "1748-1764",
+      "article_number": "",
+      "doi": "10.1016/j.ijforecast.2021.03.012",
+      "type": "journal-article",
+      "publisher": "Elsevier BV",
+      "abstract": "",
+      "url": "https://doi.org/10.1016/j.ijforecast.2021.03.012"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Temporal Fusion Transformers for interpretable multi-horizon time series forecasting",
+      "authors": [
+        "Bryan Lim",
+        "Sercan Ö. Arık",
+        "Nicolas Loeff",
+        "Tomas Pfister"
+      ],
+      "year": 2021,
+      "source": "International Journal of Forecasting",
+      "doi": "10.1016/j.ijforecast.2021.03.012",
+      "type": "preprint",
+      "abstract": "Multi-horizon forecasting often contains a complex mix of inputs – including static (i.e. time-invariant) covariates, known future inputs, and other exogenous time series that are only observed in the past – without any prior information on how they interact with the target. Several deep learning methods have been proposed, but they are typically ‘black-box’ models that do not shed light on how they use the full range of inputs present in practical scenarios. In this paper, we introduce the Temporal Fusion Transformer (TFT) – a novel attention-based architecture that combines high-performance multi-horizon forecasting with interpretable insights into temporal dynamics. To learn temporal relationships at different scales, TFT uses recurrent layers for local processing and interpretable self-attention layers for long-term dependencies. TFT utilizes specialized components to select relevant features and a series of gating layers to suppress unnecessary components, enabling high performance in a wide range of scenarios. On a variety of real-world datasets, we demonstrate significant performance improvements over existing benchmarks, and highlight three practical interpretability use cases of TFT.",
+      "cited_by_count": 153
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Multi-horizon forecasting often contains a complex mix of inputs – including static (i.e. time-invariant) covariates, known future inputs, and other exogenous time series that are only observed in the past – without any prior information on how they interact with the target. Several deep learning methods have been proposed, but they are typically ‘black-box’ models that do not shed light on how they use the full range of inputs present in practical scenarios. In this paper, we introduce the Temporal Fusion Transformer (TFT) – a novel attention-based architecture that combines high-performance multi-horizon forecasting with interpretable insights into temporal dynamics. To learn temporal relationships at different scales, TFT uses recurrent layers for local processing and interpretable self-attention layers for long-term dependencies. TFT utilizes specialized components to select relevant"
+      }
+    ]
+  },
+  "Liu2024": {
+    "bib": {
+      "author": "Liu, Yong and Hu, Tengge and Zhang, Haoran and Wu, Haixu and Wang, Shiyu and Ma, Lintao and Long, Mingsheng",
+      "title": "{iTransformer}: Inverted Transformers Are Effective for Time Series Forecasting",
+      "booktitle": "Int. Conf. Learn. Represent. (ICLR 2024)",
+      "year": "2024",
+      "url": "https://openreview.net/forum?id=JePfAI8fah"
+    },
+    "crossref": {
+      "error": "missing"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "error": "HTTP Error 503: Service Unavailable"
+    },
+    "evidence_quotes": []
+  },
+  "Monrad2026": {
+    "bib": {
+      "author": "Monrad-Krohn, L. J. and others",
+      "title": "Measurements of blowing snow particle size distribution using an open-path optical snow particle counter in {Ny-\\r{A}lesund} during winter 2025",
+      "journal": "PANGAEA",
+      "year": "2026",
+      "doi": "10.1594/PANGAEA.992701"
+    },
+    "crossref": {
+      "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)>"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "openalex": {
+      "title": "Measurements of blowing snow particle size distribution using an open-path optical snow particle counter in Ny-Ålesund during winter 2025",
+      "authors": [
+        "Lukas Monrad-Krohn",
+        "Christian Buhren",
+        "Laura Eickelmann",
+        "Andreas Foth",
+        "Markus M Frey",
+        "Maximilian Maahn",
+        "Wenceslas Marie-Sainte",
+        "Mario Mech",
+        "Thomas Poinsot",
+        "Andreas Walbröl"
+      ],
+      "year": 2026,
+      "source": "NERC Open Research Archive (Natural Environment Research Council)",
+      "doi": "10.1594/pangaea.992701",
+      "type": "dataset",
+      "abstract": "During the Intensive Observation Period for Water in all its phases (IOP4H2O) an open-path optical Snow Particle Counter (SPC, Sato et al. 1993, Ranjithkumar et al. 2025) measured particle size distributions of snow particles close to the snow surface in Ny-Ålesund from 31st January until 3rd March 2025. Due to a freely rotating wind-vane, the SPC detects snow particles that are transported horizontally by the wind, but can also include falling snow crystals. The detected particles, with diameters ranging from 36 to 500 µm, are sorted into 65 size bins. The snow mass flux (given in kg m⁻² s⁻¹) is calculated by assuming spherical particles with an ice density of 917 kg m⁻³ that pass through an observation area of 50 mm². The SPC was co-located with the Video In Situ Snowfall Sensor (VISSS, Maahn et al. 2024) and mounted around 10 cm above the snow surface, to achieve measurements of the saltation layer. The height of the SPC was regularly adjusted to the changing snow depth. During the first three weeks unrealistically low values were measured for individual size bins because of an error of the SPC (marked by the quality flag) that was solved on 19th February. During this period the size distribution and snow mass flux are inaccurate, but still serve as qualitative measures of blowing snow intensity. This data was collected to investigate sublimation of blowing snow in Ny-Ålesund. It might also be relevant for research on snow accumulation and distribution and to evaluate gauges of solid precipitation.",
+      "cited_by_count": 0
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "During the Intensive Observation Period for Water in all its phases (IOP4H2O) an open-path optical Snow Particle Counter (SPC, Sato et al. 1993, Ranjithkumar et al. 2025) measured particle size distributions of snow particles close to the snow surface in Ny-Ålesund from 31st January until 3rd March 2025. Due to a freely rotating wind-vane, the SPC detects snow particles that are transported horizontally by the wind, but can also include falling snow crystals. The detected particles, with diameters ranging from 36 to 500 µm, are sorted into 65 size bins. The snow mass flux (given in kg m⁻² s⁻¹) is calculated by assuming spherical particles with an ice density of 917 kg m⁻³ that pass through an observation area of 50 mm². The SPC was co-located with the Video In Situ Snowfall Sensor (VISSS, Maahn et al. 2024) and mounted around 10 cm above the snow surface, to achieve measurements of the s"
+      }
+    ]
+  },
+  "Murad2020": {
+    "bib": {
+      "author": "Murad, Abdulmajid and Kraemer, Frank Alexander and Bach, Kerstin and Taylor, Gavin",
+      "title": "Information-Driven Adaptive Sensing Based on Deep Reinforcement Learning",
+      "booktitle": "Proc. 10th Int. Conf. Internet of Things (IoT'20)",
+      "publisher": "ACM",
+      "year": "2020",
+      "doi": "10.1145/3410992.3411001"
+    },
+    "crossref": {
+      "title": "Information-driven adaptive sensing based on deep reinforcement learning",
+      "authors": [
+        "Abdulmajid Murad",
+        "Frank Alexander Kraemer",
+        "Kerstin Bach",
+        "Gavin Taylor"
+      ],
+      "year": 2020,
+      "container": "Proceedings of the 10th International Conference on the Internet of Things",
+      "volume": "",
+      "issue": "",
+      "page": "1-8",
+      "article_number": "",
+      "doi": "10.1145/3410992.3411001",
+      "type": "proceedings-article",
+      "publisher": "ACM",
+      "abstract": "",
+      "url": "https://doi.org/10.1145/3410992.3411001"
+    },
+    "semantic_scholar": {
+      "title": "Information-driven adaptive sensing based on deep reinforcement learning",
+      "authors": [
+        "Abdulmajid Murad",
+        "F. Kraemer",
+        "Kerstin Bach",
+        "Gavin Taylor"
+      ],
+      "year": 2020,
+      "venue": "IoT",
+      "externalIds": {
+        "MAG": "3097229291",
+        "ArXiv": "2010.04112",
+        "DBLP": "journals/corr/abs-2010-04112",
+        "DOI": "10.1145/3410992.3411001",
+        "CorpusId": 222110386
+      },
+      "abstract": "In order to make better use of deep reinforcement learning in the creation of sensing policies for resource-constrained IoT devices, we present and study a novel reward function based on the Fisher information value. This reward function enables IoT sensor devices to learn to spend available energy on measurements at otherwise unpredictable moments, while conserving energy at times when measurements would provide little new information. This is a highly general approach, which allows for a wide range of use cases without significant human design effort or hyperparameter tuning. We illustrate the approach in a scenario of workplace noise monitoring, where results show that the learned behavior outperforms a uniform sampling strategy and comes close to a near-optimal oracle solution.",
+      "citationCount": 25,
+      "openAccessPdf": {
+        "url": "https://arxiv.org/pdf/2010.04112",
+        "status": "GREEN",
+        "license": null,
+        "disclaimer": "Notice: Paper or abstract available at https://arxiv.org/abs/2010.04112, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+      }
+    },
+    "openalex": {
+      "title": "Information-driven adaptive sensing based on deep reinforcement learning",
+      "authors": [
+        "Abdulmajid Murad",
+        "Frank Alexander Kraemer",
+        "Kerstin Bach",
+        "Gavin Taylor"
+      ],
+      "year": 2020,
+      "source": "",
+      "doi": "10.1145/3410992.3411001",
+      "type": "article",
+      "abstract": "In order to make better use of deep reinforcement learning in the creation of sensing policies for resource-constrained IoT devices, we present and study a novel reward function based on the Fisher information value. This reward function enables IoT sensor devices to learn to spend available energy on measurements at otherwise unpredictable moments, while conserving energy at times when measurements would provide little new information. This is a highly general approach, which allows for a wide range of use cases without significant human design effort or hyperparameter tuning. We illustrate the approach in a scenario of workplace noise monitoring, where results show that the learned behavior outperforms a uniform sampling strategy and comes close to a near-optimal oracle solution.",
+      "cited_by_count": 19
+    },
+    "evidence_quotes": [
+      {
+        "source": "semantic_scholar",
+        "quote": "In order to make better use of deep reinforcement learning in the creation of sensing policies for resource-constrained IoT devices, we present and study a novel reward function based on the Fisher information value. This reward function enables IoT sensor devices to learn to spend available energy on measurements at otherwise unpredictable moments, while conserving energy at times when measurements would provide little new information. This is a highly general approach, which allows for a wide range of use cases without significant human design effort or hyperparameter tuning. We illustrate the approach in a scenario of workplace noise monitoring, where results show that the learned behavior outperforms a uniform sampling strategy and comes close to a near-optimal oracle solution."
+      },
+      {
+        "source": "openalex",
+        "quote": "In order to make better use of deep reinforcement learning in the creation of sensing policies for resource-constrained IoT devices, we present and study a novel reward function based on the Fisher information value. This reward function enables IoT sensor devices to learn to spend available energy on measurements at otherwise unpredictable moments, while conserving energy at times when measurements would provide little new information. This is a highly general approach, which allows for a wide range of use cases without significant human design effort or hyperparameter tuning. We illustrate the approach in a scenario of workplace noise monitoring, where results show that the learned behavior outperforms a uniform sampling strategy and comes close to a near-optimal oracle solution."
+      }
+    ]
+  },
+  "Ogbodo2025": {
+    "bib": {
+      "author": "Ogbodo, Collins O. and Rogers, Timothy J. and {Dal Borgo}, Mattia and Wagg, David J.",
+      "title": "Adaptive Sensor Steering Strategy Using Deep Reinforcement Learning for Dynamic Data Acquisition in Digital Twins",
+      "journal": "Proc. R. Soc. A",
+      "volume": "482",
+      "number": "2329",
+      "pages": "20250326",
+      "year": "2026",
+      "doi": "10.1098/rspa.2025.0326"
+    },
+    "crossref": {
+      "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)>"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "openalex": {
+      "title": "Adaptive sensor steering strategy using deep reinforcement learning for dynamic data acquisition in digital twins",
+      "authors": [
+        "Collins O. Ogbodo",
+        "Timothy J. Rogers",
+        "Mattia Dal Borgo",
+        "David Wagg"
+      ],
+      "year": 2026,
+      "source": "Proceedings of the Royal Society A Mathematical Physical and Engineering Sciences",
+      "doi": "10.1098/rspa.2025.0326",
+      "type": "article",
+      "abstract": "Abstract This paper introduces a sensor steering methodology based on deep reinforcement learning (DRL) to enhance the predictive accuracy and decision support capabilities of digital twins by optimizing the data acquisition process. Traditional sensor placement techniques are often constrained by one-off optimization strategies, which limit their applicability for online applications requiring continuous informative data assimilation. The proposed approach addresses this limitation by offering an adaptive framework for sensor placement within the digital twin paradigm. The sensor placement problem is formulated as a Markov decision process (MDP), enabling the training and deployment of an agent capable of dynamically repositioning sensors in response to the evolving conditions of the physical structure as represented by the digital twin. This ensures that the digital twin maintains a highly representative and reliable connection to its physical counterpart. The proposed framework is validated through a series of comprehensive case studies involving a cantilever plate structure subjected to diverse conditions, including healthy and damaged conditions. The results demonstrate the capability of the DRL agent to adaptively reposition sensors, improving the quality of data acquisition and hence enhancing the overall accuracy of digital twins.",
+      "cited_by_count": 1
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Abstract This paper introduces a sensor steering methodology based on deep reinforcement learning (DRL) to enhance the predictive accuracy and decision support capabilities of digital twins by optimizing the data acquisition process. Traditional sensor placement techniques are often constrained by one-off optimization strategies, which limit their applicability for online applications requiring continuous informative data assimilation. The proposed approach addresses this limitation by offering an adaptive framework for sensor placement within the digital twin paradigm. The sensor placement problem is formulated as a Markov decision process (MDP), enabling the training and deployment of an agent capable of dynamically repositioning sensors in response to the evolving conditions of the physical structure as represented by the digital twin. This ensures that the digital twin maintains a hi"
+      }
+    ]
+  },
+  "Pendyala2024": {
+    "bib": {
+      "author": "Pendyala, Abhijeet and Atamna, Asma and Glasmachers, Tobias",
+      "title": "Solving a Real-World Optimization Problem Using Proximal Policy Optimization with Curriculum Learning and Reward Engineering",
+      "booktitle": "Proc. ECML/PKDD 2024",
+      "series": "Lecture Notes in Computer Science",
+      "publisher": "Springer",
+      "year": "2024",
+      "doi": "10.1007/978-3-031-70381-2_10"
+    },
+    "crossref": {
+      "title": "Solving a Real-World Optimization Problem Using Proximal Policy Optimization with Curriculum Learning and Reward Engineering",
+      "authors": [
+        "Abhijeet Pendyala",
+        "Asma Atamna",
+        "Tobias Glasmachers"
+      ],
+      "year": 2024,
+      "container": "Lecture Notes in Computer Science",
+      "volume": "",
+      "issue": "",
+      "page": "150-165",
+      "article_number": "",
+      "doi": "10.1007/978-3-031-70381-2_10",
+      "type": "book-chapter",
+      "publisher": "Springer Nature Switzerland",
+      "abstract": "",
+      "url": "https://doi.org/10.1007/978-3-031-70381-2_10"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)>"
+    },
+    "evidence_quotes": []
+  },
+  "Qu2022": {
+    "bib": {
+      "author": "Qu, Zhiyi and Zhao, Xue and Xu, Huihui and Tang, Hongying and Wang, Jiang and Li, Baoqing",
+      "title": "An Improved {Q}-Learning-Based Sensor-Scheduling Algorithm for Multi-Target Tracking",
+      "journal": "Sensors",
+      "volume": "22",
+      "pages": "6972",
+      "year": "2022",
+      "doi": "10.3390/s22186972"
+    },
+    "crossref": {
+      "title": "An Improved Q-Learning-Based Sensor-Scheduling Algorithm for Multi-Target Tracking",
+      "authors": [
+        "Zhiyi Qu",
+        "Xue Zhao",
+        "Huihui Xu",
+        "Hongying Tang",
+        "Jiang Wang",
+        "Baoqing Li"
+      ],
+      "year": 2022,
+      "container": "Sensors",
+      "volume": "22",
+      "issue": "18",
+      "page": "6972",
+      "article_number": "",
+      "doi": "10.3390/s22186972",
+      "type": "journal-article",
+      "publisher": "MDPI AG",
+      "abstract": "Target tracking is an essential issue in wireless sensor networks (WSNs). Compared with single-target tracking, how to guarantee the performance of multi-target tracking is more challenging because the system needs to balance the tracking resource for each target according to different target properties and network status. However, the balance of tracking task allocation is rarely considered in those prior sensor-scheduling algorithms, which may result in the degradation of tracking accuracy for some targets and additional system energy consumption. To address this issue, we propose in this paper an improved Q-learning-based sensor-scheduling algorithm for multi-target tracking (MTT-SS). First, we devise an entropy weight method (EWM)-based strategy to evaluate the priority of targets being tracked according to target properties and network status. Moreover, we develop a Q-learning-based task allocation mechanism to obtain a balanced resource scheduling result in multi-target-tracking scenarios. Simulation results demonstrate that our proposed algorithm can obtain a significant enhancement in terms of tracking accuracy and energy efficiency compared with the existing sensor-scheduling algorithms.",
+      "url": "https://doi.org/10.3390/s22186972"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "An Improved Q-Learning-Based Sensor-Scheduling Algorithm for Multi-Target Tracking",
+      "authors": [
+        "Zhiyi Qu",
+        "Xue Zhao",
+        "Huihui Xu",
+        "Hongying Tang",
+        "Jiang Wang",
+        "Baoqing Li"
+      ],
+      "year": 2022,
+      "source": "Sensors",
+      "doi": "10.3390/s22186972",
+      "type": "article",
+      "abstract": "Target tracking is an essential issue in wireless sensor networks (WSNs). Compared with single-target tracking, how to guarantee the performance of multi-target tracking is more challenging because the system needs to balance the tracking resource for each target according to different target properties and network status. However, the balance of tracking task allocation is rarely considered in those prior sensor-scheduling algorithms, which may result in the degradation of tracking accuracy for some targets and additional system energy consumption. To address this issue, we propose in this paper an improved Q-learning-based sensor-scheduling algorithm for multi-target tracking (MTT-SS). First, we devise an entropy weight method (EWM)-based strategy to evaluate the priority of targets being tracked according to target properties and network status. Moreover, we develop a Q-learning-based task allocation mechanism to obtain a balanced resource scheduling result in multi-target-tracking scenarios. Simulation results demonstrate that our proposed algorithm can obtain a significant enhancement in terms of tracking accuracy and energy efficiency compared with the existing sensor-scheduling algorithms.",
+      "cited_by_count": 7
+    },
+    "evidence_quotes": [
+      {
+        "source": "crossref",
+        "quote": "Target tracking is an essential issue in wireless sensor networks (WSNs). Compared with single-target tracking, how to guarantee the performance of multi-target tracking is more challenging because the system needs to balance the tracking resource for each target according to different target properties and network status. However, the balance of tracking task allocation is rarely considered in those prior sensor-scheduling algorithms, which may result in the degradation of tracking accuracy for some targets and additional system energy consumption. To address this issue, we propose in this paper an improved Q-learning-based sensor-scheduling algorithm for multi-target tracking (MTT-SS). First, we devise an entropy weight method (EWM)-based strategy to evaluate the priority of targets being tracked according to target properties and network status. Moreover, we develop a Q-learning-based"
+      },
+      {
+        "source": "openalex",
+        "quote": "Target tracking is an essential issue in wireless sensor networks (WSNs). Compared with single-target tracking, how to guarantee the performance of multi-target tracking is more challenging because the system needs to balance the tracking resource for each target according to different target properties and network status. However, the balance of tracking task allocation is rarely considered in those prior sensor-scheduling algorithms, which may result in the degradation of tracking accuracy for some targets and additional system energy consumption. To address this issue, we propose in this paper an improved Q-learning-based sensor-scheduling algorithm for multi-target tracking (MTT-SS). First, we devise an entropy weight method (EWM)-based strategy to evaluate the priority of targets being tracked according to target properties and network status. Moreover, we develop a Q-learning-based"
+      }
+    ]
+  },
+  "Schulman2017": {
+    "bib": {
+      "author": "Schulman, John and Wolski, Filip and Dhariwal, Prafulla and Radford, Alec and Klimov, Oleg",
+      "title": "Proximal Policy Optimization Algorithms",
+      "journal": "arXiv preprint arXiv:1707.06347",
+      "year": "2017"
+    },
+    "crossref": {
+      "error": "missing"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "error": "HTTP Error 503: Service Unavailable"
+    },
+    "evidence_quotes": []
+  },
+  "Sharma2023": {
+    "bib": {
+      "author": "Sharma, Varun and Gerber, Franziska and Lehning, Michael",
+      "title": "Introducing {CRYOWRF} v1.0: multiscale atmospheric flow simulations with advanced snow cover modelling",
+      "journal": "Geoscientific Model Development",
+      "volume": "16",
+      "pages": "719--749",
+      "year": "2023",
+      "doi": "10.5194/gmd-16-719-2023"
+    },
+    "crossref": {
+      "title": "Introducing CRYOWRF v1.0: multiscale atmospheric flow simulations with advanced snow cover modelling",
+      "authors": [
+        "Varun Sharma",
+        "Franziska Gerber",
+        "Michael Lehning"
+      ],
+      "year": 2023,
+      "container": "Geoscientific Model Development",
+      "volume": "16",
+      "issue": "2",
+      "page": "719-749",
+      "article_number": "",
+      "doi": "10.5194/gmd-16-719-2023",
+      "type": "journal-article",
+      "publisher": "Copernicus GmbH",
+      "abstract": "Abstract. Accurately simulating snow cover dynamics and the snow–atmosphere coupling is of major importance for topics as wide-ranging as water resources, natural hazards, and climate change impacts with consequences for sea level rise. We present a new modelling framework for atmospheric flow simulations for cryospheric regions called CRYOWRF. CRYOWRF couples the state-of-the-art and widely used atmospheric model WRF (the Weather Research and Forecasting model) with the detailed snow cover model SNOWPACK. CRYOWRF makes it feasible to simulate the dynamics of a large number of snow layers governed by grain-scale prognostic variables with online coupling to the atmosphere for multiscale simulations from the synoptic to the turbulent scales. Additionally, a new blowing snow scheme is introduced in CRYOWRF and is discussed in detail. CRYOWRF's technical design goals and model capabilities are described, and the performance costs are shown to compare favourably with existing land surface schemes. Three case studies showcasing envisaged use cases for CRYOWRF for polar ice sheets and alpine snowpacks are provided to equip potential users with templates for their research. Finally, the future roadmap for CRYOWRF's development and usage is discussed.",
+      "url": "https://doi.org/10.5194/gmd-16-719-2023"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 404: Not Found"
+    },
+    "openalex": {
+      "title": "Introducing CRYOWRF v1.0: multiscale atmospheric flow simulations with advanced snow cover modelling",
+      "authors": [
+        "Varun Sharma",
+        "Franziska Gerber",
+        "Michael Lehning"
+      ],
+      "year": 2023,
+      "source": "Geoscientific model development",
+      "doi": "10.5194/gmd-16-719-2023",
+      "type": "article",
+      "abstract": "Abstract. Accurately simulating snow cover dynamics and the snow–atmosphere coupling is of major importance for topics as wide-ranging as water resources, natural hazards, and climate change impacts with consequences for sea level rise. We present a new modelling framework for atmospheric flow simulations for cryospheric regions called CRYOWRF. CRYOWRF couples the state-of-the-art and widely used atmospheric model WRF (the Weather Research and Forecasting model) with the detailed snow cover model SNOWPACK. CRYOWRF makes it feasible to simulate the dynamics of a large number of snow layers governed by grain-scale prognostic variables with online coupling to the atmosphere for multiscale simulations from the synoptic to the turbulent scales. Additionally, a new blowing snow scheme is introduced in CRYOWRF and is discussed in detail. CRYOWRF's technical design goals and model capabilities are described, and the performance costs are shown to compare favourably with existing land surface schemes. Three case studies showcasing envisaged use cases for CRYOWRF for polar ice sheets and alpine snowpacks are provided to equip potential users with templates for their research. Finally, the future roadmap for CRYOWRF's development and usage is discussed.",
+      "cited_by_count": 28
+    },
+    "evidence_quotes": [
+      {
+        "source": "crossref",
+        "quote": "Abstract. Accurately simulating snow cover dynamics and the snow–atmosphere coupling is of major importance for topics as wide-ranging as water resources, natural hazards, and climate change impacts with consequences for sea level rise. We present a new modelling framework for atmospheric flow simulations for cryospheric regions called CRYOWRF. CRYOWRF couples the state-of-the-art and widely used atmospheric model WRF (the Weather Research and Forecasting model) with the detailed snow cover model SNOWPACK. CRYOWRF makes it feasible to simulate the dynamics of a large number of snow layers governed by grain-scale prognostic variables with online coupling to the atmosphere for multiscale simulations from the synoptic to the turbulent scales. Additionally, a new blowing snow scheme is introduced in CRYOWRF and is discussed in detail. CRYOWRF's technical design goals and model capabilities a"
+      },
+      {
+        "source": "openalex",
+        "quote": "Abstract. Accurately simulating snow cover dynamics and the snow–atmosphere coupling is of major importance for topics as wide-ranging as water resources, natural hazards, and climate change impacts with consequences for sea level rise. We present a new modelling framework for atmospheric flow simulations for cryospheric regions called CRYOWRF. CRYOWRF couples the state-of-the-art and widely used atmospheric model WRF (the Weather Research and Forecasting model) with the detailed snow cover model SNOWPACK. CRYOWRF makes it feasible to simulate the dynamics of a large number of snow layers governed by grain-scale prognostic variables with online coupling to the atmosphere for multiscale simulations from the synoptic to the turbulent scales. Additionally, a new blowing snow scheme is introduced in CRYOWRF and is discussed in detail. CRYOWRF's technical design goals and model capabilities a"
+      }
+    ]
+  },
+  "Shi_2011": {
+    "bib": {
+      "author": "Shi, Ling and Cheng, Peng and Chen, Jiming",
+      "title": "Sensor Data Scheduling for Optimal State Estimation with Communication Energy Constraint",
+      "journal": "Automatica",
+      "volume": "47",
+      "number": "8",
+      "pages": "1693--1698",
+      "year": "2011",
+      "doi": "10.1016/j.automatica.2011.02.037",
+      "url": "http://dx.doi.org/10.1016/j.automatica.2011.02.037"
+    },
+    "crossref": {
+      "title": "Sensor data scheduling for optimal state estimation with communication energy constraint",
+      "authors": [
+        "Ling Shi",
+        "Peng Cheng",
+        "Jiming Chen"
+      ],
+      "year": 2011,
+      "container": "Automatica",
+      "volume": "47",
+      "issue": "8",
+      "page": "1693-1698",
+      "article_number": "",
+      "doi": "10.1016/j.automatica.2011.02.037",
+      "type": "journal-article",
+      "publisher": "Elsevier BV",
+      "abstract": "",
+      "url": "https://doi.org/10.1016/j.automatica.2011.02.037"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Sensor data scheduling for optimal state estimation with communication energy constraint",
+      "authors": [
+        "Ling Shi",
+        "Peng Cheng",
+        "Jiming Chen"
+      ],
+      "year": 2011,
+      "source": "Automatica",
+      "doi": "10.1016/j.automatica.2011.02.037",
+      "type": "article",
+      "abstract": "",
+      "cited_by_count": 211
+    },
+    "evidence_quotes": []
+  },
+  "Tran2026": {
+    "bib": {
+      "author": "Tran, Nho-Duc and Mahmood, Aamir and Gidlund, Mikael",
+      "title": "Learning-Based Sensor Scheduling for Delay-Aware and Stable Remote State Estimation",
+      "journal": "arXiv preprint arXiv:2601.21482",
+      "year": "2026"
+    },
+    "crossref": {
+      "error": "missing"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "error": "HTTP Error 503: Service Unavailable"
+    },
+    "evidence_quotes": []
+  },
+  "Wei2020": {
+    "bib": {
+      "author": "Wei, Yongyong and Zheng, Rong",
+      "title": "Informative Path Planning for Mobile Sensing with Reinforcement Learning",
+      "booktitle": "Proc. IEEE INFOCOM 2020",
+      "year": "2020",
+      "doi": "10.1109/INFOCOM41043.2020.9155528"
+    },
+    "crossref": {
+      "title": "Informative Path Planning for Mobile Sensing with Reinforcement Learning",
+      "authors": [
+        "Yongyong Wei",
+        "Rong Zheng"
+      ],
+      "year": 2020,
+      "container": "IEEE INFOCOM 2020 - IEEE Conference on Computer Communications",
+      "volume": "",
+      "issue": "",
+      "page": "864-873",
+      "article_number": "",
+      "doi": "10.1109/infocom41043.2020.9155528",
+      "type": "proceedings-article",
+      "publisher": "IEEE",
+      "abstract": "",
+      "url": "https://doi.org/10.1109/infocom41043.2020.9155528"
+    },
+    "semantic_scholar": {
+      "error": "HTTP Error 429: "
+    },
+    "openalex": {
+      "title": "Informative Path Planning for Mobile Sensing with Reinforcement Learning",
+      "authors": [
+        "Yongyong Wei",
+        "Rong Zheng"
+      ],
+      "year": 2020,
+      "source": "",
+      "doi": "10.1109/infocom41043.2020.9155528",
+      "type": "article",
+      "abstract": "Large-scale spatial data such as air quality, thermal conditions and location signatures play a vital role in a variety of applications. Collecting such data manually can be tedious and labour intensive. With the advancement of robotic technologies, it is feasible to automate such tasks using mobile robots with sensing and navigation capabilities. However, due to limited battery lifetime and scarcity of charging stations, it is important to plan paths for the robots that maximize the utility of data collection, also known as the informative path planning (IPP) problem. In this paper, we propose a novel IPP algorithm using reinforcement learning (RL). A constrained exploration and exploitation strategy is designed to address the unique challenges of IPP, and is shown to have fast convergence and better optimality than a classical reinforcement learning approach. Extensive experiments using real-world measurement data demonstrate that the proposed algorithm outperforms state-of-the-art algorithms in most test cases. Interestingly, unlike existing solutions that have to be re-executed when any input parameter changes, our RL-based solution allows a degree of transferability across different problem instances.",
+      "cited_by_count": 40
+    },
+    "evidence_quotes": [
+      {
+        "source": "openalex",
+        "quote": "Large-scale spatial data such as air quality, thermal conditions and location signatures play a vital role in a variety of applications. Collecting such data manually can be tedious and labour intensive. With the advancement of robotic technologies, it is feasible to automate such tasks using mobile robots with sensing and navigation capabilities. However, due to limited battery lifetime and scarcity of charging stations, it is important to plan paths for the robots that maximize the utility of data collection, also known as the informative path planning (IPP) problem. In this paper, we propose a novel IPP algorithm using reinforcement learning (RL). A constrained exploration and exploitation strategy is designed to address the unique challenges of IPP, and is shown to have fast convergence and better optimality than a classical reinforcement learning approach. Extensive experiments usin"
+      }
+    ]
+  }
+}

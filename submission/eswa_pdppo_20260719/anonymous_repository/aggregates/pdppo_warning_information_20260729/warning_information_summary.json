@@ -1,0 +1,189 @@
+{
+  "analysis_only": true,
+  "lead_window_steps": 16,
+  "policy_or_checkpoint_loaded": false,
+  "post_selection_22": {
+    "aggregate_warning": {
+      "fraction_at_or_above_threshold": 0.665247476674413,
+      "mean": 0.6500821779743927,
+      "median": 0.9894253073903092,
+      "q05": 0.00084713459653267,
+      "q95": 1.0,
+      "std": 0.45326518257026654
+    },
+    "analysis_support": "continuous scoreable final-test partition",
+    "lead_time": {
+      "detected_within_16_steps": 1262,
+      "detection_fraction": 1.0,
+      "event_runs": 1262,
+      "median_steps": 9.0,
+      "q05_steps": 8.0,
+      "q95_steps": 16.0
+    },
+    "seed_count": 22,
+    "seeds": [
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140
+    ],
+    "steps_per_seed": [
+      5242
+    ],
+    "subtype_one_vs_rest": {
+      "flux": {
+        "alert_positive_fraction": 0.12712011376643195,
+        "false_negative_rate": 0.0,
+        "false_positive_rate": 0.0192995274976862,
+        "positive_prevalence": 0.10994242308626131,
+        "pr_auc": 0.9810794444418777,
+        "precision_at_threshold": 0.8648703956343793,
+        "recall_at_threshold": 1.0,
+        "roc_auc": 0.9988095042295033
+      },
+      "particle": {
+        "alert_positive_fraction": 0.26043148000416216,
+        "false_negative_rate": 0.0,
+        "false_positive_rate": 0.04637849683579687,
+        "positive_prevalence": 0.22446325136138184,
+        "pr_auc": 0.9804006891889196,
+        "precision_at_threshold": 0.8618898581607511,
+        "recall_at_threshold": 1.0,
+        "roc_auc": 0.9971276845269497
+      },
+      "thermal": {
+        "alert_positive_fraction": 0.2785369914328327,
+        "false_negative_rate": 0.0,
+        "false_positive_rate": 0.05034640977937064,
+        "positive_prevalence": 0.24028823141757136,
+        "pr_auc": 0.9820815621528346,
+        "precision_at_threshold": 0.8626797833260693,
+        "recall_at_threshold": 1.0,
+        "roc_auc": 0.9970983490061309
+      }
+    },
+    "threshold": 0.5,
+    "thresholded_four_class": {
+      "accuracy": 0.9094464291908015,
+      "label_entropy_bits": 1.8529011286630022,
+      "macro_f1": 0.9155746635494931,
+      "macro_precision": 0.8981408414998603,
+      "macro_recall": 0.9467715299298647,
+      "mutual_information_bits": 1.4710619471630677,
+      "normalized_mutual_information_fraction": 0.7939236068276033
+    }
+  },
+  "reported_24_descriptive": {
+    "aggregate_warning": {
+      "fraction_at_or_above_threshold": 0.6652756581457459,
+      "mean": 0.6500553077153923,
+      "median": 0.9894088285678304,
+      "q05": 0.0008795248794904853,
+      "q95": 1.0,
+      "std": 0.4532562630639458
+    },
+    "analysis_support": "continuous scoreable final-test partition",
+    "lead_time": {
+      "detected_within_16_steps": 1379,
+      "detection_fraction": 1.0,
+      "event_runs": 1379,
+      "median_steps": 9.0,
+      "q05_steps": 8.0,
+      "q95_steps": 16.0
+    },
+    "seed_count": 24,
+    "seeds": [
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140
+    ],
+    "steps_per_seed": [
+      5242
+    ],
+    "subtype_one_vs_rest": {
+      "flux": {
+        "alert_positive_fraction": 0.1255564034083683,
+        "false_negative_rate": 0.0,
+        "false_positive_rate": 0.019116230964014408,
+        "positive_prevalence": 0.108514561872059,
+        "pr_auc": 0.9809161338890875,
+        "precision_at_threshold": 0.8642694353000759,
+        "recall_at_threshold": 1.0,
+        "roc_auc": 0.9988220957269899
+      },
+      "particle": {
+        "alert_positive_fraction": 0.26127909194963755,
+        "false_negative_rate": 0.0,
+        "false_positive_rate": 0.04670222586931993,
+        "positive_prevalence": 0.22508902454533894,
+        "pr_auc": 0.9805296625193064,
+        "precision_at_threshold": 0.8614888503544157,
+        "recall_at_threshold": 1.0,
+        "roc_auc": 0.9971305955411328
+      },
+      "thermal": {
+        "alert_positive_fraction": 0.2792747679002925,
+        "false_negative_rate": 0.0,
+        "false_positive_rate": 0.050425184316353885,
+        "positive_prevalence": 0.2410021620246725,
+        "pr_auc": 0.9821766175955073,
+        "precision_at_threshold": 0.8629571652198662,
+        "recall_at_threshold": 1.0,
+        "roc_auc": 0.9970940262645278
+      }
+    },
+    "threshold": 0.5,
+    "thresholded_four_class": {
+      "accuracy": 0.9093300902963246,
+      "label_entropy_bits": 1.8512631284616188,
+      "macro_f1": 0.9154351595196124,
+      "macro_precision": 0.8979608185279985,
+      "macro_recall": 0.9467141896184461,
+      "mutual_information_bits": 1.4691082308157624,
+      "normalized_mutual_information_fraction": 0.7935707292115609
+    }
+  },
+  "status": "passed",
+  "training_or_policy_replay_performed": false,
+  "truth_hashes_verified": true,
+  "warning_rule_definition": "argmax of the three subtype warning scores when their maximum is >=0.5; calm otherwise"
+}

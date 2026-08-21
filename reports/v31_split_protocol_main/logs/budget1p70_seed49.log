@@ -1,0 +1,70 @@
+reports/v31_split_protocol_main/raw/budget1p70_seed49/truth_v31_split.csv
+reports/v31_split_protocol_main/raw/budget1p70_seed49/dataset_validation/synthetic_validation.csv
+custom_ppo_update update=1 timesteps=2048 loss=0.371987 entropy=2.068840 adv_std=0.545801 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=2 timesteps=4096 loss=0.389445 entropy=2.068942 adv_std=0.776001 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=3 timesteps=6144 loss=0.765005 entropy=2.088941 adv_std=1.663508 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=4 timesteps=8192 loss=0.767925 entropy=2.106795 adv_std=1.830781 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=5 timesteps=10240 loss=0.671484 entropy=2.105714 adv_std=2.162564 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=6 timesteps=12288 loss=0.640388 entropy=2.101348 adv_std=2.234292 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=7 timesteps=14336 loss=0.611091 entropy=2.110170 adv_std=2.502932 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=8 timesteps=16384 loss=0.573093 entropy=2.111393 adv_std=1.817245 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=9 timesteps=18432 loss=0.884030 entropy=2.122253 adv_std=2.540709 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=10 timesteps=20480 loss=0.772080 entropy=2.138985 adv_std=2.179146 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=11 timesteps=22528 loss=0.933827 entropy=2.117826 adv_std=2.895787 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=12 timesteps=24576 loss=0.692582 entropy=2.109796 adv_std=2.630276 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=13 timesteps=26624 loss=0.779206 entropy=2.102912 adv_std=2.302147 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=14 timesteps=28672 loss=0.689503 entropy=2.117231 adv_std=1.952012 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=15 timesteps=30720 loss=0.740128 entropy=2.115026 adv_std=2.534551 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=16 timesteps=32768 loss=0.826913 entropy=2.115372 adv_std=2.914706 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=17 timesteps=34816 loss=0.662602 entropy=2.113508 adv_std=2.268157 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=18 timesteps=36864 loss=0.930731 entropy=2.120493 adv_std=2.803029 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=19 timesteps=38912 loss=0.745186 entropy=2.125544 adv_std=2.658839 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=20 timesteps=40960 loss=0.801386 entropy=2.125565 adv_std=2.754580 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=21 timesteps=43008 loss=0.598190 entropy=2.123287 adv_std=2.347957 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=22 timesteps=45056 loss=0.731833 entropy=2.117560 adv_std=2.270983 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=23 timesteps=47104 loss=0.901663 entropy=2.119575 adv_std=3.011063 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=24 timesteps=49152 loss=0.670336 entropy=2.095226 adv_std=2.426000 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=25 timesteps=51200 loss=0.804290 entropy=2.091648 adv_std=2.194533 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=26 timesteps=53248 loss=0.959913 entropy=2.108233 adv_std=3.203208 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=27 timesteps=55296 loss=0.613609 entropy=2.109153 adv_std=2.598321 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=28 timesteps=57344 loss=0.956056 entropy=2.129612 adv_std=2.878272 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=29 timesteps=59392 loss=1.116452 entropy=2.119954 adv_std=3.492320 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=30 timesteps=61440 loss=0.765344 entropy=2.134885 adv_std=2.583121 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=31 timesteps=63488 loss=0.680370 entropy=2.130278 adv_std=2.261770 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=32 timesteps=65536 loss=0.629348 entropy=2.122422 adv_std=2.324222 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=33 timesteps=67584 loss=0.766708 entropy=2.101884 adv_std=2.481971 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=34 timesteps=69632 loss=0.627188 entropy=2.096593 adv_std=2.484421 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=35 timesteps=71680 loss=1.008598 entropy=2.112539 adv_std=2.893770 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=36 timesteps=73728 loss=1.091497 entropy=2.120974 adv_std=2.710222 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=37 timesteps=75776 loss=0.665618 entropy=2.105644 adv_std=2.294222 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=38 timesteps=77824 loss=0.685292 entropy=2.116274 adv_std=2.881824 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=39 timesteps=79872 loss=0.985334 entropy=2.111755 adv_std=3.128020 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=40 timesteps=81920 loss=0.757515 entropy=2.102790 adv_std=2.828801 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=41 timesteps=83968 loss=1.429854 entropy=2.118216 adv_std=3.642869 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=42 timesteps=86016 loss=0.848222 entropy=2.125082 adv_std=2.749060 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=43 timesteps=88064 loss=0.731452 entropy=2.133696 adv_std=2.687965 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=44 timesteps=90112 loss=0.833961 entropy=2.113482 adv_std=2.841399 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=45 timesteps=92160 loss=1.095342 entropy=2.119161 adv_std=3.488969 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=46 timesteps=94208 loss=0.784767 entropy=2.119996 adv_std=2.685552 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=47 timesteps=96256 loss=1.028622 entropy=2.125807 adv_std=3.142178 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=48 timesteps=98304 loss=0.904113 entropy=2.111785 adv_std=2.836116 soc_aux=0.000000 awbc_label_rate=0.250
+custom_ppo_update update=49 timesteps=100000 loss=1.051865 entropy=2.112384 adv_std=3.544765 soc_aux=0.000000 awbc_label_rate=0.250
+reports/v31_split_protocol_main/raw/budget1p70_seed49/evaluation/v2_eval_overall.csv
+                    policy  steps  weighted_normalized_mae      mae     rmse    smape  pearson      dtw  oracle_loss_mean  reward_mean  power_mean  power_max  peak_power_max  steady_violation_rate  peak_violation_rate  event_rate  warmup_abort_count  warmup_abort_rate  obs_reconstruction_mae  forecast_samples  forecast_weighted_mae_overall  forecast_raw_mae_overall  forecast_weighted_mae_event  forecast_weighted_mae_non_event  forecast_weighted_mae_low_temp  forecast_weighted_mae_normal
+   full_open_unconstrained   6144                 0.058582 0.778942 2.729549 0.832697 0.872842 0.765126          0.111338    -0.111340    4.620000       4.62            6.28                    1.0                  1.0    0.207194                   0           0.000000                0.058582              6144                       0.111335                  1.611999                     0.113583                         0.105953                        0.102179                      0.112508
+ feasible_static_projected   6144                 0.248632 1.941913 4.700001 0.910184 0.895683 1.916534          0.118669    -0.118669    1.460000       1.46            1.95                    0.0                  0.0    0.207194                   0           0.000000                0.248632              6144                       0.118667                  1.729726                     0.120274                         0.114820                        0.109583                      0.120042
+validation_selected_static   6144                 0.248632 1.941913 4.700001 0.910184 0.895683 1.916534          0.118669    -0.118669    1.460000       1.46            1.95                    0.0                  0.0    0.207194                   0           0.000000                0.248632              6144                       0.118667                  1.729726                     0.120274                         0.114820                        0.109583                      0.120042
+                custom_ppo   6144                 0.220875 1.872361 4.473028 0.908728 0.908763 1.845965          0.119048    -0.119900    1.538301       1.62            2.07                    0.0                  0.0    0.207194                  63           0.010254                0.220875              6144                       0.119094                  1.706127                     0.120125                         0.116627                        0.108440                      0.123024
+               round_robin   6144                 0.253241 1.993922 4.833346 0.904189 0.879163 1.945084          0.126358    -0.146780    1.555000       1.64            1.98                    0.0                  0.0    0.207194                1530           0.249023                0.253241              6144                       0.126355                  1.806928                     0.127919                         0.122611                        0.118042                      0.125877
+                    random   6144                 0.114306 1.381982 7.004969 0.890843 0.857648 1.056927          0.128293    -0.155601    1.606621       1.70            2.33                    0.0                  0.0    0.207194                2034           0.331055                0.114306              6144                       0.128293                  2.075403                     0.128826                         0.127018                        0.117607                      0.131669
+                       aoi   6144                 0.108753 1.336581 6.016679 0.878863 0.839583 1.057845          0.128743    -0.160121    1.622279       1.70            2.33                    0.0                  0.0    0.207194                2340           0.380859                0.108753              6144                       0.128746                  2.051082                     0.127120                         0.132637                        0.114996                      0.141328
+reports/v31_split_protocol_main/raw/budget1p70_seed49/v2_custom_ppo_metrics.csv
+                    policy  steps  reward_mean  instant_mae  oracle_loss_mean  dtw_mean  power_mean  peak_power_max  event_rate  warmup_abort_count
+   full_open_unconstrained   6144    -0.111340     1.657084          0.111338  1.600745    4.620000            6.28    0.207194                   0
+validation_selected_static   6144    -0.118669     2.917854          0.118669  2.793160    1.460000            1.95    0.207194                   0
+ feasible_static_projected   6144    -0.118669     2.917854          0.118669  2.793160    1.460000            1.95    0.207194                   0
+                custom_ppo   6144    -0.119900     2.875580          0.119048  2.751385    1.538301            2.07    0.207194                  63
+               round_robin   6144    -0.146780     4.012063          0.126358  3.233444    1.555000            1.98    0.207194                1530
+                    random   6144    -0.155601     5.320796          0.128293  3.367896    1.606621            2.33    0.207194                2034
+                       aoi   6144    -0.160121     5.957732          0.128743  3.570714    1.622279            2.33    0.207194                2340
+reports/v31_split_protocol_main/raw/budget1p70_seed49/split_protocol_manifest.json

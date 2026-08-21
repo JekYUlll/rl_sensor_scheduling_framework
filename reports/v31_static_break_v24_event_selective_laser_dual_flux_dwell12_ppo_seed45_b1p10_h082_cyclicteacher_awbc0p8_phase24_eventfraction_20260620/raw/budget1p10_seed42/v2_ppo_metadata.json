@@ -1,0 +1,322 @@
+{
+  "truth_csv": "reports/v31_static_break_v24_event_selective_laser_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_phase24_eventfraction_20260620/raw/budget1p10_seed42/truth_v31_split.csv",
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v24_event_selective_laser.yaml",
+  "oracle_path": "reports/v31_static_break_v24_event_selective_laser_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_phase24_eventfraction_20260620/raw/budget1p10_seed42/v2_tcn_oracle.pt",
+  "oracle_type": "tcn",
+  "oracle_rollout_steps": 2400,
+  "oracle_rollouts_per_policy": 4,
+  "oracle_event_fraction": 0.5,
+  "oracle_full_open_repeat": 3,
+  "oracle_pretrain_rollout_summary": {
+    "spec_count_by_policy": {
+      "full_open_unconstrained": 3,
+      "feasible_static_projected": 1,
+      "round_robin": 1,
+      "aoi": 1,
+      "random": 1
+    },
+    "rollouts_by_policy": {
+      "full_open_unconstrained": 12,
+      "feasible_static_projected": 4,
+      "round_robin": 4,
+      "aoi": 4,
+      "random": 4
+    },
+    "steps_by_policy": {
+      "full_open_unconstrained": 7200,
+      "feasible_static_projected": 2400,
+      "round_robin": 2400,
+      "aoi": 2400,
+      "random": 2400
+    },
+    "step_fraction_by_policy": {
+      "full_open_unconstrained": 0.42857142857142855,
+      "feasible_static_projected": 0.14285714285714285,
+      "round_robin": 0.14285714285714285,
+      "aoi": 0.14285714285714285,
+      "random": 0.14285714285714285
+    },
+    "total_specs": 7,
+    "total_rollouts": 28,
+    "total_steps": 16800
+  },
+  "oracle_inference_device": "cpu",
+  "oracle_use_mask_channels": true,
+  "reward_target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "target_weights": [
+    0.03,
+    0.03,
+    0.1,
+    0.01,
+    0.01,
+    0.0,
+    22.0,
+    16.0,
+    16.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "model_path": "reports/v31_static_break_v24_event_selective_laser_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_phase24_eventfraction_20260620/raw/budget1p10_seed42/custom_ppo.pt",
+  "eval_policies": [
+    "custom_ppo",
+    "validation_selected_static",
+    "full_open_unconstrained",
+    "feasible_static_projected",
+    "round_robin",
+    "aoi",
+    "random",
+    "duty_constrained_validation_selected_static",
+    "duty_constrained_feasible_static_projected",
+    "duty_constrained_round_robin",
+    "duty_constrained_aoi",
+    "duty_constrained_random"
+  ],
+  "seed": 42,
+  "freq_s": 3600,
+  "lookback": 20,
+  "horizon": 8,
+  "eval_rollouts": 8,
+  "eval_event_fraction": 0.65,
+  "eval_start_indices": [
+    55500,
+    56268,
+    56780,
+    57356,
+    57932,
+    58444,
+    58956,
+    59479
+  ],
+  "train_start_indices": [],
+  "train_start_min": 21000,
+  "train_start_max": 50479,
+  "event_reward_multiplier": 1.5,
+  "reward_shaping": {
+    "lambda_warmup_abort": 1.0,
+    "lambda_switch": 0.002,
+    "lambda_duty_balance": 0.8,
+    "duty_balance_low": 0.12,
+    "duty_balance_high": 0.75,
+    "duty_balance_grace_steps": 64,
+    "duty_score_feedback": 2.5,
+    "duty_score_target": 0.4,
+    "duty_hard_guard": true,
+    "duty_hard_low": 0.12,
+    "duty_hard_high": 0.75,
+    "duty_hard_score": 12.0,
+    "min_dwell_steps": 12,
+    "baseline_duty_score_feedback": 0.0,
+    "baseline_duty_hard_guard": false
+  },
+  "energy_account": {
+    "enabled": true,
+    "energy_capacity": 180.0,
+    "initial_energy": 180.0,
+    "harvest_per_step": 0.82,
+    "reserve_energy": 20.0,
+    "lambda_energy_deficit": 1.0,
+    "soc_soft_penalty_buffer": 40.0,
+    "lambda_soc_soft_penalty": 0.08
+  },
+  "agent_cycle_phase": {
+    "enabled": true,
+    "period_steps": 24,
+    "dwell_steps": 12
+  },
+  "custom_ppo": {
+    "total_timesteps": 40000,
+    "n_steps": 512,
+    "batch_size": 64,
+    "n_epochs": 10,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.001,
+    "vf_coef": 0.5,
+    "awbc_coef": 0.8,
+    "awbc_label_stride": 1,
+    "awbc_teacher_mode": "event_cyclic",
+    "awbc_teacher_event_lookahead_steps": 0,
+    "awbc_teacher_calm_action": -1,
+    "awbc_teacher_event_action": -1,
+    "awbc_teacher_calm_actions": [
+      17,
+      5
+    ],
+    "awbc_teacher_event_actions": [
+      22,
+      7
+    ],
+    "awbc_teacher_dwell_steps": 12,
+    "prior_kl_coef": 0.05,
+    "embed_dim": 32,
+    "hidden_dim": 128,
+    "greedy_lookahead_steps": 4,
+    "event_start_prob": 0.65,
+    "use_action_mask": 1,
+    "use_action_embedding": 1,
+    "event_aware_critic": 1,
+    "event_gated_actor": 1,
+    "soc_aux_horizon": 32,
+    "soc_aux_coef": 0.03,
+    "device": "auto",
+    "seed": 42,
+    "candidate_count": 23,
+    "history_path": "reports/v31_static_break_v24_event_selective_laser_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_phase24_eventfraction_20260620/raw/budget1p10_seed42/custom_ppo_training_history_live.json",
+    "train_start_indices": [],
+    "train_start_min": 21000,
+    "train_start_max": 50479
+  },
+  "awbc_teacher": {
+    "mode": "event_cyclic",
+    "calm_sensors": [],
+    "event_sensors": [],
+    "calm_pool_spec": "radiometer_basic,surface_temp_ir,shielded_thermo_hygro,laser_disdrometer;radiometer_basic,shielded_thermo_hygro,snow_particle_counter",
+    "event_pool_spec": "surface_temp_ir,shielded_thermo_hygro,fc4_flux;surface_temp_ir,shielded_thermo_hygro,snow_particle_counter",
+    "event_lookahead_steps": 0,
+    "dwell_steps": 12,
+    "calm_action": -1,
+    "event_action": -1,
+    "calm_actions": [
+      17,
+      5
+    ],
+    "event_actions": [
+      22,
+      7
+    ]
+  },
+  "candidate_prior": {
+    "enabled": true,
+    "steps": 512,
+    "rollouts": 4,
+    "scale": 0.5,
+    "path": "reports/v31_static_break_v24_event_selective_laser_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_phase24_eventfraction_20260620/raw/budget1p10_seed42/custom_ppo_candidate_prior.csv",
+    "start_indices": [
+      26662,
+      32863,
+      38847,
+      45026
+    ]
+  },
+  "oracle_static_projected": {
+    "source": "validation_min_oracle_loss",
+    "action_idx": 18,
+    "sensor_ids": "radiometer_basic|ultrasonic_anemometer_hd|shielded_thermo_hygro|laser_disdrometer",
+    "candidate_prior_oracle_loss_mean": 0.3426346760152228,
+    "candidate_prior_power_mean": 1.08
+  },
+  "selected_static_reference": {
+    "source": "validation_min_oracle_loss",
+    "action_idx": 18,
+    "sensor_ids": "radiometer_basic|ultrasonic_anemometer_hd|shielded_thermo_hygro|laser_disdrometer",
+    "candidate_prior_oracle_loss_mean": 0.3426346760152228,
+    "candidate_prior_power_mean": 1.08
+  },
+  "partition_protocol": {
+    "oracle_start_idx": 0,
+    "oracle_end_idx": 21000,
+    "normalization_start_idx": 21000,
+    "normalization_end_idx": 51000,
+    "static_selection_start_indices": [
+      51505,
+      52496,
+      53466,
+      54462
+    ],
+    "static_selection_steps": 512
+  },
+  "ablation_switches": {
+    "use_action_mask": true,
+    "use_action_embedding": true,
+    "event_aware_critic": true,
+    "event_gated_actor": true,
+    "soc_aux_enabled": true,
+    "awbc_enabled": true,
+    "prior_kl_enabled": true,
+    "eval_duty_constrained_baselines": true,
+    "eval_switch_limited_baselines": false
+  },
+  "duty_constrained_baselines": {
+    "enabled": true,
+    "duty_hard_low": 0.12,
+    "duty_hard_high": 0.75,
+    "duty_hard_score": 12.0,
+    "duty_score_feedback": 2.5
+  },
+  "switch_limited_baselines": {
+    "enabled": false,
+    "min_dwell_steps": [
+      6,
+      12
+    ]
+  },
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 1.1,
+    "startup_peak_budget": 1.55,
+    "required_sensor_ids": [],
+    "coverage_groups": [
+      {
+        "name": "weather",
+        "sensor_ids": [
+          "met_station_core",
+          "ultrasonic_anemometer_hd",
+          "shielded_thermo_hygro"
+        ]
+      },
+      {
+        "name": "surface_forcing",
+        "sensor_ids": [
+          "radiometer_basic",
+          "surface_temp_ir"
+        ]
+      },
+      {
+        "name": "snow_transport",
+        "sensor_ids": [
+          "snow_particle_counter",
+          "laser_disdrometer",
+          "fc4_flux"
+        ]
+      }
+    ]
+  },
+  "truth_event_design": {
+    "blowing_snow_event_coverage": 0.55,
+    "blowing_snow_event_model": "semi_markov",
+    "blowing_snow_min_duration_steps": 12,
+    "blowing_snow_max_duration_steps": 36,
+    "blowing_snow_min_gap_steps": 2,
+    "blowing_snow_lead_steps": 6,
+    "blowing_snow_wind_margin_ms": 1.2,
+    "cred_hysteresis_on": 0.6,
+    "cred_hysteresis_off": 0.3,
+    "flux_wind_exponent": 4.0,
+    "event_microstructure_sigma": 0.65,
+    "event_microstructure_alpha": 0.2,
+    "event_microstructure_diameter_scale": 0.16,
+    "event_microstructure_velocity_scale": 1.5,
+    "event_particle_microstructure_correlation": 0.0
+  }
+}

@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/home/horeb/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/49_v31_physical_event_oracle_lift.py", line 1029, in <module>
+    main()
+  File "/home/horeb/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/49_v31_physical_event_oracle_lift.py", line 987, in main
+    table.to_csv(out_dir / "oracle_lift_candidate_table.csv", index=False)
+  File "/home/horeb/miniconda3/lib/python3.12/site-packages/pandas/util/_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/horeb/miniconda3/lib/python3.12/site-packages/pandas/core/generic.py", line 3986, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/horeb/miniconda3/lib/python3.12/site-packages/pandas/io/formats/format.py", line 1014, in to_csv
+    csv_formatter.save()
+  File "/home/horeb/miniconda3/lib/python3.12/site-packages/pandas/io/formats/csvs.py", line 251, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/horeb/miniconda3/lib/python3.12/site-packages/pandas/io/common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/horeb/miniconda3/lib/python3.12/site-packages/pandas/io/common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'reports/v31_static_break_calibration_v12_spc_event_fragile_linear_probe_20260607/snow_task_v6_b0p62_p1p60'

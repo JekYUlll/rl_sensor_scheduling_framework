@@ -1,0 +1,63 @@
+[budget-start] B=1.65
+[v31-s2] tasks=10 skipped=0 pending=10 workers=3
+[run] worker=0 budget=1.65 seed=41 -> reports/v31_s2_main/logs/budget1p65_seed41.log
+[run] worker=1 budget=1.65 seed=42 -> reports/v31_s2_main/logs/budget1p65_seed42.log
+[run] worker=2 budget=1.65 seed=43 -> reports/v31_s2_main/logs/budget1p65_seed43.log
+[run] worker=2 budget=1.65 seed=44 -> reports/v31_s2_main/logs/budget1p65_seed44.log
+[run] worker=1 budget=1.65 seed=45 -> reports/v31_s2_main/logs/budget1p65_seed45.log
+[run] worker=0 budget=1.65 seed=46 -> reports/v31_s2_main/logs/budget1p65_seed46.log
+[run] worker=2 budget=1.65 seed=47 -> reports/v31_s2_main/logs/budget1p65_seed47.log
+[run] worker=1 budget=1.65 seed=48 -> reports/v31_s2_main/logs/budget1p65_seed48.log
+[run] worker=0 budget=1.65 seed=49 -> reports/v31_s2_main/logs/budget1p65_seed49.log
+[run] worker=1 budget=1.65 seed=50 -> reports/v31_s2_main/logs/budget1p65_seed50.log
+[collect] /home/zhangzhuyu/.conda/envs/darts/bin/python /home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/43_v31_s2_collect.py --out-dir reports/v31_s2_main --bonferroni-family 6
+reports/v31_s2_main/v31_s2_overall_long.csv
+reports/v31_s2_main/v31_s2_main_stats.csv
+reports/v31_s2_main/v31_s2_budget_check.csv
+ budget             best_policy  full_open_best  pdppo_mean  static_mean  pdppo_static_gap  pdppo_static_gap_ok  round_robin_mean  pdppo_beats_round_robin  aoi_mean  pdppo_beats_aoi  random_mean  pdppo_beats_random
+   1.65 full_open_unconstrained            True    0.162812      0.15925           0.02237                 True          0.167076                     True  0.169964             True     0.180311                True
+reports/v31_s2_main/v31_s2_significance.csv
+[budget-done] B=1.65
+[budget-start] B=1.70
+[v31-s2] tasks=10 skipped=0 pending=10 workers=3
+[run] worker=0 budget=1.70 seed=41 -> reports/v31_s2_main/logs/budget1p70_seed41.log
+[run] worker=1 budget=1.70 seed=42 -> reports/v31_s2_main/logs/budget1p70_seed42.log
+[run] worker=2 budget=1.70 seed=43 -> reports/v31_s2_main/logs/budget1p70_seed43.log
+[run] worker=1 budget=1.70 seed=44 -> reports/v31_s2_main/logs/budget1p70_seed44.log
+[run] worker=0 budget=1.70 seed=45 -> reports/v31_s2_main/logs/budget1p70_seed45.log
+[run] worker=2 budget=1.70 seed=46 -> reports/v31_s2_main/logs/budget1p70_seed46.log
+[run] worker=0 budget=1.70 seed=47 -> reports/v31_s2_main/logs/budget1p70_seed47.log
+[run] worker=2 budget=1.70 seed=48 -> reports/v31_s2_main/logs/budget1p70_seed48.log
+[run] worker=1 budget=1.70 seed=49 -> reports/v31_s2_main/logs/budget1p70_seed49.log
+[run] worker=0 budget=1.70 seed=50 -> reports/v31_s2_main/logs/budget1p70_seed50.log
+[collect] /home/zhangzhuyu/.conda/envs/darts/bin/python /home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/43_v31_s2_collect.py --out-dir reports/v31_s2_main --bonferroni-family 6
+reports/v31_s2_main/v31_s2_overall_long.csv
+reports/v31_s2_main/v31_s2_main_stats.csv
+reports/v31_s2_main/v31_s2_budget_check.csv
+ budget             best_policy  full_open_best  pdppo_mean  static_mean  pdppo_static_gap  pdppo_static_gap_ok  round_robin_mean  pdppo_beats_round_robin  aoi_mean  pdppo_beats_aoi  random_mean  pdppo_beats_random
+   1.65 full_open_unconstrained            True    0.162812     0.159250          0.022370                 True          0.167076                     True  0.169964             True     0.180311                True
+   1.70 full_open_unconstrained            True    0.162035     0.159684          0.014725                 True          0.167385                     True  0.184357             True     0.186227                True
+reports/v31_s2_main/v31_s2_significance.csv
+[budget-done] B=1.70
+[budget-start] B=1.75
+[v31-s2] tasks=10 skipped=0 pending=10 workers=3
+[run] worker=0 budget=1.75 seed=41 -> reports/v31_s2_main/logs/budget1p75_seed41.log
+[run] worker=1 budget=1.75 seed=42 -> reports/v31_s2_main/logs/budget1p75_seed42.log
+[run] worker=2 budget=1.75 seed=43 -> reports/v31_s2_main/logs/budget1p75_seed43.log
+[run] worker=0 budget=1.75 seed=44 -> reports/v31_s2_main/logs/budget1p75_seed44.log
+[run] worker=2 budget=1.75 seed=45 -> reports/v31_s2_main/logs/budget1p75_seed45.log
+[run] worker=1 budget=1.75 seed=46 -> reports/v31_s2_main/logs/budget1p75_seed46.log
+[run] worker=2 budget=1.75 seed=47 -> reports/v31_s2_main/logs/budget1p75_seed47.log
+[run] worker=0 budget=1.75 seed=48 -> reports/v31_s2_main/logs/budget1p75_seed48.log
+[run] worker=1 budget=1.75 seed=49 -> reports/v31_s2_main/logs/budget1p75_seed49.log
+[run] worker=2 budget=1.75 seed=50 -> reports/v31_s2_main/logs/budget1p75_seed50.log
+[collect] /home/zhangzhuyu/.conda/envs/darts/bin/python /home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/43_v31_s2_collect.py --out-dir reports/v31_s2_main --bonferroni-family 6
+reports/v31_s2_main/v31_s2_overall_long.csv
+reports/v31_s2_main/v31_s2_main_stats.csv
+reports/v31_s2_main/v31_s2_budget_check.csv
+ budget             best_policy  full_open_best  pdppo_mean  static_mean  pdppo_static_gap  pdppo_static_gap_ok  round_robin_mean  pdppo_beats_round_robin  aoi_mean  pdppo_beats_aoi  random_mean  pdppo_beats_random
+   1.65 full_open_unconstrained            True    0.162812     0.159250          0.022370                 True          0.167076                     True  0.169964             True     0.180311                True
+   1.70 full_open_unconstrained            True    0.162035     0.159684          0.014725                 True          0.167385                     True  0.184357             True     0.186227                True
+   1.75 full_open_unconstrained            True    0.166145     0.161158          0.030947                False          0.168721                     True  0.193259             True     0.191413                True
+reports/v31_s2_main/v31_s2_significance.csv
+[budget-check-fail] B=1.75; stopping before later budgets.

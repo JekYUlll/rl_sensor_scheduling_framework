@@ -146,6 +146,7 @@ def prepare_input_and_targets(
     context_series: dict[str, np.ndarray] | None = None,
     context_features: list[str] | None = None,
     input_filter_cfg: Mapping[str, object] | None = None,
+    time_delta_cfg: Mapping[str, object] | None = None,
 ) -> tuple[np.ndarray, list[str], np.ndarray, list[str], np.ndarray | None]:
     input_filtered = apply_input_filter(
         np.asarray(input_series, dtype=float),
@@ -162,6 +163,7 @@ def prepare_input_and_targets(
         base_freq_s=int(base_freq_s),
         context_series=None if context_series is None else extract_context_series(context_series),
         context_features=None if context_features is None else [str(name) for name in context_features],
+        time_delta_cfg=time_delta_cfg,
     )
     target_sel, target_names, target_indices = select_target_columns(
         target_series=np.asarray(target_series, dtype=float),

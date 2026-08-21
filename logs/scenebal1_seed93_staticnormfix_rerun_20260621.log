@@ -1,0 +1,108 @@
+scenebal1_parallel_start date=2026-06-21T10:36:15+08:00 seeds=93 pilot=scenebal1_pilot_93_20260621
+reports/aggregate/scenebal1_pilot_93_macro_20260621/metpair_seed_summary.csv
+reports/aggregate/scenebal1_pilot_93_macro_20260621/metpair_claim_summary.json
+{
+  "complete_seeds": 1,
+  "seed_gate_pass_count": 1,
+  "learned_gate_pass_count": 1,
+  "replay_gate_pass_count": 1,
+  "behavior_gate_pass_count": 1,
+  "learned_macro_positive_count": 1,
+  "replay_macro_positive_count": 1,
+  "macro_seed_positive_count": 1,
+  "learned_macro_gate_count": 1,
+  "replay_macro_gate_count": 1,
+  "macro_seed_gate_count": 1,
+  "mean_learned_margin_abs": 0.36903791170561795,
+  "median_learned_margin_abs": 0.36903791170561795,
+  "mean_replay_margin_abs_vs_static_reference": 0.15603340224060958,
+  "median_replay_margin_abs_vs_static_reference": 0.15603340224060958,
+  "mean_learned_macro_margin_abs": 0.13559048482281577,
+  "median_learned_macro_margin_abs": 0.13559048482281577,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.08043632386206656,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.08043632386206656,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.0783768185853645,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.0783768185853645,
+  "one_sided_sign_test_p_seed_gate": 0.5,
+  "one_sided_sign_test_p_macro_seed_positive": 0.5,
+  "one_sided_sign_test_p_macro_seed_gate": 0.5,
+  "claim_strength": "single_seed_only",
+  "reason": "one complete passing seed",
+  "macro_claim_strength": "single_seed_macro_only",
+  "macro_reason": "one complete seed passes the macro gate"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+   93      True                 1.56862              1.937658 oracle_loss_macro_subtype_event_staticnorm                               0.369038                               0.156033                                      0.13559                                            0.080436                                     0.078377                      True                  True                True            True
+reports/aggregate/scenebal1_pilot_93_raw_macro_20260621/metpair_seed_summary.csv
+reports/aggregate/scenebal1_pilot_93_raw_macro_20260621/metpair_claim_summary.json
+{
+  "complete_seeds": 1,
+  "seed_gate_pass_count": 1,
+  "learned_gate_pass_count": 1,
+  "replay_gate_pass_count": 1,
+  "behavior_gate_pass_count": 1,
+  "learned_macro_positive_count": 1,
+  "replay_macro_positive_count": 1,
+  "macro_seed_positive_count": 1,
+  "learned_macro_gate_count": 1,
+  "replay_macro_gate_count": 1,
+  "macro_seed_gate_count": 1,
+  "mean_learned_margin_abs": 0.36903791170561795,
+  "median_learned_margin_abs": 0.36903791170561795,
+  "mean_replay_margin_abs_vs_static_reference": 0.15603340224060958,
+  "median_replay_margin_abs_vs_static_reference": 0.15603340224060958,
+  "mean_learned_macro_margin_abs": 0.13559048482281577,
+  "median_learned_macro_margin_abs": 0.13559048482281577,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.08043632386206656,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.08043632386206656,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.0783768185853645,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.0783768185853645,
+  "one_sided_sign_test_p_seed_gate": 0.5,
+  "one_sided_sign_test_p_macro_seed_positive": 0.5,
+  "one_sided_sign_test_p_macro_seed_gate": 0.5,
+  "claim_strength": "single_seed_only",
+  "reason": "one complete passing seed",
+  "macro_claim_strength": "single_seed_macro_only",
+  "macro_reason": "one complete seed passes the macro gate"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+   93      True                 1.56862              1.937658 oracle_loss_macro_subtype_event_staticnorm                               0.369038                               0.156033                                      0.13559                                            0.080436                                     0.078377                      True                  True                True            True
+reports/aggregate/scenebal1_pilot_93_oldclaim_20260621/oldclaim_seed_summary.csv
+reports/aggregate/scenebal1_pilot_93_oldclaim_20260621/oldclaim_summary.json
+{
+  "complete_seeds": 1,
+  "old_claim_step_gate_count": 1,
+  "old_claim_macro_gate_count": 1,
+  "behavior_eval_dirs": [
+    "."
+  ],
+  "step_static_gate_count": 1,
+  "step_rule_dynamic_gate_count": 1,
+  "step_operational_gate_count": 1,
+  "macro_static_gate_count": 1,
+  "macro_rule_dynamic_gate_count": 1,
+  "macro_operational_gate_count": 1,
+  "replay_gate_count": 1,
+  "replay_macro_gate_count": 1,
+  "learned_replay_static_gate_count": 1,
+  "learned_replay_macro_static_gate_count": 0,
+  "learned_true_static_step_gate_count": 1,
+  "learned_true_static_macro_gate_count": 0,
+  "behavior_gate_count": 1,
+  "mean_step_margin_vs_best_operational_baseline": 0.36903791170561795,
+  "median_step_margin_vs_best_operational_baseline": 0.36903791170561795,
+  "mean_macro_margin_vs_best_operational_baseline": 0.21530576803583412,
+  "median_macro_margin_vs_best_operational_baseline": 0.21530576803583412,
+  "one_sided_sign_test_p_old_claim_step_gate": 0.5,
+  "one_sided_sign_test_p_old_claim_macro_gate": 0.5,
+  "one_sided_sign_test_p_learned_true_static_step_gate": 0.5,
+  "one_sided_sign_test_p_learned_true_static_macro_gate": 1.0,
+  "claim_strength": "not_supported",
+  "reason": "old-claim step gates are not consistently positive",
+  "macro_claim_strength": "macro_not_supported",
+  "macro_reason": "old-claim macro gates are not consistently positive"
+}
+ seed  complete  custom_ppo_loss  best_static_loss best_rule_dynamic_policy  best_rule_dynamic_loss  step_margin_vs_best_operational_baseline  step_margin_vs_replay_static_reference  macro_margin_vs_best_operational_baseline  macro_margin_vs_replay_static_reference  old_claim_step_gate_pass  old_claim_macro_gate_pass  learned_true_static_step_gate_pass  learned_true_static_macro_gate_pass
+   93      True          1.56862          1.937658              round_robin                1.948473                                  0.369038                                0.155887                                   0.215306                                 -1.07836                      True                       True                                True                                False
+reports/aggregate/scenebal1_pilot_93_oldclaim_20260621/SCENEBAL1_REPORT.md
+scenebal1_parallel_done date=2026-06-21T10:57:36+08:00

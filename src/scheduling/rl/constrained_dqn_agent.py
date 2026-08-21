@@ -28,13 +28,6 @@ class ConstrainedDQNAgent(DQNAgent):
         train_cfg = cfg.get("training", {})
         cmdp_cfg = cfg.get("cmdp", {})
 
-        self.cost_q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
-        self.target_cost_q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
-        self.target_cost_q.load_state_dict(self.cost_q.state_dict())
-        self.cost_optimizer = torch.optim.Adam(self.cost_q.parameters(), lr=float(train_cfg.get("lr", 1e-3)))
-
-        replay_size = int(train_cfg.get("replay_size", 50000))
-        self.replay = ConstraintReplayBuffer(replay_size)
         self.lambda_cost = float(cmdp_cfg.get("lambda_cost_init", cmdp_cfg.get("lambda_avg_init", 0.0)))
         self.dual_lr = float(cmdp_cfg.get("dual_lr_cost", cmdp_cfg.get("dual_lr_avg", 0.05)))
         self.lambda_max = float(cmdp_cfg.get("lambda_max", 100.0))
@@ -53,6 +46,17 @@ class ConstrainedDQNAgent(DQNAgent):
         self.average_power_budget = average_power_budget
         self.episode_energy_budget = episode_energy_budget
         self.episode_len = episode_len
+        self.constraint_active = self.effective_average_power_budget is not None or self.lambda_cost > 0.0
+        if not self.constraint_active:
+            return
+
+        self.cost_q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
+        self.target_cost_q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
+        self.target_cost_q.load_state_dict(self.cost_q.state_dict())
+        self.cost_optimizer = torch.optim.Adam(self.cost_q.parameters(), lr=float(train_cfg.get("lr", 1e-3)))
+
+        replay_size = int(train_cfg.get("replay_size", 50000))
+        self.replay = ConstraintReplayBuffer(replay_size)
 
     def _norm_power(self, power: float) -> float:
         return float(power) / self.power_reference if self.normalize_power else float(power)
@@ -68,6 +72,8 @@ class ConstrainedDQNAgent(DQNAgent):
         return reward_q - self.lambda_cost * cost_q
 
     def act(self, state_vec: np.ndarray, greedy: bool = False, feasible_action_ids: list[int] | None = None) -> int:
+        if not self.constraint_active:
+            return super().act(state_vec, greedy=greedy, feasible_action_ids=feasible_action_ids)
         feasible = self._resolve_feasible(feasible_action_ids)
         if not feasible:
             return 0
@@ -93,6 +99,8 @@ class ConstrainedDQNAgent(DQNAgent):
         done: bool,
         constraint_cost: float | None = None,
     ) -> dict[str, float | None]:
+        if not self.constraint_active:
+            return super().observe(state, action, reward, next_state, done)
         self.replay.push(state, action, reward, self._norm_power(float(constraint_cost or 0.0)), next_state, done)
         self.total_steps += 1
         info: dict[str, float | None] = {"loss": None}
@@ -106,6 +114,8 @@ class ConstrainedDQNAgent(DQNAgent):
         return info
 
     def _train_step(self) -> float | None:
+        if not self.constraint_active:
+            return super()._train_step()
         if len(self.replay) < max(self.batch_size, self.warmup_steps):
             return None
         s, a, task_r, cost_r, ns, d = self.replay.sample(self.batch_size)
@@ -144,9 +154,20 @@ class ConstrainedDQNAgent(DQNAgent):
         return float((reward_loss + cost_loss).item())
 
     def shape_reward(self, task_reward: float, steady_power: float) -> float:
+        if not self.constraint_active:
+            return float(task_reward)
         return float(task_reward - self.lambda_cost * self._norm_power(steady_power))
 
     def end_episode(self, mean_power: float, total_energy: float) -> dict[str, float]:
+        if not self.constraint_active:
+            return {
+                "lambda_avg": 0.0,
+                "lambda_energy": 0.0,
+                "lambda_cost": 0.0,
+                "avg_power_violation": 0.0,
+                "energy_violation": 0.0,
+                "effective_average_power_budget": 0.0,
+            }
         violation = 0.0
         effective_budget = self.effective_average_power_budget
         if effective_budget is not None:
@@ -166,6 +187,9 @@ class ConstrainedDQNAgent(DQNAgent):
         }
 
     def save(self, path: str) -> None:
+        if not self.constraint_active:
+            super().save(path)
+            return
         torch.save(
             {
                 "reward_q": self.q.state_dict(),
@@ -177,6 +201,9 @@ class ConstrainedDQNAgent(DQNAgent):
         )
 
     def load(self, path: str) -> None:
+        if not self.constraint_active:
+            super().load(path)
+            return
         payload = torch.load(path, map_location=self.device)
         if isinstance(payload, dict) and "reward_q" in payload:
             self.q.load_state_dict(payload["reward_q"])

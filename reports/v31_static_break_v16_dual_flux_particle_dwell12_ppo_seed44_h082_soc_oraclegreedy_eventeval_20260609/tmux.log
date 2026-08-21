@@ -1,0 +1,13 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p15_seed44 -> reports/v31_static_break_v16_dual_flux_particle_dwell12_ppo_seed44_h082_soc_oraclegreedy_eventeval_20260609/logs/budget1p15_seed44.log
+complete_seeds=1/1
+reports/v31_static_break_v16_dual_flux_particle_dwell12_ppo_seed44_h082_soc_oraclegreedy_eventeval_20260609/v16_dual_flux_particle_b1p15_seed44_h082_soc_oraclegreedy_eventeval_summary.csv
+reports/v31_static_break_v16_dual_flux_particle_dwell12_ppo_seed44_h082_soc_oraclegreedy_eventeval_20260609/v16_dual_flux_particle_b1p15_seed44_h082_soc_oraclegreedy_eventeval_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                0                        -0.002622                       -0.002622                       -0.002622
+               best_static  1                0                        -0.038496                       -0.038496                       -0.038496
+           selected_static  1                0                        -0.012827                       -0.012827                       -0.012827
+deployable_selected_static  1                0                        -0.004314                       -0.004314                       -0.004314
+    best_deployable_static  1                0                        -0.004314                       -0.004314                       -0.004314
+     best_original_dynamic  1                0                        -0.044341                       -0.044341                       -0.044341
+       best_duty_non_pdppo  1                1                         0.008520                        0.008520                        0.008520

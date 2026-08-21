@@ -17,14 +17,21 @@ exploration:
   eps_start: 1.0
   eps_end: 0.05
   eps_decay_steps: 10000
+reward_normalization:
+  enabled: false
+  clip: 10.0
 cmdp:
-  average_power_budget: 1.6
-  episode_energy_budget: 640.0
+  # Active CMDP constraint for the full warmup/complex regime.
+  # Instantaneous rated power is still handled by the action projector; this
+  # average budget is what makes cmdp_dqn distinct from plain dqn.
+  average_power_budget: 1.35
+  episode_energy_budget: null
   lambda_avg_init: 0.0
   lambda_energy_init: 0.0
-  dual_lr_avg: 0.1
+  dual_lr_avg: 0.03
   dual_lr_energy: 0.001
-  lambda_max: 100.0
+  lambda_max: 20.0
+  violation_ema_beta: 0.8
   normalize_power: true
-  power_reference: 2.2
+  power_reference: 2.0
   lambda_power_in_reward: 0.0

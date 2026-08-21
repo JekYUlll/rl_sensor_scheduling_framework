@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 from estimators.base_estimator import BaseEstimator
+from estimators.observation_preprocessor import ObservationPreprocessor
 
 
 class KalmanFilterEstimator(BaseEstimator):
@@ -19,6 +20,7 @@ class KalmanFilterEstimator(BaseEstimator):
         sensor_warmup_steps: dict[str, int] | None = None,
         normalize_rl_state: bool = True,
         use_logdet: bool = False,
+        observation_preprocessor: ObservationPreprocessor | None = None,
     ) -> None:
         self.A = np.asarray(A, dtype=float)
         self.Q = np.asarray(Q, dtype=float)
@@ -37,6 +39,7 @@ class KalmanFilterEstimator(BaseEstimator):
         )
         self.normalize_rl_state = bool(normalize_rl_state)
         self.use_logdet = bool(use_logdet)
+        self.observation_preprocessor = observation_preprocessor or ObservationPreprocessor()
         self.sensor_ids = list(sensor_ids)
         self.id_to_idx = {sid: i for i, sid in enumerate(self.sensor_ids)}
         warmup_map = sensor_warmup_steps or {}
@@ -61,6 +64,7 @@ class KalmanFilterEstimator(BaseEstimator):
         self.ready_mask = np.zeros(len(self.sensor_ids), dtype=float)
         self.warm_remaining = np.zeros(len(self.sensor_ids), dtype=float)
         self.warm_remaining_norm = np.zeros(len(self.sensor_ids), dtype=float)
+        self.observation_preprocessor.reset()
 
     def predict(self) -> None:
         self.x_hat = self.A @ self.x_hat + self.b
@@ -68,7 +72,7 @@ class KalmanFilterEstimator(BaseEstimator):
         self.P = 0.5 * (self.P + self.P.T)
 
     def update(self, observations: list[dict]) -> None:
-        for obs in observations:
+        for obs in self.observation_preprocessor.process(observations):
             if not obs.get("available", False):
                 continue
             y = np.asarray(obs["y"], dtype=float).reshape(-1, 1)

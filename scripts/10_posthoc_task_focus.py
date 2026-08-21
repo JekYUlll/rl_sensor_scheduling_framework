@@ -42,22 +42,42 @@ def _mae(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.mean(np.abs(a - b)))
 
 
-def _load_primary_targets(env_cfg: Path) -> list[str]:
+def _load_targets(env_cfg: Path, target_set: str) -> list[str]:
     cfg = load_yaml(str(env_cfg))
-    return [str(v) for v in cfg.get("reward_target_columns", [])]
+    if target_set == "primary":
+        return [str(v) for v in cfg.get("reward_target_columns", [])]
+    if target_set == "forecast":
+        return [str(v) for v in cfg.get("forecast_target_columns", [])]
+    if target_set == "all":
+        return []
+    raise ValueError(f"unknown target set: {target_set}")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate task-focused posthoc summaries for primary microclimate targets")
     parser.add_argument("--run-tag", required=True)
     parser.add_argument("--env-cfg", default="configs/env/windblown_case.yaml")
+    parser.add_argument(
+        "--target-set",
+        choices=["primary", "forecast", "all"],
+        default="primary",
+        help="Targets to summarize. 'all' uses every target contained in forecast_predictions.npz.",
+    )
     parser.add_argument("--out-dir", default=None)
     args = parser.parse_args()
 
-    out_dir = Path(args.out_dir) if args.out_dir else ROOT / "reports" / "aggregate" / f"posthoc_{args.run_tag}" / "task_focus_primary"
+    out_dir = (
+        Path(args.out_dir)
+        if args.out_dir
+        else ROOT
+        / "reports"
+        / "aggregate"
+        / f"posthoc_{args.run_tag}"
+        / f"task_focus_{args.target_set}"
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    primary_targets = _load_primary_targets(ROOT / args.env_cfg)
+    configured_targets = _load_targets(ROOT / args.env_cfg, args.target_set)
     discovered = _discover_prediction_runs(args.run_tag)
     if not discovered:
         raise FileNotFoundError(f"no forecast predictions found for run_tag={args.run_tag}")
@@ -70,16 +90,26 @@ def main() -> None:
         feature_names = [str(v) for v in data["target_feature_names"].tolist()]
         y_true = np.asarray(data["y_true"], dtype=float)
         y_pred = np.asarray(data["y_pred"], dtype=float)
-        for target in primary_targets:
+        y_true_norm = np.asarray(data["y_true_norm"], dtype=float) if "y_true_norm" in data.files else None
+        y_pred_norm = np.asarray(data["y_pred_norm"], dtype=float) if "y_pred_norm" in data.files else None
+        selected_targets = configured_targets or feature_names
+        for target in selected_targets:
             if target not in feature_names:
                 continue
             target_idx = feature_names.index(target)
             for horizon_idx in range(y_true.shape[1]):
                 seq_true = y_true[:, horizon_idx, target_idx]
                 seq_pred = y_pred[:, horizon_idx, target_idx]
+                rmse_norm = float("nan")
+                if y_true_norm is not None and y_pred_norm is not None:
+                    rmse_norm = _rmse(
+                        y_true_norm[:, horizon_idx, target_idx],
+                        y_pred_norm[:, horizon_idx, target_idx],
+                    )
                 key = (model_name, target, horizon_idx + 1)
                 by_model_target_h.setdefault(key, {})[scheduler] = {
                     "rmse": _rmse(seq_true, seq_pred),
+                    "rmse_norm": rmse_norm,
                     "mae": _mae(seq_true, seq_pred),
                     "smape": smape_1d(seq_true, seq_pred),
                     "pearson": pearson_1d(seq_true, seq_pred),
@@ -97,11 +127,15 @@ def main() -> None:
                 "horizon": horizon,
                 "scheduler": scheduler,
                 "rmse": metrics["rmse"],
+                "rmse_norm": metrics["rmse_norm"],
                 "mae": metrics["mae"],
                 "smape": metrics["smape"],
                 "pearson": metrics["pearson"],
                 "dtw": metrics["dtw"],
                 "rmse_increase_pct_vs_full_open": 100.0 * (metrics["rmse"] - baseline["rmse"]) / max(baseline["rmse"], 1e-12),
+                "rmse_norm_increase_pct_vs_full_open": 100.0
+                * (metrics["rmse_norm"] - baseline["rmse_norm"])
+                / max(baseline["rmse_norm"], 1e-12),
                 "dtw_increase_pct_vs_full_open": 100.0 * (metrics["dtw"] - baseline["dtw"]) / max(baseline["dtw"], 1e-12),
                 "pearson_delta_vs_full_open": metrics["pearson"] - baseline["pearson"],
             }
@@ -110,34 +144,46 @@ def main() -> None:
     long_df = pd.DataFrame(rows)
     if long_df.empty:
         raise RuntimeError("task-focused posthoc produced no rows")
-    long_df.to_csv(out_dir / "primary_target_metrics_long.csv", index=False)
+    long_path = out_dir / f"{args.target_set}_target_metrics_long.csv"
+    long_df.to_csv(long_path, index=False)
 
     summary = (
         long_df.groupby("scheduler", dropna=False)
         .agg(
+            target_horizon_count=("rmse", "count"),
+            rmse_mean=("rmse", "mean"),
+            rmse_std=("rmse", "std"),
+            rmse_norm_mean=("rmse_norm", "mean"),
+            rmse_norm_std=("rmse_norm", "std"),
             rmse_increase_pct_vs_full_open=("rmse_increase_pct_vs_full_open", "mean"),
+            rmse_increase_pct_vs_full_open_std=("rmse_increase_pct_vs_full_open", "std"),
+            rmse_norm_increase_pct_vs_full_open=("rmse_norm_increase_pct_vs_full_open", "mean"),
+            rmse_norm_increase_pct_vs_full_open_std=("rmse_norm_increase_pct_vs_full_open", "std"),
             dtw_increase_pct_vs_full_open=("dtw_increase_pct_vs_full_open", "mean"),
             pearson_delta_vs_full_open=("pearson_delta_vs_full_open", "mean"),
         )
         .reset_index()
     )
-    summary.to_csv(out_dir / "primary_target_scheduler_summary.csv", index=False)
+    summary["rank_rmse_norm_mean"] = summary["rmse_norm_mean"].rank(method="min", ascending=True)
+    summary["rank_rmse_mean"] = summary["rmse_mean"].rank(method="min", ascending=True)
+    summary_path = out_dir / f"{args.target_set}_target_scheduler_summary.csv"
+    summary.to_csv(summary_path, index=False)
 
     for horizon in sorted(long_df["horizon"].unique()):
         subset = long_df[long_df["horizon"] == horizon].copy()
         rmse_pivot = subset.pivot_table(index="scheduler", columns="target", values="rmse_increase_pct_vs_full_open", aggfunc="mean")
-        rmse_pivot.to_csv(out_dir / f"primary_target_rmse_increase_h{horizon}.csv")
-        heatmap(rmse_pivot, out_dir / f"primary_target_rmse_increase_h{horizon}.png", title=f"Primary-target RMSE increase vs full-open (H={horizon})", vmin=None, vmax=None)
+        rmse_pivot.to_csv(out_dir / f"{args.target_set}_target_rmse_increase_h{horizon}.csv")
+        heatmap(rmse_pivot, out_dir / f"{args.target_set}_target_rmse_increase_h{horizon}.png", title=f"{args.target_set.title()}-target RMSE increase vs full-open (H={horizon})", vmin=None, vmax=None)
 
         dtw_pivot = subset.pivot_table(index="scheduler", columns="target", values="dtw_increase_pct_vs_full_open", aggfunc="mean")
-        dtw_pivot.to_csv(out_dir / f"primary_target_dtw_increase_h{horizon}.csv")
-        heatmap(dtw_pivot, out_dir / f"primary_target_dtw_increase_h{horizon}.png", title=f"Primary-target DTW increase vs full-open (H={horizon})", vmin=None, vmax=None)
+        dtw_pivot.to_csv(out_dir / f"{args.target_set}_target_dtw_increase_h{horizon}.csv")
+        heatmap(dtw_pivot, out_dir / f"{args.target_set}_target_dtw_increase_h{horizon}.png", title=f"{args.target_set.title()}-target DTW increase vs full-open (H={horizon})", vmin=None, vmax=None)
 
         pearson_pivot = subset.pivot_table(index="scheduler", columns="target", values="pearson_delta_vs_full_open", aggfunc="mean")
-        pearson_pivot.to_csv(out_dir / f"primary_target_pearson_delta_h{horizon}.csv")
-        heatmap(pearson_pivot, out_dir / f"primary_target_pearson_delta_h{horizon}.png", title=f"Primary-target Pearson delta vs full-open (H={horizon})", vmin=None, vmax=None)
+        pearson_pivot.to_csv(out_dir / f"{args.target_set}_target_pearson_delta_h{horizon}.csv")
+        heatmap(pearson_pivot, out_dir / f"{args.target_set}_target_pearson_delta_h{horizon}.png", title=f"{args.target_set.title()}-target Pearson delta vs full-open (H={horizon})", vmin=None, vmax=None)
 
-    print(out_dir / "primary_target_scheduler_summary.csv")
+    print(summary_path)
 
 
 if __name__ == "__main__":

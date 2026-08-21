@@ -1,0 +1,59 @@
+{
+  "run_dir": "reports/v31_ablation_aligned/raw/A2_staged_v31_aligned/D2_plus_event_critic/budget1p70_seed44",
+  "rollout_files": [
+    "reports/v31_ablation_aligned/raw/A2_staged_v31_aligned/D2_plus_event_critic/budget1p70_seed44/rollout_aoi.npz",
+    "reports/v31_ablation_aligned/raw/A2_staged_v31_aligned/D2_plus_event_critic/budget1p70_seed44/rollout_custom_ppo.npz",
+    "reports/v31_ablation_aligned/raw/A2_staged_v31_aligned/D2_plus_event_critic/budget1p70_seed44/rollout_feasible_static_projected.npz",
+    "reports/v31_ablation_aligned/raw/A2_staged_v31_aligned/D2_plus_event_critic/budget1p70_seed44/rollout_full_open_unconstrained.npz",
+    "reports/v31_ablation_aligned/raw/A2_staged_v31_aligned/D2_plus_event_critic/budget1p70_seed44/rollout_random.npz",
+    "reports/v31_ablation_aligned/raw/A2_staged_v31_aligned/D2_plus_event_critic/budget1p70_seed44/rollout_round_robin.npz"
+  ],
+  "per_step_budget": 1.7,
+  "startup_peak_budget": 3.2,
+  "dtw_window": 50,
+  "target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "target_weights": [
+    1.0,
+    1.0,
+    1.2,
+    0.6,
+    0.6,
+    1.0,
+    3.0,
+    2.0,
+    2.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "forecast_target_columns": [
+    "air_temperature_c",
+    "snow_surface_temperature_c",
+    "wind_speed_ms",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "solar_radiation_wm2",
+    "snow_mass_flux_kg_m2_s",
+    "snow_particle_mean_diameter_mm",
+    "snow_particle_mean_velocity_ms"
+  ],
+  "primary_metric": "forecast_weighted_mae_overall"
+}

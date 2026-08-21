@@ -48,6 +48,7 @@ class DatasetSensor(AbstractSensor):
             "R": r_mat,
             "variables": list(self.spec.variables),
             "power_cost": self.power_cost(),
+            "t": int(t),
             "mode": status["mode"],
             "warm_remaining_steps": status["warm_remaining_steps"],
         }

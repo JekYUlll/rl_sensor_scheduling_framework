@@ -1,0 +1,37 @@
+[calibrate] transport_v6_b0p60_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/transport_v6_b0p60_p1p60
+[calibrate] transport_v6_b0p75_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/transport_v6_b0p75_p1p60
+[calibrate] transport_v6_b0p90_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/transport_v6_b0p90_p1p60
+[calibrate] transport_v6_b1p00_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/transport_v6_b1p00_p1p60
+[calibrate] snow_task_v6_b0p60_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/snow_task_v6_b0p60_p1p60
+[calibrate] snow_task_v6_b0p75_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/snow_task_v6_b0p75_p1p60
+[calibrate] snow_task_v6_b0p90_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/snow_task_v6_b0p90_p1p60
+[calibrate] snow_task_v6_b1p00_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/snow_task_v6_b1p00_p1p60
+[calibrate] particle_flux_v6_b0p60_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/particle_flux_v6_b0p60_p1p60
+[calibrate] particle_flux_v6_b0p75_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/particle_flux_v6_b0p75_p1p60
+[calibrate] particle_flux_v6_b0p90_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/particle_flux_v6_b0p90_p1p60
+[calibrate] particle_flux_v6_b1p00_p1p60 -> reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/particle_flux_v6_b1p00_p1p60
+{
+  "failures": [
+    {
+      "combo": "transport_v6_b0p60_p1p60",
+      "returncode": 1,
+      "log_path": "reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/transport_v6_b0p60_p1p60.log"
+    },
+    {
+      "combo": "snow_task_v6_b0p60_p1p60",
+      "returncode": 1,
+      "log_path": "reports/v31_static_break_calibration_v7_cov_energy_tcn_20260607/snow_task_v6_b0p60_p1p60.log"
+    }
+  ]
+}
+                       combo  gate_pass  dynamic_margin  event_dynamic_margin  laser_shortcut_broken                                                  best_static_sensor_ids            best_dynamic_sensor_ids  best_dynamic_mid_duty_sensor_count  best_dynamic_always_on_sensor_count  best_dynamic_always_off_sensor_count  dynamic_diversity_ok
+particle_flux_v6_b0p60_p1p60      False        0.037666              0.047210                   True            radiometer_basic|shielded_thermo_hygro|snow_particle_counter dynamic:diverse_top2_lead4_dwell16                                   4                                    1                                     3                 False
+    snow_task_v6_b0p75_p1p60      False       -0.069473             -0.063325                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top2_lead0_dwell16                                   2                                    3                                     3                 False
+    transport_v6_b0p75_p1p60      False       -0.076040             -0.070017                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top2_lead0_dwell16                                   2                                    3                                     3                 False
+particle_flux_v6_b1p00_p1p60      False       -0.083440             -0.090964                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top4_lead4_dwell16                                   6                                    0                                     1                  True
+particle_flux_v6_b0p90_p1p60      False       -0.083839             -0.091317                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top4_lead4_dwell16                                   6                                    0                                     1                  True
+    snow_task_v6_b0p90_p1p60      False       -0.111643             -0.131654                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top4_lead4_dwell16                                   5                                    1                                     1                  True
+    snow_task_v6_b1p00_p1p60      False       -0.111827             -0.131901                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top4_lead4_dwell16                                   5                                    1                                     1                  True
+particle_flux_v6_b0p75_p1p60      False       -0.178594             -0.179175                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top6_lead0_dwell16                                   7                                    0                                     1                  True
+    transport_v6_b1p00_p1p60      False       -0.196582             -0.196611                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top6_lead4_dwell16                                   6                                    0                                     1                  True
+    transport_v6_b0p90_p1p60      False       -0.196825             -0.196974                   True met_station_core|radiometer_basic|surface_temp_ir|snow_particle_counter dynamic:diverse_top6_lead4_dwell16                                   6                                    0                                     1                  True

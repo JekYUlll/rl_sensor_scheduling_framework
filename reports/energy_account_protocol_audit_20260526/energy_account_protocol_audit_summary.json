@@ -1,0 +1,28 @@
+{
+  "status": "diagnostic_only_requires_split_protocol_rerun",
+  "audited_seeds": [
+    41,
+    42,
+    43,
+    44,
+    45
+  ],
+  "train_episode_steps_for_quantified_overlap": 512,
+  "storm_training_overlap_certified_count": 5,
+  "storm_train_eval_identical_starts_count": 5,
+  "full_eval_overlaps_training_count_assuming_episode_len": 5,
+  "full_eval_overlaps_storm_eval_count": 5,
+  "oracle_overlaps_storm_eval_count_reconstructed": 5,
+  "oracle_overlaps_full_eval_count_reconstructed": 5,
+  "full_eval_has_internal_overlap_count": 2,
+  "normalization_partition_declared_count": 0,
+  "fatal_reasons": [
+    "Storm-window curriculum evaluation uses the same recorded starts as PPO training in every audited seed.",
+    "No audited curriculum metadata declares training-only normalization statistics."
+  ],
+  "additional_reconstructed_risks": [
+    "Under the deterministic oracle sampler in scripts/23_v2_train_ppo.py, oracle-pretraining windows overlap both storm and full-distribution evaluation in every seed.",
+    "Full-distribution no-retrain evaluation overlaps storm evaluation in every seed and overlaps the default-length training windows in every seed."
+  ],
+  "interpretation": "Existing energy-account curriculum summaries may be retained as same-protocol mechanism diagnostics only. Learned-policy submission evidence requires a chronological split-protocol retraining and final-test evaluation."
+}

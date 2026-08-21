@@ -1,0 +1,783 @@
+{
+  "active_tex_files": [
+    "paper/main.tex",
+    "paper/sections/01_introduction.tex",
+    "paper/sections/02_related_work.tex",
+    "paper/tables/related_work_positioning.tex",
+    "paper/sections/03_problem_formulation.tex",
+    "paper/tables/notation_summary.tex",
+    "paper/sections/04_framework_protocol.tex",
+    "paper/tables/action_space_instantiation.tex",
+    "paper/tables/online_observability_audit.tex",
+    "paper/tables/pdppo_training_hyperparameters.tex",
+    "paper/figures/data_split_timeline_tikz.tex",
+    "paper/tables/baseline_reference_taxonomy.tex",
+    "paper/sections/05_simulation_setup.tex",
+    "paper/tables/sensor_specs.tex",
+    "paper/tables/main_protocol_hyperparameters.tex",
+    "paper/tables/static_mask_selection_summary.tex",
+    "paper/sections/06_results.tex",
+    "paper/tables/regime_balanced_24seed_summary.tex",
+    "paper/tables/event_type_loss_decomposition.tex",
+    "paper/tables/mechanism_ablation_summary.tex",
+    "paper/tables/event_mix_robustness_summary.tex",
+    "paper/sections/07_discussion_future_work.tex",
+    "paper/sections/08_conclusion.tex",
+    "paper/sections/appendix_theory.tex",
+    "paper/tables/g1_generator_validation.tex",
+    "paper/tables/static_mask_selection_ledger.tex"
+  ],
+  "bib_entries": 38,
+  "active_citation_keys": [
+    "AlAhdab2025",
+    "Alali2024",
+    "Aloni2024",
+    "Amory2020",
+    "AntAWS2023",
+    "Bai2018",
+    "Bajcsy2018",
+    "FernandezBes2015",
+    "Golovin2011",
+    "Jonah2026",
+    "Kaul_2012",
+    "Lauri_2023",
+    "Lim2021",
+    "Liu2024",
+    "Monrad2026",
+    "Murad2020",
+    "Ogbodo2025",
+    "Pendyala2024",
+    "Qu2022",
+    "Schulman2017",
+    "Sharma2023",
+    "Shi_2011",
+    "Tran2026",
+    "Wei2020"
+  ],
+  "active_count": 24,
+  "unused_bib_keys": [
+    "VanHasselt2016",
+    "Wang2016",
+    "DeLaFuente2024",
+    "Ibrahim2024",
+    "Ying2022",
+    "Chen2026",
+    "Wang2021",
+    "Ding2025",
+    "Wang2025",
+    "OTT2022",
+    "IAV2024",
+    "GillGMX500",
+    "SensecaLPS10",
+    "ApogeeSI111"
+  ],
+  "missing_bib_keys": [],
+  "contexts": {
+    "Schulman2017": [
+      {
+        "file": "paper/sections/01_introduction.tex",
+        "line": 42,
+        "context": "PD-PPO is the implementation used to test these hypotheses. It is a masked PPO policy over candidate channel masks \\citep{Schulman2017}. At each epoch, the policy observes the current estimator summary, uncertainty, channel freshness, previous selection, budget state, and event context. Online feasibility checks remove masks"
+      }
+    ],
+    "Shi_2011": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "Kaul_2012": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "FernandezBes2015": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "Qu2022": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "Alali2024": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "AlAhdab2025": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "Jonah2026": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "Tran2026": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 8,
+        "context": "communication, and energy-aware monitoring. Representative objectives include covariance reduction, information gain, censoring utility, and age of information (AoI) \\citep{Shi_2011,Kaul_2012,FernandezBes2015,Qu2022, Alali2024,AlAhdab2025,Jonah2026,Tran2026}. These objectives are natural when the scheduler is judged by the freshness or uncertainty of the current state. The forecasting setting studied here keeps the same resource-constrained"
+      }
+    ],
+    "Bajcsy2018": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 28,
+        "context": "The problem also connects to active perception and partially observable decision making, where observations are actions selected for a future task \\citep{Bajcsy2018,Lauri_2023,Golovin2011}. Those literatures motivate sensing decisions that change with state, but they do not by themselves specify a reproducible benchmark for specialist allocation under a fixed forecasting evaluator."
+      }
+    ],
+    "Lauri_2023": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 28,
+        "context": "The problem also connects to active perception and partially observable decision making, where observations are actions selected for a future task \\citep{Bajcsy2018,Lauri_2023,Golovin2011}. Those literatures motivate sensing decisions that change with state, but they do not by themselves specify a reproducible benchmark for specialist allocation under a fixed forecasting evaluator."
+      }
+    ],
+    "Golovin2011": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 28,
+        "context": "The problem also connects to active perception and partially observable decision making, where observations are actions selected for a future task \\citep{Bajcsy2018,Lauri_2023,Golovin2011}. Those literatures motivate sensing decisions that change with state, but they do not by themselves specify a reproducible benchmark for specialist allocation under a fixed forecasting evaluator."
+      }
+    ],
+    "Murad2020": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 35,
+        "context": "Deep reinforcement learning has been used for adaptive sensing, informative path planning, and other combinatorial scheduling problems \\citep{Murad2020,Wei2020,Ogbodo2025,Pendyala2024}. It is well suited to delayed rewards that depend on state, but hard feasibility remains essential in sensing systems that cannot execute arbitrary actions. The method in this paper therefore uses a masked categorical policy over candidate channel masks. The"
+      }
+    ],
+    "Wei2020": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 35,
+        "context": "Deep reinforcement learning has been used for adaptive sensing, informative path planning, and other combinatorial scheduling problems \\citep{Murad2020,Wei2020,Ogbodo2025,Pendyala2024}. It is well suited to delayed rewards that depend on state, but hard feasibility remains essential in sensing systems that cannot execute arbitrary actions. The method in this paper therefore uses a masked categorical policy over candidate channel masks. The"
+      }
+    ],
+    "Ogbodo2025": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 35,
+        "context": "Deep reinforcement learning has been used for adaptive sensing, informative path planning, and other combinatorial scheduling problems \\citep{Murad2020,Wei2020,Ogbodo2025,Pendyala2024}. It is well suited to delayed rewards that depend on state, but hard feasibility remains essential in sensing systems that cannot execute arbitrary actions. The method in this paper therefore uses a masked categorical policy over candidate channel masks. The"
+      }
+    ],
+    "Pendyala2024": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 35,
+        "context": "Deep reinforcement learning has been used for adaptive sensing, informative path planning, and other combinatorial scheduling problems \\citep{Murad2020,Wei2020,Ogbodo2025,Pendyala2024}. It is well suited to delayed rewards that depend on state, but hard feasibility remains essential in sensing systems that cannot execute arbitrary actions. The method in this paper therefore uses a masked categorical policy over candidate channel masks. The"
+      }
+    ],
+    "Lim2021": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 45,
+        "context": "Modern time-series models provide a direct way to score the prediction consequences of a schedule \\citep{Lim2021,Bai2018,Liu2024}. In this work, the forecaster is used as a common evaluator of schedules. It is trained on an earlier chronological partition, frozen, and then used to supply reward during policy"
+      }
+    ],
+    "Bai2018": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 45,
+        "context": "Modern time-series models provide a direct way to score the prediction consequences of a schedule \\citep{Lim2021,Bai2018,Liu2024}. In this work, the forecaster is used as a common evaluator of schedules. It is trained on an earlier chronological partition, frozen, and then used to supply reward during policy"
+      },
+      {
+        "file": "paper/sections/04_framework_protocol.tex",
+        "line": 89,
+        "context": "The evaluation forecaster is a residual temporal convolutional network \\citep{Bai2018} with three levels, 64 channels per level, kernel size 3, and dropout rate 0.05. It is fitted on the forecaster training partition before policy learning. Input and target scales are fitted before policy updates, and the architecture is held"
+      }
+    ],
+    "Liu2024": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 45,
+        "context": "Modern time-series models provide a direct way to score the prediction consequences of a schedule \\citep{Lim2021,Bai2018,Liu2024}. In this work, the forecaster is used as a common evaluator of schedules. It is trained on an earlier chronological partition, frozen, and then used to supply reward during policy"
+      }
+    ],
+    "AntAWS2023": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 60,
+        "context": "and blowing-snow monitoring. Antarctic AWS networks provide long-term atmospheric and surface observations, but instrument coverage remains uneven in space, season, and measurement type \\citep{AntAWS2023}. Blowing-snow studies use variables whose predictive value changes with storm conditions, near-surface transport, and particle microstructure \\citep{Amory2020,Sharma2023,Monrad2026}. The benchmark maps this domain into a controlled task with a fixed backbone and a"
+      },
+      {
+        "file": "paper/sections/05_simulation_setup.tex",
+        "line": 39,
+        "context": "humidity, pressure, radiation, snow-surface temperature, particle statistics, and snow mass flux. The generator is anchored to Antarctic AWS and blowing-snow statistics \\citep{AntAWS2023,Amory2020,Sharma2023,Monrad2026}. Blowing-snow events are produced by a semi-Markov process coupled to wind exceedance. The final benchmark contains particle, flux, and thermal event types. Each event"
+      }
+    ],
+    "Amory2020": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 62,
+        "context": "space, season, and measurement type \\citep{AntAWS2023}. Blowing-snow studies use variables whose predictive value changes with storm conditions, near-surface transport, and particle microstructure \\citep{Amory2020,Sharma2023,Monrad2026}. The benchmark maps this domain into a controlled task with a fixed backbone and a single selectable specialist so that learned and fixed specialist strategies can be replayed on identical truth sequences."
+      },
+      {
+        "file": "paper/sections/05_simulation_setup.tex",
+        "line": 39,
+        "context": "humidity, pressure, radiation, snow-surface temperature, particle statistics, and snow mass flux. The generator is anchored to Antarctic AWS and blowing-snow statistics \\citep{AntAWS2023,Amory2020,Sharma2023,Monrad2026}. Blowing-snow events are produced by a semi-Markov process coupled to wind exceedance. The final benchmark contains particle, flux, and thermal event types. Each event"
+      }
+    ],
+    "Sharma2023": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 62,
+        "context": "space, season, and measurement type \\citep{AntAWS2023}. Blowing-snow studies use variables whose predictive value changes with storm conditions, near-surface transport, and particle microstructure \\citep{Amory2020,Sharma2023,Monrad2026}. The benchmark maps this domain into a controlled task with a fixed backbone and a single selectable specialist so that learned and fixed specialist strategies can be replayed on identical truth sequences."
+      },
+      {
+        "file": "paper/sections/05_simulation_setup.tex",
+        "line": 39,
+        "context": "humidity, pressure, radiation, snow-surface temperature, particle statistics, and snow mass flux. The generator is anchored to Antarctic AWS and blowing-snow statistics \\citep{AntAWS2023,Amory2020,Sharma2023,Monrad2026}. Blowing-snow events are produced by a semi-Markov process coupled to wind exceedance. The final benchmark contains particle, flux, and thermal event types. Each event"
+      }
+    ],
+    "Monrad2026": [
+      {
+        "file": "paper/sections/02_related_work.tex",
+        "line": 62,
+        "context": "space, season, and measurement type \\citep{AntAWS2023}. Blowing-snow studies use variables whose predictive value changes with storm conditions, near-surface transport, and particle microstructure \\citep{Amory2020,Sharma2023,Monrad2026}. The benchmark maps this domain into a controlled task with a fixed backbone and a single selectable specialist so that learned and fixed specialist strategies can be replayed on identical truth sequences."
+      },
+      {
+        "file": "paper/sections/05_simulation_setup.tex",
+        "line": 39,
+        "context": "humidity, pressure, radiation, snow-surface temperature, particle statistics, and snow mass flux. The generator is anchored to Antarctic AWS and blowing-snow statistics \\citep{AntAWS2023,Amory2020,Sharma2023,Monrad2026}. Blowing-snow events are produced by a semi-Markov process coupled to wind exceedance. The final benchmark contains particle, flux, and thermal event types. Each event"
+      }
+    ],
+    "Aloni2024": [
+      {
+        "file": "paper/sections/05_simulation_setup.tex",
+        "line": 54,
+        "context": "including wind autocorrelation, event frequency, scalar-distribution agreement with station anchors, event durations, flux--wind scaling, particle correlation, and wind-speed spectra \\citep{Aloni2024}. All eight criteria pass their prespecified acceptance rules; the full check table and diagnostic figure are reported in \\ref{apx:generator_validation}. These checks document the simulation construction and remain separate from final test policy selection."
+      }
+    ]
+  },
+  "bib": {
+    "Schulman2017": {
+      "key": "Schulman2017",
+      "type": "article",
+      "fields": {
+        "author": "Schulman, John and Wolski, Filip and Dhariwal, Prafulla and Radford, Alec and Klimov, Oleg",
+        "title": "Proximal Policy Optimization Algorithms",
+        "journal": "arXiv preprint arXiv:1707.06347",
+        "year": "2017"
+      },
+      "raw": "@article{Schulman2017,\n  author  = {Schulman, John and Wolski, Filip and Dhariwal, Prafulla and Radford,\n             Alec and Klimov, Oleg},\n  title   = {Proximal Policy Optimization Algorithms},\n  journal = {arXiv preprint arXiv:1707.06347},\n  year    = {2017}\n}"
+    },
+    "VanHasselt2016": {
+      "key": "VanHasselt2016",
+      "type": "inproceedings",
+      "fields": {
+        "author": "van Hasselt, Hado and Guez, Arthur and Silver, David",
+        "title": "Deep Reinforcement Learning with Double {Q}-Learning",
+        "booktitle": "Proc. 30th AAAI Conf. Artif. Intell. (AAAI 2016)",
+        "volume": "30",
+        "number": "1",
+        "year": "2016",
+        "doi": "10.1609/aaai.v30i1.10295"
+      },
+      "raw": "@inproceedings{VanHasselt2016,\n  author    = {van Hasselt, Hado and Guez, Arthur and Silver, David},\n  title     = {Deep Reinforcement Learning with Double {Q}-Learning},\n  booktitle = {Proc. 30th AAAI Conf. Artif. Intell. (AAAI 2016)},\n  volume    = {30},\n  number    = {1},\n  year      = {2016},\n  doi       = {10.1609/aaai.v30i1.10295}\n}"
+    },
+    "Wang2016": {
+      "key": "Wang2016",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Wang, Ziyu and Schaul, Tom and Hessel, Matteo and van Hasselt, Hado and Lanctot, Marc and de Freitas, Nando",
+        "title": "Dueling Network Architectures for Deep Reinforcement Learning",
+        "booktitle": "Proc. 33rd Int. Conf. Mach. Learn. (ICML 2016)",
+        "series": "Proceedings of Machine Learning Research",
+        "volume": "48",
+        "pages": "1995--2003",
+        "publisher": "PMLR",
+        "year": "2016"
+      },
+      "raw": "@inproceedings{Wang2016,\n  author    = {Wang, Ziyu and Schaul, Tom and Hessel, Matteo and\n               van Hasselt, Hado and Lanctot, Marc and de Freitas, Nando},\n  title     = {Dueling Network Architectures for Deep Reinforcement Learning},\n  booktitle = {Proc. 33rd Int. Conf. Mach. Learn. (ICML 2016)},\n  series    = {Proceedings of Machine Learning Research},\n  volume    = {48},\n  pages     = {1995--2003},\n  publisher = {PMLR},\n  year      = {2016}\n}"
+    },
+    "Bajcsy2018": {
+      "key": "Bajcsy2018",
+      "type": "article",
+      "fields": {
+        "author": "Bajcsy, Ruzena and Aloimonos, Yiannis and Tsotsos, John K.",
+        "title": "Revisiting Active Perception",
+        "journal": "Auton. Robots",
+        "volume": "42",
+        "number": "2",
+        "pages": "177--196",
+        "year": "2018",
+        "doi": "10.1007/s10514-017-9615-3",
+        "url": "http://dx.doi.org/10.1007/s10514-017-9615-3"
+      },
+      "raw": "@article{Bajcsy2018,\n  author  = {Bajcsy, Ruzena and Aloimonos, Yiannis and Tsotsos, John K.},\n  title   = {Revisiting Active Perception},\n  journal = {Auton. Robots},\n  volume  = {42},\n  number  = {2},\n  pages   = {177--196},\n  year    = {2018},\n  doi     = {10.1007/s10514-017-9615-3},\n  url     = {http://dx.doi.org/10.1007/s10514-017-9615-3}\n}"
+    },
+    "Lauri_2023": {
+      "key": "Lauri_2023",
+      "type": "article",
+      "fields": {
+        "author": "Lauri, Mikko and Hsu, David and Pajarinen, Joni",
+        "title": "Partially Observable {Markov} Decision Processes in Robotics: A Survey",
+        "journal": "IEEE Trans. Robot.",
+        "volume": "39",
+        "number": "1",
+        "pages": "21--40",
+        "year": "2023",
+        "doi": "10.1109/TRO.2022.3200138",
+        "url": "http://dx.doi.org/10.1109/TRO.2022.3200138"
+      },
+      "raw": "@article{Lauri_2023,\n  author  = {Lauri, Mikko and Hsu, David and Pajarinen, Joni},\n  title   = {Partially Observable {Markov} Decision Processes in Robotics: A\n             Survey},\n  journal = {IEEE Trans. Robot.},\n  volume  = {39},\n  number  = {1},\n  pages   = {21--40},\n  year    = {2023},\n  doi     = {10.1109/TRO.2022.3200138},\n  url     = {http://dx.doi.org/10.1109/TRO.2022.3200138}\n}"
+    },
+    "Golovin2011": {
+      "key": "Golovin2011",
+      "type": "article",
+      "fields": {
+        "author": "Golovin, Daniel and Krause, Andreas",
+        "title": "Adaptive Submodularity: Theory and Applications in Active Learning and Stochastic Optimization",
+        "journal": "J. Artif. Intell. Res.",
+        "volume": "42",
+        "pages": "427--486",
+        "year": "2011",
+        "doi": "10.1613/jair.3278"
+      },
+      "raw": "@article{Golovin2011,\n  author  = {Golovin, Daniel and Krause, Andreas},\n  title   = {Adaptive Submodularity: Theory and Applications in Active\n             Learning and Stochastic Optimization},\n  journal = {J. Artif. Intell. Res.},\n  volume  = {42},\n  pages   = {427--486},\n  year    = {2011},\n  doi     = {10.1613/jair.3278}\n}"
+    },
+    "Shi_2011": {
+      "key": "Shi_2011",
+      "type": "article",
+      "fields": {
+        "author": "Shi, Ling and Cheng, Peng and Chen, Jiming",
+        "title": "Sensor Data Scheduling for Optimal State Estimation with Communication Energy Constraint",
+        "journal": "Automatica",
+        "volume": "47",
+        "number": "8",
+        "pages": "1693--1698",
+        "year": "2011",
+        "doi": "10.1016/j.automatica.2011.02.037",
+        "url": "http://dx.doi.org/10.1016/j.automatica.2011.02.037"
+      },
+      "raw": "@article{Shi_2011,\n  author  = {Shi, Ling and Cheng, Peng and Chen, Jiming},\n  title   = {Sensor Data Scheduling for Optimal State Estimation with\n             Communication Energy Constraint},\n  journal = {Automatica},\n  volume  = {47},\n  number  = {8},\n  pages   = {1693--1698},\n  year    = {2011},\n  doi     = {10.1016/j.automatica.2011.02.037},\n  url     = {http://dx.doi.org/10.1016/j.automatica.2011.02.037}\n}"
+    },
+    "Kaul_2012": {
+      "key": "Kaul_2012",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Kaul, Sanjit and Yates, Roy and Gruteser, Marco",
+        "title": "Real-Time Status: How Often Should One Update?",
+        "booktitle": "Proc. IEEE INFOCOM 2012",
+        "pages": "2731--2735",
+        "publisher": "IEEE",
+        "year": "2012",
+        "doi": "10.1109/INFCOM.2012.6195689",
+        "url": "http://dx.doi.org/10.1109/INFCOM.2012.6195689"
+      },
+      "raw": "@inproceedings{Kaul_2012,\n  author    = {Kaul, Sanjit and Yates, Roy and Gruteser, Marco},\n  title     = {Real-Time Status: How Often Should One Update?},\n  booktitle = {Proc. IEEE INFOCOM 2012},\n  pages     = {2731--2735},\n  publisher = {IEEE},\n  year      = {2012},\n  doi       = {10.1109/INFCOM.2012.6195689},\n  url       = {http://dx.doi.org/10.1109/INFCOM.2012.6195689}\n}"
+    },
+    "Alali2024": {
+      "key": "Alali2024",
+      "type": "article",
+      "fields": {
+        "author": "Alali, Mohammad and Kazeminajafabadi, Armita and Imani, Mahdi",
+        "title": "Deep Reinforcement Learning Sensor Scheduling for Effective Monitoring of Dynamical Systems",
+        "journal": "Syst. Sci. Control Eng.",
+        "volume": "12",
+        "number": "1",
+        "pages": "2329260",
+        "year": "2024",
+        "doi": "10.1080/21642583.2024.2329260"
+      },
+      "raw": "@article{Alali2024,\n  author  = {Alali, Mohammad and Kazeminajafabadi, Armita and Imani, Mahdi},\n  title   = {Deep Reinforcement Learning Sensor Scheduling for Effective Monitoring\n             of Dynamical Systems},\n  journal = {Syst. Sci. Control Eng.},\n  volume  = {12},\n  number  = {1},\n  pages   = {2329260},\n  year    = {2024},\n  doi     = {10.1080/21642583.2024.2329260}\n}"
+    },
+    "AlAhdab2025": {
+      "key": "AlAhdab2025",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Ahdab, Mohamad Al and Leth, John-Josef and Tan, Zheng-Hua",
+        "title": "Optimal Sensor Scheduling and Selection for Continuous-Discrete {Kalman} Filtering with Auxiliary Dynamics",
+        "booktitle": "Proc. 42nd Int. Conf. Mach. Learn. (ICML 2025)",
+        "series": "Proceedings of Machine Learning Research",
+        "volume": "267",
+        "pages": "703--729",
+        "publisher": "PMLR",
+        "year": "2025",
+        "url": "https://proceedings.mlr.press/v267/ahdab25a.html"
+      },
+      "raw": "@inproceedings{AlAhdab2025,\n  author    = {Ahdab, Mohamad Al and Leth, John-Josef and Tan, Zheng-Hua},\n  title     = {Optimal Sensor Scheduling and Selection for Continuous-Discrete\n               {Kalman} Filtering with Auxiliary Dynamics},\n  booktitle = {Proc. 42nd Int. Conf. Mach. Learn. (ICML 2025)},\n  series    = {Proceedings of Machine Learning Research},\n  volume    = {267},\n  pages     = {703--729},\n  publisher = {PMLR},\n  year      = {2025},\n  url       = {https://proceedings.mlr.press/v267/ahdab25a.html}\n}"
+    },
+    "Jonah2026": {
+      "key": "Jonah2026",
+      "type": "article",
+      "fields": {
+        "author": "Jonah, Sokipriala and Yoo, Seong Ki and Sthapit, Saurav",
+        "title": "Adaptive Scheduling: A Reinforcement Learning {Whittle} Index Approach for Wireless Sensor Networks",
+        "journal": "IEEE Access",
+        "volume": "14",
+        "pages": "40042--40059",
+        "year": "2026",
+        "doi": "10.1109/ACCESS.2026.3673220"
+      },
+      "raw": "@article{Jonah2026,\n  author  = {Jonah, Sokipriala and Yoo, Seong Ki and Sthapit, Saurav},\n  title   = {Adaptive Scheduling: A Reinforcement Learning {Whittle} Index Approach\n             for Wireless Sensor Networks},\n  journal = {IEEE Access},\n  volume  = {14},\n  pages   = {40042--40059},\n  year    = {2026},\n  doi     = {10.1109/ACCESS.2026.3673220}\n}"
+    },
+    "Tran2026": {
+      "key": "Tran2026",
+      "type": "article",
+      "fields": {
+        "author": "Tran, Nho-Duc and Mahmood, Aamir and Gidlund, Mikael",
+        "title": "Learning-Based Sensor Scheduling for Delay-Aware and Stable Remote State Estimation",
+        "journal": "arXiv preprint arXiv:2601.21482",
+        "year": "2026"
+      },
+      "raw": "@article{Tran2026,\n  author  = {Tran, Nho-Duc and Mahmood, Aamir and Gidlund, Mikael},\n  title   = {Learning-Based Sensor Scheduling for Delay-Aware and Stable Remote\n             State Estimation},\n  journal = {arXiv preprint arXiv:2601.21482},\n  year    = {2026}\n}"
+    },
+    "FernandezBes2015": {
+      "key": "FernandezBes2015",
+      "type": "article",
+      "fields": {
+        "author": "Fern\\'{a}ndez-Bes, Jes\\'{u}s and Cid-Sueiro, Jes\\'{u}s and Marques, Antonio G.",
+        "title": "An {MDP} Model for Censoring in Harvesting Sensors: Optimal and Approximated Solutions",
+        "journal": "IEEE J. Sel. Areas Commun.",
+        "volume": "33",
+        "number": "8",
+        "pages": "1717--1729",
+        "year": "2015",
+        "doi": "10.1109/JSAC.2015.2430512"
+      },
+      "raw": "@article{FernandezBes2015,\n  author  = {Fern\\'{a}ndez-Bes, Jes\\'{u}s and Cid-Sueiro, Jes\\'{u}s and\n             Marques, Antonio G.},\n  title   = {An {MDP} Model for Censoring in Harvesting Sensors: Optimal and\n             Approximated Solutions},\n  journal = {IEEE J. Sel. Areas Commun.},\n  volume  = {33},\n  number  = {8},\n  pages   = {1717--1729},\n  year    = {2015},\n  doi     = {10.1109/JSAC.2015.2430512}\n}"
+    },
+    "Qu2022": {
+      "key": "Qu2022",
+      "type": "article",
+      "fields": {
+        "author": "Qu, Zhiyi and Zhao, Xue and Xu, Huihui and Tang, Hongying and Wang, Jiang and Li, Baoqing",
+        "title": "An Improved {Q}-Learning-Based Sensor-Scheduling Algorithm for Multi-Target Tracking",
+        "journal": "Sensors",
+        "volume": "22",
+        "pages": "6972",
+        "year": "2022",
+        "doi": "10.3390/s22186972"
+      },
+      "raw": "@article{Qu2022,\n  author  = {Qu, Zhiyi and Zhao, Xue and Xu, Huihui and Tang, Hongying and Wang, Jiang\n             and Li, Baoqing},\n  title   = {An Improved {Q}-Learning-Based Sensor-Scheduling Algorithm for\n             Multi-Target Tracking},\n  journal = {Sensors},\n  volume  = {22},\n  pages   = {6972},\n  year    = {2022},\n  doi     = {10.3390/s22186972}\n}"
+    },
+    "Ogbodo2025": {
+      "key": "Ogbodo2025",
+      "type": "article",
+      "fields": {
+        "author": "Ogbodo, Collins O. and Rogers, Timothy J. and {Dal Borgo}, Mattia and Wagg, David J.",
+        "title": "Adaptive Sensor Steering Strategy Using Deep Reinforcement Learning for Dynamic Data Acquisition in Digital Twins",
+        "journal": "Proc. R. Soc. A",
+        "volume": "482",
+        "number": "2329",
+        "pages": "20250326",
+        "year": "2026",
+        "doi": "10.1098/rspa.2025.0326"
+      },
+      "raw": "@article{Ogbodo2025,\n  author  = {Ogbodo, Collins O. and Rogers, Timothy J. and {Dal Borgo}, Mattia\n             and Wagg, David J.},\n  title   = {Adaptive Sensor Steering Strategy Using Deep Reinforcement Learning\n             for Dynamic Data Acquisition in Digital Twins},\n  journal = {Proc. R. Soc. A},\n  volume  = {482},\n  number  = {2329},\n  pages   = {20250326},\n  year    = {2026},\n  doi     = {10.1098/rspa.2025.0326}\n}"
+    },
+    "Murad2020": {
+      "key": "Murad2020",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Murad, Abdulmajid and Kraemer, Frank Alexander and Bach, Kerstin and Taylor, Gavin",
+        "title": "Information-Driven Adaptive Sensing Based on Deep Reinforcement Learning",
+        "booktitle": "Proc. 10th Int. Conf. Internet of Things (IoT'20)",
+        "publisher": "ACM",
+        "year": "2020",
+        "doi": "10.1145/3410992.3411001"
+      },
+      "raw": "@inproceedings{Murad2020,\n  author    = {Murad, Abdulmajid and Kraemer, Frank Alexander and Bach, Kerstin and\n               Taylor, Gavin},\n  title     = {Information-Driven Adaptive Sensing Based on Deep Reinforcement Learning},\n  booktitle = {Proc. 10th Int. Conf. Internet of Things (IoT'20)},\n  publisher = {ACM},\n  year      = {2020},\n  doi       = {10.1145/3410992.3411001}\n}"
+    },
+    "Wei2020": {
+      "key": "Wei2020",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Wei, Yongyong and Zheng, Rong",
+        "title": "Informative Path Planning for Mobile Sensing with Reinforcement Learning",
+        "booktitle": "Proc. IEEE INFOCOM 2020",
+        "year": "2020",
+        "doi": "10.1109/INFOCOM41043.2020.9155528"
+      },
+      "raw": "@inproceedings{Wei2020,\n  author    = {Wei, Yongyong and Zheng, Rong},\n  title     = {Informative Path Planning for Mobile Sensing with Reinforcement Learning},\n  booktitle = {Proc. IEEE INFOCOM 2020},\n  year      = {2020},\n  doi       = {10.1109/INFOCOM41043.2020.9155528}\n}"
+    },
+    "Pendyala2024": {
+      "key": "Pendyala2024",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Pendyala, Abhijeet and Atamna, Asma and Glasmachers, Tobias",
+        "title": "Solving a Real-World Optimization Problem Using Proximal Policy Optimization with Curriculum Learning and Reward Engineering",
+        "booktitle": "Proc. ECML/PKDD 2024",
+        "series": "Lecture Notes in Computer Science",
+        "publisher": "Springer",
+        "year": "2024",
+        "doi": "10.1007/978-3-031-70381-2_10"
+      },
+      "raw": "@inproceedings{Pendyala2024,\n  author    = {Pendyala, Abhijeet and Atamna, Asma and Glasmachers, Tobias},\n  title     = {Solving a Real-World Optimization Problem Using Proximal Policy\n               Optimization with Curriculum Learning and Reward Engineering},\n  booktitle = {Proc. ECML/PKDD 2024},\n  series    = {Lecture Notes in Computer Science},\n  publisher = {Springer},\n  year      = {2024},\n  doi       = {10.1007/978-3-031-70381-2_10}\n}"
+    },
+    "DeLaFuente2024": {
+      "key": "DeLaFuente2024",
+      "type": "article",
+      "fields": {
+        "author": "De La Fuente, Neil and Vidal Guerra, Daniel A.",
+        "title": "A Comparative Study of Deep Reinforcement Learning Models: {DQN} vs {PPO} vs {A2C}",
+        "journal": "arXiv preprint arXiv:2407.14151",
+        "year": "2024"
+      },
+      "raw": "@article{DeLaFuente2024,\n  author  = {De La Fuente, Neil and Vidal Guerra, Daniel A.},\n  title   = {A Comparative Study of Deep Reinforcement Learning Models: {DQN} vs\n             {PPO} vs {A2C}},\n  journal = {arXiv preprint arXiv:2407.14151},\n  year    = {2024}\n}"
+    },
+    "Ibrahim2024": {
+      "key": "Ibrahim2024",
+      "type": "article",
+      "fields": {
+        "author": "Ibrahim, Sinan and Mostafa, Mostafa and Jnadi, Ali and Salloum, Hadi and Osinenko, Pavel",
+        "title": "Comprehensive Overview of Reward Engineering and Shaping in Advancing Reinforcement Learning Applications",
+        "journal": "IEEE Access",
+        "volume": "12",
+        "pages": "175473--175500",
+        "year": "2024",
+        "doi": "10.1109/ACCESS.2024.3504735"
+      },
+      "raw": "@article{Ibrahim2024,\n  author  = {Ibrahim, Sinan and Mostafa, Mostafa and Jnadi, Ali and Salloum, Hadi\n             and Osinenko, Pavel},\n  title   = {Comprehensive Overview of Reward Engineering and Shaping in Advancing\n             Reinforcement Learning Applications},\n  journal = {IEEE Access},\n  volume  = {12},\n  pages   = {175473--175500},\n  year    = {2024},\n  doi     = {10.1109/ACCESS.2024.3504735}\n}"
+    },
+    "Ying2022": {
+      "key": "Ying2022",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Ying, Donghao and Ding, Yuhao and Lavaei, Javad",
+        "title": "A Dual Approach to Constrained {Markov} Decision Processes with Entropy Regularization",
+        "booktitle": "Proc. 25th Int. Conf. Artif. Intell. Stat. (AISTATS)",
+        "series": "Proceedings of Machine Learning Research",
+        "volume": "151",
+        "pages": "1887--1909",
+        "publisher": "PMLR",
+        "year": "2022"
+      },
+      "raw": "@inproceedings{Ying2022,\n  author    = {Ying, Donghao and Ding, Yuhao and Lavaei, Javad},\n  title     = {A Dual Approach to Constrained {Markov} Decision Processes with\n               Entropy Regularization},\n  booktitle = {Proc. 25th Int. Conf. Artif. Intell. Stat. (AISTATS)},\n  series    = {Proceedings of Machine Learning Research},\n  volume    = {151},\n  pages     = {1887--1909},\n  publisher = {PMLR},\n  year      = {2022}\n}"
+    },
+    "Chen2026": {
+      "key": "Chen2026",
+      "type": "article",
+      "fields": {
+        "author": "Chen, Yi and Dong, Jing and Wang, Zhaoran",
+        "title": "A Primal-Dual Approach to Constrained {Markov} Decision Processes with Applications to Queue Scheduling and Inventory Management",
+        "journal": "Manage. Sci.",
+        "volume": "72",
+        "number": "2",
+        "pages": "955--988",
+        "year": "2026",
+        "doi": "10.1287/mnsc.2022.03736"
+      },
+      "raw": "@article{Chen2026,\n  author  = {Chen, Yi and Dong, Jing and Wang, Zhaoran},\n  title   = {A Primal-Dual Approach to Constrained {Markov} Decision Processes\n             with Applications to Queue Scheduling and Inventory Management},\n  journal = {Manage. Sci.},\n  volume  = {72},\n  number  = {2},\n  pages   = {955--988},\n  year    = {2026},\n  doi     = {10.1287/mnsc.2022.03736}\n}"
+    },
+    "Amory2020": {
+      "key": "Amory2020",
+      "type": "article",
+      "fields": {
+        "author": "Amory, Charles",
+        "title": "Drifting-snow statistics from multiple-year autonomous measurements in {Ad\\'{e}lie Land}, {East Antarctica}",
+        "journal": "The Cryosphere",
+        "volume": "14",
+        "pages": "1713--1725",
+        "year": "2020",
+        "doi": "10.5194/tc-14-1713-2020"
+      },
+      "raw": "@article{Amory2020,\n  author  = {Amory, Charles},\n  title   = {Drifting-snow statistics from multiple-year autonomous measurements\n             in {Ad\\'{e}lie Land}, {East Antarctica}},\n  journal = {The Cryosphere},\n  volume  = {14},\n  pages   = {1713--1725},\n  year    = {2020},\n  doi     = {10.5194/tc-14-1713-2020}\n}"
+    },
+    "AntAWS2023": {
+      "key": "AntAWS2023",
+      "type": "article",
+      "fields": {
+        "author": "Wang, Yetang and Zhang, Xueying and Ning, Wentao and Lazzara, Matthew A. and others",
+        "title": "The {AntAWS} dataset: a compilation of {Antarctic} automatic weather station observations",
+        "journal": "Earth Syst. Sci. Data",
+        "volume": "15",
+        "pages": "411--429",
+        "year": "2023",
+        "doi": "10.5194/essd-15-411-2023"
+      },
+      "raw": "@article{AntAWS2023,\n  author  = {Wang, Yetang and Zhang, Xueying and Ning, Wentao and\n             Lazzara, Matthew A. and others},\n  title   = {The {AntAWS} dataset: a compilation of {Antarctic} automatic weather\n             station observations},\n  journal = {Earth Syst. Sci. Data},\n  volume  = {15},\n  pages   = {411--429},\n  year    = {2023},\n  doi     = {10.5194/essd-15-411-2023}\n}"
+    },
+    "Monrad2026": {
+      "key": "Monrad2026",
+      "type": "article",
+      "fields": {
+        "author": "Monrad-Krohn, L. J. and others",
+        "title": "Measurements of blowing snow particle size distribution using an open-path optical snow particle counter in {Ny-\\r{A}lesund} during winter 2025",
+        "journal": "PANGAEA",
+        "year": "2026",
+        "doi": "10.1594/PANGAEA.992701"
+      },
+      "raw": "@article{Monrad2026,\n  author  = {Monrad-Krohn, L. J. and others},\n  title   = {Measurements of blowing snow particle size distribution using an\n             open-path optical snow particle counter in {Ny-\\r{A}lesund} during\n             winter 2025},\n  journal = {PANGAEA},\n  year    = {2026},\n  doi     = {10.1594/PANGAEA.992701}\n}"
+    },
+    "Sharma2023": {
+      "key": "Sharma2023",
+      "type": "article",
+      "fields": {
+        "author": "Sharma, Varun and Gerber, Franziska and Lehning, Michael",
+        "title": "Introducing {CRYOWRF} v1.0: multiscale atmospheric flow simulations with advanced snow cover modelling",
+        "journal": "Geoscientific Model Development",
+        "volume": "16",
+        "pages": "719--749",
+        "year": "2023",
+        "doi": "10.5194/gmd-16-719-2023"
+      },
+      "raw": "@article{Sharma2023,\n  author  = {Sharma, Varun and Gerber, Franziska and Lehning, Michael},\n  title   = {Introducing {CRYOWRF} v1.0: multiscale atmospheric flow simulations\n             with advanced snow cover modelling},\n  journal = {Geoscientific Model Development},\n  volume  = {16},\n  pages   = {719--749},\n  year    = {2023},\n  doi     = {10.5194/gmd-16-719-2023}\n}"
+    },
+    "Wang2021": {
+      "key": "Wang2021",
+      "type": "article",
+      "fields": {
+        "author": "Wang, Yuchen and Dou, Yinke and Yang, Wangxiao and Guo, Jingxue and Chang, Xiaomin and Ding, Minghu and Tang, Xueyuan",
+        "title": "A New Machine Learning Algorithm for Numerical Prediction of Near-Earth Environment Sensors along the Inland of East Antarctica",
+        "journal": "Sensors",
+        "volume": "21",
+        "year": "2021",
+        "doi": "10.3390/s21030755"
+      },
+      "raw": "@article{Wang2021,\n  author  = {Wang, Yuchen and Dou, Yinke and Yang, Wangxiao and Guo, Jingxue and\n             Chang, Xiaomin and Ding, Minghu and Tang, Xueyuan},\n  title   = {A New Machine Learning Algorithm for Numerical Prediction of Near-Earth\n             Environment Sensors along the Inland of East Antarctica},\n  journal = {Sensors},\n  volume  = {21},\n  year    = {2021},\n  doi     = {10.3390/s21030755}\n}"
+    },
+    "Lim2021": {
+      "key": "Lim2021",
+      "type": "article",
+      "fields": {
+        "author": "Lim, Bryan and Ar{\\i}k, Sercan \\\"{O}. and Loeff, Nicolas and Pfister, Tomas",
+        "title": "Temporal Fusion Transformers for Interpretable Multi-horizon Time Series Forecasting",
+        "journal": "Int. J. Forecast.",
+        "volume": "37",
+        "number": "4",
+        "pages": "1748--1764",
+        "year": "2021",
+        "doi": "10.1016/j.ijforecast.2021.03.012"
+      },
+      "raw": "@article{Lim2021,\n  author  = {Lim, Bryan and Ar{\\i}k, Sercan \\\"{O}. and Loeff, Nicolas and\n             Pfister, Tomas},\n  title   = {Temporal Fusion Transformers for Interpretable Multi-horizon Time\n             Series Forecasting},\n  journal = {Int. J. Forecast.},\n  volume  = {37},\n  number  = {4},\n  pages   = {1748--1764},\n  year    = {2021},\n  doi     = {10.1016/j.ijforecast.2021.03.012}\n}"
+    },
+    "Liu2024": {
+      "key": "Liu2024",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Liu, Yong and Hu, Tengge and Zhang, Haoran and Wu, Haixu and Wang, Shiyu and Ma, Lintao and Long, Mingsheng",
+        "title": "{iTransformer}: Inverted Transformers Are Effective for Time Series Forecasting",
+        "booktitle": "Int. Conf. Learn. Represent. (ICLR 2024)",
+        "year": "2024",
+        "url": "https://openreview.net/forum?id=JePfAI8fah"
+      },
+      "raw": "@inproceedings{Liu2024,\n  author  = {Liu, Yong and Hu, Tengge and Zhang, Haoran and Wu, Haixu and Wang, Shiyu\n             and Ma, Lintao and Long, Mingsheng},\n  title   = {{iTransformer}: Inverted Transformers Are Effective for Time Series\n             Forecasting},\n  booktitle = {Int. Conf. Learn. Represent. (ICLR 2024)},\n  year    = {2024},\n  url     = {https://openreview.net/forum?id=JePfAI8fah}\n}"
+    },
+    "Bai2018": {
+      "key": "Bai2018",
+      "type": "article",
+      "fields": {
+        "author": "Bai, Shaojie and Kolter, J. Zico and Koltun, Vladlen",
+        "title": "An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling",
+        "journal": "arXiv preprint arXiv:1803.01271",
+        "year": "2018",
+        "eprint": "1803.01271",
+        "archiveprefix": "arXiv",
+        "primaryclass": "cs.LG",
+        "doi": "10.48550/arXiv.1803.01271"
+      },
+      "raw": "@article{Bai2018,\n  author        = {Bai, Shaojie and Kolter, J. Zico and Koltun, Vladlen},\n  title         = {An Empirical Evaluation of Generic Convolutional and Recurrent\n                   Networks for Sequence Modeling},\n  journal       = {arXiv preprint arXiv:1803.01271},\n  year          = {2018},\n  eprint        = {1803.01271},\n  archivePrefix = {arXiv},\n  primaryClass  = {cs.LG},\n  doi           = {10.48550/arXiv.1803.01271}\n}"
+    },
+    "Ding2025": {
+      "key": "Ding2025",
+      "type": "article",
+      "fields": {
+        "author": "Ding, Minghu and others",
+        "title": "Deep learning-based reconstruction of monthly {Antarctic} surface air temperatures from 1979 to 2023",
+        "journal": "Scientific Data",
+        "year": "2025",
+        "doi": "10.1038/s41597-025-05175-6"
+      },
+      "raw": "@article{Ding2025,\n  author  = {Ding, Minghu and others},\n  title   = {Deep learning-based reconstruction of monthly {Antarctic} surface air\n             temperatures from 1979 to 2023},\n  journal = {Scientific Data},\n  year    = {2025},\n  doi     = {10.1038/s41597-025-05175-6}\n}"
+    },
+    "Wang2025": {
+      "key": "Wang2025",
+      "type": "inproceedings",
+      "fields": {
+        "author": "Wang, Jun and Du, Wenjie and Cao, Wei and Zhang, Keli and Wang, Wenjia and Liang, Yuxuan and Wen, Qingsong",
+        "title": "Deep Learning for Multivariate Time Series Imputation: A Survey",
+        "booktitle": "Proc. 34th Int. Joint Conf. Artif. Intell. (IJCAI 2025)",
+        "year": "2025",
+        "doi": "10.24963/ijcai.2025/1187"
+      },
+      "raw": "@inproceedings{Wang2025,\n  author    = {Wang, Jun and Du, Wenjie and Cao, Wei and Zhang, Keli and Wang, Wenjia\n               and Liang, Yuxuan and Wen, Qingsong},\n  title     = {Deep Learning for Multivariate Time Series Imputation: A Survey},\n  booktitle = {Proc. 34th Int. Joint Conf. Artif. Intell. (IJCAI 2025)},\n  year      = {2025},\n  doi       = {10.24963/ijcai.2025/1187}\n}"
+    },
+    "Aloni2024": {
+      "key": "Aloni2024",
+      "type": "article",
+      "fields": {
+        "author": "Aloni, Ofek and Perelman, Gal and Fishbain, Barak",
+        "title": "Synthetic Random Environmental Time Series Generation with Similarity Control, Preserving Original Signal's Statistical Characteristics",
+        "journal": "Environmental Modelling \\& Software",
+        "volume": "185",
+        "pages": "106283",
+        "year": "2025",
+        "doi": "10.1016/j.envsoft.2024.106283"
+      },
+      "raw": "@article{Aloni2024,\n  author  = {Aloni, Ofek and Perelman, Gal and Fishbain, Barak},\n  title   = {Synthetic Random Environmental Time Series Generation with Similarity\n             Control, Preserving Original Signal's Statistical Characteristics},\n  journal = {Environmental Modelling \\& Software},\n  volume  = {185},\n  pages   = {106283},\n  year    = {2025},\n  doi     = {10.1016/j.envsoft.2024.106283}\n}"
+    },
+    "OTT2022": {
+      "key": "OTT2022",
+      "type": "manual",
+      "fields": {
+        "author": "{OTT HydroMet}",
+        "title": "Operating Manual: OTT Parsivel\\textsuperscript{2} Laser Weather Sensor",
+        "number": "70.210.002.B.E 04-0922",
+        "year": "2022",
+        "note": "Doc. 70.210.002.B.E"
+      },
+      "raw": "@manual{OTT2022,\n  author  = {{OTT HydroMet}},\n  title   = {Operating Manual: OTT Parsivel\\textsuperscript{2} Laser Weather Sensor},\n  number  = {70.210.002.B.E 04-0922},\n  year    = {2022},\n  note    = {Doc. 70.210.002.B.E}\n}"
+    },
+    "IAV2024": {
+      "key": "IAV2024",
+      "type": "manual",
+      "fields": {
+        "author": "{IAV Engineering}",
+        "title": "FlowCapt FC4 Blowing Snow Sensor --- Short Product Description",
+        "edition": "V4.0",
+        "year": "2024"
+      },
+      "raw": "@manual{IAV2024,\n  author  = {{IAV Engineering}},\n  title   = {FlowCapt FC4 Blowing Snow Sensor --- Short Product Description},\n  edition = {V4.0},\n  year    = {2024}\n}"
+    },
+    "GillGMX500": {
+      "key": "GillGMX500",
+      "type": "manual",
+      "fields": {
+        "author": "{Gill Instruments Limited}",
+        "title": "MaxiMet GMX500 Compact Weather Station",
+        "year": "2023"
+      },
+      "raw": "@manual{GillGMX500,\n  author  = {{Gill Instruments Limited}},\n  title   = {MaxiMet GMX500 Compact Weather Station},\n  year    = {2023}\n}"
+    },
+    "SensecaLPS10": {
+      "key": "SensecaLPS10",
+      "type": "manual",
+      "fields": {
+        "author": "{Senseca Germany GmbH}",
+        "title": "LPS10 Class A Pyranometer --- Datasheet",
+        "year": "2024"
+      },
+      "raw": "@manual{SensecaLPS10,\n  author  = {{Senseca Germany GmbH}},\n  title   = {LPS10 Class A Pyranometer --- Datasheet},\n  year    = {2024}\n}"
+    },
+    "ApogeeSI111": {
+      "key": "ApogeeSI111",
+      "type": "manual",
+      "fields": {
+        "author": "{Apogee Instruments Inc.}",
+        "title": "SI-111-SS Precision Infrared Radiometer --- Product Manual",
+        "year": "2024"
+      },
+      "raw": "@manual{ApogeeSI111,\n  author  = {{Apogee Instruments Inc.}},\n  title   = {SI-111-SS Precision Infrared Radiometer --- Product Manual},\n  year    = {2024}\n}"
+    }
+  }
+}

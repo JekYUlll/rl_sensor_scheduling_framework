@@ -1,0 +1,455 @@
+\section{PD-PPO Scheduler and Evaluation Protocol}
+\label{sec:framework_protocol}
+
+\subsection{Scheduler inputs, actions, and constraints}
+
+The PD-PPO policy is trained using the policy reward in
+\Cref{eq:training_reward}, whose forecast-loss term is derived from the
+multi-step forecast loss in \Cref{eq:step_forecast_loss}. The macro-averaged
+normalized forecast loss in \Cref{eq:macro_loss} is used for
+event-type-balanced evaluation and does not enter PPO training. At each time step,
+the scheduler receives recent sample-and-hold values and observation masks,
+together with the time since each channel's last sampling opportunity. Its input
+also includes channel operating states, the previous executed activation vector,
+budget and time features, and simulated warning signals.
+The reported actor and critic do not receive the remaining activation time
+$r_t$ explicitly; the environment enforces the lock after an action is proposed.
+
+The finite candidate action set is listed in
+\Cref{tab:action_space_instantiation}. A feasibility check removes actions that
+violate either the steady-state or startup-peak power limit and thereby forms the
+feasible-action mask. During training, the policy samples an index from the
+feasible action-index set. During evaluation, it selects the highest-scoring
+feasible index. The resulting index specifies the proposed activation vector.
+The minimum dwell-time constraint in \Cref{eq:minimum_activation_rule} is then
+applied to determine the executed activation vector. Unless stated otherwise,
+all baselines use the same feasibility check and execution rule.
+
+\Cref{tab:action_space_instantiation} gives the candidate channel subsets used
+by PD-PPO and the constrained baselines. Every subset includes the meteorological core
+channel, and each differs only in whether and which optional channel is active. The evaluated
+configuration therefore keeps one meteorological core channel active and allows at
+most one optional channel to operate.
+
+\input{tables/action_space_instantiation}
+
+In the reported $q=1$ instance, the largest candidate steady-state demand is
+$0.74<B=0.75$, and the largest startup-peak demand is $0.92<B_{\mathrm{peak}}=0.95$.
+Consequently, every one of the six candidate action indices belongs to
+$\mathcal{I}_t$ at every evaluated time step: neither power inequality excludes
+a candidate activation vector. The feasibility layer remains part of the method,
+but the active experimental restrictions are the optional-channel cardinality
+constraint and the minimum dwell-time constraint.
+
+Let $r_t$ be the remaining required activation time immediately before the action
+at time $t$. If $r_t>0$, the environment executes $a_t=a_{t-1}$ regardless of
+the proposed $\bar a_t$. After execution, the update is
+\begin{equation}
+  r_{t+1}=
+  \begin{cases}
+    D_{\min}-1, & a_t\neq a_{t-1},\\
+    \max(r_t-1,0), & a_t=a_{t-1}.
+  \end{cases}
+  \label{eq:activation_timer_update}
+\end{equation}
+The first execution time step is therefore included in the $D_{\min}$-step
+minimum. The reported values are $D_{\min}=6$ and a maximum channel warm-up of
+two time steps. A newly activated channel cannot be deactivated before warm-up
+completes, so $W_t=0$ structurally in this experiment.
+
+\subsection{Partial observations and scheduler input}
+\label{sec:partial_observation_update}
+
+The environment maintains sample-and-hold values without a model-based Kalman
+state estimate. Let $y_{t,i,j}$ denote a valid measurement of variable $j$
+provided by ready channel $i$ at time step $t$, and let $R_{i,j}$ denote the
+configured measurement-noise variance. Define $\mathcal{O}_{t,j}$ as the set
+of ready channels that provide a valid measurement of variable $j$ at time
+step $t$. For a scalar variable observed by at least one ready channel, the
+fused value is
+\begin{equation}
+  \widetilde{x}_{t,j}
+  =
+  \frac{\sum_{i\in\mathcal{O}_{t,j}}R_{i,j}^{-1}y_{t,i,j}}
+       {\sum_{i\in\mathcal{O}_{t,j}}R_{i,j}^{-1}} .
+  \label{eq:observation_fusion}
+\end{equation}
+
+Wind-direction measurements are fused using a weighted circular mean. If
+$\mathcal{O}_{t,j}=\varnothing$, the environment retains the previous value,
+$\widetilde{x}_{t,j}=\widetilde{x}_{t-1,j}$. An observation mask indicates
+whether each variable received a valid measurement at time step $t$. The
+scheduler and frozen primary forecaster receive the most recent 20 value vectors
+together with their observation masks. These masks distinguish new measurements
+from retained sample-and-hold values.
+
+For scalar variables, \Cref{eq:observation_fusion} assumes conditionally
+independent measurement errors with variances $R_{i,j}$. Under correlated
+channel errors, the rule provides a precision-weighted approximation. Computing
+the minimum-variance linear estimate would require the full measurement-error
+covariance matrix. The weighted circular mean for wind direction is defined
+separately from the scalar fusion rule.
+
+At each time step, the environment first updates the channel operating states
+and identifies the ready channels. Measurement attempts are then performed for
+the ready channels. Valid measurements are fused into the current variable
+values, and variables without a valid measurement retain their previous values.
+The environment subsequently updates the observation masks and channel-level
+sampling ages before constructing the scheduler input.
+
+For each channel, the scheduler receives its off, warming, or ready state,
+remaining warm-up time, and normalized sampling age. The sampling age measures
+the time since the channel's last sampling opportunity. It resets when an active
+channel becomes ready to sample, including cases in which the stochastic
+measurement attempt produces no valid measurement. Variable-level AoI follows
+a different reset condition and counts the time steps since the variable's most
+recent valid observation. The scheduler input further includes the previously
+executed channel subset, current power ratio, diurnal phase, and compact
+recent-history features.
+
+The main policy does not receive an estimated covariance matrix. Covariance
+trace is used in \Cref{prop:non_equivalence} as an alternative scheduling
+objective. A diagonal predict--update uncertainty proxy is used only by the
+uncertainty-objective PPO configuration.
+
+The scheduler receives ten additional features computed deterministically from
+the most recent 16 sample-and-hold value vectors and observation masks. The
+features summarize recent patterns associated with particle, flux, and thermal
+conditions. They also capture temporal trends and recent observation coverage.
+All ten features are derived solely from information available at decision
+time. Their complete definitions and clipping rules are provided in
+Supplementary Section S1.
+
+Four simulated warning signals are also available to the scheduler at decision
+time. They represent particle, flux, thermal, and aggregate warning information
+and include simulated noise. Condition labels are excluded from the scheduler
+input. They are used to construct supervised information during training and to
+group results during evaluation. A learned gate conditioned on the aggregate
+warning signal combines the outputs of two feature encoders. The fused
+representation is then used to compute the candidate-action scores. The critic
+is implemented with a separate network. Supplementary Sections S1 and S5
+provide the complete warning-signal construction and policy equations.
+
+\begin{algorithm}[htbp]
+\caption{PD-PPO policy training}
+\label{alg:pdppo_training}
+\small
+\begin{algorithmic}
+\State Train the primary forecaster on the forecaster-training partition and
+freeze its parameters.
+\State Evaluate the candidate fixed channel subsets on the calibration/validation partition,
+compute $s_{\mathrm{calm}}$ and the event-type-specific normalization factors
+$s_c$, and define the condition-specific supervised target-action mapping.
+\State Pretrain the policy for 10,000 behavior cloning steps using the
+supervised target actions derived from future-condition supervision labels.
+\For{each PPO rollout of $n_{\mathrm{steps}}$ policy-training time steps}
+  \State Initialize or continue a rollout on the policy-training partition.
+  \For{each time step $t$ in the rollout}
+    \State Construct $o_t$ from the observation history, channel-level runtime
+    features, the previous executed activation vector, budget/time features, and
+    simulated warning signals.
+    \State Apply the feasibility check to obtain $\mathcal{I}_t$.
+    \State Sample
+    $u_t\sim\pi_{\theta}(\cdot\mid o_t,\mathcal{I}_t)$ and set
+    $\bar a_t=a^{(u_t)}$.
+    \State Apply the minimum dwell-time constraint to obtain $a_t$.
+    \State Advance the sensing environment with $a_t$ and update the observation history.
+    \State Evaluate the updated history with the frozen primary forecaster and compute
+    $R_t$ using \Cref{eq:training_reward}.
+    \State Store the sampled proposed-action index $u_t$, its log probability,
+    the reward produced after executing $a_t$, and the training-only supervision.
+  \EndFor
+  \State Update the policy and critic for $n_{\mathrm{epochs}}$ passes over the
+  rollout using the combined objective in \Cref{eq:pdppo_loss}.
+\EndFor
+\State Save the final policy checkpoint after the prescribed PPO updates and
+freeze it for test evaluation.
+\end{algorithmic}
+\end{algorithm}
+
+The implementation samples the policy at every training time step, including
+when $r_t>0$. If the lock overrides a proposal, the rollout buffer retains the
+proposed index $u_t$ and $\log\pi_{\theta_{\mathrm{old}}}
+(u_t\mid o_t,\mathcal{I}_t)$, whereas the environment transition, reward, and
+generalized advantage estimate are generated after executing
+$a_t=a_{t-1}$. The reported training protocol therefore uses proposed-action
+credit during locked time steps rather than an executed-action PPO likelihood.
+The logs do not retain the counterfactual proposals needed to estimate the
+override rate. This convention does not change the test losses of the frozen
+final policies, but those losses do not evaluate an executed-action PPO update.
+
+\subsection{Frozen primary forecaster and policy reward}
+
+The primary forecaster is trained before policy optimization. Its parameters are
+then frozen during policy training and evaluation.
+It receives the 20-step sample-and-hold value history and its observation masks.
+The time since each channel's last sampling opportunity, runtime, warning
+signals, and the recent-history features above are provided only to the
+scheduler. During policy training, the frozen primary forecaster returns the multi-step
+forecast loss for the observation sequence produced by the current schedule.
+That forecast loss forms the training loss in
+\Cref{eq:subtype_normalized_training_loss}; the training loss and operational
+penalties form the policy reward in \Cref{eq:training_reward}. During test
+evaluation, the same frozen primary forecaster evaluates the observations produced
+by the PD-PPO scheduler and every baseline.
+
+Supplementary Table S10 separates quantities available to the online scheduler
+from condition labels and future values used as training-only or evaluation-only
+information. This distinction separates the privileged true-label baseline from the
+PD-PPO scheduler.
+
+The policy reward is the negative of the training loss plus the two operational
+penalties used in the reported experiment.
+\begin{equation}
+  R_t
+  =
+  -\left[
+  L_{\mathrm{train}}(t)
+  + \lambda_{\mathrm{sw}} S_t
+  + \lambda_{\mathrm{warm}} W_t
+  \right],
+  \label{eq:training_reward}
+\end{equation}
+where $L_{\mathrm{train}}$ is the condition-weighted training loss normalized
+using calibration/validation quantities, $S_t$ is the normalized switching cost,
+and $W_t$ is the number
+of warm-up interruptions introduced at time step $t$. With $m$ logical channels,
+the executed-action switching cost is
+\begin{equation}
+  S_t=\frac{1}{m}\lVert a_t-a_{t-1}\rVert_1.
+  \label{eq:normalized_switching_cost}
+\end{equation}
+This normalized Hamming distance is the fraction of executed activation bits that
+change between consecutive time steps. It is not a count of channel-switch
+events.
+Power
+and startup violations are excluded by $\mathcal{I}_t$, and the minimum
+dwell-time constraint determines $a_t$; these constraints therefore do
+not enter the reward as residual violation terms.
+The reported evaluation separates mean forecast loss from the macro-averaged
+normalized forecast loss in
+\Cref{eq:step_forecast_loss,eq:macro_loss}.
+
+The training loss uses a condition-specific training weight and a normalization
+factor computed on the calibration/validation partition while retaining calm
+time steps and all three event types:
+\begin{equation}
+  L_{\mathrm{train}}(t)
+  =
+  \omega_{c_t}
+  \frac{L_{\mathrm{step}}(t)}{s_{c_t}},
+  \label{eq:subtype_normalized_training_loss}
+\end{equation}
+where $L_{\mathrm{step}}(t)$ is the clipped, target-weighted, scale-normalized
+multi-step forecast loss returned by the frozen primary forecaster for the
+current observation history, and $\omega_c\geq0$ is a condition-specific
+training weight. For each event type
+$c\in\{\mathrm{particle},\mathrm{flux},\mathrm{thermal}\}$, $s_c>0$ is the
+median event-type-specific forecast loss across candidate fixed channel subsets
+on the calibration/validation partition. The default factor $s_{\mathrm{calm}}>0$ is the
+median overall forecast loss across the same candidates on that partition; it is
+used for calm time steps. Thus the denominator $s_{c_t}$ in
+\Cref{eq:subtype_normalized_training_loss} equals $s_c$ when $c_t$ is event type
+$c$ and $s_{\mathrm{calm}}$ when $c_t$ is calm. The particle, flux, and thermal weights are 1.55, 0.95,
+and 1.65, while calm time steps use unit weight. These weights and normalization
+factors are fixed before policy optimization and remain unchanged during policy
+training and evaluation. The current simulator-derived operating-condition label $c_t$ is
+never available to the policy or critic at decision time. On the policy-training
+partition, it selects the condition-specific weight and normalization factor in
+\Cref{eq:subtype_normalized_training_loss}. On the test partition, it is used only
+for offline loss computation and grouped reporting. Test action selection requires
+the simulated warning signals but neither $c_t$ nor a reward value.
+
+Policy learning uses two additional supervised signals formed only during
+training. Define the future-condition supervision label $c_t^{\mathrm{sup}}$ as the
+first non-calm simulator-derived condition label in the window from $t$ through
+$t+16$, or calm when that window contains no event. This label selects a
+predefined feasible supervised target action. The meteorological core channel is paired with the
+shielded temperature--humidity channel in calm periods, the laser disdrometer channel for particle
+events, the FC4 snow mass-flux channel for flux events, and the infrared
+snow-surface-temperature channel for thermal events. These target actions supply
+behavior cloning labels, while $c_t^{\mathrm{sup}}$ supervises an auxiliary
+four-class future-condition classifier. Both signals are
+formed only on the policy-training partition. The policy and critic receive the
+simulated warning signals during policy-training rollouts and test evaluation.
+Neither $c_t$ nor $c_t^{\mathrm{sup}}$ is available to the policy or critic at
+decision time. The target actions are first used for 10,000 steps of
+behavior cloning pretraining.
+During PPO, the advantage-weighted behavior cloning term in \Cref{eq:bc_loss}
+and the auxiliary future-condition classification term in
+\Cref{eq:event_aux_loss} remain active.
+
+The primary forecaster uses a TCN-style residual temporal convolutional
+architecture \citep{Bai2018}. The implementation has three levels, 64 channels
+per level, kernel size 3, and dropout rate 0.05. It is
+fitted on the forecaster-training partition before policy training. Input and
+target scales are fitted before policy updates, and the architecture is held
+fixed throughout policy training and evaluation. No forecaster weights are
+updated after the forecaster-training partition ends.
+
+The forecaster is trained on observation sequences produced by full observation,
+fixed channel subsets, and dynamic baselines in the forecaster-training
+partition. This mixture exposes the model to dense histories and partial
+histories produced by different schedules before its parameters are fixed. It
+contains no calibration/validation or test observations.
+Rollout counts, reset conditions, and the complete
+training protocol are reported in Supplementary Section S2.
+
+\subsection{PPO objective}
+
+Let $o_t$ denote the scheduler input, $u_t$ the selected action index,
+$\bar a_t=a^{(u_t)}$ the proposed activation vector, $a_t$ the executed
+activation vector, and $\hat{A}_t$ the advantage estimate. The policy defines a
+categorical distribution over the feasible action set,
+\begin{equation}
+  \pi_{\theta}(u\mid o_t,\mathcal{I}_t)
+  =
+  \frac{\exp z_{\theta}(o_t,u)}
+  {\sum_{v\in\mathcal{I}_t}\exp z_{\theta}(o_t,v)}
+  \mathbf{1}\{u\in\mathcal{I}_t\},
+  \label{eq:masked_policy}
+\end{equation}
+where $z_{\theta}(o_t,u)$ is the policy score for activation vector $a^{(u)}$ and
+$\mathcal{I}_t$ is the power- and startup-feasible index set. The activation
+vector containing only the mandatory meteorological core channel belongs to the
+candidate action set and satisfies both limits, so
+$\mathcal{I}_t$ is nonempty at every time step.
+PPO updates this distribution with the clipped surrogate
+\begin{equation}
+  \mathcal{L}_{\mathrm{clip}}(\theta)
+  =
+  -\mathbb{E}_t
+  \left[
+  \min\left(
+  \rho_t(\theta)\hat{A}_t,\,
+  \operatorname{clip}\!\left(\rho_t(\theta),1-\epsilon,1+\epsilon\right)
+  \hat{A}_t
+  \right)
+  \right],
+  \label{eq:ppo_clip}
+\end{equation}
+where
+\begin{equation}
+  \rho_t(\theta)
+  =
+  \frac{\pi_{\theta}(u_t\mid o_t,\mathcal{I}_t)}
+       {\pi_{\theta_{\mathrm{old}}}(u_t\mid o_t,\mathcal{I}_t)} .
+\end{equation}
+The reported PPO loss contains the PPO surrogate, value loss, entropy
+regularization, and two auxiliary terms tied to the forecast training setup.
+\begin{equation}
+  \mathcal{L}_{\mathrm{PPO}}
+  =
+  \mathcal{L}_{\mathrm{clip}}
+  + c_v\mathcal{L}_{V}
+  - c_H\mathcal{H}\!\left(\pi_{\theta}(\cdot\mid o_t,\mathcal{I}_t)\right)
+  + \beta_{\mathrm{BC}}\mathcal{L}_{\mathrm{BC}}
+  + \beta_{\mathrm{cond}}\mathcal{L}_{\mathrm{cond}} .
+  \label{eq:pdppo_loss}
+\end{equation}
+For labeled training examples, let $u_t^{\mathrm{target}}\in\mathcal{I}_t$
+denote the feasible supervised target action described above. The
+advantage-weighted behavior cloning term is
+\begin{equation}
+  \mathcal{L}_{\mathrm{BC}}
+  =
+  -
+  \frac{
+  \sum_t \ell_t[\hat{A}_t]_+\,\log
+  \pi_{\theta}(u_t^{\mathrm{target}}\mid o_t,\mathcal{I}_t)
+  }{
+  \sum_t \ell_t[\hat{A}_t]_+ + \varepsilon
+  },
+  \label{eq:bc_loss}
+\end{equation}
+where $[x]_+=\max(x,0)$ and $\ell_t\in\{0,1\}$ marks examples with a valid
+supervised target. Let $\eta_t\in\{0,1\}$ mark examples for which the
+future-condition supervision label is available to the auxiliary classifier. An
+auxiliary future-condition classification loss is applied to the auxiliary
+future-condition classifier. Let
+$h_t$ be the policy representation, $q_{\theta}(c\mid h_t)$ the auxiliary
+probability of operating condition
+$c\in\{\mathrm{calm},\mathrm{particle},\mathrm{flux},\mathrm{thermal}\}$, and
+$c_t^{\mathrm{sup}}$ the future-condition supervision label used only during policy
+training. The reported stride-one configuration constructs both supervised
+targets from the same $c_t^{\mathrm{sup}}$ and sets
+$\eta_t=\ell_t=1$ at every PPO step. The general
+implementation constructs the indicators separately. The auxiliary future-condition classification loss is
+\begin{equation}
+  \mathcal{L}_{\mathrm{cond}}
+  =
+  -
+  \frac{
+  \sum_t \eta_t \log q_{\theta}(c_t^{\mathrm{sup}}\mid h_t)
+  }{
+  \sum_t \eta_t + \varepsilon
+  } .
+  \label{eq:event_aux_loss}
+\end{equation}
+
+Supplementary Table S1 lists the full protocol and training hyperparameters.
+\subsection{Reward-function and algorithm comparisons}
+\label{sec:matched_controls}
+
+The AoI-objective and uncertainty-objective PPO configurations retain the same PPO
+policy and critic architecture, scheduler input, candidate action set, feasibility check,
+chronological partitions, condition-specific weights, supervised target actions
+available only during training, and auxiliary future-condition classification loss, but
+replace the scalar forecast-loss objective. The AoI-objective PPO variant averages normalized
+observed-variable age over the observation history; the uncertainty-objective
+configuration averages a bounded diagonal predict--update variance proxy. Their
+recursions and bounds are given in
+Supplementary Section S3.
+Each scalar objective supplies the corresponding rollout reward, from which the
+value targets and advantages are computed. Replacing it therefore changes the
+PPO surrogate, critic target, and the positive-advantage weights in
+$\mathcal{L}_{\mathrm{BC}}$. These are matched PPO training configurations with
+different scalar objectives, not isolated scalar-reward ablations.
+
+The Double DQN training configuration uses a dueling network and the same
+feasible-action mask, state representation, reward, action set, constraints,
+policy-training partition, and test windows as the PD-PPO scheduler. Online and
+target networks implement the
+Double DQN target over feasible next actions, with three-step returns and
+experience replay. This configuration does not use behavior cloning pretraining, the continuing
+advantage-weighted behavior cloning term, or the auxiliary future-condition
+classifier. Its complete settings are listed in
+Supplementary Table S1.
+
+\subsection{Chronological data split and baselines}
+
+Each simulated ground-truth time series is split into forecaster-training,
+policy-training, calibration/validation, and test partitions. The
+calibration/validation partition computes $s_c$ and $s_{\mathrm{calm}}$, defines
+the condition-to-action mapping used to construct supervised targets on
+policy-training data, and selects the fixed-schedule baseline. Test windows are
+not used for forecaster training, policy updates,
+supervised-target generation, fixed-baseline selection, or normalization-factor
+fitting.
+
+The calibration/validation interval follows the policy-training interval
+chronologically. Computationally, however, its normalization factors,
+condition-to-action mapping, and fixed-schedule selection are computed offline
+before policy optimization and then held fixed. Calibration/validation
+transitions are not used as policy-training rollouts.
+
+The chronological split is summarized in Supplementary Fig. S1.
+
+The fixed-schedule baseline tests whether adaptation is needed. The AoI-priority
+baseline, round-robin baseline, and random-feasible baseline provide non-learned
+dynamic comparisons under the same operating rules. The privileged one-step
+look-ahead reference using next-step test targets chooses the currently best feasible action;
+those targets are unavailable to the deployed scheduler. Its one-step objective omits
+minimum dwell-time consequences, warm-up, and observation age. It therefore does not isolate the
+value of sequential decision making. The warning-rule baseline maps simulated
+warning signals to channel subsets selected on the calibration/validation
+partition. The privileged true-label baseline receives the exact sequence
+$c_t,\ldots,c_{t+16}$ at each decision; these condition labels are unavailable
+to the deployed scheduler. Neither privileged baseline is a guaranteed upper
+bound.
+
+Supplementary Table S11 fixes the role of each baseline before the results
+section.
+
+Exact decision rules, calibration/validation choices, tie breaks, and information availability
+for these baselines are listed in Supplementary Section S6.

@@ -1,0 +1,39 @@
+dqn_update timesteps=2000 epsilon=0.8944 reward_mean=-0.152915 loss=0.015053 unique_actions=11
+dqn_update timesteps=4000 epsilon=0.7889 reward_mean=-0.187707 loss=0.019405 unique_actions=11
+dqn_update timesteps=6000 epsilon=0.6833 reward_mean=-0.187736 loss=0.036036 unique_actions=11
+dqn_update timesteps=8000 epsilon=0.5778 reward_mean=-0.164939 loss=0.049856 unique_actions=11
+dqn_update timesteps=10000 epsilon=0.4722 reward_mean=-0.143452 loss=0.055082 unique_actions=11
+dqn_update timesteps=12000 epsilon=0.3667 reward_mean=-0.148201 loss=0.070544 unique_actions=11
+dqn_update timesteps=14000 epsilon=0.2611 reward_mean=-0.168387 loss=0.087650 unique_actions=11
+dqn_update timesteps=16000 epsilon=0.1556 reward_mean=-0.102965 loss=0.096997 unique_actions=11
+dqn_update timesteps=18000 epsilon=0.0500 reward_mean=-0.151715 loss=0.096018 unique_actions=11
+dqn_update timesteps=20000 epsilon=0.0500 reward_mean=-0.171728 loss=0.118159 unique_actions=11
+dqn_update timesteps=22000 epsilon=0.0500 reward_mean=-0.189856 loss=0.125100 unique_actions=11
+dqn_update timesteps=24000 epsilon=0.0500 reward_mean=-0.180220 loss=0.130956 unique_actions=11
+dqn_update timesteps=26000 epsilon=0.0500 reward_mean=-0.161748 loss=0.139000 unique_actions=11
+dqn_update timesteps=28000 epsilon=0.0500 reward_mean=-0.196442 loss=0.153683 unique_actions=11
+dqn_update timesteps=30000 epsilon=0.0500 reward_mean=-0.211414 loss=0.164999 unique_actions=11
+dqn_update timesteps=32000 epsilon=0.0500 reward_mean=-0.133266 loss=0.172341 unique_actions=11
+dqn_update timesteps=34000 epsilon=0.0500 reward_mean=-0.179713 loss=0.187713 unique_actions=11
+dqn_update timesteps=36000 epsilon=0.0500 reward_mean=-0.121726 loss=0.195752 unique_actions=11
+dqn_update timesteps=38000 epsilon=0.0500 reward_mean=-0.137368 loss=0.199893 unique_actions=11
+dqn_update timesteps=40000 epsilon=0.0500 reward_mean=-0.161671 loss=0.200287 unique_actions=11
+dqn_update timesteps=42000 epsilon=0.0500 reward_mean=-0.125567 loss=0.202561 unique_actions=11
+dqn_update timesteps=44000 epsilon=0.0500 reward_mean=-0.181032 loss=0.214697 unique_actions=11
+dqn_update timesteps=46000 epsilon=0.0500 reward_mean=-0.167145 loss=0.224896 unique_actions=11
+dqn_update timesteps=48000 epsilon=0.0500 reward_mean=-0.197268 loss=0.231703 unique_actions=11
+dqn_update timesteps=50000 epsilon=0.0500 reward_mean=-0.188510 loss=0.241852 unique_actions=11
+dqn_update timesteps=52000 epsilon=0.0500 reward_mean=-0.169562 loss=0.261537 unique_actions=11
+dqn_update timesteps=54000 epsilon=0.0500 reward_mean=-0.128417 loss=0.261609 unique_actions=11
+dqn_update timesteps=56000 epsilon=0.0500 reward_mean=-0.211331 loss=0.259951 unique_actions=11
+dqn_update timesteps=58000 epsilon=0.0500 reward_mean=-0.156127 loss=0.268666 unique_actions=11
+dqn_update timesteps=60000 epsilon=0.0500 reward_mean=-0.150060 loss=0.274544 unique_actions=11
+/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/v31_no_warmup_dqn_split_diagnostic/raw/budget1p70_seed42/v2_dqn_split_metrics.csv
+                    policy  steps  reward_mean  instant_mae  oracle_loss_mean  dtw_mean  power_mean  peak_power_max  event_rate  warmup_abort_count  switches_per_step  always_on_sensor_count  always_off_sensor_count  mid_duty_sensor_count  duty_entropy  duty_min  duty_max  duty_std
+   full_open_unconstrained   6144    -0.126821     1.662352          0.126819  1.604299    4.620000            6.28    0.344238                   0           0.000000                       8                        0                      0     -0.000000  1.000000  1.000000  0.000000
+               round_robin   6144    -0.137476     3.224355          0.136976  2.413395    1.555000            1.98    0.344238                   0           0.250000                       0                        0                      8      0.661852  0.125000  0.875000  0.299739
+ feasible_static_projected   6144    -0.138187     2.958534          0.138187  2.821556    1.460000            1.95    0.344238                   0           0.000000                       3                        5                      0     -0.000000  0.000000  1.000000  0.484123
+validation_selected_static   6144    -0.138187     2.958534          0.138187  2.821556    1.460000            1.95    0.344238                   0           0.000000                       3                        5                      0     -0.000000  0.000000  1.000000  0.484123
+                       dqn   6144    -0.138919     3.438746          0.138514  2.566905    1.544661            2.33    0.344238                   0           0.202670                       0                        0                      8      0.693049  0.052897  0.795736  0.282814
+                       aoi   6144    -0.143350     3.475524          0.142273  2.558437    1.639766            2.33    0.344238                   0           0.538418                       0                        0                      8      0.912774  0.156576  0.561523  0.113525
+                    random   6144    -0.145228     4.215650          0.144382  3.033047    1.612129            2.33    0.344238                   0           0.423327                       0                        0                      8      0.903069  0.197266  0.526367  0.127636

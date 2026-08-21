@@ -1,0 +1,45 @@
+reports/aggregate/scenebal1_12seed_93_104_macro_20260621/metpair_seed_summary.csv
+reports/aggregate/scenebal1_12seed_93_104_macro_20260621/metpair_claim_summary.json
+{
+  "complete_seeds": 12,
+  "seed_gate_pass_count": 12,
+  "learned_gate_pass_count": 12,
+  "replay_gate_pass_count": 12,
+  "behavior_gate_pass_count": 12,
+  "learned_macro_positive_count": 12,
+  "replay_macro_positive_count": 12,
+  "macro_seed_positive_count": 12,
+  "learned_macro_gate_count": 12,
+  "replay_macro_gate_count": 12,
+  "macro_seed_gate_count": 12,
+  "mean_learned_margin_abs": 0.13398364952407374,
+  "median_learned_margin_abs": 0.08851065471344555,
+  "mean_replay_margin_abs_vs_static_reference": 0.08724542629401337,
+  "median_replay_margin_abs_vs_static_reference": 0.08376066377491043,
+  "mean_learned_macro_margin_abs": 0.10165981927275887,
+  "median_learned_macro_margin_abs": 0.10167755276599122,
+  "mean_learned_macro_margin_abs_vs_macro_static_reference": 0.07372215852427323,
+  "median_learned_macro_margin_abs_vs_macro_static_reference": 0.07940259142346856,
+  "mean_replay_macro_margin_abs_vs_static_reference": 0.07912407801691677,
+  "median_replay_macro_margin_abs_vs_static_reference": 0.07983992159327258,
+  "one_sided_sign_test_p_seed_gate": 0.000244140625,
+  "one_sided_sign_test_p_macro_seed_positive": 0.000244140625,
+  "one_sided_sign_test_p_macro_seed_gate": 0.000244140625,
+  "claim_strength": "strong_multiseed",
+  "reason": ">=10 complete seeds with at least 80% full gate passes",
+  "macro_claim_strength": "strong_macro_multiseed",
+  "macro_reason": ">=10 complete seeds with at least 80% macro gate passes"
+}
+ seed  complete  router_custom_ppo_loss  selected_static_loss                         macro_score_column  learned_margin_abs_vs_selected_static  replay_margin_abs_vs_static_reference  learned_macro_margin_abs_vs_selected_static  learned_macro_margin_abs_vs_macro_static_reference  replay_macro_margin_abs_vs_static_reference  macro_seed_positive_pass  macro_seed_gate_pass  behavior_gate_pass  seed_gate_pass
+   93      True                1.568620              1.937658 oracle_loss_macro_subtype_event_staticnorm                               0.369038                               0.156033                                     0.135590                                            0.080436                                     0.078377                      True                  True                True            True
+   94      True                1.596270              1.650309 oracle_loss_macro_subtype_event_staticnorm                               0.054038                               0.058651                                     0.058114                                            0.062325                                     0.069290                      True                  True                True            True
+   95      True                1.951350              1.963998 oracle_loss_macro_subtype_event_staticnorm                               0.012648                               0.027350                                     0.086573                                            0.078369                                     0.087540                      True                  True                True            True
+   96      True                1.644688              1.682449 oracle_loss_macro_subtype_event_staticnorm                               0.037761                               0.059296                                     0.035452                                            0.040998                                     0.043479                      True                  True                True            True
+   97      True                1.628064              1.749918 oracle_loss_macro_subtype_event_staticnorm                               0.121854                               0.101587                                     0.108964                                            0.097154                                     0.098268                      True                  True                True            True
+   98      True                1.691185              1.713773 oracle_loss_macro_subtype_event_staticnorm                               0.022588                               0.046098                                     0.051022                                            0.053092                                     0.062896                      True                  True                True            True
+   99      True                1.715256              2.115944 oracle_loss_macro_subtype_event_staticnorm                               0.400688                               0.137161                                     0.136233                                            0.108157                                     0.108792                      True                  True                True            True
+  100      True                1.651600              1.706767 oracle_loss_macro_subtype_event_staticnorm                               0.055167                               0.033763                                     0.118899                                            0.082933                                     0.086874                      True                  True                True            True
+  101      True                1.300811              1.344353 oracle_loss_macro_subtype_event_staticnorm                               0.043542                               0.067299                                     0.147926                                            0.040290                                     0.059720                      True                  True                True            True
+  102      True                1.393161              1.563924 oracle_loss_macro_subtype_event_staticnorm                               0.170763                               0.100222                                     0.162205                                            0.064413                                     0.071185                      True                  True                True            True
+  103      True                1.460250              1.588082 oracle_loss_macro_subtype_event_staticnorm                               0.127832                               0.123276                                     0.084548                                            0.081028                                     0.081303                      True                  True                True            True
+  104      True                1.515300              1.707184 oracle_loss_macro_subtype_event_staticnorm                               0.191885                               0.136209                                     0.094391                                            0.095470                                     0.101766                      True                  True                True            True

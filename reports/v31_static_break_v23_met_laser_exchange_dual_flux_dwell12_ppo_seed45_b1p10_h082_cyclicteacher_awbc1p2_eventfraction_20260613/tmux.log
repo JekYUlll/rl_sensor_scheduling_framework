@@ -1,0 +1,13 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p10_seed45 -> reports/v31_static_break_v23_met_laser_exchange_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc1p2_eventfraction_20260613/logs/budget1p10_seed45.log
+complete_seeds=1/1
+reports/v31_static_break_v23_met_laser_exchange_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc1p2_eventfraction_20260613/v23_metlaser_dualflux_cyclicteacher_awbc1p2_seed45_h082_eventfraction_summary.csv
+reports/v31_static_break_v23_met_laser_exchange_dual_flux_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc1p2_eventfraction_20260613/v23_metlaser_dualflux_cyclicteacher_awbc1p2_seed45_h082_eventfraction_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  1                1                         0.017008                        0.017008                        0.017008
+               best_static  1                1                         0.009546                        0.009546                        0.009546
+           selected_static  1                1                         0.009546                        0.009546                        0.009546
+deployable_selected_static  1                1                         0.045119                        0.045119                        0.045119
+    best_deployable_static  1                0                        -0.003665                       -0.003665                       -0.003665
+     best_original_dynamic  1                1                         0.005924                        0.005924                        0.005924
+       best_duty_non_pdppo  1                0                        -0.003665                       -0.003665                       -0.003665

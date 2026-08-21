@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Event-type-specific forecast losses and the macro-averaged normalized forecast loss. Lower values are better; a positive paired difference favors PD-PPO over the fixed-schedule baseline.}
+  \label{tab:clean_regime_decomposition}
+  \scriptsize
+  \setlength{\tabcolsep}{2.6pt}
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    Event type & PD-PPO & Fixed baseline & \shortstack{Seeds with\\lower loss} & \shortstack{Mean paired difference\\{[95\% bootstrap CI]}} \\
+    \midrule
+    Particle event type & 1.0749 & 1.1037 & 18 of 22 & +0.0287 [+0.0148, +0.0473] \\
+    Flux event type & 0.7639 & 0.8930 & 12 of 22 & +0.1291 [+0.0642, +0.1938] \\
+    Thermal event type & 1.0418 & 1.1353 & 15 of 22 & +0.0935 [+0.0444, +0.1452] \\
+    Macro-averaged loss & 0.9602 & 1.0440 & 22 of 22 & +0.0838 [+0.0708, +0.0967] \\
+    \bottomrule
+  \end{tabular}
+\end{table}

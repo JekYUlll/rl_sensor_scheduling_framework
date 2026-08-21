@@ -99,6 +99,20 @@ def save_obs_normalization_stats(vec_env: VecNormalize, path: Path) -> None:
     obs_rms = cast(Any, vec_env.obs_rms)
     np.savez(path, mean=np.asarray(obs_rms.mean, dtype=np.float32), var=np.asarray(obs_rms.var, dtype=np.float32), epsilon=np.asarray([float(vec_env.epsilon)], dtype=np.float32), clip_obs=np.asarray([float(vec_env.clip_obs)], dtype=np.float32))
 
+
+def _ppo_validation_objective(summary: dict[str, float], objective_name: str) -> float:
+    objective = str(objective_name).strip().lower()
+    if objective == "feasible_forecast_loss":
+        forecast_loss = float(summary.get("forecast_loss", float("inf")))
+        violation = (
+            max(float(summary.get("constraint_violation", 0.0)), 0.0)
+            + max(float(summary.get("peak_violation_rate", 0.0)), 0.0)
+            + max(float(summary.get("avg_power_violation", 0.0)), 0.0)
+            + max(float(summary.get("energy_violation", 0.0)), 0.0)
+        )
+        return float(-forecast_loss - 1_000_000.0 * violation)
+    return float(summary.get("reward", float("-inf")))
+
 def make_vecnormalize(vec_env: DummyVecEnv, *, gamma: float, norm_obs: bool, norm_reward: bool, clip_obs: float, clip_reward: float, training: bool=True) -> VecNormalize:
     return VecNormalize(vec_env, training=training, norm_obs=norm_obs, norm_reward=norm_reward, clip_obs=clip_obs, clip_reward=clip_reward, gamma=gamma)
 
@@ -286,21 +300,31 @@ class WindblownSubsetGymEnv(gym.Env):
 
 class PPOTrainingCallback(BaseCallback):
 
-    def __init__(self, *, run_dir: Path, eval_env_factory: Callable[[], VecNormalize], eval_interval_episodes: int, eval_episodes: int, best_model_path: Path, verbose: int=0) -> None:
+    def __init__(
+        self,
+        *,
+        run_dir: Path,
+        eval_env_factory: Callable[[], VecNormalize],
+        eval_interval_episodes: int,
+        eval_episodes: int,
+        best_model_path: Path,
+        best_norm_stats_path: Path | None = None,
+        validation_objective: str = "task_reward",
+        verbose: int = 0,
+    ) -> None:
         super().__init__(verbose=verbose)
         self.run_dir = Path(run_dir)
         self.eval_env_factory = eval_env_factory
         self.eval_interval_episodes = max(1, int(eval_interval_episodes))
         self.eval_episodes = max(1, int(eval_episodes))
         self.best_model_path = Path(best_model_path)
+        self.best_norm_stats_path = None if best_norm_stats_path is None else Path(best_norm_stats_path)
+        self.validation_objective = str(validation_objective)
         self.episode_rows: list[dict[str, float]] = []
         self.best_objective = float('-inf')
 
     def _evaluate(self) -> dict[str, float]:
-        rewards: list[float] = []
-        powers: list[float] = []
-        forecasts: list[float] = []
-        peaks: list[float] = []
+        summaries: list[dict[str, float]] = []
         eval_env = self.eval_env_factory()
         train_env = self.model.get_env()
         if train_env is None:
@@ -318,14 +342,22 @@ class PPOTrainingCallback(BaseCallback):
             summary = dict(info.get('episode_summary', {}))
             if not summary:
                 continue
-            rewards.append(float(summary['reward']))
-            powers.append(float(summary['power']))
-            forecasts.append(float(summary['forecast_loss']))
-            peaks.append(float(summary['peak_violation_rate']))
+            summaries.append({str(k): float(v) for k, v in summary.items()})
         eval_env.close()
-        if not rewards:
+        if not summaries:
             return {'val_objective': float('-inf'), 'val_reward': float('nan'), 'val_forecast_loss': float('nan'), 'val_power': float('nan'), 'val_peak_violation_rate': float('nan')}
-        return {'val_objective': float(np.mean(rewards)), 'val_reward': float(np.mean(rewards)), 'val_forecast_loss': float(np.mean(forecasts)), 'val_power': float(np.mean(powers)), 'val_peak_violation_rate': float(np.mean(peaks))}
+        rewards = [float(item.get('reward', float('nan'))) for item in summaries]
+        powers = [float(item.get('power', float('nan'))) for item in summaries]
+        forecasts = [float(item.get('forecast_loss', float('nan'))) for item in summaries]
+        peaks = [float(item.get('peak_violation_rate', float('nan'))) for item in summaries]
+        objectives = [_ppo_validation_objective(item, self.validation_objective) for item in summaries]
+        return {
+            'val_objective': float(np.mean(objectives)),
+            'val_reward': float(np.mean(rewards)),
+            'val_forecast_loss': float(np.mean(forecasts)),
+            'val_power': float(np.mean(powers)),
+            'val_peak_violation_rate': float(np.mean(peaks)),
+        }
 
     def _on_step(self) -> bool:
         infos = self.locals.get('infos', [])
@@ -345,6 +377,10 @@ class PPOTrainingCallback(BaseCallback):
                 if eval_metrics['val_objective'] > self.best_objective:
                     self.best_objective = float(eval_metrics['val_objective'])
                     self.model.save(str(self.best_model_path))
+                    if self.best_norm_stats_path is not None:
+                        train_env = self.model.get_env()
+                        if train_env is not None and isinstance(train_env, VecNormalize):
+                            save_obs_normalization_stats(train_env, self.best_norm_stats_path)
         return True
 
     def export_training_log(self) -> pd.DataFrame:

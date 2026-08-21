@@ -1,0 +1,93 @@
+{
+  "budget": 0.7,
+  "candidate_count": 134,
+  "truth_event_rate": 0.27013333333333334,
+  "eval_start_indices": [
+    13704,
+    26574,
+    20553,
+    6918
+  ],
+  "event_loss_min": 0.196626384026156,
+  "non_event_loss_min": 0.13779299209592863,
+  "best_overall": {
+    "action_idx": -1018,
+    "sensor_ids": "dynamic:auto_non38_event64_lead0",
+    "oracle_loss_mean": 0.17706398727023043,
+    "power_mean": 0.6121874999999999,
+    "peak_max": 0.8
+  },
+  "best_event_laser": null,
+  "best_event_no_laser": {
+    "action_idx": -1042,
+    "sensor_ids": "dynamic:auto_non64_event38_lead4",
+    "oracle_loss_event": 0.196626384026156,
+    "power_mean": 0.6050781249999998,
+    "peak_max": 0.8
+  },
+  "best_event_fc4": {
+    "action_idx": -1042,
+    "sensor_ids": "dynamic:auto_non64_event38_lead4",
+    "oracle_loss_event": 0.196626384026156,
+    "power_mean": 0.6050781249999998,
+    "peak_max": 0.8
+  },
+  "best_event_no_fc4": {
+    "action_idx": -1023,
+    "sensor_ids": "dynamic:auto_non23_event38_lead4",
+    "oracle_loss_event": 0.19752909178929165,
+    "power_mean": 0.5517578124999999,
+    "peak_max": 0.8
+  },
+  "best_non_event_laser": null,
+  "best_non_event_no_laser": {
+    "action_idx": -1018,
+    "sensor_ids": "dynamic:auto_non38_event64_lead0",
+    "oracle_loss_non_event": 0.13779299209592863,
+    "power_mean": 0.6121874999999999,
+    "peak_max": 0.8
+  },
+  "laser_event_lift": NaN,
+  "fc4_event_lift": 0.0009027077631356406,
+  "laser_non_event_lift": NaN,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v6_static_break.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_tcn_b070_20260607/truth_static_break_calibration.csv",
+  "oracle_type": "tcn",
+  "target_weights": [
+    0.1,
+    0.1,
+    0.25,
+    0.05,
+    0.05,
+    0.0,
+    10.0,
+    5.0,
+    5.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 0.7,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  }
+}

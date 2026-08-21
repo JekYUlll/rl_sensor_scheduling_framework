@@ -1,0 +1,347 @@
+\section{Problem Formulation}
+
+\subsection{Sensor scheduling formulation}
+
+Let $x_t \in \mathbb{R}^d$ denote the simulated physical state at time step
+$t$. The state contains meteorological and blowing-snow variables, including
+wind speed and direction, air temperature, relative humidity, air pressure,
+solar radiation, snow surface temperature, snow particle statistics, and snow mass flux. Let
+$a_t \in \{0,1\}^m$ denote the activation vector applied to the $m$ logical
+channels at time step $t$. Each logical sensing channel is a simulation-level
+unit with associated observations, power demand, startup demand, and warm-up
+behavior.
+
+\input{tables/notation_summary}
+
+The sensing system contains a mandatory meteorological core channel and a set of
+optional channels. The core channel remains active because it supplies the
+minimum measurements needed by the downstream forecast task. At most one
+optional channel can be active at each time step. The candidate action set is
+\begin{equation}
+  \mathcal{A}
+  =
+  \left\{a\in\{0,1\}^{m}\;\middle|\;
+    a_{\mathrm{met}}=1,\;
+    \sum_{i\in\mathcal{S}}a_i\leq1
+  \right\}.
+  \label{eq:candidate_action_set}
+\end{equation}
+
+Given the previously executed activation vector $a_{t-1}$, the feasible set
+contains the candidate actions that satisfy the steady-state and startup-peak power
+limits.
+\begin{equation}
+  \begin{aligned}
+  \mathcal{F}_t
+  =\bigg\{a\in\mathcal{A}\;\bigg|\;&
+    \sum_i p_i a_i\leq B,\\[-2pt]
+  & \sum_{i:a_{t-1,i}=1} p_i a_i
+    +\sum_{i:a_{t-1,i}=0}
+      \max\!\left(p_i,p_i^{\mathrm{peak}}\right)a_i
+    \leq B^{\mathrm{peak}}
+  \bigg\}.
+  \label{eq:feasible_action_set}
+  \end{aligned}
+\end{equation}
+
+Here, $\mathcal{S}$ denotes the optional-channel index set. The steady-state powers
+$p_i$ and budget $B$ use a common normalized unit. The startup-peak powers
+$p_i^{\mathrm{peak}}$ and budget $B^{\mathrm{peak}}$ use a second common
+normalized unit. An active channel contributes its steady-state power to the
+startup-power check. A newly activated channel contributes the larger of its
+steady-state and startup-peak power. Together with \Cref{eq:candidate_action_set}, these constraints permit a fixed
+schedule to select one optional channel while preventing more than one optional
+channel from operating at the same time.
+
+The finite candidate set is indexed as
+$\{a^{(1)},\ldots,a^{(K)}\}=\mathcal{A}$. At time step $t$, the feasible
+indices are
+\[
+  \mathcal{I}_t=\{k:a^{(k)}\in\mathcal{F}_t\}.
+\]
+During training, the policy samples an index from $\mathcal{I}_t$. During
+evaluation, it selects the highest-scoring feasible index. Let $u_t$ denote the
+resulting index and let $\bar a_t=a^{(u_t)}$ be the proposed activation vector.
+Let $r_t$ denote the remaining required activation time for the previous
+executed activation vector. The executed activation vector is
+\begin{equation}
+  a_t=
+  \begin{cases}
+    a_{t-1}, & r_t>0,\\
+    \bar a_t, & r_t=0.
+  \end{cases}
+  \label{eq:minimum_activation_rule}
+\end{equation}
+
+The feasible-action mask restricts the policy distribution to
+$\mathcal{I}_t$ and enforces the steady-state and startup-peak power limits. The
+execution rule retains $a_{t-1}$ until its minimum dwell time has been
+completed. Each executed activation vector therefore remains active for at least
+$D_{\min}$ time steps.
+
+\subsection{Conditions under which optional-channel adaptation reduces forecast loss}
+
+The sensing configuration with a mandatory meteorological core channel and at most one
+active optional channel is a special case of a broader capacity-constrained
+scheduling problem. Let $n_{\mathrm{opt}}=|\mathcal{S}|$ denote the number of
+optional channels, of which the scheduler may select at most
+$q<n_{\mathrm{opt}}$ at each time step. For an operating
+condition $c\in\mathcal{C}$, let
+$S_c^\star\subseteq\mathcal{S}$ denote an optimal optional-channel subset, with
+$|S_c^\star|\leq q$.
+
+Let $\widetilde L_c(\pi)$ denote the normalized forecast loss of policy $\pi$
+under condition $c$. The weighted normalized forecast loss is
+\[
+L_{\rho}(\pi)
+=
+\sum_{c\in\mathcal{C}}
+\rho_c\widetilde L_c(\pi),
+\qquad
+\rho_c>0,
+\qquad
+\sum_{c\in\mathcal{C}}\rho_c=1.
+\]
+The empirical macro-averaged normalized forecast loss in
+\Cref{eq:macro_loss} uses
+$\widetilde L_c(\pi)=L_c(\pi)/s_c$ and assigns equal weight to the particle,
+flux, and thermal event types.
+
+Dynamic scheduling can reduce forecast loss when no fixed optional-channel
+subset is optimal for every condition with positive evaluation weight. The
+advantage requires positive excess forecast loss when a fixed subset is
+mismatched to the operating condition. Predictive information in the scheduler
+input can then support channel changes before or during a condition transition.
+The following proposition gives a sufficient condition for this advantage.
+
+\begin{proposition}[Dynamic value with one active optional channel]
+\label{prop:specialist_bottleneck}
+Consider a scheduling problem that permits at most one active optional channel.
+All policies are subject to the same startup and minimum dwell-time
+constraints. For any $s\in\mathcal{S}$, let $\pi_s$ denote the fixed-channel
+policy that selects $s$ under every operating condition. Suppose that at least
+two positive-weight conditions have different optimal optional channels. The
+corresponding condition intervals are long enough for the theoretical privileged
+policy $\pi_{\text{label}}$, which has condition-label access, to complete
+feasible channel changes under the common
+execution constraints.
+
+Transition losses are included in the normalized condition-specific losses.
+For every fixed policy $\pi_s$ and every condition $c$,
+\[
+\widetilde L_c(\pi_s)
+\geq
+\widetilde L_c(\pi_{\text{label}}).
+\]
+For each positive-weight condition whose optimal channel differs from $s$,
+\[
+\widetilde L_c(\pi_s)
+-
+\widetilde L_c(\pi_{\text{label}})
+\geq
+\Delta_c
+>
+0.
+\]
+Then every fixed policy $\pi_s$ that always selects one optional channel
+$s\in\mathcal{S}$ satisfies
+\[
+L_\rho(\pi_s)
+>
+L_\rho(\pi_{\text{label}}).
+\]
+\end{proposition}
+
+A proof is provided in \ref{apx:specialist_bottleneck_proof}, and
+\Cref{fig:specialist_bottleneck} illustrates the sufficient condition. The
+proposition assumes that all policies follow the same startup and minimum
+dwell-time constraints. It does not provide a performance bound for the
+PD-PPO scheduler or any other implemented policy. The empirical privileged true-label baseline in
+Supplementary Table S11 is not assumed to implement the theoretical
+policy $\pi_{\text{label}}$ or to attain the minimum forecast
+loss.
+
+\begin{figure}[H]
+  \centering
+  \resizebox{\linewidth}{!}{\input{figures/proposition_dynamic_value_tikz.tex}}
+  \caption{Sufficient condition for the value of adaptive scheduling with one
+  active optional channel. Different operating conditions favor different
+  optional channels, which causes every fixed policy that always selects one
+  optional channel to incur excess
+  loss for at least one condition. The theoretical privileged policy can change channels
+  when the startup and minimum dwell-time constraints allow a feasible
+  transition. The lower panel gives the resulting bound on weighted normalized
+  forecast loss. The set $\mathcal{C}_{\mathrm{mis}}(s)$ contains the
+  positive-weight conditions whose optimal channel differs from fixed channel
+  $s$. The quantity $\Delta_c$ is the corresponding normalized excess loss.}
+  \label{fig:specialist_bottleneck}
+\end{figure}
+
+\paragraph{Relation between the simulation and the proposition}
+The simulation was designed to instantiate condition-dependent channel optima
+of the type considered in \Cref{prop:specialist_bottleneck}. During particle,
+flux, and thermal intervals,
+the laser disdrometer channel, FC4 snow mass-flux channel, and infrared
+snow-surface-temperature channel, respectively, provide the most reliable measurements of the
+target variables emphasized for the corresponding event type. The event-type
+decomposition on the test partition in
+\Cref{tab:clean_regime_decomposition} evaluates whether the PD-PPO scheduler
+reduces loss under these event-specific measurement requirements and improves
+the macro-averaged normalized forecast loss. It does not verify the proposition's
+inequality for every $\pi_s$ and the theoretical $\pi_{\mathrm{label}}$ in every
+condition. The proposition does not require every event type to have lower loss
+in every seed.
+
+\subsection{Forecast loss and macro-averaged evaluation across event types}
+
+The frozen primary forecaster receives a window of sample-and-hold values and
+observation masks and predicts selected target variables at horizons
+$k=1,\ldots,H$. Let $\hat{y}_{t+k,j}$ and $y_{t+k,j}$ denote the prediction
+and target, respectively, for variable $j\in\mathcal{Y}$ at horizon $k$. The
+condition label at time step $t$ is
+\begin{equation}
+  c_t\in\{\text{calm},\text{particle},\text{flux},\text{thermal}\}.
+\end{equation}
+
+Let $w_k$ denote the horizon weight, $\alpha_{j,c_t}$ the condition-specific
+target weight, and $\sigma_j$ the scale of target variable $j$. The per-step
+forecast loss is
+\begin{equation}
+  L_{\text{step}}(t)
+  =
+  \frac{
+  \sum_{k=1}^{H}\sum_{j \in \mathcal{Y}}
+  w_k \alpha_{j,c_t}
+  \min\!\left\{10,\,
+  \left| \hat{y}_{t+k,j} - y_{t+k,j} \right|/\sigma_j\right\}
+  }{
+  \sum_{k=1}^{H}\sum_{j \in \mathcal{Y}}
+  w_k \alpha_{j,c_t}
+  } .
+  \label{eq:step_forecast_loss}
+\end{equation}
+
+The target scales satisfy $\sigma_j>0$, and all horizon and target weights are
+nonnegative. The denominator is positive for every scoreable time step. Each
+scale-normalized absolute error is capped at 10 before weighting and aggregation.
+
+The experiment uses uniform horizon weights and the predeclared
+condition-specific target weights in Supplementary Table S4. The condition
+label determines which target weights are applied during policy training and
+evaluation. It is not included in the scheduler input. Losses for PD-PPO and
+all baselines are computed using the same target scales, target weights, and
+condition labels.
+
+An overall average can be influenced disproportionately by event frequency and
+by differences in raw loss magnitude across event types. The macro-averaged normalized
+forecast loss addresses these effects by normalizing each event-type-specific
+loss with calibration/validation results from feasible fixed channel subsets and assigning
+equal weight to the three event types. Let
+$c\in\{\mathrm{particle},\mathrm{flux},\mathrm{thermal}\}$ index the event
+types, and let $\mathcal{T}_c$ denote the evaluated test time steps labeled as
+$c$. For a policy $\pi$, the event-type-specific forecast loss is
+\begin{equation}
+  L_c(\pi)
+  =
+  \frac{1}{|\mathcal{T}_c|}
+  \sum_{t\in\mathcal{T}_c}
+  L_{\text{step}}(t;\pi).
+\end{equation}
+
+For each event type $c$, the normalization factor $s_c$ is the median
+event-type-specific forecast loss across the feasible fixed channel subsets
+evaluated on the calibration/validation partition. The macro-averaged normalized forecast
+loss is
+\begin{equation}
+  L_{\text{macro}}(\pi)
+  =
+  \frac{1}{3}
+  \sum_{c\in\{\mathrm{particle},\mathrm{flux},\mathrm{thermal}\}}
+  \frac{L_c(\pi)}{s_c}.
+  \label{eq:macro_loss}
+\end{equation}
+
+This metric is reported when $|\mathcal{T}_c|>0$ and $s_c>0$ for all three
+event types. Lower values indicate better forecasting performance. The metric
+compares policies across equally weighted event types after accounting for the
+median calibration/validation loss of feasible fixed channel subsets.
+
+\subsection{Non-equivalence of forecast loss, AoI, and covariance objectives}
+
+Forecast loss, AoI, and covariance trace evaluate different properties of a
+sensor schedule. Let $\pi$ be a feasible scheduling policy and let
+$\gamma\in(0,1]$ denote a discount factor. The same horizon $T$ and temporal
+weights $\gamma^t$ are used for all three objectives. The discounted forecast objective is
+\begin{equation}
+  J_{\mathrm{fcst}}(\pi)
+  =
+  -\mathbb{E}_{\pi}
+  \left[
+    \sum_{t=0}^{T-1}\gamma^t
+    L_{\mathrm{step}}(t;\pi)
+  \right].
+  \label{eq:forecast_objective}
+\end{equation}
+
+For a separate model-based estimator with posterior covariance $P_t$, let
+$\mathcal{V}_{\mathrm{AoI}}$ denote the observed variables whose ages enter an
+AoI objective. This set need not equal the forecast-target set $\mathcal{Y}$.
+The AoI and covariance objectives are
+\begin{equation}
+  J_{\mathrm{AoI}}(\pi)
+  =
+  -\mathbb{E}_{\pi}\!\left[
+    \sum_{t=0}^{T-1}\gamma^t
+    \sum_{j\in\mathcal{V}_{\mathrm{AoI}}}\mathrm{age}_{t,j}
+  \right],
+  \qquad
+  J_{\mathrm{cov}}(\pi)
+  =
+  -\mathbb{E}_{\pi}\!\left[
+    \sum_{t=0}^{T-1}\gamma^t
+    \mathrm{tr}(P_t)
+  \right].
+\end{equation}
+
+The three objectives can induce different orderings over the same feasible
+schedules. Such a difference can occur when sensor variables have unequal
+downstream forecast value, even if one schedule produces fresher observations
+and a lower estimator covariance.
+
+\begin{proposition}[Non-equivalence of forecast loss, AoI, and covariance objectives]
+\label{prop:non_equivalence}
+Forecast loss, covariance trace, and per-variable AoI objectives can induce
+different orderings over feasible sensor schedules. In particular, there exist
+a common horizon $T$, a common discount factor $\gamma$, and two feasible
+policies $\pi_1$ and $\pi_2$ such that
+\begin{equation}
+  J_{\mathrm{AoI}}(\pi_1) > J_{\mathrm{AoI}}(\pi_2),
+  \qquad
+  J_{\mathrm{cov}}(\pi_1) > J_{\mathrm{cov}}(\pi_2),
+\end{equation}
+and
+\begin{equation}
+  J_{\mathrm{fcst}}(\pi_2) > J_{\mathrm{fcst}}(\pi_1).
+\end{equation}
+Equivalently, $\pi_1$ has lower AoI and lower covariance trace, and
+$\pi_2$ has strictly lower forecast loss.
+\end{proposition}
+
+The proof in \ref{apx:non_equivalence_proof} takes the common horizon $T=1$
+and considers a single-target, single-horizon special case of
+\Cref{eq:step_forecast_loss}. A policy that refreshes the variable with greater
+influence on the forecast target has strictly lower forecast loss in the
+constructed example, while its total AoI and covariance trace are both higher.
+This ordering shows that forecast loss must be evaluated directly when sensor
+variables have unequal downstream forecast value.
+The AoI-priority, round-robin, and random baselines provide non-learned dynamic
+comparisons. The matched scalar-objective PPO configurations replace the scalar
+scheduling objective while retaining the shared supervision and architecture.
+
+The proposition establishes that the objectives can rank feasible schedules
+differently. It does not determine the performance ordering of policies learned
+from finite training data. The comparisons in
+\Cref{sec:matched_controls,sec:objective_learner_controls} examine whether the
+forecast-loss, AoI, and bounded diagonal uncertainty objectives produce
+measurable differences under matched PPO configurations. The empirical uncertainty proxy is not the
+posterior covariance trace used in the proposition.

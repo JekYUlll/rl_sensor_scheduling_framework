@@ -1,0 +1,58 @@
+worker_start idx=0 gpu=2 date=2026-07-02T03:56:31+08:00
+seed_start seed=117 gpu=2 run_dir=reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_reward_aoi_seed117_h075ctxolscbal2_aoi_20260702aoi date=2026-07-02T03:56:31+08:00
+reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_reward_aoi_seed117_h075ctxolscbal2_aoi_20260702aoi/eval_router_conf05_scenebal2_20260621/v2_custom_ppo_metrics.csv
+                    policy  steps  reward_mean  instant_mae  oracle_loss_mean  dtw_mean  power_mean  peak_power_max  event_rate  warmup_abort_count  switches_per_step  always_on_sensor_count  always_off_sensor_count  mid_duty_sensor_count  duty_entropy  duty_min  duty_max  duty_std
+                custom_ppo   4096    -1.247558     4.457760          1.247552  4.281195    0.688535            0.92    0.656006                   0           0.005779                       1                        1                      4      0.512044  0.000000       1.0  0.323269
+   full_open_unconstrained   4096    -1.275623     1.695372          1.275621  1.602231    1.980000            2.48    0.656006                   0           0.000000                       6                        0                      0     -0.000000  1.000000       1.0  0.000000
+validation_selected_static   4096    -1.298172     5.002886          1.298171  4.944623    0.740000            0.92    0.656006                   0           0.000000                       2                        4                      0     -0.000000  0.000000       1.0  0.471405
+                    random   4096    -1.361859     3.549519          1.361805  2.946037    0.615918            0.92    0.656006                   0           0.053968                       1                        0                      5      0.588847  0.132812       1.0  0.302769
+                       aoi   4096    -1.369891     3.304993          1.369835  2.752479    0.594961            0.87    0.656006                   0           0.055352                       1                        0                      5      0.601598  0.199219       1.0  0.298146
+               round_robin   4096    -1.372161     3.124157          1.372115  2.570352    0.584570            0.87    0.656006                   0           0.045584                       1                        0                      5      0.600529  0.191406       1.0  0.298555
+ feasible_static_projected   4096    -1.372807     2.431003          1.372806  2.372733    0.330000            0.40    0.656006                   0           0.000000                       2                        4                      0     -0.000000  0.000000       1.0  0.471405
+reports/v31_metpair_backbone_context_ortholinear_balancedobjective_scenebal2_reward_aoi_seed117_h075ctxolscbal2_aoi_20260702aoi/behavior_audit_router_conf05_scenebal2_20260621/behavior_complexity_summary.csv
+{
+  "policy": "custom_ppo",
+  "steps": 4096,
+  "unique_mask_count": 4,
+  "top3_mask_fraction": 0.871826171875,
+  "mask_entropy_bits": 1.8693045384118563,
+  "transition_entropy_bits": 2.0178907243891473,
+  "best_period": 1,
+  "best_period_match": 0.9826617826617826,
+  "event_sensor_l1": 1.0115349170875834,
+  "event_mask_mi_bits": 0.3224085387350857,
+  "event_state_dependent": true,
+  "subtype_sensor_l1": 2.0,
+  "subtype_mask_mi_bits": 0.5582430557958058,
+  "subtype_state_dependent": true,
+  "state_dependent": true,
+  "fixed_like": false,
+  "simple_cycle_like": false,
+  "low_complexity": false,
+  "weak_state_dependence": false,
+  "behavior_complexity_gate_pass": true
+}
+{
+  "policy": "validation_selected_static",
+  "steps": 4096,
+  "unique_mask_count": 1,
+  "top3_mask_fraction": 1.0,
+  "mask_entropy_bits": -0.0,
+  "transition_entropy_bits": -0.0,
+  "best_period": 1,
+  "best_period_match": 1.0,
+  "event_sensor_l1": 0.0,
+  "event_mask_mi_bits": 0.0,
+  "event_state_dependent": false,
+  "subtype_sensor_l1": 0.0,
+  "subtype_mask_mi_bits": 0.0,
+  "subtype_state_dependent": false,
+  "state_dependent": false,
+  "fixed_like": true,
+  "simple_cycle_like": false,
+  "low_complexity": true,
+  "weak_state_dependence": true,
+  "behavior_complexity_gate_pass": false
+}
+seed_done seed=117 gpu=2 date=2026-07-02T04:00:46+08:00
+worker_done idx=0 gpu=2 date=2026-07-02T04:00:46+08:00

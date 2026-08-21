@@ -1,0 +1,66 @@
+\begin{tikzpicture}[
+  font=\small,
+  axis/.style={line width=0.6pt, draw=black!55},
+  splitbox/.style={
+    draw=black!60,
+    rounded corners=2pt,
+    minimum height=1.15cm,
+    align=center,
+    inner xsep=3pt,
+    inner ysep=3pt
+  },
+  note/.style={font=\scriptsize, align=center, text=black!75},
+  flow/.style={-{Latex[length=2mm]}, line width=0.55pt, draw=black!50}
+]
+
+\definecolor{forecasterblue}{RGB}{221,235,247}
+\definecolor{rlgreen}{RGB}{228,242,232}
+\definecolor{valyellow}{RGB}{255,244,204}
+\definecolor{testred}{RGB}{255,226,222}
+
+% The x coordinates encode the 35/50/7.5/7.5 chronological split.
+\coordinate (x0) at (0,0);
+\coordinate (x1) at (4.20,0);
+\coordinate (x2) at (10.20,0);
+\coordinate (x3) at (11.10,0);
+\coordinate (x4) at (12.00,0);
+
+\node[splitbox, fill=forecasterblue, minimum width=4.20cm, anchor=south west]
+  (forecasterfit) at (x0)
+  {\textbf{Forecaster training}\\[-1pt]\scriptsize 35\%, 24{,}500 time steps\\[-1pt]\scriptsize fit forecaster and data scales};
+\node[splitbox, fill=rlgreen, minimum width=6.00cm, anchor=south west]
+  (rltrain) at (x1)
+  {\textbf{PD-PPO policy training}\\[-1pt]\scriptsize 50\%, 35{,}000 time steps\\[-1pt]\scriptsize frozen primary forecaster};
+\node[splitbox, fill=valyellow, minimum width=0.90cm, anchor=south west]
+  (val) at (x2)
+  {\rotatebox{90}{\scriptsize\textbf{Cal./val.}}\\[-1pt]\scriptsize 5{,}250};
+\node[splitbox, fill=testred, minimum width=0.90cm, anchor=south west]
+  (test) at (x3)
+  {\scriptsize\textbf{Test}\\[-1pt]\scriptsize 5{,}250};
+
+% Short process notes above the timeline. These are intentionally terse to avoid
+% crowding the narrow validation/test blocks.
+\node[note, above=0.18cm of forecasterfit] {fit once; hold parameters fixed};
+\node[note, above=0.18cm of rltrain] {optimize policy under budget and operating rules};
+\node[note, anchor=south east] at ([yshift=0.18cm]val.north east)
+  {select fixed baseline; compute normalization factors};
+\node[note, anchor=south west] at ([yshift=0.18cm]test.north west)
+  {test evaluation};
+
+\draw[flow, dashed] (forecasterfit.east) -- node[above, font=\scriptsize, text=black!65]
+  {frozen primary forecaster} (rltrain.west);
+
+\draw[axis] (0,-0.12) -- (12.00,-0.12);
+\foreach \x in {0,4.20,10.20,11.10,12.00} {
+  \draw[axis] (\x,-0.20) -- (\x,-0.04);
+}
+\node[font=\scriptsize, below=2pt] at (0,-0.20) {$0$};
+\node[font=\scriptsize, below=2pt] at (4.20,-0.20) {$24{,}500$};
+\node[font=\scriptsize, below=2pt, anchor=east] at (10.14,-0.20) {$59{,}500$};
+\node[font=\scriptsize, below=2pt] at (11.10,-0.20) {$64{,}750$};
+\node[font=\scriptsize, below=2pt, anchor=west] at (12.00,-0.20) {$70{,}000$};
+
+\node[font=\scriptsize, text=black!75, below=0.55cm] at (6.00,-0.12)
+  {chronological hourly-step index in one simulated ground-truth time series};
+
+\end{tikzpicture}

@@ -1,0 +1,89 @@
+{
+  "protocol": "chronological_split_v31_retraining",
+  "truth_steps": 45000,
+  "seed": 41,
+  "budget": 0.9,
+  "split_ratios": [
+    0.35,
+    0.5,
+    0.075,
+    0.075
+  ],
+  "partitions": {
+    "oracle_pretrain": [
+      0,
+      15750
+    ],
+    "rl_train": [
+      15750,
+      38250
+    ],
+    "validation": [
+      38250,
+      41625
+    ],
+    "final_test": [
+      41625,
+      45000
+    ]
+  },
+  "oracle_pretrain": {
+    "range": [
+      0,
+      15750
+    ]
+  },
+  "rl_train": {
+    "range": [
+      15750,
+      38250
+    ],
+    "ppo_start_min": 15750,
+    "ppo_start_max": 37729,
+    "normalization_range": [
+      15750,
+      38250
+    ],
+    "candidate_prior_starts": [
+      21066,
+      26873,
+      32544
+    ],
+    "candidate_prior_steps": 384
+  },
+  "validation": {
+    "static_selection_starts": [
+      38799,
+      39741,
+      40697
+    ],
+    "static_selection_steps": 384
+  },
+  "final_test": {
+    "eval_starts": [
+      41891,
+      42661,
+      43426,
+      44205
+    ],
+    "eval_steps": 512,
+    "selection": "uniform_random_non_overlapping_without_event_filtering"
+  },
+  "reward_shaping": {
+    "lambda_warmup_abort": 0.08,
+    "lambda_switch": 0.002,
+    "lambda_duty_balance": 2.0,
+    "duty_balance_low": 0.05,
+    "duty_balance_high": 0.95,
+    "duty_balance_grace_steps": 64
+  },
+  "ppo_controls": {
+    "ent_coef": 0.003,
+    "awbc_coef": 0.05,
+    "awbc_label_stride": 16,
+    "prior_kl_coef": 0.1,
+    "greedy_lookahead_steps": 1,
+    "use_candidate_prior": true,
+    "candidate_prior_scale": 1.0
+  }
+}

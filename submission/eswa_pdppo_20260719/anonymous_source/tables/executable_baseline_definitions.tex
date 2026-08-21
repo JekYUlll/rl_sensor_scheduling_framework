@@ -1,0 +1,65 @@
+\begin{table}[H]
+  \centering
+  \caption{Definitions of the baselines. All constrained baselines use the same
+  candidate action set, feasibility check, channel warm-up model, and six-time-step
+  minimum dwell-time constraint as PD-PPO unless
+  stated otherwise.}
+  \label{tab:executable_baseline_definitions}
+  \scriptsize
+  \renewcommand{\arraystretch}{0.92}
+  \setlength{\tabcolsep}{2.6pt}
+  \begin{tabular}{@{}p{0.19\linewidth}p{0.31\linewidth}p{0.25\linewidth}p{0.19\linewidth}@{}}
+    \toprule
+    Baseline & Decision rule & Selection and tie break & Information availability \\
+    \midrule
+    Fixed-schedule baseline
+      & Apply one fixed channel subset.
+      & Evaluate all six subsets on calibration/validation windows; minimize the
+        macro-averaged normalized forecast loss, then mean forecast loss.
+      & Feasible baseline; no condition labels at decision time. \\
+    Fixed-priority baseline
+      & Assign linearly decreasing scores by channel index at every time step.
+      & Deterministic projector order.
+      & Online and non-learned. \\
+    Round-robin baseline
+      & Give the highest scores to a cyclic group of two channels.
+      & The time step and channel index define a fixed cyclic schedule; projection resolves conflicts.
+      & Online and non-learned. \\
+    AoI-priority baseline
+      & Score each channel by clipped time since its last ready sampling opportunity.
+      & Project the descending score order.
+      & Online and non-learned. \\
+    Random-feasible baseline
+      & Draw independent Gaussian channel scores at each time step.
+      & One random stream per simulation seed, seeded by simulation seed plus 100; the same 512-score stream restarts at each event-balanced test-window reset; project the sampled ranking.
+      & Online stochastic baseline; no within-seed Monte Carlo averaging. \\
+    Double DQN training configuration
+      & Evaluate six Q-values and greedily select the largest currently feasible
+        action during test evaluation.
+      & Double DQN target with a feasible-action mask; deterministic
+        lowest-index tie break.
+      & Online learned baseline; no condition labels at decision time. \\
+    Warning-rule baseline
+      & Choose the largest particle, flux, or thermal warning signal when it is
+        at least 0.5; otherwise choose the calm action.
+      & On calibration/validation windows, separately minimize calm or event-type loss for
+        each warning-signal case; break ties by mean forecast loss.
+      & Uses simulated warning signals; no condition labels at decision time. \\
+    Privileged one-step look-ahead reference using next-step test targets
+      & Simulate every candidate for one time step and select the smallest next-step
+        forecast loss on the test partition under the frozen primary forecaster.
+      & Lower switching fraction, then lower action index.
+      & Uses next-step test targets unavailable to the deployed scheduler; the objective omits minimum dwell-time, warm-up, and observation-age consequences. \\
+    Privileged true-label baseline
+      & Choose the optional channel selected on the calibration/validation partition using the exact
+        label sequence $c_t,\ldots,c_{t+16}$.
+      & Use the first active event type in the future-label interval; break calibration/validation
+        ties by mean forecast loss.
+      & Uses condition labels unavailable to the deployed scheduler. \\
+    Full-observation baseline
+      & Request all six channels at every time step.
+      & No selection.
+      & Deliberately removes the constraints; unconstrained benchmark. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

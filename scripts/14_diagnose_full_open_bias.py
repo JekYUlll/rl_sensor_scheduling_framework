@@ -251,6 +251,8 @@ def _evaluate_oracle_on_dataset(
         base_freq_s=int(getattr(oracle, "base_freq_s", 1)),
         context_series=context_series,
         context_features=list(getattr(oracle, "context_features", [])),
+        input_filter_cfg=getattr(oracle, "input_filter_cfg", None),
+        time_delta_cfg=getattr(oracle, "time_delta_cfg", None),
     )
     ds = build_window_dataset(
         series=np.asarray(input_prepared, dtype=float),

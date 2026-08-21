@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Alternative-forecaster analysis on unchanged observation sequences. Positive macro-averaged loss differences favor PD-PPO.}
+  \label{tab:clean_secondary_forecaster}
+  \footnotesize
+  \begin{tabular}{@{}lcc@{}}
+    \toprule
+    Fixed-schedule baseline & Seeds with lower loss & Mean paired difference [95\% bootstrap CI] \\
+    \midrule
+    Primary-forecaster fixed-schedule baseline & 22 of 22 & +0.1668 [+0.1340, +0.2044] \\
+    Ridge-forecaster fixed-schedule baseline & 21 of 22 & +0.1339 [+0.1103, +0.1563] \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,32 @@
+[
+  {
+    "seed": 41,
+    "seed_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/energy_account_split_protocol_gate_semimarkov/budget1p20_seed41",
+    "complete": true,
+    "missing": []
+  },
+  {
+    "seed": 42,
+    "seed_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/energy_account_split_protocol_gate_semimarkov/budget1p20_seed42",
+    "complete": true,
+    "missing": []
+  },
+  {
+    "seed": 43,
+    "seed_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/energy_account_split_protocol_gate_semimarkov/budget1p20_seed43",
+    "complete": true,
+    "missing": []
+  },
+  {
+    "seed": 44,
+    "seed_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/energy_account_split_protocol_gate_semimarkov/budget1p20_seed44",
+    "complete": true,
+    "missing": []
+  },
+  {
+    "seed": 45,
+    "seed_dir": "/home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/reports/energy_account_split_protocol_gate_semimarkov/budget1p20_seed45",
+    "complete": true,
+    "missing": []
+  }
+]

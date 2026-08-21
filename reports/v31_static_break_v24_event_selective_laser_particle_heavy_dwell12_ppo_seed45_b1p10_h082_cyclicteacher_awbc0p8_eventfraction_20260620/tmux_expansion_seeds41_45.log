@@ -1,0 +1,16 @@
+[split-grid] tasks=5 skipped=1 pending=4 workers=2
+[run] worker=0 budget1p10_seed41 -> reports/v31_static_break_v24_event_selective_laser_particle_heavy_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/logs/budget1p10_seed41.log
+[run] worker=1 budget1p10_seed42 -> reports/v31_static_break_v24_event_selective_laser_particle_heavy_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/logs/budget1p10_seed42.log
+[run] worker=0 budget1p10_seed43 -> reports/v31_static_break_v24_event_selective_laser_particle_heavy_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/logs/budget1p10_seed43.log
+[run] worker=1 budget1p10_seed44 -> reports/v31_static_break_v24_event_selective_laser_particle_heavy_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/logs/budget1p10_seed44.log
+complete_seeds=5/5
+reports/v31_static_break_v24_event_selective_laser_particle_heavy_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/v24_eventlaser_particleheavy_cyclicteacher_awbc0p8_seeds41_45_h082_eventfraction_summary.csv
+reports/v31_static_break_v24_event_selective_laser_particle_heavy_dwell12_ppo_seed45_b1p10_h082_cyclicteacher_awbc0p8_eventfraction_20260620/v24_eventlaser_particleheavy_cyclicteacher_awbc0p8_seeds41_45_h082_eventfraction_summary_comparisons.csv
+                comparison  n  pdppo_win_count  mean_delta_baseline_minus_pdppo  min_delta_baseline_minus_pdppo  max_delta_baseline_minus_pdppo
+                 full_open  5                3                         0.008480                       -0.035255                        0.031128
+               best_static  5                3                        -0.003975                       -0.042580                        0.026713
+           selected_static  5                3                        -0.001439                       -0.042580                        0.026713
+deployable_selected_static  5                3                         0.002786                       -0.027400                        0.062580
+    best_deployable_static  5                2                        -0.012423                       -0.027400                        0.002591
+     best_original_dynamic  5                1                        -0.014409                       -0.043684                        0.013743
+       best_duty_non_pdppo  5                1                        -0.011868                       -0.023402                        0.002591

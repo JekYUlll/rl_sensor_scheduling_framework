@@ -1,0 +1,106 @@
+{
+  "budget": 0.95,
+  "candidate_count": 101,
+  "truth_event_rate": 0.25475,
+  "eval_start_indices": [
+    5441,
+    10929,
+    7265
+  ],
+  "event_loss_min": 0.2628194909576527,
+  "non_event_loss_min": 0.18052596698999274,
+  "best_overall": {
+    "action_idx": 70,
+    "sensor_ids": "surface_temp_ir|fc4_flux",
+    "oracle_loss_mean": 0.23997569551104447,
+    "power_mean": 0.59,
+    "peak_max": 0.78
+  },
+  "best_event_laser": {
+    "action_idx": 61,
+    "sensor_ids": "surface_temp_ir|laser_disdrometer",
+    "oracle_loss_event": 0.2628194909576527,
+    "power_mean": 0.83,
+    "peak_max": 1.19
+  },
+  "best_event_no_laser": {
+    "action_idx": 70,
+    "sensor_ids": "surface_temp_ir|fc4_flux",
+    "oracle_loss_event": 0.26570766755746983,
+    "power_mean": 0.59,
+    "peak_max": 0.78
+  },
+  "best_event_fc4": {
+    "action_idx": 70,
+    "sensor_ids": "surface_temp_ir|fc4_flux",
+    "oracle_loss_event": 0.26570766755746983,
+    "power_mean": 0.59,
+    "peak_max": 0.78
+  },
+  "best_event_no_fc4": {
+    "action_idx": 61,
+    "sensor_ids": "surface_temp_ir|laser_disdrometer",
+    "oracle_loss_event": 0.2628194909576527,
+    "power_mean": 0.83,
+    "peak_max": 1.19
+  },
+  "best_non_event_laser": {
+    "action_idx": 61,
+    "sensor_ids": "surface_temp_ir|laser_disdrometer",
+    "oracle_loss_non_event": 0.19578507019574548,
+    "power_mean": 0.83,
+    "peak_max": 1.19
+  },
+  "best_non_event_no_laser": {
+    "action_idx": 70,
+    "sensor_ids": "surface_temp_ir|fc4_flux",
+    "oracle_loss_non_event": 0.18052596698999274,
+    "power_mean": 0.59,
+    "peak_max": 0.78
+  },
+  "laser_event_lift": 0.002888176599817105,
+  "fc4_event_lift": -0.002888176599817105,
+  "laser_non_event_lift": -0.015259103205752744,
+  "sensor_cfg": "configs/sensors/windblown_sensors_physical_event_v9_debundled_context.yaml",
+  "truth_csv": "reports/v31_static_break_calibration_v9_diverse_linear/truth_static_break_calibration.csv",
+  "oracle_type": "linear",
+  "target_weights": [
+    0.05,
+    0.05,
+    0.15,
+    0.02,
+    0.02,
+    0.0,
+    16.0,
+    6.0,
+    6.0
+  ],
+  "target_scales": [
+    5.0,
+    5.0,
+    5.0,
+    1.0,
+    1.0,
+    100.0,
+    0.0001,
+    0.2,
+    5.0
+  ],
+  "constraints": {
+    "max_active": 4,
+    "per_step_budget": 0.95,
+    "startup_peak_budget": 1.6,
+    "required_sensor_ids": [],
+    "coverage_groups": []
+  },
+  "energy_account": {
+    "enabled": false,
+    "energy_capacity": 24.0,
+    "initial_energy": 12.0,
+    "harvest_per_step": 0.65,
+    "reserve_energy": 2.0,
+    "lambda_energy_deficit": 1.0
+  },
+  "eval_start_selection": "event_fraction",
+  "eval_selection_stride": 64
+}

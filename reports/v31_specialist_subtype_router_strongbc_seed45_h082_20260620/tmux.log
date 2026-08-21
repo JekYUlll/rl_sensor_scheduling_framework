@@ -1,0 +1,5 @@
+[split-grid] tasks=1 skipped=0 pending=1 workers=1
+[run] worker=0 budget1p05_seed45 -> reports/v31_specialist_subtype_router_strongbc_seed45_h082_20260620/logs/budget1p05_seed45.log
+[collect] /home/zhangzhuyu/.conda/envs/darts/bin/python /home/zhangzhuyu/_code/microclimate_demo/rl_sensor_scheduling_framework/scripts/43_v31_s2_collect.py --out-dir reports/v31_specialist_subtype_router_strongbc_seed45_h082_20260620 --static-policy validation_selected_static --bonferroni-family 6
+[collect] missing done outputs: 1 -> reports/v31_specialist_subtype_router_strongbc_seed45_h082_20260620/v31_s2_missing_from_done.txt
+[collect] no evaluation files found under reports/v31_specialist_subtype_router_strongbc_seed45_h082_20260620
