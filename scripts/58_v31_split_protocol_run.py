@@ -638,6 +638,11 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--n-epochs", type=int, default=10)
     parser.add_argument("--ent-coef", type=float, default=0.01)
+    parser.add_argument(
+        "--separate-actor-critic-grad-clip",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     parser.add_argument("--awbc-coef", type=float, default=0.1)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
     parser.add_argument("--bc-pretrain-steps", type=int, default=0)
@@ -1406,6 +1411,11 @@ def main() -> None:
     cmd.extend(["--context-hidden-dim", str(max(1, int(args.context_hidden_dim)))])
     cmd.extend(["--context-fusion-mode", str(args.context_fusion_mode)])
     cmd.append("--context-layer-norm" if bool(args.context_layer_norm) else "--no-context-layer-norm")
+    cmd.append(
+        "--separate-actor-critic-grad-clip"
+        if bool(args.separate_actor_critic_grad_clip)
+        else "--no-separate-actor-critic-grad-clip"
+    )
     cmd.extend(["--learning-rate", str(float(args.learning_rate))])
     if bool(args.include_agent_cycle_phase):
         cmd.append("--include-agent-cycle-phase")
