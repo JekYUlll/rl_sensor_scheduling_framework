@@ -15,6 +15,8 @@ BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
 AWBC_COEF="${AWBC_COEF:-0.15}"
 BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
+CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
+VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
 
 if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
@@ -32,8 +34,17 @@ for seed in "${SEEDS[@]}"; do
     --output "${out_dir}/action_geometry.json" \
     > "${out_dir}/action_geometry.stdout.json"
 
+  control_args=()
+  if [[ -n "$CONTROL_SOURCE_RUN_DIR" ]]; then
+    control_args+=(--control-source-run-dir "$CONTROL_SOURCE_RUN_DIR")
+  fi
+  if [[ "$VALIDATE_CONTROL_SOURCE_ONLY" == "1" ]]; then
+    control_args+=(--validate-control-source-only)
+  fi
+
   "$PY" scripts/58_v31_split_protocol_run.py \
     --out-dir "$out_dir" \
+    "${control_args[@]}" \
     --sensor-cfg "$SENSOR_CFG" \
     --seed "$seed" \
     --budget "$BUDGET" \

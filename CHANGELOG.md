@@ -711,3 +711,15 @@ tar -czf "$OUT…`
   failed the replication gate and was not expanded to confirmation seeds.
 - A bounded 100k-step rerun of seed 403 was launched with the v2 scene and all
   other settings fixed to isolate training duration from scene calibration.
+
+### 2026-08-22 | Flexible-subset v2 unmatched 100k diagnostic
+
+- The seed-403 100k policy still used only four subsets, left FC4 inactive, and
+  lost to selected static by `0.008091` in mean loss and `0.031861` in macro loss.
+- Audit found that the longer run regenerated the frozen forecaster and
+  validation candidate scores. Its final start indices were unchanged, but its
+  selected static mask and all comparator losses differed from the 30k run.
+- The launcher now exposes the existing control-source validation path so that
+  training-duration comparisons can reuse byte-identical truth, evaluator,
+  action surface, validation selection, and final windows. This unmatched run
+  is retained as a collapse diagnostic, not a causal duration comparison.
