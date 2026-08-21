@@ -330,7 +330,10 @@ def reference_metrics(
     truth: pd.DataFrame,
     normalizers: dict[str, float],
 ) -> dict[str, Any]:
-    path = run_dir / router_eval_dir / "v2_custom_ppo_metrics.csv"
+    eval_dir = run_dir / router_eval_dir
+    if not (eval_dir / "v2_custom_ppo_metrics.csv").exists():
+        eval_dir = run_dir
+    path = eval_dir / "v2_custom_ppo_metrics.csv"
     if not path.exists():
         return {}
     table = pd.read_csv(path)
@@ -344,7 +347,7 @@ def reference_metrics(
         if MACRO_SUBTYPE_LOSS_COLUMN in row.index:
             out[f"{policy}_{MACRO_SUBTYPE_LOSS_COLUMN}"] = finite_float(row.get(MACRO_SUBTYPE_LOSS_COLUMN))
     for policy in ("custom_ppo", "validation_selected_static", "feasible_static_projected", "round_robin", "aoi", "random"):
-        macro_values = rollout_macro_subtype_loss(run_dir / router_eval_dir / f"rollout_{policy}.npz", truth)
+        macro_values = rollout_macro_subtype_loss(eval_dir / f"rollout_{policy}.npz", truth)
         for key, value in macro_values.items():
             out[f"{policy}_{key}"] = value
         normalized: list[float] = []

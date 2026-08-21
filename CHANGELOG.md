@@ -890,3 +890,17 @@ tar -czf "$OUT…`
   state-independent action-prior parameter even when no external prior is used.
   This is a direct static shortcut. The next bounded variant disables that term
   while retaining state-conditioned additive sensor scoring and all 20 actions.
+
+### 2026-08-22 | Flexible-subset v12 no-static-prior and context diagnostic
+
+- Removing the state-independent per-action prior expanded execution to
+  12/17/18 of 20 subsets but did not improve prediction: static two-endpoint
+  wins were `1/3`, and strongest-dynamic wins were `0/3`.
+- The online context-alert diagnostic beat PD-PPO in all three seeds, confirming
+  that warning context is informative. It beat static only in seed 405 and was
+  slightly weaker in seeds 406/407, so the scene still lacks stable
+  dynamic-over-static value.
+- The next bounded calibration changes only subtype latent update speed from
+  `0.22` to `0.55`. Faster event-specific evolution should make stale specialist
+  observations costly while preserving the physical channel model and online
+  warning lead.
