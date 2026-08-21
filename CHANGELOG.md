@@ -723,3 +723,16 @@ tar -czf "$OUT…`
   training-duration comparisons can reuse byte-identical truth, evaluator,
   action surface, validation selection, and final windows. This unmatched run
   is retained as a collapse diagnostic, not a causal duration comparison.
+
+### 2026-08-22 | Flexible-subset v2 matched 100k diagnostic
+
+- A corrected seed-403 duration comparison reused byte-identical truth and
+  frozen-forecaster assets. All six non-PD-PPO comparator rows matched the 30k
+  run exactly, confirming the matched-control path.
+- At 100k steps, PD-PPO lost to selected static by `0.019041` in mean loss and
+  `0.088967` in macro loss. It used seven masks but never activated the laser.
+  Longer training therefore does not resolve the failure.
+- The next bounded variant keeps the scene and full feasible action surface but
+  applies validation-static subtype normalization to the forecast-loss reward
+  and uses physically specified subtype prototypes for auxiliary supervision.
+  The prototypes do not constrain executable actions at training or evaluation.

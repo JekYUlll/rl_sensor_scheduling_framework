@@ -15,6 +15,10 @@ BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
 AWBC_COEF="${AWBC_COEF:-0.15}"
 BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
+ENT_COEF="${ENT_COEF:-0.02}"
+REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
+AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
+SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
 
@@ -109,18 +113,18 @@ for seed in "${SEEDS[@]}"; do
     --batch-size 128 \
     --n-epochs 8 \
     --learning-rate 0.0003 \
-    --ent-coef 0.02 \
+    --ent-coef "$ENT_COEF" \
     --awbc-coef "$AWBC_COEF" \
     --awbc-label-stride 4 \
     --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \
     --bc-pretrain-epochs 4 \
     --bc-pretrain-batch-size 256 \
     --bc-pretrain-loss-coef "$BC_PRETRAIN_LOSS_COEF" \
-    --subtype-aux-coef 0.3 \
+    --subtype-aux-coef "$SUBTYPE_AUX_COEF" \
     --subtype-aux-classes 4 \
     --subtype-aux-lookahead-steps 8 \
     --no-subtype-router \
-    --awbc-teacher-mode subtype_static_auto \
+    --awbc-teacher-mode "$AWBC_TEACHER_MODE" \
     --awbc-teacher-auto-score-mode staticnorm \
     --awbc-teacher-event-lookahead-steps 8 \
     --awbc-teacher-dwell-steps 6 \
@@ -150,6 +154,7 @@ for seed in "${SEEDS[@]}"; do
     --lambda-warmup-abort 1.0 \
     --lambda-switch 0.002 \
     --event-reward-multiplier 1.0 \
+    --reward-loss-normalization "$REWARD_LOSS_NORMALIZATION" \
     --lambda-duty-balance 0.0 \
     --duty-score-feedback 0.0 \
     --no-duty-hard-guard \
