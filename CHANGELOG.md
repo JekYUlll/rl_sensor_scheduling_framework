@@ -781,3 +781,13 @@ tar -czf "$OUT…`
 - Added an opt-in actor/critic/auxiliary grouped gradient-clipping mode. It is
   enabled only for the flexible-subset experiment track and leaves historical
   configurations unchanged.
+
+### 2026-08-22 | Flexible-subset v5 grouped-gradient diagnostic
+
+- Grouped clipping reduced final entropy from about `3.11` to `1.99`, confirming
+  that whole-model clipping had suppressed actor optimization.
+- The policy beat selected static on both endpoints and beat the best dynamic
+  mean loss by `0.002737`, but lost dynamic macro by `0.004705`.
+- Strong BC plus grouped clipping collapsed exactly to the four physical
+  prototypes. Grouped clipping is retained; the next matched run restores weak
+  BC so PPO can use non-prototype feasible subsets.
