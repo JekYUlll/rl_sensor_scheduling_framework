@@ -608,6 +608,7 @@ def main() -> None:
     parser.add_argument("--greedy-lookahead-steps", type=int, default=4)
     parser.add_argument("--use-action-mask", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--use-action-embedding", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--trainable-action-prior", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--event-aware-critic", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--event-gated-actor", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-encoder", action=argparse.BooleanOptionalAction, default=False)
@@ -1279,6 +1280,7 @@ def main() -> None:
             event_start_prob=float(args.event_start_prob),
             use_action_mask=bool(args.use_action_mask),
             use_action_embedding=bool(args.use_action_embedding),
+            trainable_action_prior=bool(args.trainable_action_prior),
             event_aware_critic=bool(args.event_aware_critic),
             event_gated_actor=bool(args.event_gated_actor),
             context_encoder_enabled=bool(args.context_encoder),
@@ -1926,6 +1928,7 @@ def main() -> None:
         "ablation_switches": {
             "use_action_mask": bool(args.use_action_mask),
             "use_action_embedding": bool(args.use_action_embedding),
+            "trainable_action_prior": bool(args.trainable_action_prior),
             "event_aware_critic": bool(args.event_aware_critic),
             "event_gated_actor": bool(args.event_gated_actor),
             "context_encoder": bool(args.context_encoder),
@@ -2060,6 +2063,7 @@ def as_serializable_config(cfg: CustomPPOConfig, *, candidate_count: int) -> dic
         "event_start_prob": float(cfg.event_start_prob),
         "use_action_mask": int(bool(cfg.use_action_mask)),
         "use_action_embedding": int(bool(cfg.use_action_embedding)),
+        "trainable_action_prior": int(bool(cfg.trainable_action_prior)),
         "event_aware_critic": int(bool(cfg.event_aware_critic)),
         "event_gated_actor": int(bool(cfg.event_gated_actor)),
         "context_encoder_enabled": int(bool(cfg.context_encoder_enabled)),

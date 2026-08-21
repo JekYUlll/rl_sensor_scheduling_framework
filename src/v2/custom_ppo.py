@@ -72,6 +72,7 @@ class CustomPPOConfig:
     event_start_prob: float = 0.67
     use_action_mask: bool = True
     use_action_embedding: bool = True
+    trainable_action_prior: bool = True
     event_aware_critic: bool = True
     event_gated_actor: bool = False
     context_encoder_enabled: bool = False
@@ -133,6 +134,7 @@ class MaskedActor:
         n_actions: int | None = None,
         candidate_prior_logits: np.ndarray | None = None,
         use_action_embedding: bool = True,
+        trainable_action_prior: bool = True,
         event_gated: bool = False,
         subtype_aux_classes: int = 0,
         context_encoder_enabled: bool = False,
@@ -228,7 +230,11 @@ class MaskedActor:
                     prior_len = int(prior.numel())
                 else:
                     prior = torch.zeros(prior_len, dtype=torch.float32)
-                self.action_prior = nn.Parameter(prior, requires_grad=True) if prior_len > 0 else None
+                self.action_prior = (
+                    nn.Parameter(prior, requires_grad=True)
+                    if prior_len > 0 and bool(trainable_action_prior)
+                    else None
+                )
 
             def _split_obs(self, obs: Any) -> tuple[Any, Any | None]:
                 if self.context_feature_dim <= 0:
@@ -344,6 +350,7 @@ class ActorCritic:
         n_actions: int | None = None,
         candidate_prior_logits: np.ndarray | None = None,
         use_action_embedding: bool = True,
+        trainable_action_prior: bool = True,
         event_aware_critic: bool = True,
         event_gated_actor: bool = False,
         soc_aux_horizon: int = 0,
@@ -367,6 +374,7 @@ class ActorCritic:
                     n_actions=n_actions,
                     candidate_prior_logits=candidate_prior_logits,
                     use_action_embedding=bool(use_action_embedding),
+                    trainable_action_prior=bool(trainable_action_prior),
                     event_gated=bool(event_gated_actor),
                     subtype_aux_classes=int(subtype_aux_classes),
                     context_encoder_enabled=bool(context_encoder_enabled),
@@ -463,6 +471,7 @@ class CustomPPO:
             n_actions=int(self.candidate_masks_np.shape[0]),
             candidate_prior_logits=self.candidate_prior_logits_np,
             use_action_embedding=bool(cfg.use_action_embedding),
+            trainable_action_prior=bool(cfg.trainable_action_prior),
             event_aware_critic=bool(cfg.event_aware_critic),
             event_gated_actor=bool(cfg.event_gated_actor),
             soc_aux_horizon=int(cfg.soc_aux_horizon),

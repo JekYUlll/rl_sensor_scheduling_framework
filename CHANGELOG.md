@@ -877,3 +877,16 @@ tar -czf "$OUT…`
   increases only fixed per-epoch effective costs for low-power channels. It
   keeps every single channel and most arbitrary pairs feasible, with no required
   channel and no explicit cardinality cap.
+
+### 2026-08-22 | Flexible-subset v11 cost-balanced development result
+
+- The calibrated power geometry contains 20 feasible actions: empty, all six
+  singletons, and 13 arbitrary pairs. PD-PPO executed 11/15/15 subsets with no
+  always-on or always-off channel, satisfying the flexible-behavior objective.
+- Forecast performance failed: all three seeds lost both endpoints to static;
+  average margins were `-0.026523/-0.098774` against static and
+  `-0.019486/-0.063568` against the strongest conventional dynamic policy.
+- Actor audit found that every candidate subset receives a trainable,
+  state-independent action-prior parameter even when no external prior is used.
+  This is a direct static shortcut. The next bounded variant disables that term
+  while retaining state-conditioned additive sensor scoring and all 20 actions.

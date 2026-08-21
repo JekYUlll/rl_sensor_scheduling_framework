@@ -99,6 +99,18 @@ def test_masked_actor_feasible_only() -> None:
     assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
 
 
+def test_masked_actor_can_disable_state_independent_action_prior() -> None:
+    actor = MaskedActor(
+        obs_dim=5,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        n_actions=3,
+        trainable_action_prior=False,
+    )
+    assert actor.action_prior is None
+
+
 def test_custom_ppo_episode_env_preserves_complete_config() -> None:
     truth = _truth(64)
     cfg = WarmupEnvConfig(

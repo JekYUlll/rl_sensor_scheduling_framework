@@ -698,6 +698,7 @@ def main() -> None:
     parser.add_argument("--greedy-lookahead-steps", type=int, default=4)
     parser.add_argument("--event-start-prob", type=float, default=0.67)
     parser.add_argument("--event-aware-critic", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--trainable-action-prior", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--event-gated-actor", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-feature-dim", type=int, default=0)
@@ -1090,6 +1091,7 @@ def main() -> None:
             "greedy_lookahead_steps": int(args.greedy_lookahead_steps),
             "event_start_prob": float(args.event_start_prob),
             "event_aware_critic": bool(args.event_aware_critic),
+            "trainable_action_prior": bool(args.trainable_action_prior),
             "event_gated_actor": bool(args.event_gated_actor),
             "context_encoder": bool(args.context_encoder),
             "context_feature_dim": int(args.context_feature_dim),
@@ -1415,6 +1417,11 @@ def main() -> None:
     if bool(args.event_subtypes_enabled):
         cmd.append("--event-subtypes-enabled")
     cmd.append("--event-aware-critic" if bool(args.event_aware_critic) else "--no-event-aware-critic")
+    cmd.append(
+        "--trainable-action-prior"
+        if bool(args.trainable_action_prior)
+        else "--no-trainable-action-prior"
+    )
     cmd.append("--event-gated-actor" if bool(args.event_gated_actor) else "--no-event-gated-actor")
     cmd.append("--context-encoder" if bool(args.context_encoder) else "--no-context-encoder")
     cmd.extend(["--context-feature-dim", str(max(0, int(args.context_feature_dim)))])

@@ -20,6 +20,7 @@ BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
 ENT_COEF="${ENT_COEF:-0.02}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
+TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
 read -r -a TEACHER_CALM_SENSOR_ARGS <<< "${TEACHER_CALM_SENSORS:-met_station_core radiometer_basic shielded_thermo_hygro}"
 read -r -a TEACHER_PARTICLE_SENSOR_ARGS <<< "${TEACHER_PARTICLE_SENSORS:-met_station_core laser_disdrometer}"
 read -r -a TEACHER_FLUX_SENSOR_ARGS <<< "${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}"
@@ -58,6 +59,11 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--separate-actor-critic-grad-clip)
   else
     control_args+=(--no-separate-actor-critic-grad-clip)
+  fi
+  if [[ "$TRAINABLE_ACTION_PRIOR" == "1" ]]; then
+    control_args+=(--trainable-action-prior)
+  else
+    control_args+=(--no-trainable-action-prior)
   fi
 
   "$PY" scripts/58_v31_split_protocol_run.py \
