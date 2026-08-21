@@ -8,6 +8,13 @@ DEVICE="${DEVICE:-cuda}"
 RUN_PREFIX="${RUN_PREFIX:-v32_flexible_subset_v1_dev}"
 TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-30000}"
 TRUTH_STEPS="${TRUTH_STEPS:-36000}"
+SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
+BUDGET="${BUDGET:-1.35}"
+STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
+BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
+AWBC_COEF="${AWBC_COEF:-0.15}"
+BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
+BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
 
 if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
@@ -16,20 +23,21 @@ else
 fi
 
 for seed in "${SEEDS[@]}"; do
-  out_dir="reports/${RUN_PREFIX}_seed${seed}_b1p35_20260822"
+  out_dir="reports/${RUN_PREFIX}_seed${seed}_${BUDGET_LABEL}_20260822"
   mkdir -p "$out_dir"
   "$PY" scripts/97_v32_flexible_subset_preflight.py \
-    --budget 1.35 \
-    --startup-peak-budget 1.65 \
+    --sensor-cfg "$SENSOR_CFG" \
+    --budget "$BUDGET" \
+    --startup-peak-budget "$STARTUP_BUDGET" \
     --output "${out_dir}/action_geometry.json" \
     > "${out_dir}/action_geometry.stdout.json"
 
   "$PY" scripts/58_v31_split_protocol_run.py \
     --out-dir "$out_dir" \
-    --sensor-cfg configs/sensors/windblown_sensors_flexible_subset_v1.yaml \
+    --sensor-cfg "$SENSOR_CFG" \
     --seed "$seed" \
-    --budget 1.35 \
-    --startup-peak-budget 1.65 \
+    --budget "$BUDGET" \
+    --startup-peak-budget "$STARTUP_BUDGET" \
     --truth-steps "$TRUTH_STEPS" \
     --freq-s 3600 \
     --split-ratios 0.35 0.50 0.075 0.075 \
@@ -46,7 +54,7 @@ for seed in "${SEEDS[@]}"; do
     --event-microstructure-alpha 0.22 \
     --event-microstructure-diameter-scale 0.08 \
     --event-microstructure-velocity-scale 0.20 \
-    --event-particle-microstructure-correlation 0.65 \
+    --event-particle-microstructure-correlation 0.35 \
     --event-subtypes-enabled \
     --event-subtype-particle-prob 0.36 \
     --event-subtype-flux-prob 0.36 \
@@ -60,7 +68,7 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-flux-velocity-boost-ms 0.8 \
     --event-subtype-thermal-surface-drop-c 2.4 \
     --event-subtype-particle-humidity-boost-pct 1.0 \
-    --event-subtype-flux-wind-boost-ms 0.6 \
+    --event-subtype-flux-wind-boost-ms 1.0 \
     --event-subtype-thermal-air-temp-drop-c 1.0 \
     --event-subtype-latent-alpha 0.22 \
     --event-subtype-particle-latent-diameter-scale-mm 0.14 \
@@ -91,12 +99,12 @@ for seed in "${SEEDS[@]}"; do
     --n-epochs 8 \
     --learning-rate 0.0003 \
     --ent-coef 0.02 \
-    --awbc-coef 0.15 \
+    --awbc-coef "$AWBC_COEF" \
     --awbc-label-stride 4 \
-    --bc-pretrain-steps 1500 \
+    --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \
     --bc-pretrain-epochs 4 \
     --bc-pretrain-batch-size 256 \
-    --bc-pretrain-loss-coef 0.5 \
+    --bc-pretrain-loss-coef "$BC_PRETRAIN_LOSS_COEF" \
     --subtype-aux-coef 0.3 \
     --subtype-aux-classes 4 \
     --subtype-aux-lookahead-steps 8 \

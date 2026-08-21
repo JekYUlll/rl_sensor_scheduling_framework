@@ -1,0 +1,311 @@
+{
+  "sensor_cfg": "configs/sensors/windblown_sensors_flexible_subset_v1.yaml",
+  "sensor_ids": [
+    "met_station_core",
+    "radiometer_basic",
+    "shielded_thermo_hygro",
+    "surface_temp_ir",
+    "laser_disdrometer",
+    "fc4_flux"
+  ],
+  "effective_costs": [
+    0.4,
+    0.28,
+    0.32,
+    0.48,
+    0.7,
+    0.62
+  ],
+  "startup_costs": [
+    0.48,
+    0.34,
+    0.39,
+    0.62,
+    0.88,
+    0.78
+  ],
+  "budget": 1.35,
+  "startup_peak_budget": 1.65,
+  "candidate_mask_count": 29,
+  "cardinality_counts": {
+    "0": 1,
+    "1": 6,
+    "2": 14,
+    "3": 8
+  },
+  "channel_candidate_counts": {
+    "met_station_core": 11,
+    "radiometer_basic": 12,
+    "shielded_thermo_hygro": 12,
+    "surface_temp_ir": 9,
+    "laser_disdrometer": 6,
+    "fc4_flux": 8
+  },
+  "all_single_channels_feasible": true,
+  "empty_mask_feasible": true,
+  "full_open_cost": 2.8,
+  "full_open_peak": 3.49,
+  "full_open_feasible": false,
+  "masks": [
+    {
+      "sensor_ids": [],
+      "cardinality": 0,
+      "steady_cost": 0.0,
+      "cold_start_cost": 0.0
+    },
+    {
+      "sensor_ids": [
+        "met_station_core"
+      ],
+      "cardinality": 1,
+      "steady_cost": 0.4,
+      "cold_start_cost": 0.48
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic"
+      ],
+      "cardinality": 1,
+      "steady_cost": 0.28,
+      "cold_start_cost": 0.34
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "radiometer_basic"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.68,
+      "cold_start_cost": 0.8200000000000001
+    },
+    {
+      "sensor_ids": [
+        "shielded_thermo_hygro"
+      ],
+      "cardinality": 1,
+      "steady_cost": 0.32,
+      "cold_start_cost": 0.39
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "shielded_thermo_hygro"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.72,
+      "cold_start_cost": 0.87
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "shielded_thermo_hygro"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.6000000000000001,
+      "cold_start_cost": 0.73
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "radiometer_basic",
+        "shielded_thermo_hygro"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.0,
+      "cold_start_cost": 1.21
+    },
+    {
+      "sensor_ids": [
+        "surface_temp_ir"
+      ],
+      "cardinality": 1,
+      "steady_cost": 0.48,
+      "cold_start_cost": 0.62
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "surface_temp_ir"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.88,
+      "cold_start_cost": 1.1
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "surface_temp_ir"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.76,
+      "cold_start_cost": 0.96
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "radiometer_basic",
+        "surface_temp_ir"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.1600000000000001,
+      "cold_start_cost": 1.44
+    },
+    {
+      "sensor_ids": [
+        "shielded_thermo_hygro",
+        "surface_temp_ir"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.8,
+      "cold_start_cost": 1.01
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "shielded_thermo_hygro",
+        "surface_temp_ir"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.2,
+      "cold_start_cost": 1.49
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "shielded_thermo_hygro",
+        "surface_temp_ir"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.08,
+      "cold_start_cost": 1.35
+    },
+    {
+      "sensor_ids": [
+        "laser_disdrometer"
+      ],
+      "cardinality": 1,
+      "steady_cost": 0.7,
+      "cold_start_cost": 0.88
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "laser_disdrometer"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.1,
+      "cold_start_cost": 1.3599999999999999
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "laser_disdrometer"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.98,
+      "cold_start_cost": 1.22
+    },
+    {
+      "sensor_ids": [
+        "shielded_thermo_hygro",
+        "laser_disdrometer"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.02,
+      "cold_start_cost": 1.27
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "shielded_thermo_hygro",
+        "laser_disdrometer"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.3,
+      "cold_start_cost": 1.61
+    },
+    {
+      "sensor_ids": [
+        "surface_temp_ir",
+        "laser_disdrometer"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.18,
+      "cold_start_cost": 1.5
+    },
+    {
+      "sensor_ids": [
+        "fc4_flux"
+      ],
+      "cardinality": 1,
+      "steady_cost": 0.62,
+      "cold_start_cost": 0.78
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "fc4_flux"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.02,
+      "cold_start_cost": 1.26
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "fc4_flux"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.9,
+      "cold_start_cost": 1.12
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "radiometer_basic",
+        "fc4_flux"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.3,
+      "cold_start_cost": 1.6
+    },
+    {
+      "sensor_ids": [
+        "shielded_thermo_hygro",
+        "fc4_flux"
+      ],
+      "cardinality": 2,
+      "steady_cost": 0.94,
+      "cold_start_cost": 1.17
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "shielded_thermo_hygro",
+        "fc4_flux"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.3399999999999999,
+      "cold_start_cost": 1.65
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "shielded_thermo_hygro",
+        "fc4_flux"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.22,
+      "cold_start_cost": 1.5100000000000002
+    },
+    {
+      "sensor_ids": [
+        "surface_temp_ir",
+        "fc4_flux"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.1,
+      "cold_start_cost": 1.4
+    }
+  ]
+}

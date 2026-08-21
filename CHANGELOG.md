@@ -673,3 +673,16 @@ mkdir -p "$(dirname "$OUT")"
 tar -czf "$OUT…`
   - … and 33 more
 
+### 2026-08-22 | Flexible-subset PD-PPO development pilot
+
+- Replaced the mandatory-core plus one-specialist geometry in an independent
+  experiment track with 29 power-feasible subsets over six physical-system channels.
+- Seed 401 at 30k steps improved over the selected static schedule on macro
+  normalized loss (`0.656944 < 0.723909`) but lost on mean forecast loss
+  (`0.171239 > 0.161443`) and remained slightly behind AoI.
+- Operational feasibility passed with zero violations and zero warm-up aborts,
+  but behaviour failed the diversity gate: one channel was always active, two
+  were always inactive, and only three masks were executed.
+- Diagnosis: the validation teacher selected the laser mask for both particle
+  and flux conditions. The run was stopped at one development seed; v2 targets
+  this measured identifiability and cost-geometry failure before further scaling.
