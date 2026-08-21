@@ -837,3 +837,16 @@ tar -czf "$OUT…`
   by default; the next bounded test uses existing physical-prototype guidance
   only during early PPO updates and decays it to zero, avoiding both immediate
   BC forgetting and permanent four-prototype lock-in.
+
+### 2026-08-22 | Flexible-subset v8 decaying-AWBC diagnostic
+
+- Linear decay from AWBC `0.15` to zero over 10k PPO steps degraded both
+  representative development seeds. Average margins were
+  `-0.020409/-0.083357` against static and `-0.008042/-0.061643` against the
+  strongest conventional dynamic policy.
+- Seed 406 recovered six-channel coverage, but seed 407 collapsed to a
+  low-switching met-plus-FC4 policy. Short-lived teacher guidance does not solve
+  cross-seed optimization drift and is rejected.
+- The next bounded diagnostic restores v6 and lowers only the PPO learning rate
+  from `3e-4` to `1e-4`. The launcher now exposes this existing hyperparameter;
+  its historical default remains unchanged.
