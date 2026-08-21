@@ -809,3 +809,18 @@ tar -czf "$OUT…`
   the best conventional dynamic reference by `0.009414` and `0.014126`.
 - No feasibility or warm-up failure occurred. The configuration was frozen for
   development replication on seeds 406 and 407.
+
+### 2026-08-22 | Flexible-subset v6 development replication
+
+- Across seeds 405--407, PD-PPO beat the validation-selected static subset on
+  both endpoints in `2/3` seeds. Mean margins were `+0.008988` for mean loss
+  and `+0.089263` for macro loss.
+- PD-PPO beat the strongest conventional dynamic reference on both endpoints
+  in `2/3` seeds. Mean margins were `+0.004541` and `-0.000391`, so v6 did not
+  pass the frozen final-evaluation gate.
+- Executed subset coverage was `19`, `8`, and `11` of 24. Seed 406 never used
+  the laser and used FC4 at only `0.016` duty, localizing the remaining problem
+  to cross-seed action-coverage stability rather than feasibility or switching.
+- No warm-up abort occurred. The next bounded change will preserve the scene,
+  action geometry, reward, and comparators while addressing actor coverage
+  stability; fresh final seeds remain untouched.
