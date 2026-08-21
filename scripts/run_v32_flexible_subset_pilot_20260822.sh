@@ -125,6 +125,10 @@ for seed in "${SEEDS[@]}"; do
     --subtype-aux-lookahead-steps 8 \
     --no-subtype-router \
     --awbc-teacher-mode "$AWBC_TEACHER_MODE" \
+    --awbc-teacher-subtype-calm-sensors met_station_core radiometer_basic shielded_thermo_hygro \
+    --awbc-teacher-subtype-particle-sensors met_station_core laser_disdrometer \
+    --awbc-teacher-subtype-flux-sensors met_station_core fc4_flux \
+    --awbc-teacher-subtype-thermal-sensors radiometer_basic shielded_thermo_hygro surface_temp_ir \
     --awbc-teacher-auto-score-mode staticnorm \
     --awbc-teacher-event-lookahead-steps 8 \
     --awbc-teacher-dwell-steps 6 \
