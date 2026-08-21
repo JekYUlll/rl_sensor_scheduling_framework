@@ -686,3 +686,14 @@ tar -czf "$OUT…`
 - Diagnosis: the validation teacher selected the laser mask for both particle
   and flux conditions. The run was stopped at one development seed; v2 targets
   this measured identifiability and cost-geometry failure before further scaling.
+
+### 2026-08-22 | Flexible-subset v2 bounded pilot
+
+- Seed 402 passed both performance endpoints against the validation-selected
+  static schedule: mean loss `0.165710 < 0.197650` and macro normalized loss
+  `0.786622 < 0.996109`.
+- It also beat AoI, round-robin, and random on both endpoints, with zero power
+  violations and zero warm-up aborts.
+- Behaviour improved from three to eleven executed masks. No channel was always
+  active, five channels had intermediate duty, and only FC4 remained effectively
+  inactive. The frozen v2 configuration advanced to seeds 403 and 404.
