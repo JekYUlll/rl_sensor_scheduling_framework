@@ -125,7 +125,7 @@ for seed in "${SEEDS[@]}"; do
     --static-selection-rollouts 4 \
     --eval-steps 384 \
     --eval-rollouts 6 \
-    --eval-start-selection subtype_balanced_transport \
+    --eval-start-selection subtype_balanced_transport_rich \
     --eval-event-fraction 0.70 \
     --eval-selection-stride 48 \
     --lambda-warmup-abort 1.0 \
