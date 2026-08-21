@@ -150,7 +150,6 @@ for seed in "${SEEDS[@]}"; do
     --subtype-flux-target-weights 0.10 0.10 0.30 0.05 0.05 0.10 24.0 4.0 4.0 \
     --subtype-thermal-target-weights 0.50 10.0 0.20 0.05 0.05 0.20 2.0 2.0 2.0 \
     --disable-coverage-groups \
-    --max-active 6 \
     --device "$DEVICE" \
     2>&1 | tee "${out_dir}/run_train_eval.log"
 done

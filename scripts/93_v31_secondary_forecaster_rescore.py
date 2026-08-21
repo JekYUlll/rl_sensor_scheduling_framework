@@ -102,7 +102,7 @@ def summarize_samples(samples: pd.DataFrame, *, policy: str) -> dict[str, Any]:
 def build_constraints(metadata: dict[str, Any]) -> PowerConstraintsV2:
     payload = dict(metadata["constraints"])
     return PowerConstraintsV2(
-        max_active=int(payload["max_active"]),
+        max_active=None if payload.get("max_active") is None else int(payload["max_active"]),
         per_step_budget=float(payload["per_step_budget"]),
         startup_peak_budget=float(payload["startup_peak_budget"]),
         required_sensor_ids=tuple(str(value) for value in payload["required_sensor_ids"]),

@@ -69,7 +69,7 @@ def constraints_from_metadata(metadata: dict[str, Any]) -> PowerConstraintsV2:
         for item in source.get("coverage_groups", [])
     )
     return PowerConstraintsV2(
-        max_active=int(source["max_active"]),
+        max_active=None if source.get("max_active") is None else int(source["max_active"]),
         per_step_budget=float(source["per_step_budget"]),
         startup_peak_budget=float(source["startup_peak_budget"]),
         required_sensor_ids=tuple(str(x) for x in source.get("required_sensor_ids", [])),

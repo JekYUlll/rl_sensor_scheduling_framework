@@ -159,7 +159,7 @@ def validate_control_source(
         raise ValueError("control source sensor configuration does not match requested sensor configuration")
     constraints = dict(metadata.get("constraints", {}))
     expected_constraints = {
-        "max_active": int(args.max_active),
+        "max_active": None if args.max_active is None else int(args.max_active),
         "per_step_budget": float(args.per_step_budget),
         "startup_peak_budget": float(args.startup_peak_budget),
         "required_sensor_ids": [str(value) for value in args.required_sensors],
@@ -603,7 +603,12 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=41)
     parser.add_argument("--per-step-budget", type=float, default=1.7)
     parser.add_argument("--startup-peak-budget", type=float, default=3.2)
-    parser.add_argument("--max-active", type=int, default=4)
+    parser.add_argument(
+        "--max-active",
+        type=int,
+        default=None,
+        help="Optional cardinality cap. Omit to let power constraints define the subset size.",
+    )
     parser.add_argument("--required-sensors", nargs="*", default=list(helpers.DEFAULT_REQUIRED_SENSOR_IDS))
     parser.add_argument("--disable-coverage-groups", action="store_true")
     parser.add_argument("--lambda-warmup-abort", type=float, default=0.08)
@@ -696,7 +701,7 @@ def main() -> None:
     sensors = load_sensor_specs(sensor_cfg_path)
     coverage_groups = () if bool(args.disable_coverage_groups) else helpers.DEFAULT_COVERAGE_GROUPS
     constraints = PowerConstraintsV2(
-        max_active=int(args.max_active),
+        max_active=None if args.max_active is None else int(args.max_active),
         per_step_budget=float(args.per_step_budget),
         startup_peak_budget=float(args.startup_peak_budget),
         required_sensor_ids=tuple(str(sensor_id) for sensor_id in args.required_sensors),
@@ -1858,7 +1863,7 @@ def main() -> None:
             "min_dwell_steps": [int(value) for value in dwell_steps],
         },
         "constraints": {
-            "max_active": int(args.max_active),
+            "max_active": None if args.max_active is None else int(args.max_active),
             "per_step_budget": float(args.per_step_budget),
             "startup_peak_budget": float(args.startup_peak_budget),
             "required_sensor_ids": [str(sensor_id) for sensor_id in args.required_sensors],
