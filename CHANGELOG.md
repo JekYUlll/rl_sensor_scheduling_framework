@@ -791,3 +791,11 @@ tar -czf "$OUT…`
 - Strong BC plus grouped clipping collapsed exactly to the four physical
   prototypes. Grouped clipping is retained; the next matched run restores weak
   BC so PPO can use non-prototype feasible subsets.
+
+### 2026-08-22 | Flexible-subset v5b grouped-gradient weak-BC diagnostic
+
+- Weak BC plus continuing AWBC still produced exactly four prototype masks.
+- PD-PPO beat selected static on both endpoints and the best dynamic mean by
+  `0.003651`, but lost the best dynamic macro by `0.009019`.
+- The next matched run uses strong BC only as initialization and disables AWBC
+  during PPO, isolating whether continuing imitation causes prototype lock-in.
