@@ -747,3 +747,14 @@ tar -czf "$OUT…`
   duty reached only `0.287` during thermal windows even though the online
   thermal alert was fully separable. The actor's BC pretraining accuracy was
   only `0.110`; the next matched run changes only BC pretraining strength.
+
+### 2026-08-22 | Flexible-subset v3 matched strong-BC pilot
+
+- Stronger pretraining raised BC accuracy from `0.110` to `0.786` while all
+  frozen comparator metrics remained exactly unchanged.
+- PD-PPO beat selected static by `0.031659` in mean loss and `0.097111` in macro
+  loss. It also beat the best conventional dynamic reference by `0.010987` and
+  `0.004263`.
+- The policy used ten masks; all six channels had intermediate duty, switches
+  per step were `0.021421`, and no feasibility or warm-up failure occurred.
+  This configuration advanced to development seeds 406 and 407.
