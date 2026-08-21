@@ -1,0 +1,4 @@
+seed,pdppo_mean_loss,selected_static_mean_loss,mean_margin_vs_static,pdppo_macro_loss,selected_static_macro_loss,macro_margin_vs_static,mean_margin_vs_best_dynamic,macro_margin_vs_best_dynamic,always_on,always_off,mid_duty,switches_per_step,passes_both_static_endpoints
+402,0.165709657,0.197649690,0.031940033,0.786621754,0.996109395,0.209487640,0.015470672,0.066884296,0,1,5,0.026052974,true
+403,0.217263450,0.208264235,-0.008999215,1.202267976,1.142107927,-0.060160050,-0.014944444,-0.107919484,0,1,4,0.007236937,false
+404,0.192526780,0.187055458,-0.005471322,0.904057880,0.908290114,0.004232234,-0.008031572,-0.008769503,0,0,5,0.019539731,false

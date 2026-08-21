@@ -697,3 +697,17 @@ tar -czf "$OUT…`
 - Behaviour improved from three to eleven executed masks. No channel was always
   active, five channels had intermediate duty, and only FC4 remained effectively
   inactive. The frozen v2 configuration advanced to seeds 403 and 404.
+
+### 2026-08-22 | Flexible-subset v2 30k replication
+
+- Seeds 403 and 404 did not reproduce seed 402's two-endpoint advantage. Across
+  the three development seeds, PD-PPO beat the validation-selected static subset
+  on both mean and macro forecast loss in `1/3` seeds.
+- Seed 403 lost to the selected static subset by `0.008999` in mean loss and
+  `0.060160` in macro loss. Seed 404 lost mean loss by `0.005471` while retaining
+  a small macro advantage of `0.004232`.
+- All three runs remained feasible with no always-on channel, but seed 403 used
+  only four subsets and switched at `0.007237` per step. The 30k configuration
+  failed the replication gate and was not expanded to confirmation seeds.
+- A bounded 100k-step rerun of seed 403 was launched with the v2 scene and all
+  other settings fixed to isolate training duration from scene calibration.
