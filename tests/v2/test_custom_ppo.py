@@ -521,3 +521,17 @@ def test_ppo_actor_inputs_use_online_alert_in_rollout_and_teacher_batch() -> Non
     np.testing.assert_allclose(rollout["event_flags"], expected_online, atol=1e-7)
     np.testing.assert_allclose(teacher["event_flags"], expected_online, atol=1e-7)
     assert not np.allclose(expected_online, exact_labels)
+
+
+def test_awbc_coefficient_can_decay_to_zero_without_changing_default() -> None:
+    constant = CustomPPO.__new__(CustomPPO)
+    constant.cfg = CustomPPOConfig(awbc_coef=0.2)
+    assert constant._effective_awbc_coef(0) == 0.2
+    assert constant._effective_awbc_coef(50_000) == 0.2
+
+    decayed = CustomPPO.__new__(CustomPPO)
+    decayed.cfg = CustomPPOConfig(awbc_coef=0.2, awbc_decay_timesteps=10_000)
+    assert decayed._effective_awbc_coef(0) == 0.2
+    assert decayed._effective_awbc_coef(5_000) == 0.1
+    assert decayed._effective_awbc_coef(10_000) == 0.0
+    assert decayed._effective_awbc_coef(20_000) == 0.0

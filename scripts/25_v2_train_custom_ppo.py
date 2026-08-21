@@ -520,6 +520,7 @@ def main() -> None:
         default=False,
     )
     parser.add_argument("--awbc-coef", type=float, default=0.1)
+    parser.add_argument("--awbc-decay-timesteps", type=int, default=0)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
     parser.add_argument("--bc-pretrain-steps", type=int, default=0)
     parser.add_argument("--bc-pretrain-epochs", type=int, default=4)
@@ -1236,6 +1237,7 @@ def main() -> None:
             ent_coef=float(args.ent_coef),
             separate_actor_critic_grad_clip=bool(args.separate_actor_critic_grad_clip),
             awbc_coef=float(args.awbc_coef),
+            awbc_decay_timesteps=max(0, int(args.awbc_decay_timesteps)),
             awbc_label_stride=int(args.awbc_label_stride),
             bc_pretrain_steps=int(args.bc_pretrain_steps),
             bc_pretrain_epochs=int(args.bc_pretrain_epochs),
@@ -1957,6 +1959,7 @@ def as_serializable_config(cfg: CustomPPOConfig, *, candidate_count: int) -> dic
         "ent_coef": float(cfg.ent_coef),
         "vf_coef": float(cfg.vf_coef),
         "awbc_coef": float(cfg.awbc_coef),
+        "awbc_decay_timesteps": int(cfg.awbc_decay_timesteps),
         "awbc_label_stride": int(cfg.awbc_label_stride),
         "bc_pretrain_steps": int(cfg.bc_pretrain_steps),
         "bc_pretrain_epochs": int(cfg.bc_pretrain_epochs),

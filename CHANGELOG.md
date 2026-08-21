@@ -824,3 +824,16 @@ tar -czf "$OUT…`
 - No warm-up abort occurred. The next bounded change will preserve the scene,
   action geometry, reward, and comparators while addressing actor coverage
   stability; fresh final seeds remain untouched.
+
+### 2026-08-22 | Flexible-subset v7 zero-entropy diagnostic
+
+- Removing the PPO entropy bonus did not stabilize the v6 replication failures.
+  Across seeds 406 and 407, mean margins were `-0.014901/-0.056149` against
+  static and `-0.003140/-0.044832` against the strongest dynamic reference.
+- The policies executed 8 and 19 subsets, showing that entropy removal changed
+  individual trajectories without reducing cross-seed coverage variance. This
+  hypothesis is rejected.
+- Added an opt-in linear AWBC decay schedule. Historical behavior is unchanged
+  by default; the next bounded test uses existing physical-prototype guidance
+  only during early PPO updates and decays it to zero, avoiding both immediate
+  BC forgetting and permanent four-prototype lock-in.

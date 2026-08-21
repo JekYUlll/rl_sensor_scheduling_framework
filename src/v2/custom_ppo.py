@@ -30,6 +30,7 @@ class CustomPPOConfig:
     ent_coef: float = 0.01
     vf_coef: float = 0.5
     awbc_coef: float = 0.1
+    awbc_decay_timesteps: int = 0
     awbc_label_stride: int = 4
     bc_pretrain_steps: int = 0
     bc_pretrain_epochs: int = 4
@@ -529,6 +530,7 @@ class CustomPPO:
         steps_done = 0
         update_idx = 0
         while steps_done < total_timesteps:
+            self._active_awbc_coef = self._effective_awbc_coef(steps_done)
             rollout_steps = min(int(self.cfg.n_steps), total_timesteps - steps_done)
             batch = self.collect_rollout(int(rollout_steps), seed_offset=update_idx * 997)
             metrics = self.update(batch)
@@ -548,6 +550,7 @@ class CustomPPO:
                 f"subtype_acc={float(metrics.get('subtype_aux_accuracy', float('nan'))):.3f} "
                 f"subtype_action_ce={float(metrics.get('subtype_action_ce_loss', float('nan'))):.6f} "
                 f"subtype_action_margin={float(metrics.get('subtype_action_margin_loss', float('nan'))):.6f} "
+                f"awbc_coef={float(metrics['awbc_coef']):.6f} "
                 f"awbc_label_rate={float(metrics['awbc_label_rate']):.3f}",
                 flush=True,
             )
@@ -594,7 +597,7 @@ class CustomPPO:
                 logprob_t = dist.log_prob(action_t)
                 value_t = self.model.value(obs_t, event_t)
             action = int(action_t.detach().cpu().item())
-            should_label = float(self.cfg.awbc_coef) > 0.0 and (step % label_stride == 0)
+            should_label = float(self._current_awbc_coef()) > 0.0 and (step % label_stride == 0)
             if should_label:
                 greedy = self._awbc_teacher_action(env, action_mask_np)
                 awbc_valid = 1.0
@@ -1094,7 +1097,7 @@ class CustomPPO:
                     policy_loss
                     + float(self.cfg.vf_coef) * value_loss
                     - float(self.cfg.ent_coef) * entropy
-                    + float(self.cfg.awbc_coef) * awbc_loss
+                    + float(self._current_awbc_coef()) * awbc_loss
                     + float(self.cfg.prior_kl_coef) * prior_kl_loss
                     + float(self.cfg.soc_aux_coef) * soc_aux_loss
                     + float(self.cfg.subtype_aux_coef) * subtype_aux_loss
@@ -1139,8 +1142,20 @@ class CustomPPO:
             "advantage_std": float(np.std(batch["advantages"])),
             "event_rate": float(np.mean(batch["event_flags"])),
             "awbc_label_rate": float(np.mean(batch["awbc_valid"])),
+            "awbc_coef": float(self._current_awbc_coef()),
             "greedy_unique_actions": int(np.unique(batch["greedy_actions"]).size),
         }
+
+    def _effective_awbc_coef(self, timesteps: int) -> float:
+        base = max(0.0, float(self.cfg.awbc_coef))
+        decay_steps = max(0, int(self.cfg.awbc_decay_timesteps))
+        if decay_steps == 0:
+            return base
+        progress = min(max(float(timesteps) / float(decay_steps), 0.0), 1.0)
+        return base * (1.0 - progress)
+
+    def _current_awbc_coef(self) -> float:
+        return float(getattr(self, "_active_awbc_coef", self.cfg.awbc_coef))
 
     def _subtype_aux_loss(self, obs: Any, event_flags: Any, labels: Any, valid: Any) -> tuple[Any, float]:
         torch, nn = _torch_modules()

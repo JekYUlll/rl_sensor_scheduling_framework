@@ -13,6 +13,7 @@ BUDGET="${BUDGET:-1.35}"
 STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
 BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
 AWBC_COEF="${AWBC_COEF:-0.15}"
+AWBC_DECAY_TIMESTEPS="${AWBC_DECAY_TIMESTEPS:-0}"
 BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
 BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
@@ -122,6 +123,7 @@ for seed in "${SEEDS[@]}"; do
     --learning-rate 0.0003 \
     --ent-coef "$ENT_COEF" \
     --awbc-coef "$AWBC_COEF" \
+    --awbc-decay-timesteps "$AWBC_DECAY_TIMESTEPS" \
     --awbc-label-stride 4 \
     --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \
     --bc-pretrain-epochs "$BC_PRETRAIN_EPOCHS" \
