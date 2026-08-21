@@ -4,7 +4,7 @@ import copy
 import json
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -510,7 +510,10 @@ class CustomPPO:
         if self.model.soc_aux_head is not None:
             nn.utils.clip_grad_norm_(self.model.soc_aux_head.parameters(), max_norm)
 
-    def train(self) -> "CustomPPO":
+    def train(
+        self,
+        on_update: Callable[["CustomPPO", int, int, dict[str, float | int]], None] | None = None,
+    ) -> "CustomPPO":
         bc_steps = max(0, int(self.cfg.bc_pretrain_steps))
         if bc_steps > 0:
             metrics = self.bc_pretrain(bc_steps)
@@ -539,6 +542,8 @@ class CustomPPO:
             metrics["timesteps"] = int(steps_done)
             self.history.append(metrics)
             self._flush_history()
+            if on_update is not None:
+                on_update(self, int(update_idx), int(steps_done), metrics)
             print(
                 "custom_ppo_update "
                 f"update={update_idx} timesteps={steps_done} "

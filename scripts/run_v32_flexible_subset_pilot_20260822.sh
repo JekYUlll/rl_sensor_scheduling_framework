@@ -19,6 +19,7 @@ BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
 ENT_COEF="${ENT_COEF:-0.02}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
+CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
@@ -126,6 +127,7 @@ for seed in "${SEEDS[@]}"; do
     --awbc-coef "$AWBC_COEF" \
     --awbc-decay-timesteps "$AWBC_DECAY_TIMESTEPS" \
     --awbc-label-stride 4 \
+    --checkpoint-selection-interval-updates "$CHECKPOINT_SELECTION_INTERVAL_UPDATES" \
     --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \
     --bc-pretrain-epochs "$BC_PRETRAIN_EPOCHS" \
     --bc-pretrain-batch-size 256 \

@@ -646,6 +646,7 @@ def main() -> None:
     parser.add_argument("--awbc-coef", type=float, default=0.1)
     parser.add_argument("--awbc-decay-timesteps", type=int, default=0)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
+    parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
     parser.add_argument("--bc-pretrain-steps", type=int, default=0)
     parser.add_argument("--bc-pretrain-epochs", type=int, default=4)
     parser.add_argument("--bc-pretrain-batch-size", type=int, default=128)
@@ -1053,6 +1054,9 @@ def main() -> None:
             "awbc_coef": float(args.awbc_coef),
             "awbc_decay_timesteps": max(0, int(args.awbc_decay_timesteps)),
             "awbc_label_stride": int(args.awbc_label_stride),
+            "checkpoint_selection_interval_updates": max(
+                0, int(args.checkpoint_selection_interval_updates)
+            ),
             "bc_pretrain_steps": int(args.bc_pretrain_steps),
             "bc_pretrain_epochs": int(args.bc_pretrain_epochs),
             "bc_pretrain_batch_size": int(args.bc_pretrain_batch_size),
@@ -1272,6 +1276,8 @@ def main() -> None:
         str(max(0, int(args.awbc_decay_timesteps))),
         "--awbc-label-stride",
         str(int(args.awbc_label_stride)),
+        "--checkpoint-selection-interval-updates",
+        str(max(0, int(args.checkpoint_selection_interval_updates))),
         "--bc-pretrain-steps",
         str(int(args.bc_pretrain_steps)),
         "--bc-pretrain-epochs",

@@ -850,3 +850,17 @@ tar -czf "$OUT…`
 - The next bounded diagnostic restores v6 and lowers only the PPO learning rate
   from `3e-4` to `1e-4`. The launcher now exposes this existing hyperparameter;
   its historical default remains unchanged.
+
+### 2026-08-22 | Flexible-subset v9 low-learning-rate diagnostic
+
+- Lowering the PPO learning rate to `1e-4` increased executed subset coverage
+  to 13 and 16 on seeds 406/407, but average margins remained negative:
+  `-0.012654/-0.004511` against static and `-0.001211/-0.032193` against the
+  strongest conventional dynamic reference.
+- Entropy, teacher-transition, and learning-rate diagnostics have now all
+  failed to produce stable cross-seed performance. Ordinary hyperparameter
+  retries stop here.
+- The next structural correction selects checkpoints only on the existing
+  calibration/validation partition and restores the selected policy before
+  independent test evaluation. The current final-update-only behavior can
+  discard better intermediate PPO policies and amplify seed variance.

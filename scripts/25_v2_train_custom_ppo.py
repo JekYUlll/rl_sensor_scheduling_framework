@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import importlib.util
 import json
@@ -522,6 +523,7 @@ def main() -> None:
     parser.add_argument("--awbc-coef", type=float, default=0.1)
     parser.add_argument("--awbc-decay-timesteps", type=int, default=0)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
+    parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
     parser.add_argument("--bc-pretrain-steps", type=int, default=0)
     parser.add_argument("--bc-pretrain-epochs", type=int, default=4)
     parser.add_argument("--bc-pretrain-batch-size", type=int, default=128)
@@ -1295,7 +1297,59 @@ def main() -> None:
         ),
         candidate_prior_logits=candidate_prior_logits,
     )
-    trainer.train()
+    checkpoint_selection_rows: list[dict[str, float | int]] = []
+    best_checkpoint_state = None
+    best_checkpoint_score = float("inf")
+    best_checkpoint_update = 0
+    checkpoint_interval = max(0, int(args.checkpoint_selection_interval_updates))
+    checkpoint_starts = tuple(int(x) for x in (args.static_selection_start_indices or ()))
+    checkpoint_cfg = replace(
+        train_cfg,
+        episode_len=int(args.static_selection_steps),
+        seed=int(args.seed) + 8500,
+        duty_score_feedback=0.0,
+        duty_hard_guard=False,
+    )
+
+    def select_checkpoint(
+        current_trainer: CustomPPO,
+        update_idx: int,
+        timesteps: int,
+        _metrics: dict[str, float | int],
+    ) -> None:
+        nonlocal best_checkpoint_state, best_checkpoint_score, best_checkpoint_update
+        if checkpoint_interval <= 0 or not checkpoint_starts:
+            return
+        final_update = int(timesteps) >= int(args.total_timesteps)
+        if int(update_idx) % checkpoint_interval != 0 and not final_update:
+            return
+        _, selection_metrics = evaluate_custom_ppo(
+            trainer=current_trainer,
+            truth_df=truth,
+            sensor_specs=sensors,
+            constraints=constraints,
+            cfg=checkpoint_cfg,
+            oracle=oracle,
+            steps=int(args.static_selection_steps),
+            start_indices=checkpoint_starts,
+            policy_name="custom_ppo_checkpoint_selection",
+        )
+        score = float(selection_metrics["oracle_loss_mean"])
+        checkpoint_selection_rows.append(
+            {"update": int(update_idx), "timesteps": int(timesteps), "oracle_loss_mean": score}
+        )
+        if np.isfinite(score) and score < best_checkpoint_score:
+            best_checkpoint_score = score
+            best_checkpoint_update = int(update_idx)
+            best_checkpoint_state = copy.deepcopy(current_trainer.model.state_dict())
+
+    trainer.train(on_update=select_checkpoint)
+    if best_checkpoint_state is not None:
+        trainer.model.load_state_dict(best_checkpoint_state)
+    if checkpoint_selection_rows:
+        pd.DataFrame(checkpoint_selection_rows).to_csv(
+            out_dir / "custom_ppo_checkpoint_selection.csv", index=False
+        )
     model_path = out_dir / "custom_ppo.pt"
     trainer.save(model_path)
     if args.checkpoint_path:
@@ -1809,6 +1863,16 @@ def main() -> None:
             "measurement_variance_source": "sensor noise_std propagated to observed state columns",
         },
         "custom_ppo": as_serializable_config(trainer.cfg, candidate_count=int(candidate_masks.shape[0])),
+        "checkpoint_selection": {
+            "enabled": checkpoint_interval > 0,
+            "interval_updates": checkpoint_interval,
+            "partition": "calibration_validation",
+            "start_indices": [int(x) for x in checkpoint_starts],
+            "steps": int(args.static_selection_steps),
+            "score": "oracle_loss_mean",
+            "selected_update": int(best_checkpoint_update),
+            "selected_score": None if not np.isfinite(best_checkpoint_score) else float(best_checkpoint_score),
+        },
         "awbc_teacher": {
             "mode": str(args.awbc_teacher_mode),
             "calm_sensors": [str(x) for x in (args.awbc_teacher_calm_sensors or ())],
