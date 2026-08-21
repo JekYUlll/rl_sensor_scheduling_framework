@@ -514,6 +514,11 @@ def main() -> None:
     parser.add_argument("--gae-lambda", type=float, default=0.95)
     parser.add_argument("--clip-range", type=float, default=0.2)
     parser.add_argument("--ent-coef", type=float, default=0.01)
+    parser.add_argument(
+        "--separate-actor-critic-grad-clip",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     parser.add_argument("--awbc-coef", type=float, default=0.1)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
     parser.add_argument("--bc-pretrain-steps", type=int, default=0)
@@ -1229,6 +1234,7 @@ def main() -> None:
             gae_lambda=float(args.gae_lambda),
             clip_range=float(args.clip_range),
             ent_coef=float(args.ent_coef),
+            separate_actor_critic_grad_clip=bool(args.separate_actor_critic_grad_clip),
             awbc_coef=float(args.awbc_coef),
             awbc_label_stride=int(args.awbc_label_stride),
             bc_pretrain_steps=int(args.bc_pretrain_steps),

@@ -48,6 +48,7 @@ class CustomPPOConfig:
     embed_dim: int = 32
     hidden_dim: int = 128
     max_grad_norm: float = 0.5
+    separate_actor_critic_grad_clip: bool = False
     greedy_lookahead_steps: int = 4
     awbc_teacher_mode: str = "oracle_greedy"
     awbc_teacher_event_lookahead_steps: int = 0
@@ -497,6 +498,17 @@ class CustomPPO:
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=float(cfg.learning_rate))
         self.history: list[dict[str, float | int]] = []
 
+    def _clip_update_gradients(self) -> None:
+        _, nn = _torch_modules()
+        max_norm = float(self.cfg.max_grad_norm)
+        if not bool(self.cfg.separate_actor_critic_grad_clip):
+            nn.utils.clip_grad_norm_(self.model.parameters(), max_norm)
+            return
+        nn.utils.clip_grad_norm_(self.model.actor.parameters(), max_norm)
+        nn.utils.clip_grad_norm_(self.model.critic.parameters(), max_norm)
+        if self.model.soc_aux_head is not None:
+            nn.utils.clip_grad_norm_(self.model.soc_aux_head.parameters(), max_norm)
+
     def train(self) -> "CustomPPO":
         bc_steps = max(0, int(self.cfg.bc_pretrain_steps))
         if bc_steps > 0:
@@ -751,7 +763,7 @@ class CustomPPO:
                 loss = float(self.cfg.bc_pretrain_loss_coef) * bc_loss + float(self.cfg.subtype_aux_coef) * subtype_aux_loss
                 self.optimizer.zero_grad(set_to_none=True)
                 loss.backward()
-                nn.utils.clip_grad_norm_(self.model.parameters(), float(self.cfg.max_grad_norm))
+                self._clip_update_gradients()
                 self.optimizer.step()
                 pred = torch.argmax(dist.probs, dim=1)
                 rows.append(
@@ -1091,7 +1103,7 @@ class CustomPPO:
                 )
                 self.optimizer.zero_grad(set_to_none=True)
                 loss.backward()
-                nn.utils.clip_grad_norm_(self.model.parameters(), float(self.cfg.max_grad_norm))
+                self._clip_update_gradients()
                 self.optimizer.step()
                 loss_rows.append(
                     {

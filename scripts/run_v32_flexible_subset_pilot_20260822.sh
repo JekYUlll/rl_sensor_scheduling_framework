@@ -20,6 +20,7 @@ ENT_COEF="${ENT_COEF:-0.02}"
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
+SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
 
@@ -45,6 +46,11 @@ for seed in "${SEEDS[@]}"; do
   fi
   if [[ "$VALIDATE_CONTROL_SOURCE_ONLY" == "1" ]]; then
     control_args+=(--validate-control-source-only)
+  fi
+  if [[ "$SEPARATE_ACTOR_CRITIC_GRAD_CLIP" == "1" ]]; then
+    control_args+=(--separate-actor-critic-grad-clip)
+  else
+    control_args+=(--no-separate-actor-critic-grad-clip)
   fi
 
   "$PY" scripts/58_v31_split_protocol_run.py \

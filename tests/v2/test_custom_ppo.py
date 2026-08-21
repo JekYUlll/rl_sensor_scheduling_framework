@@ -139,6 +139,48 @@ def test_custom_ppo_episode_env_preserves_complete_config() -> None:
     assert episode_env.cfg.seed == 13
 
 
+def test_separate_gradient_clipping_limits_actor_and_critic_independently() -> None:
+    truth = _truth(64)
+    trainer = CustomPPO(
+        truth_df=truth,
+        sensor_specs=_sensors(),
+        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        env_cfg=WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=("air_temperature_c",),
+            lookback=4,
+            episode_len=8,
+            seed=9,
+        ),
+        oracle=_oracle(truth),
+        candidate_masks=np.asarray([[True, False, False], [True, False, True]], dtype=bool),
+        cfg=CustomPPOConfig(
+            total_timesteps=1,
+            n_steps=1,
+            batch_size=1,
+            n_epochs=1,
+            max_grad_norm=0.5,
+            separate_actor_critic_grad_clip=True,
+            device="cpu",
+        ),
+    )
+    for parameter in trainer.model.actor.parameters():
+        parameter.grad = torch.full_like(parameter, 10.0)
+    for parameter in trainer.model.critic.parameters():
+        parameter.grad = torch.full_like(parameter, 100.0)
+
+    trainer._clip_update_gradients()
+
+    actor_norm = torch.sqrt(
+        sum(torch.sum(parameter.grad**2) for parameter in trainer.model.actor.parameters())
+    )
+    critic_norm = torch.sqrt(
+        sum(torch.sum(parameter.grad**2) for parameter in trainer.model.critic.parameters())
+    )
+    assert actor_norm <= 0.50001
+    assert critic_norm <= 0.50001
+
+
 def test_oracle_lookahead_snapshot_restores_uncertainty_and_constraint_state() -> None:
     truth = _truth(64)
     env = WarmupSchedulingEnv(

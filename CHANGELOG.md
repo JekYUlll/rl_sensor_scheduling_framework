@@ -769,3 +769,15 @@ tar -czf "$OUT…`
 - All runs used every channel at intermediate duty and executed 4--10 masks.
   The next matched variant replaces four-prototype BC labels with frozen-
   forecast greedy labels over the complete feasible action surface.
+
+### 2026-08-22 | Flexible-subset v4b forecast-greedy warm start
+
+- Full-surface forecast-greedy BC raised action coverage to 17 masks but failed
+  both performance gates. PD-PPO lost to selected static by `0.042258` mean and
+  `0.134527` macro, and one channel remained inactive.
+- Training logs showed mean value loss `103.96` versus mean policy-loss
+  magnitude `0.00836`. Whole-model gradient clipping therefore allowed critic
+  gradients to suppress actor updates despite separate network modules.
+- Added an opt-in actor/critic/auxiliary grouped gradient-clipping mode. It is
+  enabled only for the flexible-subset experiment track and leaves historical
+  configurations unchanged.
