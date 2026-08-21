@@ -758,3 +758,14 @@ tar -czf "$OUT…`
 - The policy used ten masks; all six channels had intermediate duty, switches
   per step were `0.021421`, and no feasibility or warm-up failure occurred.
   This configuration advanced to development seeds 406 and 407.
+
+### 2026-08-22 | Flexible-subset v3 strong-BC replication
+
+- Across seeds 405--407, PD-PPO beat selected static on both endpoints in `2/3`
+  seeds and beat the best conventional dynamic reference on both in `2/3`.
+- Mean margins against static remained positive (`+0.004613` mean and
+  `+0.026351` macro), but the mean macro margin against the best dynamic
+  reference was `-0.018517`. The configuration did not advance to final seeds.
+- All runs used every channel at intermediate duty and executed 4--10 masks.
+  The next matched variant replaces four-prototype BC labels with frozen-
+  forecast greedy labels over the complete feasible action surface.
