@@ -9,6 +9,10 @@ RUN_PREFIX="${RUN_PREFIX:-v32_flexible_subset_v1_dev}"
 TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-30000}"
 TRUTH_STEPS="${TRUTH_STEPS:-36000}"
 EVENT_COVERAGE="${EVENT_COVERAGE:-0.45}"
+MIN_DURATION="${MIN_DURATION:-20}"
+MAX_DURATION="${MAX_DURATION:-64}"
+MIN_GAP="${MIN_GAP:-12}"
+LEAD_STEPS="${LEAD_STEPS:-8}"
 EVENT_MICROSTRUCTURE_SIGMA="${EVENT_MICROSTRUCTURE_SIGMA:-0.08}"
 EVENT_MICROSTRUCTURE_ALPHA="${EVENT_MICROSTRUCTURE_ALPHA:-0.22}"
 EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION="${EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION:-0.35}"
@@ -100,10 +104,10 @@ for seed in "${SEEDS[@]}"; do
     --freq-s 3600 \
     --split-ratios 0.35 0.50 0.075 0.075 \
     --event-coverage "$EVENT_COVERAGE" \
-    --min-duration 20 \
-    --max-duration 64 \
-    --min-gap 12 \
-    --lead-steps 8 \
+    --min-duration "$MIN_DURATION" \
+    --max-duration "$MAX_DURATION" \
+    --min-gap "$MIN_GAP" \
+    --lead-steps "$LEAD_STEPS" \
     --wind-margin-ms 1.4 \
     --cred-hysteresis-on 0.6 \
     --cred-hysteresis-off 0.3 \

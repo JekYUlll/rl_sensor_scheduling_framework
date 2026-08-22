@@ -1278,3 +1278,17 @@ tar -czf "$OUT…`
   Candidate rankings show that thermal specialization is stable while particle
   and flux specialist value is not, motivating a bounded screen of stronger
   specialist-specific latent effects rather than another global perturbation.
+
+### 2026-08-22 | Flexible-subset v38 specialist-latent screen
+
+- V38 doubled the particle-specific latent effects, raised the flux-specific
+  latent scale, and used moderate `alpha=0.15` with zero shared particle/flux
+  microstructure correlation. New development seeds 811--815 were screened
+  only with the exact 20-action privileged upper diagnostic.
+- Dynamic schedules beat hindsight static in `4/5` seeds, with margins
+  `+0.00577`, `-0.00711`, `+0.00947`, `+0.00164`, and `+0.01169` (mean
+  `+0.00429`). This improves subtype specialization but does not provide enough
+  headroom for policy training. V39 keeps these amplitudes and tests longer
+  event residence so specialist observations can amortize warm-up and forecast
+  history transitions. The launcher now exposes duration controls while
+  preserving all historical defaults.
