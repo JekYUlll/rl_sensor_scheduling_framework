@@ -1219,3 +1219,19 @@ tar -czf "$OUT…`
   rankings, so automatic action labels are not used. A seed607 method choice
   compares forecast-reward learning without action CE against prespecified
   physical event-only CE; both retain the same masked PPO and frozen evidence.
+
+### 2026-08-22 | Flexible-subset v36 clean method selection
+
+- On the frozen long-memory scene, prespecified physical event-only action CE
+  improved seed607 over the no-action-CE control and then replicated on seeds
+  608--609. Across seeds 607--609, PD-PPO achieved mean ordinary/macro losses
+  of `0.20741/0.62545`, compared with `0.22717/0.75909` for the strongest
+  validation-selected static schedule and `0.23280/0.72110` for the strongest
+  conventional dynamic schedule on each endpoint.
+- PD-PPO won both endpoints in `3/3` seeds against both comparison families.
+  Every run had zero always-on channels, one unused channel, five
+  intermediate-duty channels, `0.0175--0.0352` switches per step, and zero
+  warm-up aborts. The V36b method and V35 scene therefore pass the development
+  gate. All configuration choices are frozen, and seeds 701--705 are declared
+  as the untouched confirmation set before launch; no tuning may use their
+  results.
