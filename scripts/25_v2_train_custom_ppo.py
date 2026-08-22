@@ -463,6 +463,8 @@ def main() -> None:
         default="deterministic",
     )
     parser.add_argument("--evaluation-sampling-seed", type=int, default=None)
+    parser.add_argument("--evaluation-sampling-temperature", type=float, default=1.0)
+    parser.add_argument("--evaluation-temperature-candidates", nargs="*", type=float, default=None)
     parser.add_argument("--lookback", type=int, default=20)
     parser.add_argument("--horizon", type=int, default=8)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
@@ -1366,7 +1368,7 @@ def main() -> None:
     checkpoint_starts = tuple(int(x) for x in (args.static_selection_start_indices or ()))
     checkpoint_score_name = str(args.checkpoint_selection_score)
     checkpoint_normalizers: dict[str, float] = {}
-    if checkpoint_interval > 0 and control_source_dir is not None:
+    if (checkpoint_interval > 0 or args.evaluation_temperature_candidates) and control_source_dir is not None:
         checkpoint_static_path = control_source_dir / "validation_static_candidates.csv"
         if checkpoint_static_path.is_file():
             checkpoint_normalizers = subtype_static_normalizers(pd.read_csv(checkpoint_static_path))
@@ -1446,6 +1448,59 @@ def main() -> None:
         pd.DataFrame(checkpoint_selection_rows).to_csv(
             out_dir / "custom_ppo_checkpoint_selection.csv", index=False
         )
+    selected_evaluation_temperature = float(args.evaluation_sampling_temperature)
+    temperature_selection_rows: list[dict[str, float]] = []
+    temperature_candidates = tuple(float(x) for x in (args.evaluation_temperature_candidates or ()))
+    if temperature_candidates:
+        if not checkpoint_starts or not checkpoint_normalizers:
+            raise ValueError(
+                "evaluation temperature selection requires validation starts and static normalizers"
+            )
+        if control_source_dir is None:
+            raise ValueError("evaluation temperature selection requires a control source")
+        static_table = pd.read_csv(control_source_dir / "validation_static_candidates.csv")
+        static_ordinary = float(static_table["oracle_loss_mean"].min())
+        static_macro = float(static_table[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN].min())
+        best_temperature_score = float("inf")
+        for candidate_idx, temperature in enumerate(temperature_candidates):
+            result, metrics = evaluate_custom_ppo(
+                trainer=trainer,
+                truth_df=truth,
+                sensor_specs=sensors,
+                constraints=constraints,
+                cfg=checkpoint_cfg,
+                oracle=oracle,
+                steps=int(args.static_selection_steps),
+                start_indices=checkpoint_starts,
+                policy_name="custom_ppo_temperature_selection",
+                deterministic=float(temperature) <= 0.0,
+                sampling_seed=int(policy_seed) + 930_000 + int(candidate_idx),
+                sampling_temperature=max(float(temperature), 1.0e-6),
+            )
+            metrics = add_subtype_macro_metrics(metrics, result, truth)
+            metrics = add_staticnorm_macro(
+                pd.DataFrame([metrics]), checkpoint_normalizers
+            ).iloc[0].to_dict()
+            score = 0.5 * (
+                float(metrics["oracle_loss_mean"]) / max(static_ordinary, 1.0e-8)
+                + float(metrics[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN]) / max(static_macro, 1.0e-8)
+            )
+            temperature_selection_rows.append(
+                {
+                    "temperature": float(temperature),
+                    "oracle_loss_mean": float(metrics["oracle_loss_mean"]),
+                    STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN: float(
+                        metrics[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN]
+                    ),
+                    "relative_joint_score": float(score),
+                }
+            )
+            if score < best_temperature_score:
+                best_temperature_score = float(score)
+                selected_evaluation_temperature = float(temperature)
+        pd.DataFrame(temperature_selection_rows).to_csv(
+            out_dir / "custom_ppo_temperature_selection.csv", index=False
+        )
     model_path = out_dir / "custom_ppo.pt"
     trainer.save(model_path)
     if args.checkpoint_path:
@@ -1523,8 +1578,13 @@ def main() -> None:
         oracle=oracle,
         steps=int(args.eval_steps),
         start_indices=eval_start_indices,
-        deterministic=str(args.evaluation_policy_mode) == "deterministic",
+        deterministic=(
+            selected_evaluation_temperature <= 0.0
+            if temperature_candidates
+            else str(args.evaluation_policy_mode) == "deterministic"
+        ),
         sampling_seed=args.evaluation_sampling_seed,
+        sampling_temperature=max(selected_evaluation_temperature, 1.0e-6),
     )
     append_eval_row(rows, custom_metrics, custom_result, truth)
     save_rollout_npz(
@@ -1550,8 +1610,13 @@ def main() -> None:
                 start_indices=eval_start_indices,
                 policy_name=dwell_name,
                 min_dwell_steps=int(dwell),
-                deterministic=str(args.evaluation_policy_mode) == "deterministic",
+                deterministic=(
+                    selected_evaluation_temperature <= 0.0
+                    if temperature_candidates
+                    else str(args.evaluation_policy_mode) == "deterministic"
+                ),
                 sampling_seed=args.evaluation_sampling_seed,
+                sampling_temperature=max(selected_evaluation_temperature, 1.0e-6),
             )
             append_eval_row(rows, metrics, result, truth)
             eval_policy_names.append(dwell_name)
@@ -1881,6 +1946,8 @@ def main() -> None:
         "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
         "evaluation_policy_mode": str(args.evaluation_policy_mode),
         "evaluation_sampling_seed": args.evaluation_sampling_seed,
+        "evaluation_sampling_temperature": float(selected_evaluation_temperature),
+        "evaluation_temperature_candidates": [float(x) for x in temperature_candidates],
         "eval_policies": eval_policy_names,
         "seed": int(args.seed),
         "policy_seed": int(policy_seed),

@@ -1409,6 +1409,7 @@ class CustomPPO:
         *,
         deterministic: bool = True,
         event_context: float | None = None,
+        sampling_temperature: float = 1.0,
     ) -> np.ndarray:
         torch, _ = _torch_modules()
         obs_t = torch_tensor(np.asarray(obs, dtype=np.float32).reshape(1, -1), device=self.device)
@@ -1421,7 +1422,13 @@ class CustomPPO:
             action = self._subtype_router_action(obs_t, mask_t, event_t) if deterministic else None
             if action is None:
                 dist = self.model.dist(obs_t, self.candidate_masks_t, mask_t, event_t)
-                action = int(torch.argmax(dist.probs, dim=1).detach().cpu().item()) if deterministic else int(dist.sample().detach().cpu().item())
+                if deterministic or float(sampling_temperature) <= 0.0:
+                    action = int(torch.argmax(dist.probs, dim=1).detach().cpu().item())
+                else:
+                    sample_dist = torch.distributions.Categorical(
+                        logits=dist.logits / max(float(sampling_temperature), 1.0e-6)
+                    )
+                    action = int(sample_dist.sample().detach().cpu().item())
         return self.candidate_masks_np[action]
 
     def _subtype_router_action(self, obs_t: Any, mask_t: Any, event_t: Any) -> int | None:
@@ -1565,6 +1572,7 @@ class CustomPPOPolicy:
     trainer: CustomPPO
     name: str = "custom_ppo"
     deterministic: bool = True
+    sampling_temperature: float = 1.0
 
     def reset(self) -> None:
         pass
@@ -1576,6 +1584,7 @@ class CustomPPOPolicy:
             action_mask,
             deterministic=bool(self.deterministic),
             event_context=env.online_event_context(),
+            sampling_temperature=float(self.sampling_temperature),
         )
 
     def act_scores(self, env: WarmupSchedulingEnv) -> np.ndarray:
@@ -1597,6 +1606,7 @@ def evaluate_custom_ppo(
     min_dwell_steps: int = 1,
     deterministic: bool = True,
     sampling_seed: int | None = None,
+    sampling_temperature: float = 1.0,
 ) -> tuple[RolloutResult, dict[str, float | str | int]]:
     torch, _ = _torch_modules()
     torch.manual_seed(
@@ -1606,6 +1616,7 @@ def evaluate_custom_ppo(
         trainer=trainer,
         name=str(policy_name),
         deterministic=bool(deterministic),
+        sampling_temperature=float(sampling_temperature),
     )
     policy = (
         MinDwellPolicyWrapper(

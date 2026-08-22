@@ -651,6 +651,8 @@ def main() -> None:
         default="deterministic",
     )
     parser.add_argument("--evaluation-sampling-seed", type=int, default=None)
+    parser.add_argument("--evaluation-sampling-temperature", type=float, default=1.0)
+    parser.add_argument("--evaluation-temperature-candidates", nargs="*", type=float, default=None)
     parser.add_argument("--n-steps", type=int, default=2048)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--n-epochs", type=int, default=10)
@@ -1112,6 +1114,10 @@ def main() -> None:
             "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
             "evaluation_policy_mode": str(args.evaluation_policy_mode),
             "evaluation_sampling_seed": args.evaluation_sampling_seed,
+            "evaluation_sampling_temperature": float(args.evaluation_sampling_temperature),
+            "evaluation_temperature_candidates": [
+                float(x) for x in (args.evaluation_temperature_candidates or ())
+            ],
             "awbc_coef": float(args.awbc_coef),
             "awbc_decay_timesteps": max(0, int(args.awbc_decay_timesteps)),
             "awbc_label_stride": int(args.awbc_label_stride),
@@ -1650,6 +1656,16 @@ def main() -> None:
     cmd.extend(["--evaluation-policy-mode", str(args.evaluation_policy_mode)])
     if args.evaluation_sampling_seed is not None:
         cmd.extend(["--evaluation-sampling-seed", str(int(args.evaluation_sampling_seed))])
+    cmd.extend(
+        ["--evaluation-sampling-temperature", str(float(args.evaluation_sampling_temperature))]
+    )
+    append_option(
+        cmd,
+        "--evaluation-temperature-candidates",
+        None
+        if args.evaluation_temperature_candidates is None
+        else [str(float(x)) for x in args.evaluation_temperature_candidates],
+    )
     if bool(args.energy_account):
         cmd.extend(
             [

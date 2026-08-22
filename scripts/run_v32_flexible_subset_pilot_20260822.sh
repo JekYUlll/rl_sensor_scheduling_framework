@@ -40,6 +40,8 @@ CHANNEL_MARGINAL_ENTROPY_COEF="${CHANNEL_MARGINAL_ENTROPY_COEF:-0}"
 POLICY_CHECKPOINT_SOURCE="${POLICY_CHECKPOINT_SOURCE:-}"
 EVALUATION_POLICY_MODE="${EVALUATION_POLICY_MODE:-deterministic}"
 EVALUATION_SAMPLING_SEED="${EVALUATION_SAMPLING_SEED:-}"
+EVALUATION_SAMPLING_TEMPERATURE="${EVALUATION_SAMPLING_TEMPERATURE:-1.0}"
+EVALUATION_TEMPERATURE_CANDIDATES="${EVALUATION_TEMPERATURE_CANDIDATES:-}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 GREEDY_LOOKAHEAD_STEPS="${GREEDY_LOOKAHEAD_STEPS:-4}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
@@ -115,6 +117,11 @@ for seed in "${SEEDS[@]}"; do
   control_args+=(--evaluation-policy-mode "$EVALUATION_POLICY_MODE")
   if [[ -n "$EVALUATION_SAMPLING_SEED" ]]; then
     control_args+=(--evaluation-sampling-seed "$EVALUATION_SAMPLING_SEED")
+  fi
+  control_args+=(--evaluation-sampling-temperature "$EVALUATION_SAMPLING_TEMPERATURE")
+  if [[ -n "$EVALUATION_TEMPERATURE_CANDIDATES" ]]; then
+    read -r -a evaluation_temperature_args <<< "$EVALUATION_TEMPERATURE_CANDIDATES"
+    control_args+=(--evaluation-temperature-candidates "${evaluation_temperature_args[@]}")
   fi
   if [[ "$SEPARATE_ACTOR_CRITIC_GRAD_CLIP" == "1" ]]; then
     control_args+=(--separate-actor-critic-grad-clip)

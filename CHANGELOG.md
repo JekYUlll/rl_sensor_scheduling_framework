@@ -2456,3 +2456,13 @@ tar -czf "$OUT…`
   problem.
 - Closed coefficient tuning. The next step replays frozen checkpoints with
   stochastic feasible-action sampling and reports it separately from argmax.
+## 2026-08-23 - V91 rejects unit-temperature stochastic deployment
+
+- Replayed the five frozen V90 checkpoints three times with independent fixed
+  sampling seeds, preserving all data, evaluators, constraints, and baselines.
+- Stochastic feasible-action sampling restored six-channel dynamic behavior in
+  every scene and replicate, with no always-on/off channels.
+- Forecast performance degraded consistently: strongest-static joint wins were
+  0/5 in every replicate and conventional-dynamic wins were 2/5, 3/5, and 2/5.
+- Unit-temperature sampling is therefore diagnostic only. Any lower-temperature
+  execution must be selected on calibration/validation before final replay.

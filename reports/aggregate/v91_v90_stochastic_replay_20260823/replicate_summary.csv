@@ -1,0 +1,4 @@
+rep,static_joint_wins,dynamic_joint_wins,behavior_passes,mean_static_ordinary_margin,mean_static_macro_margin,mean_dynamic_ordinary_margin,mean_dynamic_macro_margin
+1,0,2,5,-0.029904,-0.085020,0.009466,0.032943
+2,0,3,5,-0.028537,-0.089931,0.010832,0.028032
+3,0,2,5,-0.035495,-0.081352,0.003874,0.036611
