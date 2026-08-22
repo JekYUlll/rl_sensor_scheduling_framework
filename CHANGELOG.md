@@ -1,5 +1,26 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V45 Reward-Weight Flag Audit and PPO Tail Fix
+
+### Result
+
+- V45 disabled oracle-fitting subtype weights while restoring the complete V43
+  policy configuration. Its training log and final metrics reproduced V43
+  exactly. The flag is correctly recorded as disabled, but a reused frozen
+  evaluator makes it irrelevant to the online scalar reward.
+- Code audit found a separate training defect. A nominal 40k run with
+  `n_steps=1024` performed 39 full updates followed by one 64-transition PPO
+  update. In seed855, that short update reduced greedy action coverage from 20
+  actions to 3 and entropy from `0.8732` to `0.4957`.
+
+### Correction
+
+- PPO now treats `total_timesteps` as a minimum sample budget and trains only on
+  complete rollout batches. A 40k request therefore executes 40 full updates
+  and 40,960 transitions. Added a unit test for the exact rollout schedule.
+- V46 will rerun the V43 configuration on frozen V42 assets with this training
+  correction. No scientific configuration parameter is changed.
+
 ## 2026-08-22 - V44 No-Action-CE Control Failed
 
 ### Result

@@ -15,6 +15,7 @@ from v2.custom_ppo import (  # noqa: E402
     MaskedActor,
     advantage_weighted_bc_loss,
     feasible_candidate_mask,
+    full_rollout_schedule,
     restore_env,
     snapshot_env,
 )
@@ -38,6 +39,12 @@ STATE_COLUMNS = (
     "snow_particle_mean_velocity_ms",
     "snow_mass_flux_kg_m2_s",
 )
+
+
+def test_full_rollout_schedule_never_emits_short_tail_batch() -> None:
+    assert full_rollout_schedule(40_000, 1_024) == (1_024,) * 40
+    assert sum(full_rollout_schedule(40_000, 1_024)) == 40_960
+    assert full_rollout_schedule(0, 1_024) == ()
 
 
 def _truth(rows: int = 64) -> pd.DataFrame:

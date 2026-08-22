@@ -17,6 +17,16 @@ from v2.rollout import RolloutResult, concat_rollout_results, rollout_metrics, r
 from v2.sensor_spec import SensorSpecV2
 
 
+def full_rollout_schedule(total_timesteps: int, n_steps: int) -> tuple[int, ...]:
+    """Return full PPO rollout sizes that meet or exceed the sample budget."""
+    total = max(0, int(total_timesteps))
+    rollout = int(n_steps)
+    if rollout <= 0:
+        raise ValueError("n_steps must be positive")
+    count = (total + rollout - 1) // rollout
+    return tuple(rollout for _ in range(count))
+
+
 @dataclass(frozen=True)
 class CustomPPOConfig:
     total_timesteps: int = 100_000
@@ -559,16 +569,15 @@ class CustomPPO:
                 f"unique_actions={int(metrics.get('greedy_unique_actions', 0))}",
                 flush=True,
             )
-        total_timesteps = int(self.cfg.total_timesteps)
         steps_done = 0
-        update_idx = 0
-        while steps_done < total_timesteps:
+        for update_idx, rollout_steps in enumerate(
+            full_rollout_schedule(self.cfg.total_timesteps, self.cfg.n_steps),
+            start=1,
+        ):
             self._active_awbc_coef = self._effective_awbc_coef(steps_done)
-            rollout_steps = min(int(self.cfg.n_steps), total_timesteps - steps_done)
-            batch = self.collect_rollout(int(rollout_steps), seed_offset=update_idx * 997)
+            batch = self.collect_rollout(int(rollout_steps), seed_offset=(update_idx - 1) * 997)
             metrics = self.update(batch)
             steps_done += int(batch["obs"].shape[0])
-            update_idx += 1
             metrics["timesteps"] = int(steps_done)
             self.history.append(metrics)
             self._flush_history()
