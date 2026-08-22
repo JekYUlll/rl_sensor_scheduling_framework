@@ -948,3 +948,12 @@ tar -czf "$OUT…`
 - The alias configuration and state-column extension are removed. Exploration
   resumes from V15 with event-window and transition-level analysis of the
   seed-406 transfer failure.
+
+### 2026-08-22 | Flexible-subset launcher teacher defaults
+
+- The flexible-subset launcher still defaulted to infeasible three-channel calm
+  and thermal teacher masks inherited from the earlier action geometry. A V17
+  preflight rejected the launch before oracle fitting or policy training.
+- Defaults now reproduce the feasible V15 teacher actions: `{met station,
+  radiometer}` for calm and `{thermo-hygro, surface IR}` for thermal. Particle
+  and flux teacher actions are unchanged.
