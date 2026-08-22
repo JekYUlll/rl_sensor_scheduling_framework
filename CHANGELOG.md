@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V60 BC-Only Diagnostic Rejected V51 Learnability Gate
+
+### Result
+
+- Evaluated the soft forecast-value warm start before any PPO update on all
+  five V51 development seeds. Joint wins were `1/5` against static and `3/5`
+  against dynamic references. Behavior passed in only `1/5`; most policies
+  became effectively fixed with switching below `0.0014` per step.
+- Mean ordinary/macro margins were `-0.006702/+0.035849` against static and
+  `+0.010055/+0.028079` against conventional dynamic policies.
+
+### Interpretation and Decision
+
+- PPO is not solely responsible for the transfer failure. The privileged
+  future-loss upper can identify dynamic actions, but the resulting mapping is
+  not robustly recoverable from online state across the final partition.
+- Future scene screens require two gates before PPO: an all-action privileged
+  headroom gate and a deployable online-context policy gate. V51 is rejected if
+  its existing context-alert replay does not pass the latter.
+
 ## 2026-08-22 - V59 Forecast-Gain Replication Failed
 
 ### Result
