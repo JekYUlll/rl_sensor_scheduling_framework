@@ -1,0 +1,187 @@
+sensors:
+  # Effective per-epoch costs include the fixed within-epoch sampling load and
+  # interface overhead of each physical-system channel. Sampling frequency is
+  # not a scheduling action in this configuration.
+  - sensor_id: met_station_core
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+      - air_temperature_c
+      - relative_humidity
+      - air_pressure_pa
+    refresh_interval: 1
+    power_cost: 0.52
+    startup_peak_power: 0.62
+    warmup_steps: 0
+    noise_std:
+      wind_speed_ms: 0.18
+      wind_direction_deg: 1.80
+      air_temperature_c: 0.18
+      relative_humidity: 0.90
+      air_pressure_pa: 14.0
+
+  - sensor_id: radiometer_basic
+    variables:
+      - solar_radiation_wm2
+    refresh_interval: 1
+    power_cost: 0.50
+    startup_peak_power: 0.60
+    warmup_steps: 0
+    noise_std:
+      solar_radiation_wm2: 8.0
+
+  - sensor_id: shielded_thermo_hygro
+    variables:
+      - air_temperature_c
+      - relative_humidity
+    refresh_interval: 1
+    power_cost: 0.52
+    startup_peak_power: 0.62
+    warmup_steps: 0
+    noise_std:
+      air_temperature_c: 0.06
+      relative_humidity: 0.30
+
+  - sensor_id: surface_temp_ir
+    variables:
+      - snow_surface_temperature_c
+      - surface_thermal_gradient_precursor
+    refresh_interval: 1
+    power_cost: 0.58
+    startup_peak_power: 0.72
+    warmup_steps: 1
+    noise_std:
+      snow_surface_temperature_c: 0.25
+      surface_thermal_gradient_precursor: 0.30
+    calm_noise_std:
+      snow_surface_temperature_c: 0.32
+      surface_thermal_gradient_precursor: 0.45
+    calm_observation_probability:
+      snow_surface_temperature_c: 0.92
+      surface_thermal_gradient_precursor: 0.78
+    event_noise_std:
+      snow_surface_temperature_c: 0.24
+      surface_thermal_gradient_precursor: 0.28
+    event_observation_probability:
+      snow_surface_temperature_c: 0.94
+      surface_thermal_gradient_precursor: 0.86
+    event_subtype_noise_std:
+      particle:
+        snow_surface_temperature_c: 0.22
+        surface_thermal_gradient_precursor: 0.27
+      flux:
+        snow_surface_temperature_c: 0.20
+        surface_thermal_gradient_precursor: 0.24
+      thermal:
+        snow_surface_temperature_c: 0.10
+        surface_thermal_gradient_precursor: 0.08
+    event_subtype_observation_probability:
+      particle:
+        snow_surface_temperature_c: 0.90
+        surface_thermal_gradient_precursor: 0.82
+      flux:
+        snow_surface_temperature_c: 0.92
+        surface_thermal_gradient_precursor: 0.86
+      thermal:
+        snow_surface_temperature_c: 0.98
+        surface_thermal_gradient_precursor: 0.98
+
+  - sensor_id: laser_disdrometer
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+      - particle_spectrum_precursor
+    refresh_interval: 1
+    power_cost: 0.70
+    startup_peak_power: 0.88
+    warmup_steps: 2
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.16
+      snow_particle_mean_velocity_ms: 0.45
+      particle_spectrum_precursor: 0.25
+    calm_noise_std:
+      snow_particle_mean_diameter_mm: 0.70
+      snow_particle_mean_velocity_ms: 1.80
+      particle_spectrum_precursor: 0.80
+    calm_observation_probability:
+      snow_particle_mean_diameter_mm: 0.22
+      snow_particle_mean_velocity_ms: 0.22
+      particle_spectrum_precursor: 0.18
+    event_noise_std:
+      snow_particle_mean_diameter_mm: 0.16
+      snow_particle_mean_velocity_ms: 0.42
+      particle_spectrum_precursor: 0.24
+    event_observation_probability:
+      snow_particle_mean_diameter_mm: 0.82
+      snow_particle_mean_velocity_ms: 0.82
+      particle_spectrum_precursor: 0.78
+    event_subtype_noise_std:
+      particle:
+        snow_particle_mean_diameter_mm: 0.07
+        snow_particle_mean_velocity_ms: 0.18
+        particle_spectrum_precursor: 0.06
+      flux:
+        snow_particle_mean_diameter_mm: 0.22
+        snow_particle_mean_velocity_ms: 0.60
+        particle_spectrum_precursor: 0.30
+      thermal:
+        snow_particle_mean_diameter_mm: 0.22
+        snow_particle_mean_velocity_ms: 0.55
+        particle_spectrum_precursor: 0.34
+    event_subtype_observation_probability:
+      particle:
+        snow_particle_mean_diameter_mm: 0.97
+        snow_particle_mean_velocity_ms: 0.97
+        particle_spectrum_precursor: 0.98
+      flux:
+        snow_particle_mean_diameter_mm: 0.72
+        snow_particle_mean_velocity_ms: 0.72
+        particle_spectrum_precursor: 0.64
+      thermal:
+        snow_particle_mean_diameter_mm: 0.68
+        snow_particle_mean_velocity_ms: 0.68
+        particle_spectrum_precursor: 0.58
+
+  - sensor_id: fc4_flux
+    variables:
+      - snow_mass_flux_kg_m2_s
+      - flux_burst_precursor
+    refresh_interval: 1
+    power_cost: 0.62
+    startup_peak_power: 0.78
+    warmup_steps: 1
+    noise_std:
+      snow_mass_flux_kg_m2_s: 8.0e-07
+      flux_burst_precursor: 0.25
+    calm_noise_std:
+      snow_mass_flux_kg_m2_s: 3.0e-06
+      flux_burst_precursor: 0.85
+    calm_observation_probability:
+      snow_mass_flux_kg_m2_s: 0.20
+      flux_burst_precursor: 0.16
+    event_noise_std:
+      snow_mass_flux_kg_m2_s: 8.0e-07
+      flux_burst_precursor: 0.24
+    event_observation_probability:
+      snow_mass_flux_kg_m2_s: 0.84
+      flux_burst_precursor: 0.80
+    event_subtype_noise_std:
+      particle:
+        snow_mass_flux_kg_m2_s: 7.0e-07
+        flux_burst_precursor: 0.18
+      flux:
+        snow_mass_flux_kg_m2_s: 1.2e-07
+        flux_burst_precursor: 0.025
+      thermal:
+        snow_mass_flux_kg_m2_s: 1.1e-06
+        flux_burst_precursor: 0.34
+    event_subtype_observation_probability:
+      particle:
+        snow_mass_flux_kg_m2_s: 0.88
+        flux_burst_precursor: 0.84
+      flux:
+        snow_mass_flux_kg_m2_s: 0.995
+        flux_burst_precursor: 0.995
+      thermal:
+        snow_mass_flux_kg_m2_s: 0.64
+        flux_burst_precursor: 0.56

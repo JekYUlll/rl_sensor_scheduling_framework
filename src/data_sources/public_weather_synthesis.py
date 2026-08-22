@@ -827,6 +827,13 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
             "event_subtype_particle_latent": particle_subtype_latent,
             "event_subtype_flux_latent": flux_subtype_latent,
             "event_subtype_thermal_latent": thermal_subtype_latent,
+            # Channel-derived diagnostics expose the precursor carried by each
+            # physical specialist. They are predictor inputs, not forecast targets
+            # or scheduler-visible event labels, and remain unavailable unless the
+            # corresponding sensor is selected and ready.
+            "particle_spectrum_precursor": particle_subtype_latent,
+            "flux_burst_precursor": flux_subtype_latent,
+            "surface_thermal_gradient_precursor": thermal_subtype_latent,
             "agent_context_particle_alert": particle_context_alert,
             "agent_context_flux_alert": flux_context_alert,
             "agent_context_thermal_alert": thermal_context_alert,

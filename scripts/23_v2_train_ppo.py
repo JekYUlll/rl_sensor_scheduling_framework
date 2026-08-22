@@ -397,7 +397,16 @@ def train_oracle(
     subtype_teacher_thermal_mask: np.ndarray | None = None,
     base_freq_s: int,
     seed: int,
+    state_columns: tuple[str, ...] | None = None,
+    reward_target_columns: tuple[str, ...] | None = None,
 ) -> LinearFrozenForecastOracle | TCNFrozenForecastOracle:
+    active_state_columns = tuple(STATE_COLUMNS if state_columns is None else state_columns)
+    active_reward_targets = tuple(
+        REWARD_TARGET_COLUMNS if reward_target_columns is None else reward_target_columns
+    )
+    missing_targets = [name for name in active_reward_targets if name not in active_state_columns]
+    if missing_targets:
+        raise ValueError(f"reward targets are absent from state columns: {missing_targets}")
     policy_specs = build_oracle_policy_specs(
         len(sensors),
         constraints,
@@ -439,7 +448,7 @@ def train_oracle(
                     constraints,
                 )
             )
-    target_indices = [STATE_COLUMNS.index(name) for name in REWARD_TARGET_COLUMNS]
+    target_indices = [active_state_columns.index(name) for name in active_reward_targets]
     x_batches = []
     y_batches = []
     subtype_batches = []
@@ -469,8 +478,8 @@ def train_oracle(
                 sensors,
                 policy_constraints,
                 WarmupEnvConfig(
-                    state_columns=STATE_COLUMNS,
-                    reward_target_columns=REWARD_TARGET_COLUMNS,
+                    state_columns=active_state_columns,
+                    reward_target_columns=active_reward_targets,
                     lookback=int(lookback),
                     episode_len=int(per_rollout_steps),
                     seed=int(seed) + idx * 100 + offset,
