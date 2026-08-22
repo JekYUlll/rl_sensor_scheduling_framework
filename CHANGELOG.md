@@ -1,5 +1,29 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V56 Soft Forecast-Value Warm Start Passed Seed881
+
+### Result
+
+- Replaced the all-action teacher's noisy hard argmin target with a normalized
+  soft distribution over every feasible action's eight-step forecast cost.
+  The frozen V51 scene, online observations, constraints, PPO reward, and final
+  evaluation remained unchanged.
+- On the bounded seed881 screen, PD-PPO beat the strongest static reference by
+  `+0.037001/+0.065688` ordinary/macro margin and the strongest conventional
+  dynamic reference by `+0.008585/+0.026580`.
+- All six channels had intermediate duty, no channel was always on or off,
+  warm-up aborts were zero, and switching was `0.06079` per step.
+
+### Interpretation and Decision
+
+- Preserving the complete forecast-value ordering is more learnable than
+  classifying a single future-dependent winner. This is a clean training-only
+  representation of the existing prediction objective, not a new baseline or
+  deployed input.
+- Freeze V56 settings and replicate on the remaining V51 development seeds
+  882--885. Require the existing 4/5 joint performance and behavior gates
+  before declaring fresh confirmation seeds.
+
 ## 2026-08-22 - V55 Stronger All-Action BC Failed
 
 ### Result
