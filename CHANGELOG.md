@@ -957,3 +957,15 @@ tar -czf "$OUT…`
 - Defaults now reproduce the feasible V15 teacher actions: `{met station,
   radiometer}` for calm and `{thermo-hygro, surface IR}` for thermal. Particle
   and flux teacher actions are unchanged.
+
+### 2026-08-22 | Flexible-subset v17 no-action-prior signal
+
+- With the V15 scene and the state-independent trainable action prior disabled,
+  seed 406 PD-PPO improved over its within-run validation-selected static
+  reference on mean loss (`0.24219` versus `0.24721`) and normalized subtype
+  macro loss (`1.06079` versus `1.26149`). All six channels had intermediate
+  duty, the switch rate was `0.05710` per step, and there were no aborts.
+- This run retrained the stochastic TCN oracle. Its selected static action
+  changed from the V15 action 8 to action 1, so it is positive development
+  evidence but not a strict single-variable ablation. V18 will reuse the frozen
+  V15 control artifacts to isolate the action-prior effect.
