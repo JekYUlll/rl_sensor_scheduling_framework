@@ -2221,3 +2221,23 @@ tar -czf "$OUT…`
   comprehensive baseline-superiority claim. The next operation is a privileged
   all-action upper diagnostic to separate scene headroom from policy transfer;
   no fresh-seed result will be used to retune V76.
+
+### 2026-08-23 | Flexible-subset v76 fresh dynamic-headroom diagnostic
+
+- The first diagnostic invocation inherited the historical
+  `met_station_core` required-channel default in script49 and enumerated only
+  15 actions. Those outputs were archived as invalid and excluded. The
+  corrected invocation explicitly used no required channel and reproduced all
+  35 candidate actions from the primary geometry.
+- The privileged eight-step receding-horizon diagnostic beat the best static
+  candidate in all five fresh scenes. Ordinary-loss margins ranged from
+  `+0.036500` to `+0.104118`, with mean `+0.065336`.
+- Every corrected run used all 35 actions; all six channels had intermediate
+  duty, with zero always-on/off channels and zero warm-up aborts. The fresh
+  scenes therefore contain substantial dynamic headroom. V76's failure is an
+  online context-to-action transfer problem, not a remaining static scene.
+- The next bounded development comparison will retain V76's frozen scene,
+  reward, masked PPO, constraints, and positive-inclusion auxiliary objective,
+  while replacing the single prototype BC target with the existing soft
+  all-action forecast-value warm start. This combination is newly justified by
+  the online context features added after the earlier V56 experiment.

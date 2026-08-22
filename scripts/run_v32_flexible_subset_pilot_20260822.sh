@@ -21,6 +21,7 @@ EVENT_SUBTYPE_PARTICLE_MIN_PARSIVEL_AVAILABILITY="${EVENT_SUBTYPE_PARTICLE_MIN_P
 SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
 ORACLE_EPOCHS="${ORACLE_EPOCHS:-10}"
 ORACLE_TYPE="${ORACLE_TYPE:-tcn}"
+ORACLE_INFERENCE_DEVICE="${ORACLE_INFERENCE_DEVICE:-cpu}"
 ORACLE_FULL_OPEN_REPEAT="${ORACLE_FULL_OPEN_REPEAT:-3}"
 ORACLE_CANDIDATE_MASK_REPEAT="${ORACLE_CANDIDATE_MASK_REPEAT:-1}"
 ORACLE_SUBTYPE_TEACHER_REPEAT="${ORACLE_SUBTYPE_TEACHER_REPEAT:-4}"
@@ -184,7 +185,7 @@ for seed in "${SEEDS[@]}"; do
     --oracle-subtype-teacher-flux-sensors "${TEACHER_FLUX_SENSOR_ARGS[@]}" \
     --oracle-subtype-teacher-thermal-sensors "${TEACHER_THERMAL_SENSOR_ARGS[@]}" \
     --oracle-device auto \
-    --oracle-inference-device cpu \
+    --oracle-inference-device "$ORACLE_INFERENCE_DEVICE" \
     --total-timesteps "$TOTAL_TIMESTEPS" \
     --n-steps 1024 \
     --batch-size 128 \

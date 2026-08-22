@@ -1,0 +1,12 @@
+{
+  "seeds": 5,
+  "dynamic_wins": 5,
+  "mean_margin": 0.06533645749910241,
+  "min_margin": 0.0365001755983233,
+  "max_margin": 0.1041184397860585,
+  "all_35_actions_used": true,
+  "all_six_mid_duty": true,
+  "all_zero_always_on_off": true,
+  "all_zero_abort": true,
+  "interpretation": "Privileged 8-step all-action receding-horizon diagnostic; not deployable and not a policy baseline."
+}
