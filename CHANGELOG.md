@@ -1,5 +1,35 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V51 All-Action Continuous Dynamic Gate Passed
+
+### Diagnostic Correction
+
+- Added a privileged receding-horizon structural diagnostic that evaluates all
+  20 currently feasible masks at every epoch by snapshotting the complete
+  environment, replaying each mask for eight steps, restoring constraint and
+  sensor runtime state, and executing only the first action before replanning.
+- The diagnostic preserves power, startup, warm-up, and six-step dwell rules.
+  It uses future forecast loss and is therefore an upper diagnostic, not a
+  deployable comparator or a source of final policy inputs.
+
+### Result
+
+- On the frozen V51 seeds `881--885`, all-action dynamic-over-static margins
+  were `+0.056414`, `+0.037329`, `+0.018914`, `+0.070042`, and `+0.072553`.
+  The result passes the strengthened gate with `5/5` wins and mean `+0.051050`.
+- Every seed used all 20 actions, all six channels had intermediate duty, no
+  channel was always on or always off, warm-up aborts were zero, and switching
+  rates were `0.03899--0.04724` per step.
+
+### Interpretation and Decision
+
+- V51 contains strong continuous state-dependent scheduling value. The earlier
+  `4/5` subtype-auto result was a limitation of the four-bucket, top-two-mask
+  diagnostic, not evidence that V51 remained intrinsically static.
+- Freeze V51 truth, evaluator, starts, action geometry, costs, constraints, and
+  sensor-quality configuration. Train the corrected V48 PD-PPO architecture on
+  the same assets before any fresh confirmation seeds are declared.
+
 ## 2026-08-22 - V52 Forecast-Horizon Lag Screen Rejected
 
 ### Result
