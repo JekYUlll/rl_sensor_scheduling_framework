@@ -653,6 +653,12 @@ def main() -> None:
     parser.add_argument("--bc-pretrain-epochs", type=int, default=4)
     parser.add_argument("--bc-pretrain-batch-size", type=int, default=128)
     parser.add_argument("--bc-pretrain-loss-coef", type=float, default=1.0)
+    parser.add_argument(
+        "--bc-pretrain-target-mode",
+        choices=["hard", "soft_forecast_value"],
+        default="hard",
+    )
+    parser.add_argument("--bc-soft-temperature", type=float, default=1.0)
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1067,6 +1073,8 @@ def main() -> None:
             "bc_pretrain_epochs": int(args.bc_pretrain_epochs),
             "bc_pretrain_batch_size": int(args.bc_pretrain_batch_size),
             "bc_pretrain_loss_coef": float(args.bc_pretrain_loss_coef),
+            "bc_pretrain_target_mode": str(args.bc_pretrain_target_mode),
+            "bc_soft_temperature": float(args.bc_soft_temperature),
             "awbc_teacher_mode": str(args.awbc_teacher_mode),
             "subtype_aux_coef": float(args.subtype_aux_coef),
             "subtype_aux_classes": int(args.subtype_aux_classes),
@@ -1297,6 +1305,10 @@ def main() -> None:
         str(int(args.bc_pretrain_batch_size)),
         "--bc-pretrain-loss-coef",
         str(float(args.bc_pretrain_loss_coef)),
+        "--bc-pretrain-target-mode",
+        str(args.bc_pretrain_target_mode),
+        "--bc-soft-temperature",
+        str(float(args.bc_soft_temperature)),
         "--subtype-aux-coef",
         str(float(args.subtype_aux_coef)),
         "--subtype-aux-classes",
