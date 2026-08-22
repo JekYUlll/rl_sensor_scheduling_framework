@@ -299,6 +299,24 @@ def build_context_action_indices(validation_table: pd.DataFrame) -> dict[str, in
     }
 
 
+def build_physical_context_action_indices(
+    metadata: dict[str, Any],
+    sensors: list[Any],
+    candidate_masks: np.ndarray,
+) -> dict[str, int]:
+    sensor_ids = [str(spec.sensor_id) for spec in sensors]
+    definitions = dict(metadata.get("oracle_subtype_teacher_sensors", {}))
+    out: dict[str, int] = {}
+    for label in ("calm", "particle", "flux", "thermal"):
+        wanted = {str(sensor_id) for sensor_id in definitions.get(label, ())}
+        target = np.asarray([sensor_id in wanted for sensor_id in sensor_ids], dtype=bool)
+        matches = np.flatnonzero(np.all(np.asarray(candidate_masks, dtype=bool) == target, axis=1))
+        if len(matches) != 1:
+            raise ValueError(f"Physical {label} mask is not a unique candidate: {sorted(wanted)}")
+        out[label] = int(matches[0])
+    return out
+
+
 def rollout_macro_subtype_loss(rollout_path: Path, truth: pd.DataFrame) -> dict[str, float]:
     if not rollout_path.exists() or "event_subtype_id" not in truth.columns:
         return {}
@@ -371,6 +389,7 @@ def evaluate_run(
     policies: tuple[str, ...],
     context_thresholds: tuple[float, ...],
     greedy_max_steps: int,
+    context_action_source: str,
 ) -> pd.DataFrame:
     helpers = load_module(ROOT / "scripts" / "23_v2_train_ppo.py", "_framework_baseline_helpers")
     ops = load_module(ROOT / "scripts" / "64_v31_eval_saved_run_operational_baselines.py", "_framework_baseline_ops")
@@ -428,6 +447,11 @@ def evaluate_run(
         fallback_path = run_dir / "reward_staticnorm_fallback_candidates.csv"
         if fallback_path.exists():
             context_action_table = pd.read_csv(fallback_path)
+    action_indices = (
+        build_physical_context_action_indices(metadata, sensors, candidate_masks)
+        if str(context_action_source) == "physical"
+        else build_context_action_indices(context_action_table)
+    )
     static_table_path = run_dir / replay_dir / "split_static_candidate_event_table.csv"
     static_table = pd.read_csv(static_table_path) if static_table_path.exists() else validation_table.copy()
     normalizers = subtype_static_normalizers(static_table)
@@ -435,7 +459,6 @@ def evaluate_run(
     policy_objects: list[Any] = []
     selected_action_rows: list[dict[str, Any]] = []
     if "context_bandit" in policies:
-        action_indices = build_context_action_indices(context_action_table)
         for threshold in context_thresholds:
             name = f"context_alert_bandit_t{str(threshold).replace('.', 'p')}"
             policy_objects.append(
@@ -447,13 +470,19 @@ def evaluate_run(
                     name=name,
                 )
             )
-            selected_action_rows.append({"policy": name, **action_indices, "threshold": float(threshold)})
+            selected_action_rows.append(
+                {
+                    "policy": name,
+                    **action_indices,
+                    "threshold": float(threshold),
+                    "action_source": str(context_action_source),
+                }
+            )
     if "forecast_greedy" in policies:
         policy_objects.append(ForecastGreedyOneStepPolicy(candidate_masks, name="forecast_greedy_one_step"))
     if "event_label" in policies:
         if "event_subtype_id" not in truth.columns:
             raise ValueError("event-label reference requires event_subtype_id for offline replay")
-        action_indices = build_context_action_indices(context_action_table)
         lookahead = int(metadata.get("oracle_subtype_teacher_lookahead_steps", 0))
         policy_objects.append(
             gate.SubtypeMaskPolicy(
@@ -473,6 +502,7 @@ def evaluate_run(
                 "policy": f"event_label_reference_l{lookahead}",
                 **action_indices,
                 "lookahead_steps": lookahead,
+                "action_source": str(context_action_source),
             }
         )
 
@@ -643,6 +673,11 @@ def main() -> None:
     )
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
     parser.add_argument(
+        "--context-action-source",
+        choices=["validation", "physical"],
+        default="validation",
+    )
+    parser.add_argument(
         "--greedy-max-steps",
         type=int,
         default=-1,
@@ -684,6 +719,7 @@ def main() -> None:
                 policies=tuple(str(x) for x in args.policies),
                 context_thresholds=tuple(float(x) for x in args.context_thresholds),
                 greedy_max_steps=int(args.greedy_max_steps),
+                context_action_source=str(args.context_action_source),
             )
         all_rows.append(table)
         print(f"framework_baseline_done seed={seed} rows={len(table)}", flush=True)
