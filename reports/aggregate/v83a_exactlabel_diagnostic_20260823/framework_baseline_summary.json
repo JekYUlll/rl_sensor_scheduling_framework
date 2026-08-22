@@ -1,0 +1,22 @@
+{
+  "complete_rows": 5,
+  "policies": [
+    {
+      "policy": "event_label_reference_l8",
+      "complete_seeds": 5,
+      "mean_oracle_loss": 0.438439679731285,
+      "mean_loss_margin_vs_custom_ppo": -0.07061269783314657,
+      "median_loss_margin_vs_custom_ppo": -0.06746650778465368,
+      "pdppo_step_win_count": 0,
+      "pdppo_step_loss_count": 5,
+      "mean_staticnorm_macro": 1.2840093297943336,
+      "mean_staticnorm_macro_margin_vs_custom_ppo": -0.29872499666018126,
+      "pdppo_staticnorm_macro_win_count": 0,
+      "diagnostic_privilege": "exact_final_event_subtype",
+      "mean_switches_per_step": 0.011608047474308873,
+      "mean_mid_duty_sensor_count": 3.8,
+      "mean_warmup_abort_count": 0.0
+    }
+  ],
+  "interpretation": "Positive margins mean the supplementary baseline has higher loss than PD-PPO. forecast_greedy_one_step is a privileged myopic diagnostic because it chooses masks using final-test future loss; context_alert_bandit uses supplied synthetic warning-score columns; event_label_reference uses exact final-test subtype labels and is privileged."
+}

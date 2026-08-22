@@ -1,0 +1,7 @@
+policy,calm,particle,flux,thermal,threshold,action_source
+context_alert_bandit_t0p35,20,22,10,28,0.35,validation
+context_alert_bandit_t0p4,20,22,10,28,0.4,validation
+context_alert_bandit_t0p45,20,22,10,28,0.45,validation
+context_alert_bandit_t0p5,20,22,10,28,0.5,validation
+context_alert_bandit_t0p55,20,22,10,28,0.55,validation
+context_alert_bandit_t0p6,20,22,10,28,0.6,validation

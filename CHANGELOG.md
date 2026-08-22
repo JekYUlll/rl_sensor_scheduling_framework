@@ -2332,3 +2332,24 @@ tar -czf "$OUT…`
   therefore closed. The next scene gate must require a deployable online-
   context policy, not only a privileged future-loss upper bound, to beat static
   robustly before any further PPO training.
+### 2026-08-23 | Flexible-subset V83a deployable-context scene gate
+
+- Generated five new development scenes (`1101--1105`) with the frozen
+  35-action physical geometry, changing only online warning lead from 8 to 12
+  steps and warning noise from `0.05` to `0.02`. No full PD-PPO training was
+  authorized during this screen.
+- The validation-calibrated context-alert policy beat the strongest static
+  family on both co-primary endpoints in `4/5` scenes. Its mean ordinary and
+  static-normalized macro margins were `-0.001153` and `+0.030614`; seed1104
+  caused the ordinary-mean failure. Thresholds `0.35--0.60` did not repair that
+  seed, although threshold `0.35` made the aggregate margins
+  `+0.001838/+0.041896`.
+- Exact-label replay with the same validation-derived action map also failed
+  seed1104 and passed only `4/5`. Physical, guarded-hybrid, and
+  continuity-guarded maps performed worse. Replacing validation action scores
+  with the larger policy-training candidate table reduced joint wins to `3/5`.
+- V83a therefore fails the prespecified robust online-identifiability gate.
+  The warning signal is not the primary blocker; subtype-to-subset rankings and
+  transition-aware execution do not transfer stably across partitions. The
+  next diagnostic must select the complete context policy by constrained
+  calibration replay before any further scene amplification or PPO training.
