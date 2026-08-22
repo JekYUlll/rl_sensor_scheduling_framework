@@ -1250,3 +1250,17 @@ tar -czf "$OUT…`
   warm-up aborts. The configuration is rejected for a static-dominance claim.
   Seeds 701--705 are frozen and may be used only for post-hoc diagnosis, never
   for subsequent scene or policy selection.
+
+### 2026-08-22 | Flexible-subset upper-bound geometry correction
+
+- The V35 upper-bound screen inherited the diagnostic script's default
+  `required_sensor_ids=[met_station_core]`, while the flexible mainline has no
+  required channel. Its reported dynamic margins are reproducible but do not
+  establish an upper bound over the mainline's 20-action feasible geometry.
+- A post-hoc exact-geometry audit on frozen seeds 701--705 removed the required
+  channel and enumerated the same feasible subsets as the learned policy.
+  Privileged subtype schedules beat the hindsight best static subset in only
+  `2/5` seeds. Ordinary-loss margins were `+0.01600`, `-0.00324`, `+0.02032`,
+  `-0.00863`, and `-0.00435` (mean `+0.00402`). This confirms that the current
+  scene still admits a cross-seed static shortcut. Further PPO tuning stops;
+  future scene screens must pass an exact-geometry upper gate before training.
