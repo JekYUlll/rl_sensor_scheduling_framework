@@ -517,6 +517,7 @@ def main() -> None:
     parser.add_argument("--gae-lambda", type=float, default=0.95)
     parser.add_argument("--clip-range", type=float, default=0.2)
     parser.add_argument("--ent-coef", type=float, default=0.01)
+    parser.add_argument("--channel-marginal-entropy-coef", type=float, default=0.0)
     parser.add_argument(
         "--separate-actor-critic-grad-clip",
         action=argparse.BooleanOptionalAction,
@@ -1282,6 +1283,7 @@ def main() -> None:
             gae_lambda=float(args.gae_lambda),
             clip_range=float(args.clip_range),
             ent_coef=float(args.ent_coef),
+            channel_marginal_entropy_coef=float(args.channel_marginal_entropy_coef),
             separate_actor_critic_grad_clip=bool(args.separate_actor_critic_grad_clip),
             awbc_coef=float(args.awbc_coef),
             awbc_decay_timesteps=max(0, int(args.awbc_decay_timesteps)),
@@ -2126,6 +2128,7 @@ def as_serializable_config(
         "gae_lambda": float(cfg.gae_lambda),
         "clip_range": float(cfg.clip_range),
         "ent_coef": float(cfg.ent_coef),
+        "channel_marginal_entropy_coef": float(cfg.channel_marginal_entropy_coef),
         "vf_coef": float(cfg.vf_coef),
         "awbc_coef": float(cfg.awbc_coef),
         "awbc_decay_timesteps": int(cfg.awbc_decay_timesteps),

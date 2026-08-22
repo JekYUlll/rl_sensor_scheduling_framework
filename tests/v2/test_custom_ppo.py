@@ -14,6 +14,7 @@ from v2.custom_ppo import (  # noqa: E402
     CustomPPOConfig,
     MaskedActor,
     advantage_weighted_bc_loss,
+    channel_marginal_distribution_entropy,
     feasible_candidate_mask,
     full_rollout_schedule,
     soft_forecast_value_targets,
@@ -46,6 +47,22 @@ def test_full_rollout_schedule_never_emits_short_tail_batch() -> None:
     assert full_rollout_schedule(40_000, 1_024) == (1_024,) * 40
     assert sum(full_rollout_schedule(40_000, 1_024)) == 40_960
     assert full_rollout_schedule(0, 1_024) == ()
+
+
+def test_channel_marginal_distribution_entropy_distinguishes_channel_coverage() -> None:
+    candidate_masks = torch.eye(3)
+    balanced_logits = torch.zeros((4, 3), requires_grad=True)
+    balanced = channel_marginal_distribution_entropy(
+        torch.softmax(balanced_logits, dim=1), candidate_masks
+    )
+    collapsed = channel_marginal_distribution_entropy(
+        torch.tensor([[1.0, 0.0, 0.0]]), candidate_masks
+    )
+
+    assert balanced.item() == pytest.approx(1.0)
+    assert collapsed.item() == pytest.approx(0.0)
+    (-balanced).backward()
+    assert balanced_logits.grad is not None
 
 
 def test_soft_forecast_value_targets_normalize_per_state_and_mask_invalid_actions() -> None:

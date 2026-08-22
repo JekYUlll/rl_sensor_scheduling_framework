@@ -27,6 +27,26 @@ def full_rollout_schedule(total_timesteps: int, n_steps: int) -> tuple[int, ...]
     return tuple(rollout for _ in range(count))
 
 
+def channel_marginal_distribution_entropy(action_probs: Any, candidate_masks: Any) -> Any:
+    """Return normalized entropy of channel inclusion mass over a policy batch."""
+    torch, _ = _torch_modules()
+    masks = candidate_masks.float()
+    if masks.ndim != 2 or action_probs.ndim != 2:
+        raise ValueError("action_probs and candidate_masks must both be rank-2")
+    if int(action_probs.shape[1]) != int(masks.shape[0]):
+        raise ValueError("action_probs action dimension must match candidate_masks")
+    n_sensors = int(masks.shape[1])
+    if n_sensors <= 1:
+        return torch.zeros((), device=action_probs.device, dtype=action_probs.dtype)
+    inclusion_mass = (action_probs @ masks).mean(dim=0)
+    total_mass = inclusion_mass.sum()
+    if float(total_mass.detach().cpu().item()) <= 1.0e-12:
+        return torch.zeros((), device=action_probs.device, dtype=action_probs.dtype)
+    normalized = inclusion_mass / total_mass
+    entropy = -(normalized * torch.log(normalized.clamp_min(1.0e-12))).sum()
+    return entropy / float(np.log(float(n_sensors)))
+
+
 @dataclass(frozen=True)
 class CustomPPOConfig:
     total_timesteps: int = 100_000
@@ -38,6 +58,7 @@ class CustomPPOConfig:
     gae_lambda: float = 0.95
     clip_range: float = 0.2
     ent_coef: float = 0.01
+    channel_marginal_entropy_coef: float = 0.0
     vf_coef: float = 0.5
     awbc_coef: float = 0.1
     awbc_decay_timesteps: int = 0
@@ -1183,6 +1204,10 @@ class CustomPPO:
                 dist = self.model.dist(mb_obs, self.candidate_masks_t, mb_masks, mb_events)
                 new_logprobs = dist.log_prob(mb_actions)
                 entropy = dist.entropy().mean()
+                channel_marginal_entropy = channel_marginal_distribution_entropy(
+                    dist.probs,
+                    self.candidate_masks_t,
+                )
                 values = self.model.value(mb_obs, mb_events)
                 ratio = torch.exp(new_logprobs - mb_old_logprobs)
                 clipped_ratio = torch.clamp(
@@ -1217,6 +1242,7 @@ class CustomPPO:
                     policy_loss
                     + float(self.cfg.vf_coef) * value_loss
                     - float(self.cfg.ent_coef) * entropy
+                    - float(self.cfg.channel_marginal_entropy_coef) * channel_marginal_entropy
                     + float(self._current_awbc_coef()) * awbc_loss
                     + float(self.cfg.prior_kl_coef) * prior_kl_loss
                     + float(self.cfg.soc_aux_coef) * soc_aux_loss
@@ -1234,6 +1260,9 @@ class CustomPPO:
                         "policy_loss": float(policy_loss.detach().cpu().item()),
                         "value_loss": float(value_loss.detach().cpu().item()),
                         "entropy": float(entropy.detach().cpu().item()),
+                        "channel_marginal_entropy": float(
+                            channel_marginal_entropy.detach().cpu().item()
+                        ),
                         "awbc_loss": float(awbc_loss.detach().cpu().item()),
                         "prior_kl_loss": float(prior_kl_loss.detach().cpu().item()),
                         "soc_aux_loss": float(soc_aux_loss.detach().cpu().item()),
@@ -1250,6 +1279,9 @@ class CustomPPO:
             "policy_loss": _mean_metric(loss_rows, "policy_loss"),
             "value_loss": _mean_metric(loss_rows, "value_loss"),
             "entropy": _mean_metric(loss_rows, "entropy"),
+            "channel_marginal_entropy": _mean_metric(
+                loss_rows, "channel_marginal_entropy"
+            ),
             "awbc_loss": _mean_metric(loss_rows, "awbc_loss"),
             "prior_kl_loss": _mean_metric(loss_rows, "prior_kl_loss"),
             "soc_aux_loss": _mean_metric(loss_rows, "soc_aux_loss"),
