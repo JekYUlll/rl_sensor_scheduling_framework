@@ -2420,3 +2420,27 @@ tar -czf "$OUT…`
   action map. No simulator event label is used by this teacher.
 - V88 will test this observation-aligned teacher once, with subtype action CE
   disabled to avoid reintroducing the mismatched privileged timing signal.
+
+### 2026-08-23 | V88 online-context teacher result
+
+- Online-alert teacher labels preserved nondegenerate behavior in all seeds but
+  reached `0/5` strongest-static and `2/5` conventional-dynamic joint wins.
+  Mean static margins were `-0.028691/-0.069646`.
+- The result rejects direct imitation of the deployable context heuristic as a
+  sufficient training formulation. The `context_alert` implementation remains
+  as a clean diagnostic option, not the primary method.
+- V89 returns to V86's performance-positive guidance and changes only entropy
+  coefficient `0.02 -> 0.04` to test whether action coverage can be restored
+  without giving up forecast performance.
+## 2026-08-23 - V89 rejects action-entropy correction
+
+- Increased only the categorical policy entropy coefficient from 0.02 to 0.04
+  on the V86 configuration and frozen V83a development scenes.
+- PD-PPO beat the strongest static family jointly in 4/5 seeds and conventional
+  dynamic policies in 5/5, with positive mean margins on both endpoints.
+- The deployment-behavior gate passed only 3/5 seeds. Seeds 1101 and 1105 kept
+  two and three channels always off, respectively, despite the higher action
+  entropy.
+- Closed entropy-coefficient tuning. The next bounded test must regularize
+  channel-level marginal occupancy directly without imposing a hard duty quota
+  or changing the arbitrary-subset action geometry.
