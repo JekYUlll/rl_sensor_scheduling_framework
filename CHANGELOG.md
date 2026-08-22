@@ -1,5 +1,29 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V57 Forecast-Gain Reward Fixed Credit Scale but Missed AoI
+
+### Result
+
+- Trained masked PPO from scratch with reward equal to forecast improvement
+  over a same-epoch no-new-measurement counterfactual. No BC, action labels,
+  baseline policy, or final-test information entered training.
+- Rollout advantage standard deviation fell from roughly `9` under absolute
+  loss to `0.38--0.69` early in training. On seed881, ordinary/macro margins
+  were `+0.014006/+0.011919` against static but `-0.014410/-0.027190` against
+  AoI.
+- All six channels had intermediate duty, no channel was always on or off, and
+  warm-up aborts were zero.
+
+### Interpretation and Decision
+
+- The matched counterfactual corrects reward scale and temporal attribution,
+  but random exploration does not learn the 20-action surface within 40,960
+  transitions.
+- V58 will combine only the two forecast-derived components already tested:
+  V56 soft forecast-value initialization and V57 forecast-gain PPO reward.
+  The scene, constraints, policy architecture, and final evaluation remain
+  frozen.
+
 ## 2026-08-22 - V56 Soft Forecast-Value Replication Failed
 
 ### Result
