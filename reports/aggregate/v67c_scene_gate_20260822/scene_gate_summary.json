@@ -1,0 +1,18 @@
+[
+  {
+    "mode": "continuity_guarded",
+    "joint_wins_strongest_static": 3,
+    "ordinary_wins_validation_static": 4,
+    "macro_wins_validation_static": 5,
+    "mean_ordinary_margin_strongest_static": 0.02683876497224752,
+    "mean_macro_margin_strongest_static": 0.14223860213000855
+  },
+  {
+    "mode": "validation",
+    "joint_wins_strongest_static": 4,
+    "ordinary_wins_validation_static": 4,
+    "macro_wins_validation_static": 5,
+    "mean_ordinary_margin_strongest_static": 0.026954407381062008,
+    "mean_macro_margin_strongest_static": 0.16158008147534608
+  }
+]

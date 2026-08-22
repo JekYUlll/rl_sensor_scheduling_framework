@@ -671,3 +671,31 @@ def test_subtype_action_event_only_excludes_calm_samples() -> None:
     assert torch.allclose(ce_loss, expected)
     assert float(margin_loss) == 0.0
     assert valid_rate == 0.5
+
+
+def test_subtype_action_positive_inclusion_does_not_penalize_extra_sensors() -> None:
+    trainer = CustomPPO.__new__(CustomPPO)
+    trainer.cfg = CustomPPOConfig(
+        subtype_action_ce_coef=1.0,
+        subtype_action_supervision_mode="positive_sensor_inclusion",
+        awbc_teacher_subtype_calm_action=0,
+        awbc_teacher_subtype_particle_action=1,
+        awbc_teacher_subtype_flux_action=2,
+        awbc_teacher_subtype_thermal_action=3,
+    )
+    trainer.candidate_masks_t = torch.tensor(
+        [[1, 0, 0], [1, 1, 0], [1, 1, 1], [0, 0, 1]], dtype=torch.float32
+    )
+    logits = torch.log(torch.tensor([[0.1, 0.2, 0.6, 0.1]], dtype=torch.float32))
+    dist = torch.distributions.Categorical(logits=logits)
+    feasible = torch.ones((1, 4), dtype=torch.bool)
+    labels = torch.tensor([1], dtype=torch.long)
+    valid = torch.ones(1)
+
+    inclusion_loss, margin_loss, valid_rate = trainer._subtype_action_losses(
+        dist, feasible, labels, valid
+    )
+
+    assert torch.allclose(inclusion_loss, -torch.log(torch.tensor(0.8)))
+    assert float(margin_loss) == 0.0
+    assert valid_rate == 1.0

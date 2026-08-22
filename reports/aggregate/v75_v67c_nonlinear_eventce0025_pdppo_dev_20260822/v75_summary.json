@@ -1,0 +1,12 @@
+{
+  "seeds": 5,
+  "static_joint_wins": 4,
+  "dynamic_joint_wins": 2,
+  "behavior_no_multiple_off": 4,
+  "mean_static_margin_ordinary": 0.018893341887289573,
+  "mean_static_margin_macro": 0.12934904740100459,
+  "mean_dynamic_margin_ordinary": 0.014413623431594002,
+  "mean_dynamic_margin_macro": 0.04570489185397066,
+  "mean_switches_per_step": 0.027572731220147577,
+  "all_zero_abort": true
+}

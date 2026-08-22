@@ -52,6 +52,7 @@ class CustomPPOConfig:
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
     subtype_action_ce_coef: float = 0.0
+    subtype_action_supervision_mode: str = "exact_action"
     subtype_action_event_only: bool = False
     subtype_action_margin_coef: float = 0.0
     subtype_action_margin: float = 0.5
@@ -1284,11 +1285,25 @@ class CustomPPO:
         if valid_count <= 0.0:
             return zero, zero, valid_rate
 
-        ce_loss = nn.functional.nll_loss(
-            torch.log(dist.probs.clamp_min(1.0e-8))[base_valid],
-            targets[base_valid],
-            reduction="mean",
-        )
+        supervision_mode = str(self.cfg.subtype_action_supervision_mode)
+        if supervision_mode == "exact_action":
+            ce_loss = nn.functional.nll_loss(
+                torch.log(dist.probs.clamp_min(1.0e-8))[base_valid],
+                targets[base_valid],
+                reduction="mean",
+            )
+        elif supervision_mode == "positive_sensor_inclusion":
+            safe_targets = targets.clamp(min=0, max=max(0, n_actions - 1))
+            required_masks = self.candidate_masks_t[safe_targets].bool()
+            candidates = self.candidate_masks_t.bool().reshape(1, n_actions, -1)
+            required = required_masks.reshape(required_masks.shape[0], 1, -1)
+            includes_required = ((candidates & required) == required).all(dim=2)
+            if action_masks is not None:
+                includes_required = includes_required & action_masks.bool()
+            inclusion_mass = (dist.probs * includes_required.float()).sum(dim=1).clamp_min(1.0e-8)
+            ce_loss = -torch.log(inclusion_mass[base_valid]).mean()
+        else:
+            raise ValueError(f"Unsupported subtype action supervision mode: {supervision_mode}")
 
         margin_loss = zero
         if margin_weight > 0.0:

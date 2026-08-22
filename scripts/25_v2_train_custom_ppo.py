@@ -526,6 +526,15 @@ def main() -> None:
     parser.add_argument("--awbc-decay-timesteps", type=int, default=0)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
+    parser.add_argument(
+        "--checkpoint-selection-score",
+        choices=[
+            "oracle_loss_mean",
+            "oracle_loss_macro_subtype_event",
+            "oracle_loss_macro_subtype_event_staticnorm",
+        ],
+        default="oracle_loss_mean",
+    )
     parser.add_argument("--bc-pretrain-steps", type=int, default=0)
     parser.add_argument("--bc-pretrain-epochs", type=int, default=4)
     parser.add_argument("--bc-pretrain-batch-size", type=int, default=128)
@@ -540,6 +549,11 @@ def main() -> None:
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
     parser.add_argument("--subtype-action-ce-coef", type=float, default=0.0)
+    parser.add_argument(
+        "--subtype-action-supervision-mode",
+        choices=["exact_action", "positive_sensor_inclusion"],
+        default="exact_action",
+    )
     parser.add_argument("--subtype-action-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--subtype-action-margin-coef", type=float, default=0.0)
     parser.add_argument("--subtype-action-margin", type=float, default=0.5)
@@ -1269,6 +1283,7 @@ def main() -> None:
             subtype_aux_classes=max(2, int(args.subtype_aux_classes)),
             subtype_aux_lookahead_steps=max(0, int(args.subtype_aux_lookahead_steps)),
             subtype_action_ce_coef=float(args.subtype_action_ce_coef),
+            subtype_action_supervision_mode=str(args.subtype_action_supervision_mode),
             subtype_action_event_only=bool(args.subtype_action_event_only),
             subtype_action_margin_coef=float(args.subtype_action_margin_coef),
             subtype_action_margin=float(args.subtype_action_margin),
@@ -1326,6 +1341,22 @@ def main() -> None:
     best_checkpoint_update = 0
     checkpoint_interval = max(0, int(args.checkpoint_selection_interval_updates))
     checkpoint_starts = tuple(int(x) for x in (args.static_selection_start_indices or ()))
+    checkpoint_score_name = str(args.checkpoint_selection_score)
+    checkpoint_normalizers: dict[str, float] = {}
+    if checkpoint_score_name == STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN:
+        if control_source_dir is None:
+            raise ValueError(
+                "static-normalized macro checkpoint selection requires --control-source-run-dir"
+            )
+        checkpoint_static_path = control_source_dir / "validation_static_candidates.csv"
+        if not checkpoint_static_path.is_file():
+            raise FileNotFoundError(
+                "control source is missing validation_static_candidates.csv required for "
+                "static-normalized macro checkpoint selection"
+            )
+        checkpoint_normalizers = subtype_static_normalizers(pd.read_csv(checkpoint_static_path))
+        if not checkpoint_normalizers:
+            raise ValueError("could not derive checkpoint subtype normalizers from control source")
     checkpoint_cfg = replace(
         train_cfg,
         episode_len=int(args.static_selection_steps),
@@ -1346,7 +1377,7 @@ def main() -> None:
         final_update = int(timesteps) >= int(args.total_timesteps)
         if int(update_idx) % checkpoint_interval != 0 and not final_update:
             return
-        _, selection_metrics = evaluate_custom_ppo(
+        selection_result, selection_metrics = evaluate_custom_ppo(
             trainer=current_trainer,
             truth_df=truth,
             sensor_specs=sensors,
@@ -1357,9 +1388,26 @@ def main() -> None:
             start_indices=checkpoint_starts,
             policy_name="custom_ppo_checkpoint_selection",
         )
-        score = float(selection_metrics["oracle_loss_mean"])
+        selection_metrics = add_subtype_macro_metrics(selection_metrics, selection_result, truth)
+        if checkpoint_normalizers:
+            selection_metrics = add_staticnorm_macro(
+                pd.DataFrame([selection_metrics]), checkpoint_normalizers
+            ).iloc[0].to_dict()
+        score = float(selection_metrics[checkpoint_score_name])
         checkpoint_selection_rows.append(
-            {"update": int(update_idx), "timesteps": int(timesteps), "oracle_loss_mean": score}
+            {
+                "update": int(update_idx),
+                "timesteps": int(timesteps),
+                "oracle_loss_mean": float(selection_metrics["oracle_loss_mean"]),
+                "oracle_loss_macro_subtype_event": float(
+                    selection_metrics["oracle_loss_macro_subtype_event"]
+                ),
+                "oracle_loss_macro_subtype_event_staticnorm": float(
+                    selection_metrics["oracle_loss_macro_subtype_event_staticnorm"]
+                ),
+                "selection_score_name": checkpoint_score_name,
+                "selection_score": score,
+            }
         )
         if np.isfinite(score) and score < best_checkpoint_score:
             best_checkpoint_score = score
@@ -1894,7 +1942,7 @@ def main() -> None:
             "partition": "calibration_validation",
             "start_indices": [int(x) for x in checkpoint_starts],
             "steps": int(args.static_selection_steps),
-            "score": "oracle_loss_mean",
+            "score": str(args.checkpoint_selection_score),
             "selected_update": int(best_checkpoint_update),
             "selected_score": None if not np.isfinite(best_checkpoint_score) else float(best_checkpoint_score),
         },

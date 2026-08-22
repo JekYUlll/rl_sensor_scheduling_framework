@@ -656,6 +656,15 @@ def main() -> None:
     parser.add_argument("--awbc-decay-timesteps", type=int, default=0)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
+    parser.add_argument(
+        "--checkpoint-selection-score",
+        choices=[
+            "oracle_loss_mean",
+            "oracle_loss_macro_subtype_event",
+            "oracle_loss_macro_subtype_event_staticnorm",
+        ],
+        default="oracle_loss_mean",
+    )
     parser.add_argument("--bc-pretrain-steps", type=int, default=0)
     parser.add_argument("--bc-pretrain-epochs", type=int, default=4)
     parser.add_argument("--bc-pretrain-batch-size", type=int, default=128)
@@ -670,6 +679,11 @@ def main() -> None:
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
     parser.add_argument("--subtype-action-ce-coef", type=float, default=0.0)
+    parser.add_argument(
+        "--subtype-action-supervision-mode",
+        choices=["exact_action", "positive_sensor_inclusion"],
+        default="exact_action",
+    )
     parser.add_argument("--subtype-action-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--subtype-action-margin-coef", type=float, default=0.0)
     parser.add_argument("--subtype-action-margin", type=float, default=0.5)
@@ -1084,6 +1098,7 @@ def main() -> None:
             "checkpoint_selection_interval_updates": max(
                 0, int(args.checkpoint_selection_interval_updates)
             ),
+            "checkpoint_selection_score": str(args.checkpoint_selection_score),
             "bc_pretrain_steps": int(args.bc_pretrain_steps),
             "bc_pretrain_epochs": int(args.bc_pretrain_epochs),
             "bc_pretrain_batch_size": int(args.bc_pretrain_batch_size),
@@ -1094,6 +1109,9 @@ def main() -> None:
             "subtype_aux_coef": float(args.subtype_aux_coef),
             "subtype_aux_classes": int(args.subtype_aux_classes),
             "subtype_aux_lookahead_steps": int(args.subtype_aux_lookahead_steps),
+            "subtype_action_ce_coef": float(args.subtype_action_ce_coef),
+            "subtype_action_supervision_mode": str(args.subtype_action_supervision_mode),
+            "subtype_action_event_only": bool(args.subtype_action_event_only),
             "subtype_router": bool(args.subtype_router),
             "subtype_router_min_confidence": float(args.subtype_router_min_confidence),
             "subtype_router_low_confidence_action": int(args.subtype_router_low_confidence_action),
@@ -1317,6 +1335,8 @@ def main() -> None:
         str(int(args.awbc_label_stride)),
         "--checkpoint-selection-interval-updates",
         str(max(0, int(args.checkpoint_selection_interval_updates))),
+        "--checkpoint-selection-score",
+        str(args.checkpoint_selection_score),
         "--bc-pretrain-steps",
         str(int(args.bc_pretrain_steps)),
         "--bc-pretrain-epochs",
@@ -1337,6 +1357,8 @@ def main() -> None:
         str(max(0, int(args.subtype_aux_lookahead_steps))),
         "--subtype-action-ce-coef",
         str(float(args.subtype_action_ce_coef)),
+        "--subtype-action-supervision-mode",
+        str(args.subtype_action_supervision_mode),
         "--subtype-action-event-only" if bool(args.subtype_action_event_only) else "--no-subtype-action-event-only",
         "--subtype-action-margin-coef",
         str(float(args.subtype_action_margin_coef)),

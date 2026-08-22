@@ -1,0 +1,3 @@
+mode,joint_wins_strongest_static,ordinary_wins_validation_static,macro_wins_validation_static,mean_ordinary_margin_strongest_static,mean_macro_margin_strongest_static
+continuity_guarded,3,4,5,0.02683876497224752,0.14223860213000855
+validation,4,4,5,0.026954407381062008,0.16158008147534608

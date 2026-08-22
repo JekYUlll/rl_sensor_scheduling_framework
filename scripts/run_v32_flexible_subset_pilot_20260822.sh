@@ -38,6 +38,7 @@ ENT_COEF="${ENT_COEF:-0.02}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 GREEDY_LOOKAHEAD_STEPS="${GREEDY_LOOKAHEAD_STEPS:-4}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
+CHECKPOINT_SELECTION_SCORE="${CHECKPOINT_SELECTION_SCORE:-oracle_loss_mean}"
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
 NONLINEAR_ACTION_EMBEDDING="${NONLINEAR_ACTION_EMBEDDING:-0}"
 EVENT_SUBTYPE_LATENT_ALPHA="${EVENT_SUBTYPE_LATENT_ALPHA:-0.22}"
@@ -59,6 +60,7 @@ REWARD_PROXY_MODE="${REWARD_PROXY_MODE:-forecast}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0.0}"
+SUBTYPE_ACTION_SUPERVISION_MODE="${SUBTYPE_ACTION_SUPERVISION_MODE:-exact_action}"
 SUBTYPE_ACTION_EVENT_ONLY="${SUBTYPE_ACTION_EVENT_ONLY:-0}"
 SUBTYPE_LOSS_WEIGHTING="${SUBTYPE_LOSS_WEIGHTING:-1}"
 CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-10}"
@@ -193,6 +195,7 @@ for seed in "${SEEDS[@]}"; do
     --awbc-decay-timesteps "$AWBC_DECAY_TIMESTEPS" \
     --awbc-label-stride 4 \
     --checkpoint-selection-interval-updates "$CHECKPOINT_SELECTION_INTERVAL_UPDATES" \
+    --checkpoint-selection-score "$CHECKPOINT_SELECTION_SCORE" \
     --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \
     --bc-pretrain-epochs "$BC_PRETRAIN_EPOCHS" \
     --bc-pretrain-batch-size 256 \
@@ -203,6 +206,7 @@ for seed in "${SEEDS[@]}"; do
     --subtype-aux-classes 4 \
     --subtype-aux-lookahead-steps 8 \
     --subtype-action-ce-coef "$SUBTYPE_ACTION_CE_COEF" \
+    --subtype-action-supervision-mode "$SUBTYPE_ACTION_SUPERVISION_MODE" \
     --no-subtype-router \
     --awbc-teacher-mode "$AWBC_TEACHER_MODE" \
     --awbc-teacher-subtype-calm-sensors "${TEACHER_CALM_SENSOR_ARGS[@]}" \

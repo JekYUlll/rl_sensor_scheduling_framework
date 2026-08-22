@@ -2011,3 +2011,166 @@ tar -czf "$OUT…`
   Those runs remain valid random-assignment diagnostics but are no longer
   described as stratified evidence. V67 is regenerated after passing both
   options to the authoritative truth builder.
+
+### 2026-08-22 | Flexible-subset v67c corrected scene gate
+
+- V67c is the first run whose generator metadata verifies both stratified
+  subtype assignment and an `0.8` run-level Parsivel availability requirement.
+  Particle-subtype availability rose to `97.2%--98.6%`, while all three
+  subtype populations remained substantial. The TCN evaluator, 35-action
+  geometry, costs, budgets, estimator, and all latent amplitudes were retained.
+- The validation-selected online warning schedule beat the strongest static
+  reference jointly in `4/5` seeds. It beat the deployable validation-selected
+  static schedule on ordinary loss in `4/5` and macro loss in `5/5`; mean
+  strongest-static margins were `+0.026954/+0.161580`.
+- Seed901 missed ordinary loss by `0.010997` while retaining a positive macro
+  margin. Some diagnostic mappings also left channels unused, so this result
+  establishes a strong but not final scene gate. The next experiment trains
+  the complete context-aware PD-PPO on the frozen V67c assets and evaluates
+  policy behavior directly; no further scene tuning is selected from V67c test
+  windows.
+
+### 2026-08-22 | Flexible-subset v68 clean context-PPO control
+
+- Trained the clean 20-feature context-aware masked PPO for 40 complete
+  1,024-step updates on each frozen V67c seed. It retained the forecast-loss
+  reward and used no behavior-cloning warm start, action auxiliary, bandit
+  imitation, trainable action prior, or scene change.
+- The learner beat the strongest static and conventional dynamic families
+  jointly in only `1/5` seeds. Mean ordinary/macro margins were
+  `-0.030244/-0.011349` against static and `-0.034723/-0.094993` against
+  dynamic references.
+- Four runs used all six channels at intermediate duty; seed903 used five.
+  All runs had zero always-on channels, zero warm-up aborts, and nontrivial
+  switching. The failure is context-to-action learning, not policy activity.
+- V69 tests the previously established complete PD-PPO training configuration
+  on the same frozen assets: training-only BC initialization and event-only
+  physical action supervision, with no execution-time labels and no change to
+  the 35-action policy surface.
+
+### 2026-08-22 | Flexible-subset v69 complete-training control
+
+- Added the previously validated training-only BC warm start and event-only
+  physical action auxiliary to the frozen V67c context-aware policy. Runtime
+  inputs, forecast reward, hard feasibility mask, action surface, and scene
+  were unchanged.
+- Static joint wins improved to `4/5`, with mean ordinary/macro margins
+  `+0.027142/+0.144113`. Conventional dynamic joint wins reached `3/5`, with
+  positive mean margins `+0.022662/+0.060468`.
+- Sustained prototype guidance narrowed execution: only seed901 retained all
+  six channels at intermediate duty, while the remaining seeds left one to
+  three channels unused. V69 is therefore not the flexible main method despite
+  its strong static result.
+- V70 retains the BC initialization, removes ongoing action CE, and restores
+  entropy `0.02`. This isolates whether a broad feasible-subset policy can keep
+  the learned performance without prototype lock-in.
+
+### 2026-08-22 | Flexible-subset v70 BC-initialized control
+
+- V70 retained the V69 behavior-cloning initialization but removed ongoing
+  event-action cross-entropy and restored entropy `0.02`; the frozen V67c
+  scene, evaluator, 35-action surface, power model, and evaluation starts were
+  unchanged.
+- The policy beat the strongest static family jointly in `3/5` seeds, with
+  mean ordinary/macro margins `+0.000545/+0.032104`. It beat the conventional
+  dynamic family jointly in only `1/5`, with mean margins
+  `-0.003935/-0.051540`.
+- Three seeds used all six channels at intermediate duty. Seeds 901 and 905
+  used five; every run had zero always-on channels and zero warm-up aborts.
+  BC initialization alone therefore restores neither stable performance nor
+  complete flexible coverage.
+- V71 is the single bounded interpolation between V69 and V70: event-only
+  action CE `0.05` with entropy `0.02`. All other assets and settings remain
+  frozen. It must pass both performance families and six-channel behavior to
+  proceed to fresh confirmation.
+
+### 2026-08-22 | Flexible-subset v71 supervision interpolation
+
+- V71 used event-only action CE `0.05` and entropy `0.02` between the V69 and
+  V70 endpoints. It improved conventional-dynamic joint wins to `4/5`, with
+  positive mean ordinary/macro margins `+0.019979/+0.080215`.
+- Static joint wins remained `3/5`; mean static margins were
+  `+0.024459/+0.163859`. Only seed901 used all six channels at intermediate
+  duty, while the other policies left one to three channels unused. All runs
+  remained free of always-on channels and warm-up aborts.
+- A configuration audit found that V71 also disabled the nonlinear subset
+  encoder, so it is not a one-variable interpolation from V70. V68--V70 had
+  already used the nonlinear encoder. V72 accidentally duplicated V70 and
+  reproduced its training histories and metrics exactly; it is excluded as a
+  duplicate-configuration audit, not interpreted as a new experiment.
+- V71c restores the nonlinear encoder and changes only event-only action CE
+  from `0` to `0.05` relative to V70. This corrected run is the valid bounded
+  supervision interpolation.
+
+### 2026-08-22 | Flexible-subset v71c corrected supervision interpolation
+
+- V71c restored the nonlinear subset encoder and changed only event-only
+  action CE from `0` to `0.05` relative to V70. It beat both strongest-static
+  and conventional-dynamic families jointly in `4/5` seeds. Mean
+  ordinary/macro margins were `+0.016935/+0.111200` against static and
+  `+0.012456/+0.027556` against dynamic references.
+- The deterministic policy showed clear subtype-conditioned switching, but
+  seed904 left one channel unused and seed905 left two nearly unused. The other
+  three seeds had no always-off channels; all five had no always-on channels or
+  warm-up aborts.
+- V73 enables the existing calibration-only checkpoint selection every five
+  PPO updates. Selection uses validation forecast loss only, without final-test
+  metrics or channel-duty criteria, to test whether last-update collapse is
+  responsible for the remaining low-use channels.
+
+### 2026-08-22 | Flexible-subset v73 validation checkpoint selection
+
+- Selecting checkpoints by validation mean forecast loss produced static joint
+  wins `3/5` and conventional-dynamic joint wins `4/5`. All mean margins stayed
+  positive, but seed903 lost its macro advantage and seed905 retained three
+  nearly unused channels.
+- The selector exposed an objective mismatch: it optimized ordinary validation
+  loss while subtype-balanced macro loss is a co-primary endpoint. Added a
+  backward-compatible checkpoint score option and full per-checkpoint endpoint
+  logging. The default remains ordinary loss.
+- V74 changes only the calibration checkpoint score to the existing
+  static-normalized subtype macro loss. Focused tests and the complete test
+  suite pass before remote deployment.
+
+### 2026-08-22 | Flexible-subset v74c macro checkpoint selection
+
+- The first V74 launch stopped at update 5 because checkpoint replay had not
+  yet applied the existing subtype aggregation before reading the macro score.
+  No final metrics were produced. The callback now reuses the authoritative
+  subtype aggregation and derives fixed normalizers from control-source
+  validation candidates; all tests pass after the repair.
+- Corrected V74c achieved `4/5` joint wins against both static and conventional
+  dynamic families, with positive mean margins. Four seeds avoided multiple
+  always-off channels; seed905 retained three. Macro-only selection also chose
+  a poor final checkpoint for seed901, so it does not resolve the dual-endpoint
+  selection problem.
+- V75 is the final supervision interpolation on the nonlinear actor. It uses
+  event-only action CE `0.025`, no checkpoint selection, and otherwise exactly
+  the V70/V71c configuration.
+
+### 2026-08-22 | Flexible-subset v75 exact-action CE midpoint
+
+- V75 reached `4/5` joint wins against static but only `2/5` against the
+  conventional dynamic family. Four seeds avoided multiple always-off channels;
+  seed905 still left three nearly unused. Coefficient interpolation is closed.
+- Exact-action CE penalizes every feasible subset except one prototype, even
+  when another subset contains the same physically relevant channels. This is
+  structurally misaligned with arbitrary feasible-subset scheduling.
+- Added a backward-compatible `positive_sensor_inclusion` supervision mode.
+  It raises the total probability of all feasible actions containing the
+  training-time guide channels and does not penalize extra channels. Historical
+  `exact_action` behavior remains the default. V76 applies inclusion guidance
+  to calm and event subtype examples with no runtime labels or duty constraint.
+
+### 2026-08-22 | Flexible-subset v76 positive-inclusion development gate
+
+- V76 beat the strongest static and conventional dynamic families jointly in
+  `4/5` seeds. Mean ordinary/macro margins were
+  `+0.030283/+0.164848` against static and `+0.025803/+0.081204` against
+  conventional dynamic references.
+- Every seed had zero always-on channels, no more than one always-off channel,
+  nonzero switching, and zero warm-up aborts. Seed901 was the sole performance
+  loss but retained valid dynamic behavior.
+- The V76 method is frozen. Framework replay against context-alert,
+  one-step forecast-greedy, and privileged event-label references is running
+  before launching new-seed confirmation.
