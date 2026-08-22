@@ -1,0 +1,18 @@
+{
+  "oracle_type": "linear",
+  "measurement_update_mode": "variance_weighted",
+  "seeds": [
+    901,
+    902,
+    903,
+    904,
+    905
+  ],
+  "ordinary_wins": 0,
+  "macro_wins": 0,
+  "joint_wins": 0,
+  "seed_count": 5,
+  "mean_ordinary_margin": -0.17630782343142454,
+  "mean_macro_margin": -0.1774061129451007,
+  "decision": "reject_linear_predictor_diagnostic"
+}

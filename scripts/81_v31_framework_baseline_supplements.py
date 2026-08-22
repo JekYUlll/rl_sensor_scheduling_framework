@@ -317,6 +317,52 @@ def build_physical_context_action_indices(
     return out
 
 
+def build_continuity_guarded_context_action_indices(
+    metadata: dict[str, Any],
+    sensors: list[Any],
+    candidate_masks: np.ndarray,
+    validation_table: pd.DataFrame,
+) -> dict[str, int]:
+    """Select specialist masks while retaining maximal calm-mask coverage."""
+    sensor_ids = [str(spec.sensor_id) for spec in sensors]
+    masks = np.asarray(candidate_masks, dtype=bool)
+    definitions = dict(metadata.get("oracle_subtype_teacher_sensors", {}))
+    calm_action = best_action_by_column(validation_table, "oracle_loss_non_event")
+    calm_mask = masks[int(calm_action)]
+    physical_calm = {str(sensor_id) for sensor_id in definitions.get("calm", ())}
+    indexed = validation_table.set_index("action_idx")
+    out = {"calm": int(calm_action)}
+
+    for label in ("particle", "flux", "thermal"):
+        physical_event = {str(sensor_id) for sensor_id in definitions.get(label, ())}
+        required_ids = physical_event - physical_calm
+        required_indices = [idx for idx, sensor_id in enumerate(sensor_ids) if sensor_id in required_ids]
+        eligible = [
+            idx
+            for idx, mask in enumerate(masks)
+            if required_indices and bool(np.all(mask[required_indices])) and idx in indexed.index
+        ]
+        if not eligible:
+            out[label] = build_physical_context_action_indices(metadata, sensors, masks)[label]
+            continue
+        overlap = {idx: int(np.sum(masks[idx] & calm_mask)) for idx in eligible}
+        max_overlap = max(overlap.values())
+        continuity_candidates = [idx for idx in eligible if overlap[idx] == max_overlap]
+        score_column = f"oracle_loss_subtype_{label}"
+        ranked = indexed.loc[continuity_candidates].copy()
+        ranked["_score"] = pd.to_numeric(ranked[score_column], errors="coerce")
+        ranked = ranked[np.isfinite(ranked["_score"])]
+        if ranked.empty:
+            out[label] = min(continuity_candidates)
+        else:
+            out[label] = int(
+                ranked.reset_index()
+                .sort_values(["_score", "oracle_loss_mean", "action_idx"])
+                .iloc[0]["action_idx"]
+            )
+    return out
+
+
 def rollout_macro_subtype_loss(rollout_path: Path, truth: pd.DataFrame) -> dict[str, float]:
     if not rollout_path.exists() or "event_subtype_id" not in truth.columns:
         return {}
@@ -449,6 +495,13 @@ def evaluate_run(
             context_action_table = pd.read_csv(fallback_path)
     if str(context_action_source) == "physical":
         action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
+    elif str(context_action_source) == "continuity_guarded":
+        action_indices = build_continuity_guarded_context_action_indices(
+            metadata,
+            sensors,
+            candidate_masks,
+            context_action_table,
+        )
     elif str(context_action_source) == "hybrid":
         action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
         action_indices["calm"] = best_action_by_column(context_action_table, "oracle_loss_non_event")
@@ -689,7 +742,7 @@ def main() -> None:
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
     parser.add_argument(
         "--context-action-source",
-        choices=["validation", "physical", "hybrid", "guarded_hybrid"],
+        choices=["validation", "physical", "hybrid", "guarded_hybrid", "continuity_guarded"],
         default="validation",
     )
     parser.add_argument(

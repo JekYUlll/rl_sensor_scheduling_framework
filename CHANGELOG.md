@@ -1968,3 +1968,18 @@ tar -czf "$OUT…`
 - The split protocol and flexible launcher now expose the existing `linear` and
   `tcn` frozen-oracle implementations. V66 will isolate predictor-family
   sensitivity under the unchanged V64 scene and estimator.
+
+### 2026-08-22 | Flexible-subset v66 linear-predictor diagnostic
+
+- V66 held the V64 truth generator, six-channel costs, `1.75/2.15` budgets,
+  35-action geometry, variance-weighted estimator, and seeds 901--905 fixed;
+  only the frozen forecast evaluator changed from TCN to linear ridge. No PPO
+  training or online-policy selection was run.
+- Full-open operation lost to the strongest static schedule on both endpoints
+  in every seed (`0/5` ordinary, `0/5` macro, `0/5` joint). Mean
+  static-minus-full-open margins were `-0.176308` and `-0.177406`.
+- The linear evaluator therefore worsens, rather than repairs, information
+  ordering. Predictor-family substitution is rejected as a mainline fix. A
+  fixed evaluator's loss cannot be used as a physical monotonicity axiom; the
+  next scene gate must compare feasible online dynamic schedules directly with
+  static schedules under the same evaluator and observable information.
