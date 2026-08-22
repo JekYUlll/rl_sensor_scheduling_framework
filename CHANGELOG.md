@@ -1062,3 +1062,14 @@ tar -czf "$OUT…`
   three always-off channels, and only `0.00608` switches per step. V26 removes
   validation checkpoint restoration while keeping the frozen scene, oracle,
   reward, and no-prior nonlinear actor unchanged.
+
+### 2026-08-22 | Flexible-subset v26 final-policy control
+
+- Removing checkpoint restoration recovered dynamic execution with all six
+  channels at intermediate duty, `0.0453` switches per step, and zero aborts.
+  Prediction still failed: mean `0.15987` and normalized subtype macro `0.57814`
+  remained worse than static `0.14540/0.56057`.
+- The actor learns broad behavior but does not reliably map its high-accuracy
+  subtype representation to the corresponding feasible subset. V27 activates
+  the existing training-only subtype action cross-entropy auxiliary without an
+  execution-time label or hard subtype router.

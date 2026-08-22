@@ -36,6 +36,7 @@ read -r -a TEACHER_THERMAL_SENSOR_ARGS <<< "${TEACHER_THERMAL_SENSORS:-shielded_
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
+SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0.0}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
@@ -159,6 +160,7 @@ for seed in "${SEEDS[@]}"; do
     --subtype-aux-coef "$SUBTYPE_AUX_COEF" \
     --subtype-aux-classes 4 \
     --subtype-aux-lookahead-steps 8 \
+    --subtype-action-ce-coef "$SUBTYPE_ACTION_CE_COEF" \
     --no-subtype-router \
     --awbc-teacher-mode "$AWBC_TEACHER_MODE" \
     --awbc-teacher-subtype-calm-sensors "${TEACHER_CALM_SENSOR_ARGS[@]}" \
