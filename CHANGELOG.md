@@ -2567,3 +2567,30 @@ tar -czf "$OUT…`
 - V99 replaces coarse static action labels with an eight-step frozen-forecaster
   greedy teacher on the training partition. It begins as a seed1101 mechanism
   test and retains the forecast reward and arbitrary feasible-action mask.
+### 2026-08-23 | V100--V101 close broad-execution diagnostics
+
+- V100 used soft forecast-value pretraining on frozen seed 1101. It exercised
+  28 feasible subsets with all six channels at intermediate duty, but lost to
+  the strongest static family by `-0.094912/-0.498743` on the ordinary/macro
+  endpoints. The variant is rejected.
+- V101 selected execution temperature from six candidates using validation
+  replay only. Temperature `0.1` removed literal zero-duty channels, but final
+  margins were `-0.003062/-0.012583` against static and
+  `+0.010018/-0.039865` against conventional dynamic references. The variant
+  is rejected.
+- The original user requirement prohibits multiple always-on or always-off
+  channels; it does not require every duty to be strictly interior. V97 meets
+  that requirement in `5/5` development seeds, while retaining materially
+  stronger prediction performance than V100 or V101. V97 is therefore the
+  frozen confirmation configuration unless V99 reveals a performance-preserving
+  mechanism improvement.
+### 2026-08-23 | Fresh V97 confirmation protocol locked
+
+- Locked 22 scene seeds `1201--1222` and independent policy seeds `4201--4222`
+  before generating any confirmation output.
+- The frozen protocol preserves the V96 scene/objective and complete V97 learner.
+  Validation-only calibrated context maps provide training guidance; each test
+  partition is evaluated once after all choices are frozen.
+- The behavior gate follows the physical-system requirement: at most one
+  always-on and at most one always-off channel per seed, nonzero switching,
+  zero warm-up aborts, and state-dependent channel allocation.
