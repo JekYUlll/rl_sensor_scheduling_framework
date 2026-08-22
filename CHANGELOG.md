@@ -2000,3 +2000,7 @@ tar -czf "$OUT…`
   availability. Added an opt-in run-level eligibility condition so particle
   subtypes can be assigned only when the instrument is operational for a
   specified fraction of the event; historical generation remains unchanged.
+- The first V67 launch generated truth but stopped before evaluator fitting
+  because the downstream training entry point did not yet declare the new
+  option. No metric was produced; the partial outputs are excluded from
+  evidence and archived before the corrected rerun.
