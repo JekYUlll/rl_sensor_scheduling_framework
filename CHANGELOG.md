@@ -2174,3 +2174,50 @@ tar -czf "$OUT…`
 - The V76 method is frozen. Framework replay against context-alert,
   one-step forecast-greedy, and privileged event-label references is running
   before launching new-seed confirmation.
+
+### 2026-08-22 | Flexible-subset v76 framework baseline gate
+
+- PD-PPO beat the privileged one-step forecast-greedy diagnostic on both
+  endpoints in all five development seeds. Mean ordinary/macro margins were
+  `+0.026394/+0.238765`.
+- Against the supplied-warning context-alert policy, PD-PPO won `2/5` on both
+  endpoints but retained small positive mean margins
+  `+0.003329/+0.003268`. This supports competitiveness, not stable dominance,
+  against the strong handcrafted context reference.
+- Locked fresh confirmation seeds `1001--1005` before launch. Each run rebuilds
+  truth and the frozen evaluator from the prespecified V76 configuration; no
+  development control assets or final feedback are reused.
+
+### 2026-08-22 | Flexible-subset v76 fresh confirmation
+
+- The frozen V76 policy retained valid dynamic operation in all five fresh
+  seeds: every run had zero always-on channels, at most one always-off channel,
+  nonzero switching, and zero warm-up aborts. The mean switching rate was
+  `0.036648` per step.
+- PD-PPO beat the strongest conventional dynamic reference jointly on both
+  endpoints in `5/5` seeds. Mean ordinary/macro margins were
+  `+0.030479/+0.106572`.
+- The prespecified strongest-static confirmation gate did not pass. Joint wins
+  were `3/5`; mean ordinary/macro margins were `+0.000104/+0.059654`, with the
+  ordinary mean effectively tied. Seeds1002 and 1005 lost both endpoints to
+  the validation-selected static subset.
+- These fresh results are retained as confirmatory evidence and will not be
+  used to retune V76. Frozen replay against forecast-greedy, context-alert, and
+  privileged event-label references is being completed to close the evidence
+  boundary before deciding a new development-only hypothesis.
+
+### 2026-08-22 | Flexible-subset v76 fresh supplementary references
+
+- Against the privileged one-step forecast-greedy diagnostic, PD-PPO won both
+  endpoints in `4/5` fresh seeds. Mean ordinary/macro margins were
+  `+0.005727/+0.099330`, confirming a useful sequential advantage but not the
+  development set's `5/5` stability.
+- The supplied-warning context-alert policy remained stronger in three seeds.
+  PD-PPO ordinary/macro wins were `2/5`, with mean margins
+  `-0.004275/-0.010749`. The exact-event-label reference produced the same
+  `2/5` win count and mean margins `-0.007753/-0.024272`.
+- V76 therefore confirms feasible, nondegenerate dynamic scheduling and strong
+  gains over conventional dynamic policies, but it does not meet the required
+  comprehensive baseline-superiority claim. The next operation is a privileged
+  all-action upper diagnostic to separate scene headroom from policy transfer;
+  no fresh-seed result will be used to retune V76.
