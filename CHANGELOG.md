@@ -991,3 +991,15 @@ tar -czf "$OUT…`
   seed and does not pass the joint gate. The next bounded control aligns the
   training reward with validation-normalized subtype losses while retaining the
   no-prior actor and frozen evidence path.
+
+### 2026-08-22 | Flexible-subset v20 normalized-reward control
+
+- Subtype-normalized forecast reward with the frozen V15 evidence path reached
+  macro loss `0.85721`, effectively tying but not beating static `0.85606`.
+  Mean loss remained worse (`0.26286` versus `0.25439`), and only four channels
+  retained intermediate duty.
+- Reward normalization is rejected as the primary correction. Architecture
+  inspection found that candidate embeddings were linear sums of sensor
+  embeddings, which cannot represent non-additive complementarity or redundancy
+  between channels. A shared nonlinear subset encoder is added as the next clean
+  arbitrary-subset actor variant.

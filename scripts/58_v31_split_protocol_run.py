@@ -699,6 +699,7 @@ def main() -> None:
     parser.add_argument("--event-start-prob", type=float, default=0.67)
     parser.add_argument("--event-aware-critic", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--trainable-action-prior", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--nonlinear-action-embedding", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--event-gated-actor", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-feature-dim", type=int, default=0)
@@ -1421,6 +1422,11 @@ def main() -> None:
         "--trainable-action-prior"
         if bool(args.trainable_action_prior)
         else "--no-trainable-action-prior"
+    )
+    cmd.append(
+        "--nonlinear-action-embedding"
+        if bool(args.nonlinear_action_embedding)
+        else "--no-nonlinear-action-embedding"
     )
     cmd.append("--event-gated-actor" if bool(args.event_gated_actor) else "--no-event-gated-actor")
     cmd.append("--context-encoder" if bool(args.context_encoder) else "--no-context-encoder")

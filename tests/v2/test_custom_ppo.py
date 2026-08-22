@@ -111,6 +111,24 @@ def test_masked_actor_can_disable_state_independent_action_prior() -> None:
     assert actor.action_prior is None
 
 
+def test_nonlinear_action_embedding_encodes_subset_interactions() -> None:
+    actor = MaskedActor(
+        obs_dim=5,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        n_actions=4,
+        nonlinear_action_embedding=True,
+    )
+    assert not isinstance(actor.action_embedding.subset_encoder, torch.nn.Identity)
+    masks = torch.tensor(
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    )
+    embeddings = actor._action_embeddings(masks)
+    assert embeddings.shape == (4, 8)
+    assert not torch.allclose(embeddings[2], embeddings[0] + embeddings[1])
+
+
 def test_custom_ppo_episode_env_preserves_complete_config() -> None:
     truth = _truth(64)
     cfg = WarmupEnvConfig(

@@ -21,6 +21,7 @@ ENT_COEF="${ENT_COEF:-0.02}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
+NONLINEAR_ACTION_EMBEDDING="${NONLINEAR_ACTION_EMBEDDING:-0}"
 EVENT_SUBTYPE_LATENT_ALPHA="${EVENT_SUBTYPE_LATENT_ALPHA:-0.22}"
 PARTICLE_LATENT_DIAMETER_SCALE="${PARTICLE_LATENT_DIAMETER_SCALE:-0.14}"
 PARTICLE_LATENT_VELOCITY_SCALE="${PARTICLE_LATENT_VELOCITY_SCALE:-2.4}"
@@ -69,6 +70,11 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--trainable-action-prior)
   else
     control_args+=(--no-trainable-action-prior)
+  fi
+  if [[ "$NONLINEAR_ACTION_EMBEDDING" == "1" ]]; then
+    control_args+=(--nonlinear-action-embedding)
+  else
+    control_args+=(--no-nonlinear-action-embedding)
   fi
 
   "$PY" scripts/58_v31_split_protocol_run.py \

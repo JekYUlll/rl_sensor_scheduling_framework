@@ -72,6 +72,7 @@ class CustomPPOConfig:
     event_start_prob: float = 0.67
     use_action_mask: bool = True
     use_action_embedding: bool = True
+    nonlinear_action_embedding: bool = False
     trainable_action_prior: bool = True
     event_aware_critic: bool = True
     event_gated_actor: bool = False
@@ -107,19 +108,30 @@ class SensorEmbedding:
 
 
 class ActionEmbedding:
-    def __new__(cls, n_sensors: int, embed_dim: int) -> Any:
+    def __new__(cls, n_sensors: int, embed_dim: int, *, nonlinear: bool = False) -> Any:
         torch, nn = _torch_modules()
 
         class _ActionEmbedding(nn.Module):
             def __init__(self) -> None:
                 super().__init__()
                 self.sensor_embedding = SensorEmbedding(int(n_sensors), int(embed_dim))
+                self.subset_encoder = (
+                    nn.Sequential(
+                        nn.Linear(int(embed_dim), int(embed_dim)),
+                        nn.Tanh(),
+                        nn.Linear(int(embed_dim), int(embed_dim)),
+                        nn.Tanh(),
+                    )
+                    if bool(nonlinear)
+                    else nn.Identity()
+                )
 
             def forward(self, action_masks: Any) -> Any:
                 masks = action_masks.float()
                 sensor_ids = torch.arange(int(n_sensors), device=masks.device, dtype=torch.long)
                 sensor_emb = self.sensor_embedding(sensor_ids)
-                return masks @ sensor_emb
+                pooled = masks @ sensor_emb
+                return self.subset_encoder(pooled)
 
         return _ActionEmbedding()
 
@@ -134,6 +146,7 @@ class MaskedActor:
         n_actions: int | None = None,
         candidate_prior_logits: np.ndarray | None = None,
         use_action_embedding: bool = True,
+        nonlinear_action_embedding: bool = False,
         trainable_action_prior: bool = True,
         event_gated: bool = False,
         subtype_aux_classes: int = 0,
@@ -160,7 +173,11 @@ class MaskedActor:
                 )
                 main_obs_dim = int(obs_dim) - int(self.context_feature_dim)
                 if self.use_action_embedding:
-                    self.action_embedding = ActionEmbedding(int(n_sensors), int(embed_dim))
+                    self.action_embedding = ActionEmbedding(
+                        int(n_sensors),
+                        int(embed_dim),
+                        nonlinear=bool(nonlinear_action_embedding),
+                    )
                 else:
                     if self.n_actions <= 0:
                         raise ValueError("n_actions must be provided when use_action_embedding=False")
@@ -350,6 +367,7 @@ class ActorCritic:
         n_actions: int | None = None,
         candidate_prior_logits: np.ndarray | None = None,
         use_action_embedding: bool = True,
+        nonlinear_action_embedding: bool = False,
         trainable_action_prior: bool = True,
         event_aware_critic: bool = True,
         event_gated_actor: bool = False,
@@ -374,6 +392,7 @@ class ActorCritic:
                     n_actions=n_actions,
                     candidate_prior_logits=candidate_prior_logits,
                     use_action_embedding=bool(use_action_embedding),
+                    nonlinear_action_embedding=bool(nonlinear_action_embedding),
                     trainable_action_prior=bool(trainable_action_prior),
                     event_gated=bool(event_gated_actor),
                     subtype_aux_classes=int(subtype_aux_classes),
@@ -471,6 +490,7 @@ class CustomPPO:
             n_actions=int(self.candidate_masks_np.shape[0]),
             candidate_prior_logits=self.candidate_prior_logits_np,
             use_action_embedding=bool(cfg.use_action_embedding),
+            nonlinear_action_embedding=bool(cfg.nonlinear_action_embedding),
             trainable_action_prior=bool(cfg.trainable_action_prior),
             event_aware_critic=bool(cfg.event_aware_critic),
             event_gated_actor=bool(cfg.event_gated_actor),
