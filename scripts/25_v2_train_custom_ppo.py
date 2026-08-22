@@ -1354,20 +1354,16 @@ def main() -> None:
     checkpoint_starts = tuple(int(x) for x in (args.static_selection_start_indices or ()))
     checkpoint_score_name = str(args.checkpoint_selection_score)
     checkpoint_normalizers: dict[str, float] = {}
-    if checkpoint_score_name == STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN:
-        if control_source_dir is None:
-            raise ValueError(
-                "static-normalized macro checkpoint selection requires --control-source-run-dir"
-            )
+    if checkpoint_interval > 0 and control_source_dir is not None:
         checkpoint_static_path = control_source_dir / "validation_static_candidates.csv"
-        if not checkpoint_static_path.is_file():
-            raise FileNotFoundError(
-                "control source is missing validation_static_candidates.csv required for "
-                "static-normalized macro checkpoint selection"
-            )
-        checkpoint_normalizers = subtype_static_normalizers(pd.read_csv(checkpoint_static_path))
+        if checkpoint_static_path.is_file():
+            checkpoint_normalizers = subtype_static_normalizers(pd.read_csv(checkpoint_static_path))
+    if checkpoint_score_name == STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN:
         if not checkpoint_normalizers:
-            raise ValueError("could not derive checkpoint subtype normalizers from control source")
+            raise ValueError(
+                "static-normalized macro checkpoint selection requires a control source "
+                "with validation_static_candidates.csv"
+            )
     checkpoint_cfg = replace(
         train_cfg,
         episode_len=int(args.static_selection_steps),
