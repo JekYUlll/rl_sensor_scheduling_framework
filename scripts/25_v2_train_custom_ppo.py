@@ -456,6 +456,13 @@ def main() -> None:
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
     parser.add_argument("--out-dir", "--output-dir", dest="out_dir", default="reports/v2_custom_ppo_probe/budget1p70_seed41")
     parser.add_argument("--checkpoint-path", default=None)
+    parser.add_argument("--policy-checkpoint-source", default=None)
+    parser.add_argument(
+        "--evaluation-policy-mode",
+        choices=["deterministic", "stochastic"],
+        default="deterministic",
+    )
+    parser.add_argument("--evaluation-sampling-seed", type=int, default=None)
     parser.add_argument("--lookback", type=int, default=20)
     parser.add_argument("--horizon", type=int, default=8)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
@@ -1429,7 +1436,10 @@ def main() -> None:
             best_checkpoint_update = int(update_idx)
             best_checkpoint_state = copy.deepcopy(current_trainer.model.state_dict())
 
-    trainer.train(on_update=select_checkpoint)
+    if args.policy_checkpoint_source:
+        trainer.load_policy_checkpoint(Path(args.policy_checkpoint_source))
+    else:
+        trainer.train(on_update=select_checkpoint)
     if best_checkpoint_state is not None:
         trainer.model.load_state_dict(best_checkpoint_state)
     if checkpoint_selection_rows:
@@ -1513,6 +1523,8 @@ def main() -> None:
         oracle=oracle,
         steps=int(args.eval_steps),
         start_indices=eval_start_indices,
+        deterministic=str(args.evaluation_policy_mode) == "deterministic",
+        sampling_seed=args.evaluation_sampling_seed,
     )
     append_eval_row(rows, custom_metrics, custom_result, truth)
     save_rollout_npz(
@@ -1538,6 +1550,8 @@ def main() -> None:
                 start_indices=eval_start_indices,
                 policy_name=dwell_name,
                 min_dwell_steps=int(dwell),
+                deterministic=str(args.evaluation_policy_mode) == "deterministic",
+                sampling_seed=args.evaluation_sampling_seed,
             )
             append_eval_row(rows, metrics, result, truth)
             eval_policy_names.append(dwell_name)
@@ -1864,6 +1878,9 @@ def main() -> None:
         "subtype_flux_target_weights": None if subtype_flux_target_weights is None else list(subtype_flux_target_weights),
         "subtype_thermal_target_weights": None if subtype_thermal_target_weights is None else list(subtype_thermal_target_weights),
         "model_path": str(model_path),
+        "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
+        "evaluation_policy_mode": str(args.evaluation_policy_mode),
+        "evaluation_sampling_seed": args.evaluation_sampling_seed,
         "eval_policies": eval_policy_names,
         "seed": int(args.seed),
         "policy_seed": int(policy_seed),

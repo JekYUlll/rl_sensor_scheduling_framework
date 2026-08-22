@@ -566,10 +566,15 @@ def test_custom_ppo_short_run(tmp_path: Path) -> None:
 
     trainer.train()
     trainer.save(tmp_path / "custom_ppo.pt")
+    saved = {key: value.detach().clone() for key, value in trainer.model.state_dict().items()}
+    with torch.no_grad():
+        next(trainer.model.parameters()).add_(1.0)
+    trainer.load_policy_checkpoint(tmp_path / "custom_ppo.pt")
 
     assert trainer.history
     assert np.isfinite(float(trainer.history[-1]["loss"]))
     assert (tmp_path / "custom_ppo.pt").exists()
+    assert all(torch.equal(value, trainer.model.state_dict()[key]) for key, value in saved.items())
 
 
 def test_custom_ppo_samples_only_inside_configured_training_partition() -> None:

@@ -644,6 +644,13 @@ def main() -> None:
     parser.add_argument("--oracle-device", default="auto")
     parser.add_argument("--oracle-inference-device", default="cpu")
     parser.add_argument("--total-timesteps", type=int, default=100000)
+    parser.add_argument("--policy-checkpoint-source", default=None)
+    parser.add_argument(
+        "--evaluation-policy-mode",
+        choices=["deterministic", "stochastic"],
+        default="deterministic",
+    )
+    parser.add_argument("--evaluation-sampling-seed", type=int, default=None)
     parser.add_argument("--n-steps", type=int, default=2048)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--n-epochs", type=int, default=10)
@@ -1102,6 +1109,9 @@ def main() -> None:
         "ppo_controls": {
             "ent_coef": float(args.ent_coef),
             "channel_marginal_entropy_coef": float(args.channel_marginal_entropy_coef),
+            "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
+            "evaluation_policy_mode": str(args.evaluation_policy_mode),
+            "evaluation_sampling_seed": args.evaluation_sampling_seed,
             "awbc_coef": float(args.awbc_coef),
             "awbc_decay_timesteps": max(0, int(args.awbc_decay_timesteps)),
             "awbc_label_stride": int(args.awbc_label_stride),
@@ -1635,6 +1645,11 @@ def main() -> None:
         cmd.append("--use-oracle-candidate-prior")
     if bool(args.skip_rollout_evaluation):
         cmd.append("--skip-evaluation")
+    if args.policy_checkpoint_source:
+        cmd.extend(["--policy-checkpoint-source", str(args.policy_checkpoint_source)])
+    cmd.extend(["--evaluation-policy-mode", str(args.evaluation_policy_mode)])
+    if args.evaluation_sampling_seed is not None:
+        cmd.extend(["--evaluation-sampling-seed", str(int(args.evaluation_sampling_seed))])
     if bool(args.energy_account):
         cmd.extend(
             [

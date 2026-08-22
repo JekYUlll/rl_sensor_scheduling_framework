@@ -2444,3 +2444,15 @@ tar -czf "$OUT…`
 - Closed entropy-coefficient tuning. The next bounded test must regularize
   channel-level marginal occupancy directly without imposing a hard duty quota
   or changing the arbitrary-subset action geometry.
+## 2026-08-23 - V90 rejects channel-marginal entropy under argmax replay
+
+- Added a soft, training-only entropy term over channel inclusion mass without
+  changing feasible actions or imposing duty limits.
+- V90 beat conventional dynamic policies in 5/5 seeds but reached only 3/5
+  strongest-static wins and 2/5 behavior passes.
+- The sampled training distribution retained high channel entropy, while the
+  deterministic argmax rollout still produced always-on/off channels. This
+  exposes an objective/execution mismatch rather than an exploration-coefficient
+  problem.
+- Closed coefficient tuning. The next step replays frozen checkpoints with
+  stochastic feasible-action sampling and reports it separately from argmax.

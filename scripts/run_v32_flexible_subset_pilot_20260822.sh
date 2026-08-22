@@ -37,6 +37,9 @@ BC_PRETRAIN_TARGET_MODE="${BC_PRETRAIN_TARGET_MODE:-hard}"
 BC_SOFT_TEMPERATURE="${BC_SOFT_TEMPERATURE:-1.0}"
 ENT_COEF="${ENT_COEF:-0.02}"
 CHANNEL_MARGINAL_ENTROPY_COEF="${CHANNEL_MARGINAL_ENTROPY_COEF:-0}"
+POLICY_CHECKPOINT_SOURCE="${POLICY_CHECKPOINT_SOURCE:-}"
+EVALUATION_POLICY_MODE="${EVALUATION_POLICY_MODE:-deterministic}"
+EVALUATION_SAMPLING_SEED="${EVALUATION_SAMPLING_SEED:-}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 GREEDY_LOOKAHEAD_STEPS="${GREEDY_LOOKAHEAD_STEPS:-4}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
@@ -105,6 +108,13 @@ for seed in "${SEEDS[@]}"; do
   fi
   if [[ -n "$POLICY_SEED" ]]; then
     control_args+=(--policy-seed "$POLICY_SEED")
+  fi
+  if [[ -n "$POLICY_CHECKPOINT_SOURCE" ]]; then
+    control_args+=(--policy-checkpoint-source "$POLICY_CHECKPOINT_SOURCE")
+  fi
+  control_args+=(--evaluation-policy-mode "$EVALUATION_POLICY_MODE")
+  if [[ -n "$EVALUATION_SAMPLING_SEED" ]]; then
+    control_args+=(--evaluation-sampling-seed "$EVALUATION_SAMPLING_SEED")
   fi
   if [[ "$SEPARATE_ACTOR_CRITIC_GRAD_CLIP" == "1" ]]; then
     control_args+=(--separate-actor-critic-grad-clip)

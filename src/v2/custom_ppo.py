@@ -1494,6 +1494,19 @@ class CustomPPO:
             str(out),
         )
 
+    def load_policy_checkpoint(self, path: str | Path) -> None:
+        torch, _ = _torch_modules()
+        payload = torch.load(str(path), map_location=self.device, weights_only=False)
+        masks = np.asarray(payload.get("candidate_masks"), dtype=bool)
+        if masks.shape != self.candidate_masks_np.shape or not np.array_equal(
+            masks, self.candidate_masks_np
+        ):
+            raise ValueError("checkpoint candidate masks do not match trainer action geometry")
+        if int(payload.get("obs_dim", -1)) != int(self.obs_dim):
+            raise ValueError("checkpoint observation dimension does not match trainer")
+        self.model.load_state_dict(payload["state_dict"], strict=True)
+        self.history = list(payload.get("history", ()))
+
     def save_history(self, path: str | Path) -> None:
         out = Path(path)
         out.parent.mkdir(parents=True, exist_ok=True)
@@ -1582,8 +1595,18 @@ def evaluate_custom_ppo(
     start_indices: tuple[int, ...],
     policy_name: str = "custom_ppo",
     min_dwell_steps: int = 1,
+    deterministic: bool = True,
+    sampling_seed: int | None = None,
 ) -> tuple[RolloutResult, dict[str, float | str | int]]:
-    base_policy = CustomPPOPolicy(trainer=trainer, name=str(policy_name))
+    torch, _ = _torch_modules()
+    torch.manual_seed(
+        int(trainer.cfg.seed) + 700_000 if sampling_seed is None else int(sampling_seed)
+    )
+    base_policy = CustomPPOPolicy(
+        trainer=trainer,
+        name=str(policy_name),
+        deterministic=bool(deterministic),
+    )
     policy = (
         MinDwellPolicyWrapper(
             base_policy=base_policy,
