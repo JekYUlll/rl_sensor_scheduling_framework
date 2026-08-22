@@ -35,6 +35,7 @@ CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
 NONLINEAR_ACTION_EMBEDDING="${NONLINEAR_ACTION_EMBEDDING:-0}"
 EVENT_SUBTYPE_LATENT_ALPHA="${EVENT_SUBTYPE_LATENT_ALPHA:-0.22}"
+EVENT_SUBTYPE_TARGET_LAG_STEPS="${EVENT_SUBTYPE_TARGET_LAG_STEPS:-4}"
 PARTICLE_HUMIDITY_BOOST="${PARTICLE_HUMIDITY_BOOST:-1.0}"
 FLUX_WIND_BOOST="${FLUX_WIND_BOOST:-1.0}"
 THERMAL_AIR_TEMP_DROP="${THERMAL_AIR_TEMP_DROP:-1.0}"
@@ -153,7 +154,7 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-particle-latent-velocity-scale-ms "$PARTICLE_LATENT_VELOCITY_SCALE" \
     --event-subtype-flux-latent-sigma "$FLUX_LATENT_SIGMA" \
     --event-subtype-thermal-latent-surface-scale-c "$THERMAL_LATENT_SURFACE_SCALE" \
-    --event-subtype-latent-target-lag-steps 4 \
+    --event-subtype-latent-target-lag-steps "$EVENT_SUBTYPE_TARGET_LAG_STEPS" \
     --event-subtype-context-lead-steps 8 \
     --event-subtype-context-noise-std 0.05 \
     --oracle-rollout-steps 2048 \
