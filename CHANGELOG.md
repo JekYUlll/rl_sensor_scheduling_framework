@@ -2004,3 +2004,10 @@ tar -czf "$OUT…`
   because the downstream training entry point did not yet declare the new
   option. No metric was produced; the partial outputs are excluded from
   evidence and archived before the corrected rerun.
+- A second propagation audit found that the split wrapper's initial truth-build
+  command had omitted both the new availability option and the pre-existing
+  subtype-assignment option. Consequently, V61--V66 requested `stratified` in
+  manifests but their generated truth used the generator's `random` default.
+  Those runs remain valid random-assignment diagnostics but are no longer
+  described as stratified evidence. V67 is regenerated after passing both
+  options to the authoritative truth builder.
