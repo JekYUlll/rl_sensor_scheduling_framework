@@ -427,6 +427,7 @@ def main() -> None:
     parser.add_argument("--event-particle-microstructure-correlation", type=float, default=1.0)
     parser.add_argument("--event-subtypes-enabled", action="store_true")
     parser.add_argument("--event-subtype-particle-prob", type=float, default=0.34)
+    parser.add_argument("--event-subtype-assignment", choices=["random", "stratified"], default="random")
     parser.add_argument("--event-subtype-flux-prob", type=float, default=0.33)
     parser.add_argument("--event-subtype-thermal-prob", type=float, default=0.33)
     parser.add_argument("--event-subtype-particle-flux-multiplier", type=float, default=0.72)
@@ -1978,6 +1979,7 @@ def main() -> None:
             "event_particle_microstructure_correlation": float(args.event_particle_microstructure_correlation),
             "event_subtypes_enabled": bool(args.event_subtypes_enabled),
             "event_subtype_particle_prob": float(args.event_subtype_particle_prob),
+            "event_subtype_assignment": str(args.event_subtype_assignment),
             "event_subtype_flux_prob": float(args.event_subtype_flux_prob),
             "event_subtype_thermal_prob": float(args.event_subtype_thermal_prob),
             "event_subtype_particle_humidity_boost_pct": float(args.event_subtype_particle_humidity_boost_pct),

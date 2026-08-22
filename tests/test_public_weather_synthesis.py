@@ -2,15 +2,31 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from data_sources.public_weather_synthesis import (
     PublicWeatherSynthesisConfig,
     STATE_COLUMNS,
+    _assign_event_subtypes,
     generate_public_weather_truth,
     load_antaws_station,
     validate_synthetic_against_anchor,
 )
+
+
+def test_stratified_event_subtypes_control_run_counts() -> None:
+    active = np.tile(np.asarray([True, True, False]), 12)
+    subtype = _assign_event_subtypes(
+        active,
+        rng=np.random.default_rng(7),
+        particle_prob=0.5,
+        flux_prob=0.25,
+        thermal_prob=0.25,
+        assignment="stratified",
+    )
+    run_labels = subtype[np.arange(0, active.size, 3)]
+    assert np.bincount(run_labels, minlength=4)[1:].tolist() == [6, 3, 3]
 
 
 def _write_antaws_station(root: Path, station: str, rows: int = 16) -> None:

@@ -1015,3 +1015,13 @@ tar -czf "$OUT…`
   bounded control raises the existing entropy coefficient and uses
   validation-only checkpoint selection; no new supervision or baseline prior is
   introduced.
+
+### 2026-08-22 | Flexible-subset v22 nonlinear entropy control
+
+- Raising entropy regularization to `0.02` restored broad six-channel use but
+  degraded both endpoints to mean `0.30077` and normalized subtype macro
+  `0.95556`. Higher actor entropy is rejected.
+- The bounded actor controls are exhausted. Since the privileged physical
+  dynamic reference itself passed only two of three V15 seeds, exploration
+  moves to a prespecified stratified subtype generator that stabilizes event
+  coverage across chronological partitions without using outcome feedback.

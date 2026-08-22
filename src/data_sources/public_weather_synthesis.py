@@ -65,6 +65,7 @@ class PublicWeatherSynthesisConfig:
     event_microstructure_velocity_scale: float = 0.0
     event_particle_microstructure_correlation: float = 1.0
     event_subtypes_enabled: bool = False
+    event_subtype_assignment: str = "random"
     event_subtype_particle_prob: float = 0.34
     event_subtype_flux_prob: float = 0.33
     event_subtype_thermal_prob: float = 0.33
@@ -384,6 +385,7 @@ def _assign_event_subtypes(
     particle_prob: float,
     flux_prob: float,
     thermal_prob: float,
+    assignment: str = "random",
 ) -> np.ndarray:
     """Assign one latent subtype to each event run.
 
@@ -399,8 +401,22 @@ def _assign_event_subtypes(
     if float(np.sum(probs)) <= 0.0:
         probs = np.asarray([1.0, 1.0, 1.0], dtype=float)
     probs = probs / float(np.sum(probs))
-    for start, end in _bool_runs(arr):
-        subtype_id = int(rng.choice(np.asarray([1, 2, 3], dtype=int), p=probs))
+    runs = _bool_runs(arr)
+    assigned = np.zeros(3, dtype=int)
+    tie_order = rng.permutation(3)
+    tie_rank = np.empty(3, dtype=int)
+    tie_rank[tie_order] = np.arange(3)
+    for run_idx, (start, end) in enumerate(runs):
+        if str(assignment) == "stratified":
+            deficit = probs * float(run_idx + 1) - assigned
+            best = np.flatnonzero(np.isclose(deficit, np.max(deficit)))
+            chosen = int(best[np.argmin(tie_rank[best])])
+            subtype_id = chosen + 1
+            assigned[chosen] += 1
+        elif str(assignment) == "random":
+            subtype_id = int(rng.choice(np.asarray([1, 2, 3], dtype=int), p=probs))
+        else:
+            raise ValueError(f"Unsupported event_subtype_assignment={assignment!r}")
         subtype[int(start) : int(end)] = subtype_id
     return subtype
 
@@ -604,6 +620,7 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
             particle_prob=float(cfg.event_subtype_particle_prob),
             flux_prob=float(cfg.event_subtype_flux_prob),
             thermal_prob=float(cfg.event_subtype_thermal_prob),
+            assignment=str(cfg.event_subtype_assignment),
         )
     else:
         event_subtype_id = np.zeros(int(cfg.steps), dtype=int)
@@ -865,6 +882,7 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         "event_subtype_flux_rate": float(np.mean(flux_event)),
         "event_subtype_thermal_rate": float(np.mean(thermal_event)),
         "event_subtype_particle_prob": float(cfg.event_subtype_particle_prob),
+        "event_subtype_assignment": str(cfg.event_subtype_assignment),
         "event_subtype_flux_prob": float(cfg.event_subtype_flux_prob),
         "event_subtype_thermal_prob": float(cfg.event_subtype_thermal_prob),
         "event_subtype_particle_flux_multiplier": float(cfg.event_subtype_particle_flux_multiplier),

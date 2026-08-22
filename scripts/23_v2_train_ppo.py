@@ -184,6 +184,8 @@ def ensure_truth(args: argparse.Namespace) -> Path:
         str(getattr(args, "event_microstructure_velocity_scale", 0.0)),
         "--event-particle-microstructure-correlation",
         str(getattr(args, "event_particle_microstructure_correlation", 1.0)),
+        "--event-subtype-assignment",
+        str(getattr(args, "event_subtype_assignment", "random")),
         "--event-subtype-particle-prob",
         str(getattr(args, "event_subtype_particle_prob", 0.34)),
         "--event-subtype-flux-prob",
@@ -746,6 +748,7 @@ def main() -> None:
     parser.add_argument("--event-particle-microstructure-correlation", type=float, default=1.0)
     parser.add_argument("--event-subtypes-enabled", action="store_true")
     parser.add_argument("--event-subtype-particle-prob", type=float, default=0.34)
+    parser.add_argument("--event-subtype-assignment", choices=["random", "stratified"], default="random")
     parser.add_argument("--event-subtype-flux-prob", type=float, default=0.33)
     parser.add_argument("--event-subtype-thermal-prob", type=float, default=0.33)
     parser.add_argument("--event-subtype-particle-flux-multiplier", type=float, default=0.72)

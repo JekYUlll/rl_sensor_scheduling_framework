@@ -593,6 +593,7 @@ def main() -> None:
     parser.add_argument("--event-microstructure-velocity-scale", type=float, default=0.0)
     parser.add_argument("--event-particle-microstructure-correlation", type=float, default=1.0)
     parser.add_argument("--event-subtypes-enabled", action="store_true")
+    parser.add_argument("--event-subtype-assignment", choices=["random", "stratified"], default="random")
     parser.add_argument("--event-subtype-particle-prob", type=float, default=0.34)
     parser.add_argument("--event-subtype-flux-prob", type=float, default=0.33)
     parser.add_argument("--event-subtype-thermal-prob", type=float, default=0.33)
@@ -1175,6 +1176,8 @@ def main() -> None:
         str(float(args.event_microstructure_velocity_scale)),
         "--event-particle-microstructure-correlation",
         str(float(args.event_particle_microstructure_correlation)),
+        "--event-subtype-assignment",
+        str(args.event_subtype_assignment),
         "--event-subtype-particle-prob",
         str(float(args.event_subtype_particle_prob)),
         "--event-subtype-flux-prob",

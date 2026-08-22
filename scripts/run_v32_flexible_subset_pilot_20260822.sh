@@ -27,6 +27,7 @@ PARTICLE_LATENT_DIAMETER_SCALE="${PARTICLE_LATENT_DIAMETER_SCALE:-0.14}"
 PARTICLE_LATENT_VELOCITY_SCALE="${PARTICLE_LATENT_VELOCITY_SCALE:-2.4}"
 FLUX_LATENT_SIGMA="${FLUX_LATENT_SIGMA:-1.2}"
 THERMAL_LATENT_SURFACE_SCALE="${THERMAL_LATENT_SURFACE_SCALE:-2.4}"
+EVENT_SUBTYPE_ASSIGNMENT="${EVENT_SUBTYPE_ASSIGNMENT:-random}"
 read -r -a TEACHER_CALM_SENSOR_ARGS <<< "${TEACHER_CALM_SENSORS:-met_station_core radiometer_basic}"
 read -r -a TEACHER_PARTICLE_SENSOR_ARGS <<< "${TEACHER_PARTICLE_SENSORS:-met_station_core laser_disdrometer}"
 read -r -a TEACHER_FLUX_SENSOR_ARGS <<< "${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}"
@@ -102,6 +103,7 @@ for seed in "${SEEDS[@]}"; do
     --event-microstructure-velocity-scale 0.20 \
     --event-particle-microstructure-correlation 0.35 \
     --event-subtypes-enabled \
+    --event-subtype-assignment "$EVENT_SUBTYPE_ASSIGNMENT" \
     --event-subtype-particle-prob 0.36 \
     --event-subtype-flux-prob 0.36 \
     --event-subtype-thermal-prob 0.28 \
