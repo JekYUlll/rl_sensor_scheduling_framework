@@ -1099,3 +1099,15 @@ tar -czf "$OUT…`
   during events. A backward-compatible event-only option is added to the
   existing subtype-action auxiliary so calm actions remain governed by the
   forecast objective instead of a fixed prototype.
+
+### 2026-08-22 | Flexible-subset v29 event-only action guidance
+
+- Restricting physical subtype-action guidance to event samples reduced mean
+  loss to `0.13356`, ahead of AoI `0.14180` and validation-selected static
+  `0.14540`. Normalized subtype macro loss was `0.49633`, also ahead of AoI
+  `0.51523` and static `0.56057`.
+- The policy had zero aborts, `0.0439` switches per step, five intermediate-duty
+  channels, no always-on channel, and one unused channel. This is the first
+  learned flexible-subset configuration to pass both performance comparisons
+  without fixed-mask degeneration. The configuration is frozen for independent
+  development-seed replication; no further seed-406 tuning is permitted.
