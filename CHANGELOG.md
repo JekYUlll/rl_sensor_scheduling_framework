@@ -2555,3 +2555,15 @@ tar -czf "$OUT…`
 - V98 retains the V97 objective and learner but replaces only the teacher map
   with the six-channel-covering physical-function map. No runtime channel,
   cardinality, or duty constraint is added.
+### 2026-08-23 | V98 rejects static teacher-map replacement
+
+- Replaced the V97 seed-specific teacher actions with the original fixed
+  physical-function map while retaining AWBC `0.05` and every other control.
+- Performance remained strong: static ordinary/macro wins were `4/5` and
+  `5/5`, dynamic joint wins were `5/5`, and all mean margins were positive.
+- Strict behavior remained `4/5`; seed 1101 still gave FC4 zero duty even
+  though its physical flux teacher contains FC4. Stronger static-teacher
+  retention is therefore not justified.
+- V99 replaces coarse static action labels with an eight-step frozen-forecaster
+  greedy teacher on the training partition. It begins as a seed1101 mechanism
+  test and retains the forecast reward and arbitrary feasible-action mask.
