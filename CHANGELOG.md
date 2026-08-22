@@ -1073,3 +1073,16 @@ tar -czf "$OUT…`
   subtype representation to the corresponding feasible subset. V27 activates
   the existing training-only subtype action cross-entropy auxiliary without an
   execution-time label or hard subtype router.
+
+### 2026-08-22 | Flexible-subset v27 subtype-action auxiliary
+
+- Adding subtype-action cross-entropy at coefficient `0.1` degraded the frozen
+  V24 seed-406 evaluation to mean loss `0.18254` and normalized subtype macro
+  loss `0.71743`, compared with static `0.14540/0.56057` and AoI
+  `0.14180/0.51523`.
+- The policy regressed to one always-on and two always-off channels with only
+  `0.0220` switches per step. High subtype-classification accuracy therefore
+  did not translate into forecast-value action ranking. Hard subtype-action
+  supervision is rejected; the next diagnostic checks whether its prototype
+  labels agree with per-window forecast-loss-optimal feasible subsets before
+  any further policy training.
