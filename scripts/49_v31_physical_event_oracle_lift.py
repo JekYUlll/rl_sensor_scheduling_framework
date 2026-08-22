@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
+from v2.custom_ppo import oracle_greedy_candidate_index  # noqa: E402
 from v2.oracle import make_oracle_feature  # noqa: E402
 from v2.oracle import LinearFrozenForecastOracle  # noqa: E402
 from v2.policies import StaticMaskPolicy  # noqa: E402
@@ -899,6 +900,115 @@ def _subtype_schedule_rows(
     return pd.DataFrame(rows)
 
 
+def _receding_oracle_rows(
+    *,
+    truth: pd.DataFrame,
+    sensors: list[object],
+    constraints: PowerConstraintsV2,
+    candidate_masks: np.ndarray,
+    oracle: object,
+    cfg: WarmupEnvConfig,
+    start_indices: tuple[int, ...],
+    steps: int,
+    lookahead_steps: int,
+) -> pd.DataFrame:
+    """Evaluate a privileged all-action receding-horizon structural diagnostic."""
+    losses: list[float] = []
+    event_losses: list[float] = []
+    non_event_losses: list[float] = []
+    subtype_losses: dict[int, list[float]] = {1: [], 2: [], 3: []}
+    powers: list[float] = []
+    peaks: list[float] = []
+    switches: list[float] = []
+    selected_counts = np.zeros(len(sensors), dtype=float)
+    action_counts = np.zeros(len(candidate_masks), dtype=int)
+    aborts = 0
+    total_steps = 0
+    subtype_ids = (
+        truth["event_subtype_id"].to_numpy(dtype=int)
+        if "event_subtype_id" in truth.columns
+        else np.zeros(len(truth), dtype=int)
+    )
+    for offset, start_idx in enumerate(start_indices):
+        env = WarmupSchedulingEnv(
+            truth,
+            sensors,
+            constraints,
+            replace(cfg, seed=int(cfg.seed) + int(offset) + 111_000),
+            oracle=oracle,
+        )
+        env.reset(start_idx=int(start_idx))
+        for _ in range(int(steps)):
+            action_idx = oracle_greedy_candidate_index(
+                env,
+                candidate_masks,
+                lookahead_steps=max(1, int(lookahead_steps)),
+            )
+            action_counts[action_idx] += 1
+            _, _, done, info = env.step_mask(candidate_masks[action_idx])
+            loss = float(info.get("oracle_loss", float("nan")))
+            if np.isfinite(loss):
+                losses.append(loss)
+                if bool(info.get("event", False)):
+                    event_losses.append(loss)
+                else:
+                    non_event_losses.append(loss)
+                subtype_id = int(subtype_ids[min(int(env.current_idx), len(subtype_ids) - 1)])
+                if subtype_id in subtype_losses:
+                    subtype_losses[subtype_id].append(loss)
+            powers.append(float(info.get("power", 0.0)))
+            peaks.append(float(info.get("peak_power", 0.0)))
+            switches.append(float(info.get("switch_rate", 0.0)))
+            aborts += int(info.get("warmup_abort_delta", 0))
+            selected_counts += np.asarray(info.get("selected_mask", [0] * len(sensors)), dtype=float)
+            total_steps += 1
+            if done:
+                break
+    duties = selected_counts / max(1, int(total_steps))
+    selected_names = [
+        str(spec.sensor_id)
+        for idx, spec in enumerate(sensors)
+        if duties[idx] > ALWAYS_OFF_DUTY
+    ]
+    duty_entropy = float(
+        -np.mean(
+            duties * np.log(np.clip(duties, 1e-9, 1.0))
+            + (1.0 - duties) * np.log(np.clip(1.0 - duties, 1e-9, 1.0))
+        )
+        / np.log(2.0)
+    )
+    row: dict[str, object] = {
+        "action_idx": -4000,
+        "sensor_ids": f"dynamic:receding_oracle_l{int(lookahead_steps)}",
+        "sensor_count": len(selected_names),
+        "has_laser": "laser_disdrometer" in selected_names,
+        "has_fc4": "fc4_flux" in selected_names,
+        "has_snow_particle_counter": "snow_particle_counter" in selected_names,
+        "has_radiometer": "radiometer_basic" in selected_names,
+        "oracle_loss_mean": float(np.mean(losses)) if losses else float("inf"),
+        "oracle_loss_event": float(np.mean(event_losses)) if event_losses else float("inf"),
+        "oracle_loss_non_event": float(np.mean(non_event_losses)) if non_event_losses else float("inf"),
+        "oracle_loss_subtype_particle": float(np.mean(subtype_losses[1])) if subtype_losses[1] else float("inf"),
+        "oracle_loss_subtype_flux": float(np.mean(subtype_losses[2])) if subtype_losses[2] else float("inf"),
+        "oracle_loss_subtype_thermal": float(np.mean(subtype_losses[3])) if subtype_losses[3] else float("inf"),
+        "steps_subtype_particle": len(subtype_losses[1]),
+        "steps_subtype_flux": len(subtype_losses[2]),
+        "steps_subtype_thermal": len(subtype_losses[3]),
+        "power_mean": float(np.mean(powers)) if powers else 0.0,
+        "peak_max": float(np.max(peaks)) if peaks else 0.0,
+        "warmup_abort_count": int(aborts),
+        "switches_per_step": float(np.mean(switches)) if switches else 0.0,
+        "always_on_sensor_count": int(np.sum(duties >= ALWAYS_ON_DUTY)),
+        "always_off_sensor_count": int(np.sum(duties <= ALWAYS_OFF_DUTY)),
+        "mid_duty_sensor_count": int(np.sum((duties >= MID_DUTY_LOW) & (duties <= MID_DUTY_HIGH))),
+        "duty_entropy": duty_entropy,
+        "receding_action_coverage": int(np.sum(action_counts > 0)),
+    }
+    for idx, spec in enumerate(sensors):
+        row[f"duty__{str(spec.sensor_id).replace('/', '_')}"] = float(duties[idx])
+    return pd.DataFrame([row])
+
+
 def _schedule_rows(
     *,
     truth: pd.DataFrame,
@@ -1215,6 +1325,7 @@ def main() -> None:
             "diverse_auto",
             "subtype_static_break",
             "subtype_auto",
+            "receding_oracle",
             "all",
         ],
         default="legacy",
@@ -1222,6 +1333,7 @@ def main() -> None:
     parser.add_argument("--schedule-lead-steps", type=int, default=4)
     parser.add_argument("--auto-schedule-top-k", type=int, default=4)
     parser.add_argument("--diverse-schedule-dwell-steps", type=int, default=16)
+    parser.add_argument("--receding-oracle-lookahead-steps", type=int, default=8)
     parser.add_argument("--deployable-static-diagnostics", action="store_true")
     parser.add_argument("--deployable-static-top-k", type=int, default=6)
     parser.add_argument("--deployable-static-duty-low", type=float, default=0.12)
@@ -1430,6 +1542,20 @@ def main() -> None:
                 )
                 if not subtype_auto_rows.empty:
                     tables.append(subtype_auto_rows)
+        if str(args.schedule_family) in {"receding_oracle", "all"}:
+            tables.append(
+                _receding_oracle_rows(
+                    truth=truth,
+                    sensors=sensors,
+                    constraints=constraints,
+                    candidate_masks=candidate_masks,
+                    oracle=oracle,
+                    cfg=eval_cfg,
+                    start_indices=tuple(int(x) for x in eval_start_indices),
+                    steps=int(args.eval_steps),
+                    lookahead_steps=int(args.receding_oracle_lookahead_steps),
+                )
+            )
         if tables:
             table = pd.concat([table, *tables], ignore_index=True).sort_values("oracle_loss_mean").reset_index(drop=True)
     if bool(args.deployable_static_diagnostics):
