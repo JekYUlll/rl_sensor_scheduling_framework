@@ -1,5 +1,26 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V49 Specialist-Amplitude Screen Rejected
+
+### Result
+
+- Increased only particle and flux specialist-specific latent amplitudes by
+  1.5x on fresh development seeds `861--865`; no PPO policy was trained.
+- Exact-geometry privileged dynamic schedules beat hindsight static in `2/5`
+  seeds. Per-seed ordinary margins were `-0.014808`, `-0.078140`, `-0.023027`,
+  `+0.101064`, and `+0.005382`; the mean was `-0.001906`.
+
+### Interpretation and Decision
+
+- Reject amplitude scaling. With `target_scales=null`, the frozen TCN correctly
+  normalizes each target using fitting-partition standard deviations. Increasing
+  target amplitude also increases its normalization scale and does not reliably
+  increase specialist information value.
+- V50 returns to V42 amplitudes and changes only specialist-latent persistence
+  (`alpha 0.15 -> 0.08`) on new seeds `871--875`. This tests whether a current
+  specialist observation remains informative across the eight-step forecast
+  horizon. No PPO training occurs before the exact upper gate passes.
+
 ## 2026-08-22 - V48 Complete Context Encoding Improved Dynamic Baselines
 
 ### Result
