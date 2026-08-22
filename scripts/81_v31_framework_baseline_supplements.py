@@ -447,11 +447,13 @@ def evaluate_run(
         fallback_path = run_dir / "reward_staticnorm_fallback_candidates.csv"
         if fallback_path.exists():
             context_action_table = pd.read_csv(fallback_path)
-    action_indices = (
-        build_physical_context_action_indices(metadata, sensors, candidate_masks)
-        if str(context_action_source) == "physical"
-        else build_context_action_indices(context_action_table)
-    )
+    if str(context_action_source) == "physical":
+        action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
+    elif str(context_action_source) == "hybrid":
+        action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
+        action_indices["calm"] = best_action_by_column(context_action_table, "oracle_loss_non_event")
+    else:
+        action_indices = build_context_action_indices(context_action_table)
     static_table_path = run_dir / replay_dir / "split_static_candidate_event_table.csv"
     static_table = pd.read_csv(static_table_path) if static_table_path.exists() else validation_table.copy()
     normalizers = subtype_static_normalizers(static_table)
@@ -674,7 +676,7 @@ def main() -> None:
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
     parser.add_argument(
         "--context-action-source",
-        choices=["validation", "physical"],
+        choices=["validation", "physical", "hybrid"],
         default="validation",
     )
     parser.add_argument(
