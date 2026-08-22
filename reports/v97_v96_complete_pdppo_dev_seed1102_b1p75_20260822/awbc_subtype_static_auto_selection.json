@@ -1,0 +1,41 @@
+{
+  "mode": "subtype_static_auto",
+  "auto_score_mode": "staticnorm",
+  "candidate_table": "reports/v97_v96_complete_pdppo_dev_seed1102_b1p75_20260822/awbc_subtype_static_auto_candidates.csv",
+  "calm": {
+    "action_idx": 11,
+    "sensor_ids": "met_station_core|radiometer_basic|surface_temp_ir",
+    "score_column": "oracle_loss_non_event",
+    "score": 0.26451240805404713,
+    "oracle_loss_mean": 0.516636971195112,
+    "oracle_loss_event": 0.8138220945571332,
+    "oracle_loss_non_event": 0.26451240805404713
+  },
+  "particle": {
+    "action_idx": 19,
+    "sensor_ids": "shielded_thermo_hygro|laser_disdrometer",
+    "score_column": "oracle_loss_subtype_particle_staticnorm",
+    "score": 0.6812540966059188,
+    "oracle_loss_mean": 0.45953521447760676,
+    "oracle_loss_event": 0.6014513541197946,
+    "oracle_loss_non_event": 0.33913704546708634
+  },
+  "flux": {
+    "action_idx": 33,
+    "sensor_ids": "shielded_thermo_hygro|surface_temp_ir|fc4_flux",
+    "score_column": "oracle_loss_subtype_flux_staticnorm",
+    "score": 0.8981537413394693,
+    "oracle_loss_mean": 0.5531077892179989,
+    "oracle_loss_event": 0.7505762526012482,
+    "oracle_loss_non_event": 0.3855803924849174
+  },
+  "thermal": {
+    "action_idx": 12,
+    "sensor_ids": "shielded_thermo_hygro|surface_temp_ir",
+    "score_column": "oracle_loss_subtype_thermal_staticnorm",
+    "score": 0.6796269472057762,
+    "oracle_loss_mean": 0.5533239159194636,
+    "oracle_loss_event": 0.763428347441533,
+    "oracle_loss_non_event": 0.375076474014459
+  }
+}

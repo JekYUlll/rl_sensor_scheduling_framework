@@ -2541,3 +2541,17 @@ tar -czf "$OUT…`
 - V96 therefore has genuine dynamic headroom without required channels,
   cardinality limits, or duty quotas. Scene-weight tuning is closed; the next
   stage trains PD-PPO on the frozen V96 assets with fresh policy seeds.
+### 2026-08-23 | V97 passes performance and localizes one teacher omission
+
+- Trained the complete nonlinear PD-PPO configuration on frozen V96 assets
+  with fresh policy seeds 3101--3105. Strongest-static ordinary/macro wins were
+  `4/5` and `5/5`; conventional-dynamic joint wins were `5/5`.
+- Mean margins were `+0.020304/+0.086369` against strongest static and
+  `+0.022752/+0.047480` against conventional dynamic references. Every seed
+  had nonzero switching and zero warm-up aborts.
+- The strict no-constant-channel gate passed `4/5`. Seed 1101 never selected
+  FC4 because its calibration-selected four-state teacher map contains no FC4
+  action. This is a teacher-coverage defect, not missing dynamic scene value.
+- V98 retains the V97 objective and learner but replaces only the teacher map
+  with the six-channel-covering physical-function map. No runtime channel,
+  cardinality, or duty constraint is added.
