@@ -980,3 +980,14 @@ tar -czf "$OUT…`
   one channel effectively off. The prior is therefore a verified source of
   static bias, but removing it alone does not pass the prediction or behavior
   gates. The next bounded control adds validation-only checkpoint selection.
+
+### 2026-08-22 | Flexible-subset v19 frozen checkpoint control
+
+- Validation-only checkpoint selection chose update 30. On the frozen seed-406
+  test windows it improved normalized subtype macro loss to `0.84910`, narrowly
+  better than static `0.85606`, while mean loss remained worse (`0.27675`
+  versus `0.25439`).
+- Checkpoint selection therefore trades the two co-primary endpoints on this
+  seed and does not pass the joint gate. The next bounded control aligns the
+  training reward with validation-normalized subtype losses while retaining the
+  no-prior actor and frozen evidence path.
