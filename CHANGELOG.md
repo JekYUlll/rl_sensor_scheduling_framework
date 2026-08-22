@@ -1,5 +1,31 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V54 All-Action Warm Start Improved Coverage but Failed
+
+### Result
+
+- Replaced the obsolete prototype action supervision with the framework's
+  all-action, eight-step forecast-greedy teacher on the policy-training
+  partition. The teacher was used only for BC initialization; continuing AWBC
+  and action cross-entropy were disabled during PPO.
+- Joint wins improved to `2/5` against static and `3/5` against conventional
+  dynamic policies, but the gate still failed. Mean ordinary/macro margins were
+  `-0.014789/+0.004939` against static and `+0.001968/-0.002831` against
+  conventional dynamic policies.
+- Behavior passed in `3/5` seeds and no channel was always on. The teacher used
+  all 20 actions, but BC accuracy was only `0.105--0.170`; final policy entropy
+  remained high at `2.102--2.551`.
+
+### Interpretation and Decision
+
+- Action coverage is repaired, but the actor has not learned a sharp observable
+  state-to-action map from the one-time teacher data. Do not modify the frozen
+  scene, reward, or teacher.
+- V55 is one bounded ordinary-training test: increase BC fitting epochs on the
+  same 2,000-label design (`12 -> 40`) and reduce entropy coefficient
+  (`0.005 -> 0.001`). Require the original 4/5 performance and behavior gates;
+  stop this learner line if the improvement does not transfer.
+
 ## 2026-08-22 - V53 Frozen V51 PD-PPO Transfer Failed
 
 ### Result
