@@ -19,6 +19,7 @@ EVENT_MICROSTRUCTURE_ALPHA="${EVENT_MICROSTRUCTURE_ALPHA:-0.22}"
 EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION="${EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION:-0.35}"
 SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
 ORACLE_EPOCHS="${ORACLE_EPOCHS:-10}"
+ORACLE_FULL_OPEN_REPEAT="${ORACLE_FULL_OPEN_REPEAT:-3}"
 ORACLE_CANDIDATE_MASK_REPEAT="${ORACLE_CANDIDATE_MASK_REPEAT:-1}"
 ORACLE_SUBTYPE_TEACHER_REPEAT="${ORACLE_SUBTYPE_TEACHER_REPEAT:-4}"
 BUDGET="${BUDGET:-1.35}"
@@ -165,6 +166,7 @@ for seed in "${SEEDS[@]}"; do
     --oracle-rollout-steps 2048 \
     --oracle-rollouts-per-policy 4 \
     --oracle-epochs "$ORACLE_EPOCHS" \
+    --oracle-full-open-repeat "$ORACLE_FULL_OPEN_REPEAT" \
     --oracle-batch-size 512 \
     --oracle-loss-clip 20 \
     --oracle-candidate-mask-repeat "$ORACLE_CANDIDATE_MASK_REPEAT" \

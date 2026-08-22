@@ -1940,3 +1940,17 @@ tar -czf "$OUT…`
   evaluation, metadata, and the flexible-subset launcher. Static candidate
   replay now also inherits the uncertainty configuration instead of silently
   reverting to defaults. The complete test suite passes (`110` tests).
+
+### 2026-08-22 | Flexible-subset v64 estimator screen
+
+- V64 held the V63 scene, seeds, costs, and 35-action geometry fixed and enabled
+  the variance-consistent carried-state estimator. Full-open improved from
+  `2/5` to `4/5` joint wins over static, with mean ordinary and macro margins
+  `+0.021641` and `+0.046879`.
+- The validation-selected online warning policy likewise improved from `3/5`
+  to `4/5` joint wins, with mean margins `+0.023191` and `+0.119193`. Seed905
+  remained negative on both checks, so PPO training stays blocked.
+- The frozen evaluator fitting mixture contained about 70 static candidate
+  groups but only 6 subtype-dynamic and 3 full-open groups. The launcher now
+  exposes `ORACLE_FULL_OPEN_REPEAT`; V65 will rebalance fitting coverage without
+  changing the simulator, action space, estimator, reward, or online policy.
