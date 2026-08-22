@@ -67,6 +67,7 @@ class CustomPPOConfig:
     greedy_lookahead_steps: int = 4
     awbc_teacher_mode: str = "oracle_greedy"
     awbc_teacher_event_lookahead_steps: int = 0
+    awbc_teacher_alert_threshold: float = 0.5
     awbc_teacher_energy_mpc_horizon: int = 4
     awbc_teacher_energy_mpc_soc_bins: int = 16
     awbc_teacher_energy_mpc_low_soc_ratio: float = 0.25
@@ -951,6 +952,23 @@ class CustomPPO:
                         return int(idx)
         if mode in {"subtype_auto", "subtype_static_auto"}:
             idx = self._subtype_preferred_action(env, action_mask)
+            if 0 <= idx < len(action_mask) and bool(action_mask[idx]):
+                return int(idx)
+        if mode == "context_alert":
+            labels = ("particle", "flux", "thermal")
+            values = {
+                label: float(self.truth_df.iloc[int(env.current_idx)].get(f"agent_context_{label}_alert", 0.0))
+                for label in labels
+            }
+            label = max(values, key=values.get)
+            subtype_id = labels.index(label) + 1 if values[label] >= float(self.cfg.awbc_teacher_alert_threshold) else 0
+            actions = (
+                int(self.cfg.awbc_teacher_subtype_calm_action),
+                int(self.cfg.awbc_teacher_subtype_particle_action),
+                int(self.cfg.awbc_teacher_subtype_flux_action),
+                int(self.cfg.awbc_teacher_subtype_thermal_action),
+            )
+            idx = actions[int(subtype_id)]
             if 0 <= idx < len(action_mask) and bool(action_mask[idx]):
                 return int(idx)
         if mode == "energy_mpc":

@@ -65,6 +65,7 @@ read -r -a AWBC_TEACHER_THERMAL_SENSOR_ARGS <<< "${AWBC_TEACHER_THERMAL_SENSORS:
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
 REWARD_PROXY_MODE="${REWARD_PROXY_MODE:-forecast}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
+AWBC_TEACHER_ALERT_THRESHOLD="${AWBC_TEACHER_ALERT_THRESHOLD:-0.5}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0.0}"
 SUBTYPE_ACTION_SUPERVISION_MODE="${SUBTYPE_ACTION_SUPERVISION_MODE:-exact_action}"
@@ -227,6 +228,7 @@ for seed in "${SEEDS[@]}"; do
     --awbc-teacher-subtype-thermal-sensors "${AWBC_TEACHER_THERMAL_SENSOR_ARGS[@]}" \
     --awbc-teacher-auto-score-mode staticnorm \
     --awbc-teacher-event-lookahead-steps 8 \
+    --awbc-teacher-alert-threshold "$AWBC_TEACHER_ALERT_THRESHOLD" \
     --awbc-teacher-dwell-steps 6 \
     --prior-kl-coef 0.0 \
     --greedy-lookahead-steps "$GREEDY_LOOKAHEAD_STEPS" \

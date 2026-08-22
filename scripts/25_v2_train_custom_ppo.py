@@ -568,6 +568,7 @@ def main() -> None:
             "event_cyclic",
             "subtype_auto",
             "subtype_static_auto",
+            "context_alert",
             "energy_mpc",
         ],
         default="oracle_greedy",
@@ -575,6 +576,7 @@ def main() -> None:
     parser.add_argument("--awbc-teacher-calm-sensors", nargs="*", default=None)
     parser.add_argument("--awbc-teacher-event-sensors", nargs="*", default=None)
     parser.add_argument("--awbc-teacher-event-lookahead-steps", type=int, default=0)
+    parser.add_argument("--awbc-teacher-alert-threshold", type=float, default=0.5)
     parser.add_argument("--awbc-teacher-energy-mpc-horizon", type=int, default=4)
     parser.add_argument("--awbc-teacher-energy-mpc-soc-bins", type=int, default=16)
     parser.add_argument("--awbc-teacher-energy-mpc-low-soc-ratio", type=float, default=0.25)
@@ -843,7 +845,7 @@ def main() -> None:
             event_specs,
             label="event_pool",
         )
-    if str(args.awbc_teacher_mode) == "subtype_auto":
+    if str(args.awbc_teacher_mode) in {"subtype_auto", "context_alert"}:
         if "event_subtype_id" not in truth.columns:
             raise ValueError("subtype_auto AWBC teacher requires truth column event_subtype_id")
         awbc_teacher_subtype_calm_action = resolve_candidate_action_index(
@@ -1307,6 +1309,7 @@ def main() -> None:
             greedy_lookahead_steps=int(args.greedy_lookahead_steps),
             awbc_teacher_mode=str(args.awbc_teacher_mode),
             awbc_teacher_event_lookahead_steps=int(args.awbc_teacher_event_lookahead_steps),
+            awbc_teacher_alert_threshold=float(args.awbc_teacher_alert_threshold),
             awbc_teacher_energy_mpc_horizon=int(args.awbc_teacher_energy_mpc_horizon),
             awbc_teacher_energy_mpc_soc_bins=int(args.awbc_teacher_energy_mpc_soc_bins),
             awbc_teacher_energy_mpc_low_soc_ratio=float(args.awbc_teacher_energy_mpc_low_soc_ratio),
@@ -1975,6 +1978,7 @@ def main() -> None:
             "calm_pool_spec": str(args.awbc_teacher_calm_pool_spec or ""),
             "event_pool_spec": str(args.awbc_teacher_event_pool_spec or ""),
             "event_lookahead_steps": int(args.awbc_teacher_event_lookahead_steps),
+            "alert_threshold": float(args.awbc_teacher_alert_threshold),
             "energy_mpc_horizon": int(args.awbc_teacher_energy_mpc_horizon),
             "energy_mpc_soc_bins": int(args.awbc_teacher_energy_mpc_soc_bins),
             "energy_mpc_low_soc_ratio": float(args.awbc_teacher_energy_mpc_low_soc_ratio),
@@ -2138,6 +2142,7 @@ def as_serializable_config(
         "subtype_router_low_confidence_action": int(cfg.subtype_router_low_confidence_action),
         "awbc_teacher_mode": str(cfg.awbc_teacher_mode),
         "awbc_teacher_event_lookahead_steps": int(cfg.awbc_teacher_event_lookahead_steps),
+        "awbc_teacher_alert_threshold": float(cfg.awbc_teacher_alert_threshold),
         "awbc_teacher_energy_mpc_horizon": int(cfg.awbc_teacher_energy_mpc_horizon),
         "awbc_teacher_energy_mpc_soc_bins": int(cfg.awbc_teacher_energy_mpc_soc_bins),
         "awbc_teacher_energy_mpc_low_soc_ratio": float(cfg.awbc_teacher_energy_mpc_low_soc_ratio),

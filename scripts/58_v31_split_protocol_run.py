@@ -699,6 +699,7 @@ def main() -> None:
             "event_cyclic",
             "subtype_auto",
             "subtype_static_auto",
+            "context_alert",
             "energy_mpc",
         ],
         default="oracle_greedy",
@@ -706,6 +707,7 @@ def main() -> None:
     parser.add_argument("--awbc-teacher-calm-sensors", nargs="*", default=None)
     parser.add_argument("--awbc-teacher-event-sensors", nargs="*", default=None)
     parser.add_argument("--awbc-teacher-event-lookahead-steps", type=int, default=0)
+    parser.add_argument("--awbc-teacher-alert-threshold", type=float, default=0.5)
     parser.add_argument("--awbc-teacher-energy-mpc-horizon", type=int, default=4)
     parser.add_argument("--awbc-teacher-energy-mpc-soc-bins", type=int, default=16)
     parser.add_argument("--awbc-teacher-energy-mpc-low-soc-ratio", type=float, default=0.25)
@@ -1112,6 +1114,7 @@ def main() -> None:
             "bc_pretrain_target_mode": str(args.bc_pretrain_target_mode),
             "bc_soft_temperature": float(args.bc_soft_temperature),
             "awbc_teacher_mode": str(args.awbc_teacher_mode),
+            "awbc_teacher_alert_threshold": float(args.awbc_teacher_alert_threshold),
             "subtype_aux_coef": float(args.subtype_aux_coef),
             "subtype_aux_classes": int(args.subtype_aux_classes),
             "subtype_aux_lookahead_steps": int(args.subtype_aux_lookahead_steps),
@@ -1379,6 +1382,8 @@ def main() -> None:
         str(args.awbc_teacher_mode),
         "--awbc-teacher-event-lookahead-steps",
         str(int(args.awbc_teacher_event_lookahead_steps)),
+        "--awbc-teacher-alert-threshold",
+        str(float(args.awbc_teacher_alert_threshold)),
         "--awbc-teacher-energy-mpc-horizon",
         str(int(args.awbc_teacher_energy_mpc_horizon)),
         "--awbc-teacher-energy-mpc-soc-bins",

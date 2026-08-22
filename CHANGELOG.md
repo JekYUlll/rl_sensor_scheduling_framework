@@ -2396,3 +2396,27 @@ tar -czf "$OUT…`
   often near zero during event steps. The failure is PPO-stage retention of the
   warm start, not lack of deployable scene information. One bounded V86 run
   retains the same guidance with existing AWBC coefficient `0.05`.
+
+### 2026-08-23 | V86 calibrated teacher with constant AWBC
+
+- Constant AWBC `0.05` raised strongest-static joint wins to `4/5` and
+  conventional-dynamic wins to `5/5`. Mean static margins became
+  `+0.008486/+0.066459`, confirming that guidance retention was causal.
+- Behavior did not pass: seeds 1101 and 1105 had two and three always-off
+  channels, despite zero always-on channels, nonzero switching, and zero aborts.
+- V87 keeps the same initial coefficient but linearly decays it to zero over
+  40960 steps. This is the final bounded retention/diversity correction before
+  reassessing the training formulation.
+
+### 2026-08-23 | V87 decaying AWBC and online-label correction
+
+- Linear AWBC decay reached only `3/5` strongest-static and `4/5`
+  conventional-dynamic joint wins. Mean static margins were
+  `-0.001906/+0.059765`, and the same two seeds retained multiple always-off
+  channels. The subtype-look-ahead retention route is closed.
+- Added a clean `context_alert` teacher mode. It derives warm-start/AWBC labels
+  from the same online particle, flux, and thermal warning scores visible to the
+  deployed policy, with a fixed threshold and calibration-selected feasible
+  action map. No simulator event label is used by this teacher.
+- V88 will test this observation-aligned teacher once, with subtype action CE
+  disabled to avoid reintroducing the mismatched privileged timing signal.
