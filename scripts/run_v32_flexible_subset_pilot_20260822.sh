@@ -52,6 +52,7 @@ read -r -a TEACHER_PARTICLE_SENSOR_ARGS <<< "${TEACHER_PARTICLE_SENSORS:-met_sta
 read -r -a TEACHER_FLUX_SENSOR_ARGS <<< "${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}"
 read -r -a TEACHER_THERMAL_SENSOR_ARGS <<< "${TEACHER_THERMAL_SENSORS:-shielded_thermo_hygro surface_temp_ir}"
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
+REWARD_PROXY_MODE="${REWARD_PROXY_MODE:-forecast}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0.0}"
@@ -231,6 +232,7 @@ for seed in "${SEEDS[@]}"; do
     --lambda-switch 0.002 \
     --event-reward-multiplier 1.0 \
     --reward-loss-normalization "$REWARD_LOSS_NORMALIZATION" \
+    --reward-proxy-mode "$REWARD_PROXY_MODE" \
     --lambda-duty-balance 0.0 \
     --duty-score-feedback 0.0 \
     --no-duty-hard-guard \

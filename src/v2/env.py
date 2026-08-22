@@ -247,6 +247,9 @@ class WarmupSchedulingEnv:
         return feasible
 
     def _step_projection(self, selected_mask: np.ndarray) -> tuple[np.ndarray, float, bool, dict[str, object]]:
+        history_before_step = np.asarray(self.history, dtype=float).copy()
+        mask_history_before_step = np.asarray(self.mask_history, dtype=float).copy()
+        carried_observation_before_step = np.asarray(self.last_observation, dtype=float).copy()
         selected_mask = np.asarray(selected_mask, dtype=bool).reshape(-1)
         selected_mask, dwell_hold_applied = self._apply_min_dwell_guard(selected_mask)
         selected_mask, energy_guard_dropped = self._apply_energy_guard(selected_mask)
@@ -391,6 +394,18 @@ class WarmupSchedulingEnv:
         soc_soft_penalty = self._soc_soft_penalty()
         error = float(np.mean(np.abs(observation - truth)))
         oracle_loss = self._oracle_loss()
+        counterfactual_oracle_loss = None
+        if str(self.cfg.reward_proxy_mode) == "forecast_gain":
+            counterfactual_history = np.vstack(
+                [history_before_step[1:], carried_observation_before_step.reshape(1, -1)]
+            )
+            counterfactual_masks = np.vstack(
+                [mask_history_before_step[1:], np.zeros((1, mask_history_before_step.shape[1]), dtype=float)]
+            )
+            counterfactual_oracle_loss = self._oracle_loss_for_history(
+                counterfactual_history,
+                counterfactual_masks,
+            )
         abort_count_after = int(sum(rt.warmup_abort_count for rt in self.runtimes.values()))
         warmup_abort_delta = max(0, abort_count_after - abort_count_before)
         switch_rate = float(np.mean(np.abs(selected_mask.astype(float) - previous_action_mask)))
@@ -410,6 +425,7 @@ class WarmupSchedulingEnv:
         )
         raw_reward_loss, reward_loss = self._training_reward_loss(
             oracle_loss=oracle_loss,
+            counterfactual_oracle_loss=counterfactual_oracle_loss,
             instant_error=error,
             event_subtype_id=event_subtype_id,
         )
@@ -456,6 +472,11 @@ class WarmupSchedulingEnv:
             "shaping_penalty": float(shaping_penalty),
             "instant_abs_error": error,
             "oracle_loss": float(oracle_loss) if oracle_loss is not None else float("nan"),
+            "counterfactual_oracle_loss": (
+                float(counterfactual_oracle_loss)
+                if counterfactual_oracle_loss is not None
+                else float("nan")
+            ),
             "oracle_loss_reward": float(reward_loss),
             "reward_proxy_mode": str(self.cfg.reward_proxy_mode),
             "reward_proxy_loss": float(raw_reward_loss),
@@ -470,6 +491,7 @@ class WarmupSchedulingEnv:
         self,
         *,
         oracle_loss: float | None,
+        counterfactual_oracle_loss: float | None,
         instant_error: float,
         event_subtype_id: int,
     ) -> tuple[float, float]:
@@ -480,6 +502,16 @@ class WarmupSchedulingEnv:
                 self._reward_oracle_loss(raw_loss, event_subtype_id=event_subtype_id)
                 if oracle_loss is not None
                 else raw_loss
+            )
+            return raw_loss, float(shaped_loss)
+        if mode == "forecast_gain":
+            if oracle_loss is None or counterfactual_oracle_loss is None:
+                return float(instant_error), float(instant_error)
+            raw_loss = float(oracle_loss) - float(counterfactual_oracle_loss)
+            shaped_loss = self._reward_oracle_loss(
+                float(oracle_loss), event_subtype_id=event_subtype_id
+            ) - self._reward_oracle_loss(
+                float(counterfactual_oracle_loss), event_subtype_id=event_subtype_id
             )
             return raw_loss, float(shaped_loss)
         if mode == "aoi":
@@ -778,6 +810,13 @@ class WarmupSchedulingEnv:
         return draws
 
     def _oracle_loss(self) -> float | None:
+        return self._oracle_loss_for_history(self.history, self.mask_history)
+
+    def _oracle_loss_for_history(
+        self,
+        history: np.ndarray,
+        mask_history: np.ndarray,
+    ) -> float | None:
         if self.oracle is None or not self.oracle.is_fitted:
             return None
         horizon = int(self.oracle.cfg.horizon)
@@ -785,7 +824,7 @@ class WarmupSchedulingEnv:
         end = start + horizon
         if end > len(self.truth_values):
             return None
-        feature = make_oracle_feature(self.history, self.mask_history)
+        feature = make_oracle_feature(history, mask_history)
         future = self.truth_values[start:end]
         future = future[:, self.reward_target_indices]
         loss_with_context = getattr(self.oracle, "loss_with_context", None)

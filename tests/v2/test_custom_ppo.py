@@ -190,6 +190,32 @@ def test_custom_ppo_episode_env_preserves_complete_config() -> None:
     assert episode_env.cfg.seed == 13
 
 
+def test_forecast_gain_reward_uses_same_epoch_no_measurement_counterfactual() -> None:
+    truth = _truth(64)
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=STATE_COLUMNS,
+            reward_proxy_mode="forecast_gain",
+            lookback=4,
+            episode_len=8,
+            lambda_warmup_abort=0.0,
+            lambda_switch=0.0,
+        ),
+        oracle=_oracle(truth),
+    )
+    env.reset(start_idx=12)
+
+    _, reward, _, info = env.step_mask(np.asarray([True, False, True]))
+
+    expected_loss = float(info["oracle_loss"]) - float(info["counterfactual_oracle_loss"])
+    assert float(info["reward_proxy_loss"]) == pytest.approx(expected_loss)
+    assert reward == pytest.approx(-expected_loss)
+
+
 def test_separate_gradient_clipping_limits_actor_and_critic_independently() -> None:
     truth = _truth(64)
     trainer = CustomPPO(
