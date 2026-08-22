@@ -20,9 +20,11 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
 from v2.oracle import make_oracle_feature  # noqa: E402
+from v2.oracle import LinearFrozenForecastOracle  # noqa: E402
 from v2.policies import StaticMaskPolicy  # noqa: E402
 from v2.power_projector import PowerConstraintsV2  # noqa: E402
 from v2.sensor_spec import load_sensor_specs  # noqa: E402
+from v2.tcn_oracle import TCNFrozenForecastOracle  # noqa: E402
 
 
 MID_DUTY_LOW = 0.05
@@ -1178,6 +1180,7 @@ def main() -> None:
     parser.add_argument("--lookback", type=int, default=20)
     parser.add_argument("--horizon", type=int, default=8)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="linear")
+    parser.add_argument("--oracle-path", default="")
     parser.add_argument("--oracle-rollout-steps", type=int, default=1200)
     parser.add_argument("--oracle-rollouts-per-policy", type=int, default=3)
     parser.add_argument("--oracle-event-fraction", type=float, default=0.50)
@@ -1257,30 +1260,37 @@ def main() -> None:
     )
     target_weights = tuple(float(x) for x in args.target_weights)
     target_scales = tuple(float(x) for x in args.target_scales)
-    oracle = helpers.train_oracle(
-        truth,
-        sensors,
-        constraints,
-        oracle_type=str(args.oracle_type),
-        lookback=int(args.lookback),
-        horizon=int(args.horizon),
-        rollout_steps=int(args.oracle_rollout_steps),
-        tcn_epochs=int(args.oracle_epochs),
-        tcn_batch_size=int(args.oracle_batch_size),
-        tcn_lr=float(args.oracle_learning_rate),
-        tcn_channels=int(args.oracle_channels),
-        tcn_levels=int(args.oracle_levels),
-        tcn_device=str(args.oracle_device),
-        tcn_loss_clip=float(args.oracle_loss_clip),
-        tcn_use_mask_channels=True,
-        target_weights=target_weights,
-        target_scales=target_scales,
-        rollouts_per_policy=int(args.oracle_rollouts_per_policy),
-        event_fraction=float(args.oracle_event_fraction),
-        full_open_repeat=int(args.oracle_full_open_repeat),
-        base_freq_s=int(args.freq_s),
-        seed=int(args.seed),
-    )
+    if str(args.oracle_path):
+        oracle_path = Path(args.oracle_path)
+        if str(args.oracle_type) == "tcn":
+            oracle = TCNFrozenForecastOracle.load(oracle_path, device=str(args.oracle_inference_device))
+        else:
+            oracle = LinearFrozenForecastOracle.load(str(oracle_path))
+    else:
+        oracle = helpers.train_oracle(
+            truth,
+            sensors,
+            constraints,
+            oracle_type=str(args.oracle_type),
+            lookback=int(args.lookback),
+            horizon=int(args.horizon),
+            rollout_steps=int(args.oracle_rollout_steps),
+            tcn_epochs=int(args.oracle_epochs),
+            tcn_batch_size=int(args.oracle_batch_size),
+            tcn_lr=float(args.oracle_learning_rate),
+            tcn_channels=int(args.oracle_channels),
+            tcn_levels=int(args.oracle_levels),
+            tcn_device=str(args.oracle_device),
+            tcn_loss_clip=float(args.oracle_loss_clip),
+            tcn_use_mask_channels=True,
+            target_weights=target_weights,
+            target_scales=target_scales,
+            rollouts_per_policy=int(args.oracle_rollouts_per_policy),
+            event_fraction=float(args.oracle_event_fraction),
+            full_open_repeat=int(args.oracle_full_open_repeat),
+            base_freq_s=int(args.freq_s),
+            seed=int(args.seed),
+        )
     if str(args.oracle_type) == "tcn":
         oracle.to_device(str(args.oracle_inference_device))
     candidate_masks = helpers.build_projected_candidate_masks(sensors, constraints, max_candidate_warmup=None)
