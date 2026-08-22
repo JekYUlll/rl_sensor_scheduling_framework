@@ -345,6 +345,43 @@ def test_masked_actor_gated_context_fusion_preserves_feasible_mask() -> None:
     assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
 
 
+def test_masked_actor_subtype_moe_routes_online_context_and_preserves_mask() -> None:
+    actor = MaskedActor(
+        obs_dim=25,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        context_encoder_enabled=True,
+        context_feature_dim=20,
+        context_hidden_dim=8,
+        context_fusion_mode="subtype_moe",
+        context_layer_norm=True,
+        subtype_aux_classes=4,
+    )
+    obs = torch.zeros((2, 25), dtype=torch.float32)
+    obs[1, -20:] = 1.0
+    candidate_masks = torch.tensor(
+        [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+    action_mask = torch.tensor([[True, False, True], [False, True, True]])
+
+    subtype_logits = actor.subtype_logits(obs)
+    probs = actor.dist(obs, candidate_masks, action_mask).probs
+    loss = subtype_logits.square().mean() + probs.square().mean()
+    loss.backward()
+
+    assert subtype_logits.shape == (2, 4)
+    assert actor.context_router.weight.grad is not None
+    assert all(expert[0].weight.grad is not None for expert in actor.context_experts)
+    assert torch.allclose(probs[0, 1], torch.tensor(0.0), atol=1e-7)
+    assert torch.allclose(probs[1, 0], torch.tensor(0.0), atol=1e-7)
+    assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
+
+
 def test_action_embedding_structure() -> None:
     action_embedding = ActionEmbedding(n_sensors=3, embed_dim=3)
     with torch.no_grad():

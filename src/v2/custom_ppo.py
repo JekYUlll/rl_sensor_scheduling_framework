@@ -231,6 +231,22 @@ class MaskedActor:
                     if self.context_feature_dim > 0 and self.context_fusion_mode == "gated_add"
                     else None
                 )
+                if self.context_feature_dim > 0 and self.context_fusion_mode == "subtype_moe":
+                    if self.subtype_aux_classes <= 1:
+                        raise ValueError("subtype_moe requires at least two subtype auxiliary classes")
+                    self.context_router = nn.Linear(int(embed_dim), self.subtype_aux_classes)
+                    self.context_experts = nn.ModuleList(
+                        [
+                            nn.Sequential(
+                                nn.Linear(int(embed_dim), int(embed_dim)),
+                                nn.Tanh(),
+                            )
+                            for _ in range(self.subtype_aux_classes)
+                        ]
+                    )
+                else:
+                    self.context_router = None
+                    self.context_experts = None
                 self.context_norm = (
                     nn.LayerNorm(int(embed_dim))
                     if self.context_feature_dim > 0 and bool(context_layer_norm)
@@ -251,7 +267,7 @@ class MaskedActor:
                         nn.Tanh(),
                         nn.Linear(int(hidden_dim), self.subtype_aux_classes),
                     )
-                    if self.subtype_aux_classes > 0
+                    if self.subtype_aux_classes > 0 and self.context_router is None
                     else None
                 )
                 self.action_bias = nn.Linear(int(embed_dim), 1)
@@ -287,7 +303,14 @@ class MaskedActor:
                 context = self.obs_encoder(main_obs)
                 if self.context_encoder is not None and context_obs is not None:
                     context_extra = self.context_encoder(context_obs)
-                    if self.context_fusion_mode == "gated_add" and self.context_gate is not None:
+                    if self.context_fusion_mode == "subtype_moe" and self.context_router is not None:
+                        router_probs = torch.softmax(self.context_router(context_extra), dim=1)
+                        expert_values = torch.stack(
+                            [expert(context_extra) for expert in self.context_experts],
+                            dim=1,
+                        )
+                        context = context + torch.sum(router_probs.unsqueeze(-1) * expert_values, dim=1)
+                    elif self.context_fusion_mode == "gated_add" and self.context_gate is not None:
                         gate = self.context_gate(context_obs)
                         context = context + gate * context_extra
                     elif self.context_fusion is not None:
@@ -306,6 +329,11 @@ class MaskedActor:
                 return context
 
             def subtype_logits(self, obs: Any, event_flag: Any | None = None) -> Any | None:
+                if self.context_router is not None and self.context_encoder is not None:
+                    _, context_obs = self._split_obs(obs)
+                    if context_obs is None:
+                        return None
+                    return self.context_router(self.context_encoder(context_obs))
                 if self.subtype_head is None:
                     return None
                 return self.subtype_head(self.encode_context(obs, event_flag))

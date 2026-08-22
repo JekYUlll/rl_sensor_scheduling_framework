@@ -577,6 +577,7 @@ def main() -> None:
     parser.add_argument("--stations", nargs="+", default=["Panda100", "Panda200", "Taishan"])
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
     parser.add_argument("--seed", type=int, default=41)
+    parser.add_argument("--policy-seed", type=int, default=None)
     parser.add_argument("--budget", type=float, default=1.70)
     parser.add_argument("--startup-peak-budget", type=float, default=3.20)
     parser.add_argument("--truth-steps", type=int, default=90000)
@@ -734,7 +735,11 @@ def main() -> None:
     parser.add_argument("--context-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-feature-dim", type=int, default=0)
     parser.add_argument("--context-hidden-dim", type=int, default=64)
-    parser.add_argument("--context-fusion-mode", choices=["concat", "gated_add"], default="concat")
+    parser.add_argument(
+        "--context-fusion-mode",
+        choices=["concat", "gated_add", "subtype_moe"],
+        default="concat",
+    )
     parser.add_argument("--context-layer-norm", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
@@ -960,6 +965,7 @@ def main() -> None:
         "truth_steps": int(args.truth_steps),
         "lookback": int(args.lookback),
         "seed": int(args.seed),
+        "policy_seed": int(args.seed if args.policy_seed is None else args.policy_seed),
         "budget": float(args.budget),
         "target_weights": None if args.target_weights is None else [float(x) for x in args.target_weights],
         "target_scales": None if args.target_scales is None else [float(x) for x in args.target_scales],
@@ -1474,6 +1480,8 @@ def main() -> None:
         "--soc-aux-coef",
         str(float(args.soc_aux_coef)),
     ]
+    if args.policy_seed is not None:
+        cmd.extend(["--policy-seed", str(int(args.policy_seed))])
     if control_source_dir is not None:
         cmd.extend(["--control-source-run-dir", str(control_source_dir)])
     if bool(args.validate_control_source_only):

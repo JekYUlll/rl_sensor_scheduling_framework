@@ -2241,3 +2241,72 @@ tar -czf "$OUT…`
   while replacing the single prototype BC target with the existing soft
   all-action forecast-value warm start. This combination is newly justified by
   the online context features added after the earlier V56 experiment.
+
+### 2026-08-23 | Flexible-subset v77 soft forecast-value context test
+
+- V77 combined V76's online context encoder and positive-inclusion auxiliary
+  with the existing soft all-action forecast-value BC initialization. It used
+  the same development truth, evaluator, starts, reward, constraints, and PPO
+  protocol as V76.
+- The variant failed: strongest-static joint wins were `2/5` and conventional-
+  dynamic joint wins were `1/5`. Mean ordinary/macro margins were
+  `-0.003851/+0.028943` against static and `-0.008329/-0.054697` against
+  dynamic references.
+- Behavior remained broad, with all six channels at intermediate duty in every
+  seed and no always-on/off channels or aborts. Future-value soft imitation
+  therefore improves coverage but does not solve online policy transfer; this
+  teacher line is closed without temperature or duration tuning.
+- A conditional-duty audit found that V76 already uses near-maximal subset
+  cardinality, so unused power is not the blocker. The weaker seeds instead
+  fail to retain guided event-to-channel mappings; for example, seed901 has
+  zero FC4 duty in flux windows despite valid subtype supervision. V78 tests a
+  single evidence-driven change, positive-inclusion weight `0.05` to `0.10`,
+  while preserving set-valued extra-channel freedom and every other V76 choice.
+
+### 2026-08-23 | Flexible-subset v78 stronger inclusion guidance
+
+- Raising positive-inclusion weight from `0.05` to `0.10` did not improve the
+  complete development gate. Strongest-static joint wins were `3/5` and
+  conventional-dynamic wins were `4/5`; V76 remained better at `4/5` for both.
+  Mean margins remained positive, but seed901 lost both families and seed904
+  lost the ordinary static endpoint.
+- Channel use narrowed again: one seed left two channels unused and two seeds
+  left one unused. All runs retained zero always-on channels and zero aborts.
+  Stronger scalar guidance therefore recreates the performance/coverage trade-
+  off and is rejected; no further inclusion coefficient is tested.
+- Added a `subtype_moe` actor fusion mode. Online context features predict soft
+  subtype routing weights that blend four small action-representation experts;
+  simulator labels supervise the router only during training. Runtime inputs,
+  forecast reward, 35-action feasibility masking, critic, and V76 auxiliary
+  loss remain unchanged. V79 is the matched development test.
+
+### 2026-08-23 | Flexible-subset v79 subtype mixture-of-experts actor
+
+- V79 did not improve the complete gate. Strongest-static and conventional-
+  dynamic joint wins were both `3/5`; aggregate margins were positive, but
+  seeds901 and 904 retained ordinary static losses and seed903 lost the dynamic
+  macro endpoint. Behavior passed in all five seeds.
+- The added context specialization is therefore not adopted as the primary
+  method. The implementation remains available as an explicit architecture
+  ablation, with unit tests confirming label-free runtime routing and feasible
+  action masking.
+- V80 tests a representation simplification motivated by set-valued guidance.
+  It removes only the nonlinear subset encoder so that sensor value is shared
+  compositionally across every subset containing that sensor. All V76 context,
+  reward, supervision, PPO, and constraint settings remain fixed.
+
+### 2026-08-23 | Flexible-subset v80 linear action representation
+
+- V80 improved the aggregate margins but did not improve paired stability.
+  Strongest-static and conventional-dynamic joint wins were `3/5` and `4/5`;
+  mean ordinary/macro margins were `+0.026406/+0.170481` against static and
+  `+0.021928/+0.086841` against dynamic references.
+- All five seeds passed the behavior gate, with no always-on channel, at most
+  one always-off channel, nonzero switching, and zero warm-up aborts. The
+  linear representation is therefore viable but does not replace V76, whose
+  static joint win count remains higher at `4/5` on the matched scenes.
+- Architecture and scalar-objective tuning are closed. The next experiment
+  separates the policy/training random seed from the frozen scene seed and
+  selects one of three independent initializations using validation losses
+  only. This gives the learned policy the same validation-selection discipline
+  already used by the strongest static baseline without inspecting test loss.

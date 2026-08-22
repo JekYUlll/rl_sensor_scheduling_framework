@@ -638,12 +638,22 @@ def main() -> None:
     parser.add_argument("--context-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-feature-dim", type=int, default=0)
     parser.add_argument("--context-hidden-dim", type=int, default=64)
-    parser.add_argument("--context-fusion-mode", choices=["concat", "gated_add"], default="concat")
+    parser.add_argument(
+        "--context-fusion-mode",
+        choices=["concat", "gated_add", "subtype_moe"],
+        default="concat",
+    )
     parser.add_argument("--context-layer-norm", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--seed", type=int, default=41)
+    parser.add_argument(
+        "--policy-seed",
+        type=int,
+        default=None,
+        help="Optional policy/training RNG seed; data generation and evaluation retain --seed.",
+    )
     parser.add_argument("--per-step-budget", type=float, default=1.7)
     parser.add_argument("--startup-peak-budget", type=float, default=3.2)
     parser.add_argument(
@@ -722,6 +732,7 @@ def main() -> None:
     parser.add_argument("--event-start-prob", type=float, default=0.67)
     parser.add_argument("--skip-evaluation", action="store_true")
     args = parser.parse_args()
+    policy_seed = int(args.seed if args.policy_seed is None else args.policy_seed)
 
     target_weights = tuple(float(x) for x in args.target_weights)
     target_scales = tuple(float(x) for x in args.target_scales)
@@ -995,7 +1006,7 @@ def main() -> None:
         reward_proxy_mode=str(args.reward_proxy_mode),
         lookback=int(args.lookback),
         episode_len=int(args.train_episode_len),
-        seed=int(args.seed),
+        seed=policy_seed,
         base_freq_s=int(args.freq_s),
         normalization_mean=normalization_mean,
         normalization_std=normalization_std,
@@ -1327,7 +1338,7 @@ def main() -> None:
             soc_aux_horizon=int(args.soc_aux_horizon),
             soc_aux_coef=float(args.soc_aux_coef),
             device=str(args.device),
-            seed=int(args.seed),
+            seed=policy_seed,
             history_path=str(out_dir / "custom_ppo_training_history_live.json"),
             train_start_indices=tuple(int(x) for x in (args.train_start_indices or ())),
             train_start_min=args.train_start_min,
@@ -1851,6 +1862,7 @@ def main() -> None:
         "model_path": str(model_path),
         "eval_policies": eval_policy_names,
         "seed": int(args.seed),
+        "policy_seed": int(policy_seed),
         "freq_s": int(args.freq_s),
         "lookback": int(args.lookback),
         "horizon": int(args.horizon),
@@ -1935,7 +1947,12 @@ def main() -> None:
             "measurement_variance_source": "sensor noise_std propagated to observed state columns",
             "measurement_update_mode": str(train_cfg.measurement_update_mode),
         },
-        "custom_ppo": as_serializable_config(trainer.cfg, candidate_count=int(candidate_masks.shape[0])),
+        "custom_ppo": as_serializable_config(
+            trainer.cfg,
+            candidate_count=int(candidate_masks.shape[0]),
+            data_seed=int(args.seed),
+            policy_seed=policy_seed,
+        ),
         "checkpoint_selection": {
             "enabled": checkpoint_interval > 0,
             "interval_updates": checkpoint_interval,
@@ -2089,7 +2106,13 @@ def main() -> None:
         )
 
 
-def as_serializable_config(cfg: CustomPPOConfig, *, candidate_count: int) -> dict[str, float | int | str]:
+def as_serializable_config(
+    cfg: CustomPPOConfig,
+    *,
+    candidate_count: int,
+    data_seed: int,
+    policy_seed: int,
+) -> dict[str, float | int | str]:
     payload = {
         "total_timesteps": int(cfg.total_timesteps),
         "n_steps": int(cfg.n_steps),
@@ -2152,6 +2175,8 @@ def as_serializable_config(cfg: CustomPPOConfig, *, candidate_count: int) -> dic
         "soc_aux_coef": float(cfg.soc_aux_coef),
         "device": str(cfg.device),
         "seed": int(cfg.seed),
+        "data_seed": int(data_seed),
+        "policy_seed": int(policy_seed),
         "candidate_count": int(candidate_count),
         "history_path": str(cfg.history_path or ""),
         "train_start_indices": [int(x) for x in getattr(cfg, "train_start_indices", ())],

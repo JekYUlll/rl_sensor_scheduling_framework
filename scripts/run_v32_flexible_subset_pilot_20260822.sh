@@ -65,10 +65,12 @@ SUBTYPE_ACTION_SUPERVISION_MODE="${SUBTYPE_ACTION_SUPERVISION_MODE:-exact_action
 SUBTYPE_ACTION_EVENT_ONLY="${SUBTYPE_ACTION_EVENT_ONLY:-0}"
 SUBTYPE_LOSS_WEIGHTING="${SUBTYPE_LOSS_WEIGHTING:-1}"
 CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-10}"
+CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
+POLICY_SEED="${POLICY_SEED:-}"
 
 if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
@@ -92,6 +94,9 @@ for seed in "${SEEDS[@]}"; do
   fi
   if [[ "$VALIDATE_CONTROL_SOURCE_ONLY" == "1" ]]; then
     control_args+=(--validate-control-source-only)
+  fi
+  if [[ -n "$POLICY_SEED" ]]; then
+    control_args+=(--policy-seed "$POLICY_SEED")
   fi
   if [[ "$SEPARATE_ACTOR_CRITIC_GRAD_CLIP" == "1" ]]; then
     control_args+=(--separate-actor-critic-grad-clip)
@@ -226,7 +231,7 @@ for seed in "${SEEDS[@]}"; do
     --context-feature-dim "$CONTEXT_FEATURE_DIM" \
     --measurement-update-mode "$MEASUREMENT_UPDATE_MODE" \
     --context-hidden-dim 64 \
-    --context-fusion-mode gated_add \
+    --context-fusion-mode "$CONTEXT_FUSION_MODE" \
     --context-layer-norm \
     --include-alert-context-features \
     --no-include-event-flag-in-state \
