@@ -5,32 +5,32 @@ sensors:
   - sensor_id: met_station_core
     variables: [wind_speed_ms, wind_direction_deg, air_temperature_c, relative_humidity, air_pressure_pa]
     refresh_interval: 1
-    power_cost: 0.40
-    startup_peak_power: 0.48
+    power_cost: 0.52
+    startup_peak_power: 0.62
     warmup_steps: 0
     noise_std: {wind_speed_ms: 0.18, wind_direction_deg: 1.80, air_temperature_c: 0.18, relative_humidity: 0.90, air_pressure_pa: 14.0}
 
   - sensor_id: radiometer_basic
     variables: [solar_radiation_wm2]
     refresh_interval: 1
-    power_cost: 0.28
-    startup_peak_power: 0.34
+    power_cost: 0.50
+    startup_peak_power: 0.60
     warmup_steps: 0
     noise_std: {solar_radiation_wm2: 8.0}
 
   - sensor_id: shielded_thermo_hygro
     variables: [air_temperature_c, relative_humidity]
     refresh_interval: 1
-    power_cost: 0.32
-    startup_peak_power: 0.39
+    power_cost: 0.52
+    startup_peak_power: 0.62
     warmup_steps: 0
     noise_std: {air_temperature_c: 0.06, relative_humidity: 0.30}
 
   - sensor_id: surface_temp_ir
     variables: [snow_surface_temperature_c, event_subtype_thermal_latent]
     refresh_interval: 1
-    power_cost: 0.48
-    startup_peak_power: 0.62
+    power_cost: 0.58
+    startup_peak_power: 0.72
     warmup_steps: 1
     noise_std: {snow_surface_temperature_c: 0.25, event_subtype_thermal_latent: 0.30}
     calm_noise_std: {snow_surface_temperature_c: 0.32, event_subtype_thermal_latent: 0.45}
