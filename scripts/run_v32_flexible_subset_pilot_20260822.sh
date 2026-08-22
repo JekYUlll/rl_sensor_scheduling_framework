@@ -17,6 +17,7 @@ LEAD_STEPS="${LEAD_STEPS:-8}"
 EVENT_MICROSTRUCTURE_SIGMA="${EVENT_MICROSTRUCTURE_SIGMA:-0.08}"
 EVENT_MICROSTRUCTURE_ALPHA="${EVENT_MICROSTRUCTURE_ALPHA:-0.22}"
 EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION="${EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION:-0.35}"
+EVENT_SUBTYPE_PARTICLE_MIN_PARSIVEL_AVAILABILITY="${EVENT_SUBTYPE_PARTICLE_MIN_PARSIVEL_AVAILABILITY:-0}"
 SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
 ORACLE_EPOCHS="${ORACLE_EPOCHS:-10}"
 ORACLE_TYPE="${ORACLE_TYPE:-tcn}"
@@ -142,6 +143,7 @@ for seed in "${SEEDS[@]}"; do
     --event-particle-microstructure-correlation "$EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION" \
     --event-subtypes-enabled \
     --event-subtype-assignment "$EVENT_SUBTYPE_ASSIGNMENT" \
+    --event-subtype-particle-min-parsivel-availability "$EVENT_SUBTYPE_PARTICLE_MIN_PARSIVEL_AVAILABILITY" \
     --event-subtype-particle-prob 0.36 \
     --event-subtype-flux-prob 0.36 \
     --event-subtype-thermal-prob 0.28 \

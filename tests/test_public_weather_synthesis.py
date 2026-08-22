@@ -29,6 +29,25 @@ def test_stratified_event_subtypes_control_run_counts() -> None:
     assert np.bincount(run_labels, minlength=4)[1:].tolist() == [6, 3, 3]
 
 
+def test_particle_subtype_respects_run_level_sensor_availability() -> None:
+    active = np.tile(np.asarray([True, True, False]), 12)
+    eligible = np.tile(np.asarray([False, False, True]), 12)
+    eligible[18:20] = True
+    subtype = _assign_event_subtypes(
+        active,
+        rng=np.random.default_rng(7),
+        particle_prob=0.5,
+        flux_prob=0.25,
+        thermal_prob=0.25,
+        assignment="stratified",
+        particle_eligibility=eligible,
+        particle_min_eligibility_fraction=0.8,
+    )
+    run_labels = subtype[np.arange(0, active.size, 3)]
+    assert np.count_nonzero(run_labels == 1) == 1
+    assert run_labels[6] == 1
+
+
 def _write_antaws_station(root: Path, station: str, rows: int = 16) -> None:
     root.mkdir(parents=True, exist_ok=True)
     data = []

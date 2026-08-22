@@ -1983,3 +1983,20 @@ tar -czf "$OUT…`
   fixed evaluator's loss cannot be used as a physical monotonicity axiom; the
   next scene gate must compare feasible online dynamic schedules directly with
   static schedules under the same evaluator and observable information.
+
+### 2026-08-22 | V64 continuity-guarded online scene audit
+
+- Added a calibration-only diagnostic that selects the best calm mask, requires
+  the relevant physical specialist during each alert, retains the maximum
+  number of calm-mask channels, and uses subtype forecast loss only to break
+  calibration ties. This diagnostic does not alter PD-PPO or use test labels.
+- On the frozen V64 runs it beat static jointly in `3/5` seeds. Mean ordinary
+  and macro margins improved to `+0.018754` and `+0.114463`, but seeds 902 and
+  905 still failed. Continuity-aware mask selection is therefore useful but
+  insufficient as a scene repair.
+- The truth audit found that the fixed `-30 C` Parsivel operating threshold
+  makes `54%--61%` of particle-subtype target epochs unavailable and zero-valued
+  across these seeds. Subtype assignment was independent of this physical
+  availability. Added an opt-in run-level eligibility condition so particle
+  subtypes can be assigned only when the instrument is operational for a
+  specified fraction of the event; historical generation remains unchanged.

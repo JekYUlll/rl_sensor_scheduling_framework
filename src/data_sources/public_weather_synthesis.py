@@ -66,6 +66,7 @@ class PublicWeatherSynthesisConfig:
     event_particle_microstructure_correlation: float = 1.0
     event_subtypes_enabled: bool = False
     event_subtype_assignment: str = "random"
+    event_subtype_particle_min_parsivel_availability: float = 0.0
     event_subtype_particle_prob: float = 0.34
     event_subtype_flux_prob: float = 0.33
     event_subtype_thermal_prob: float = 0.33
@@ -386,6 +387,8 @@ def _assign_event_subtypes(
     flux_prob: float,
     thermal_prob: float,
     assignment: str = "random",
+    particle_eligibility: np.ndarray | None = None,
+    particle_min_eligibility_fraction: float = 0.0,
 ) -> np.ndarray:
     """Assign one latent subtype to each event run.
 
@@ -402,19 +405,31 @@ def _assign_event_subtypes(
         probs = np.asarray([1.0, 1.0, 1.0], dtype=float)
     probs = probs / float(np.sum(probs))
     runs = _bool_runs(arr)
+    eligibility = None if particle_eligibility is None else np.asarray(particle_eligibility, dtype=bool).reshape(-1)
+    if eligibility is not None and eligibility.shape != arr.shape:
+        raise ValueError("particle_eligibility must match active")
+    min_particle_fraction = float(np.clip(particle_min_eligibility_fraction, 0.0, 1.0))
     assigned = np.zeros(3, dtype=int)
     tie_order = rng.permutation(3)
     tie_rank = np.empty(3, dtype=int)
     tie_rank[tie_order] = np.arange(3)
     for run_idx, (start, end) in enumerate(runs):
+        available_types = np.ones(3, dtype=bool)
+        if eligibility is not None and min_particle_fraction > 0.0:
+            available_types[0] = bool(
+                np.mean(eligibility[int(start) : int(end)]) >= min_particle_fraction
+            )
         if str(assignment) == "stratified":
             deficit = probs * float(run_idx + 1) - assigned
+            deficit = np.where(available_types, deficit, -np.inf)
             best = np.flatnonzero(np.isclose(deficit, np.max(deficit)))
             chosen = int(best[np.argmin(tie_rank[best])])
             subtype_id = chosen + 1
             assigned[chosen] += 1
         elif str(assignment) == "random":
-            subtype_id = int(rng.choice(np.asarray([1, 2, 3], dtype=int), p=probs))
+            eligible_probs = np.where(available_types, probs, 0.0)
+            eligible_probs = eligible_probs / float(np.sum(eligible_probs))
+            subtype_id = int(rng.choice(np.asarray([1, 2, 3], dtype=int), p=eligible_probs))
         else:
             raise ValueError(f"Unsupported event_subtype_assignment={assignment!r}")
         subtype[int(start) : int(end)] = subtype_id
@@ -613,6 +628,7 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         )
     else:
         blowing_snow_active = event_candidate
+    parsivel_available = synth_cols["air_temperature_c"] >= float(cfg.parsivel_min_temp_c)
     if bool(cfg.event_subtypes_enabled):
         event_subtype_id = _assign_event_subtypes(
             blowing_snow_active,
@@ -621,6 +637,10 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
             flux_prob=float(cfg.event_subtype_flux_prob),
             thermal_prob=float(cfg.event_subtype_thermal_prob),
             assignment=str(cfg.event_subtype_assignment),
+            particle_eligibility=parsivel_available,
+            particle_min_eligibility_fraction=float(
+                cfg.event_subtype_particle_min_parsivel_availability
+            ),
         )
     else:
         event_subtype_id = np.zeros(int(cfg.steps), dtype=int)
@@ -790,7 +810,6 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         flux = flux * np.exp(float(cfg.event_microstructure_sigma) * event_microstructure)
         flux = np.clip(flux, 0.0, None)
 
-    parsivel_available = synth_cols["air_temperature_c"] >= float(cfg.parsivel_min_temp_c)
     diameter = 0.34 - 0.009 * np.minimum(wind_speed, 24.0) + rng.normal(0.0, 0.025, size=int(cfg.steps))
     diameter = diameter + float(cfg.event_microstructure_diameter_scale) * particle_microstructure
     if bool(cfg.event_subtypes_enabled):
@@ -899,6 +918,9 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         "event_subtype_latent_alpha": float(cfg.event_subtype_latent_alpha),
         "event_subtype_particle_latent_diameter_scale_mm": float(
             cfg.event_subtype_particle_latent_diameter_scale_mm
+        ),
+        "event_subtype_particle_min_parsivel_availability": float(
+            cfg.event_subtype_particle_min_parsivel_availability
         ),
         "event_subtype_particle_latent_velocity_scale_ms": float(
             cfg.event_subtype_particle_latent_velocity_scale_ms
