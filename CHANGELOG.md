@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V59 Forecast-Gain Replication Failed
+
+### Result
+
+- Frozen 200,704-step V59 was replicated on all V51 development seeds. Joint
+  wins were `1/5` against static and `3/5` against conventional dynamic
+  references. Mean ordinary/macro margins were `-0.018184/-0.000430` against
+  static and `-0.001427/-0.008200` against dynamic policies.
+- Behavior passed in `4/5` seeds. Reward and critic scales remained stable, so
+  numerical instability does not explain the failed transfer.
+
+### Interpretation and Decision
+
+- Reject longer forecast-gain exploration and stop this reward branch. The
+  matched counterfactual is useful diagnostically but does not preserve the
+  absolute forecast-loss ordering across seeds.
+- Run a BC-only soft-value transfer diagnostic. It will determine whether PPO
+  updates destroy an initially useful online mapping or whether the privileged
+  V51 dynamic upper is intrinsically unavailable from online observations.
+
 ## 2026-08-22 - V59 Longer Forecast-Gain PPO Passed Seed881
 
 ### Result
