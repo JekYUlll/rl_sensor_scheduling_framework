@@ -1003,3 +1003,15 @@ tar -czf "$OUT…`
   embeddings, which cannot represent non-additive complementarity or redundancy
   between channels. A shared nonlinear subset encoder is added as the next clean
   arbitrary-subset actor variant.
+
+### 2026-08-22 | Flexible-subset v21 nonlinear subset encoder
+
+- On the frozen seed-406 evidence path, the nonlinear subset encoder preserved
+  intermediate duty for all six channels and improved normalized subtype macro
+  loss from V18's `0.91173` to `0.88322`. Mean loss was `0.27579`; both values
+  remained worse than static (`0.25439`, `0.85606`).
+- Actor entropy declined much faster than in the linear encoder, indicating
+  premature concentration after adding subset interaction capacity. The next
+  bounded control raises the existing entropy coefficient and uses
+  validation-only checkpoint selection; no new supervision or baseline prior is
+  introduced.
