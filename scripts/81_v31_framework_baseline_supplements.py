@@ -452,6 +452,19 @@ def evaluate_run(
     elif str(context_action_source) == "hybrid":
         action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
         action_indices["calm"] = best_action_by_column(context_action_table, "oracle_loss_non_event")
+    elif str(context_action_source) == "guarded_hybrid":
+        action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
+        calm_action = best_action_by_column(context_action_table, "oracle_loss_non_event")
+        action_indices["calm"] = calm_action
+        indexed = context_action_table.set_index("action_idx")
+        for label in ("particle", "flux", "thermal"):
+            score_column = f"oracle_loss_subtype_{label}"
+            specialist_score = finite_float(indexed.loc[action_indices[label], score_column])
+            calm_score = finite_float(indexed.loc[calm_action, score_column])
+            if not np.isfinite(specialist_score) or (
+                np.isfinite(calm_score) and specialist_score >= calm_score
+            ):
+                action_indices[label] = calm_action
     else:
         action_indices = build_context_action_indices(context_action_table)
     static_table_path = run_dir / replay_dir / "split_static_candidate_event_table.csv"
@@ -676,7 +689,7 @@ def main() -> None:
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
     parser.add_argument(
         "--context-action-source",
-        choices=["validation", "physical", "hybrid"],
+        choices=["validation", "physical", "hybrid", "guarded_hybrid"],
         default="validation",
     )
     parser.add_argument(
