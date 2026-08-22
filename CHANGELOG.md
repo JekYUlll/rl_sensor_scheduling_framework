@@ -2506,3 +2506,16 @@ tar -czf "$OUT…`
   families and is closed. V95 restores the nonlinear encoder and performs the
   originally intended event-only scope test for both retained guidance losses,
   which V93 did not execute because of the corrected launcher overwrite.
+### 2026-08-23 | V95 closes retained-guidance scope tuning
+
+- Correctly restricted both retained AWBC and subtype-action inclusion to event
+  samples, with all remaining V93 controls frozen. Joint wins were `3/5`
+  against strongest static and `5/5` against conventional dynamic references;
+  behavior passed `3/5`.
+- Seed 1101 recovered full channel coverage, while seeds 1103 and 1105 each
+  left two channels unused. The scope change therefore does not satisfy the
+  complete gate and is closed.
+- Variable-level decomposition identified a scene-objective defect: the base
+  loss assigns mass-flux weight `18` and particle weights `8/8`, so snow targets
+  dominate even in calm periods. The next screen uses equal weights after the
+  existing physical target scaling while retaining event-subtype weights.
