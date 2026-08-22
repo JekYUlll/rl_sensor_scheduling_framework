@@ -917,3 +917,20 @@ tar -czf "$OUT…`
   specialist observations. V13 is rejected. The next bounded calibration
   restores alpha `0.22` and increases only the subtype-latent target amplitudes
   to strengthen specialist information value without changing action geometry.
+
+### 2026-08-22 | Flexible-subset v14--v15 specialist-value calibration
+
+- Stronger subtype target amplitudes improved v14 relative to fast-latent v13,
+  but PD-PPO still reached only `1/3` two-endpoint static wins and `0/3`
+  strongest-dynamic wins.
+- Replacing the thermal physical pair with `{shielded thermo-hygro, IR}` made
+  both online-warning and privileged exact-label physical policies beat static
+  in seeds 405 and 407. Seed 406 remained slightly negative.
+- Validation-selected, physical, hybrid, and validation-guarded action mappings
+  were evaluated. None passed 3/3 because the seed-406 validation preference did
+  not transfer to test. Further action-map tuning is stopped to avoid post-hoc
+  adaptation.
+- The flexible formulation itself is validated behaviorally: 20 naturally
+  power-feasible actions, no required channel, no cardinality cap, broad subset
+  use, and no forced duty quotas. Stable prediction superiority remains an open
+  algorithm/scenario-transfer problem and is not claimed from these dev runs.
