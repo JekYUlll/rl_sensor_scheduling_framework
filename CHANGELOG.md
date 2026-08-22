@@ -2476,3 +2476,18 @@ tar -czf "$OUT…`
   performance/diversity conflict.
 - Closed execution-temperature tuning. The next bounded training test retains
   calibrated guidance only in event windows and frees calm/transition actions.
+### 2026-08-23 | V93 event-only guidance retains performance but not coverage
+
+- Restricted retained AWBC and subtype-action guidance to event samples while
+  keeping the V83a scene, forecaster, action geometry, reward, and policy seeds
+  fixed. PD-PPO jointly beat the strongest static family in `4/5` seeds and
+  conventional dynamic references in `5/5`; mean ordinary/macro margins were
+  `+0.010409/+0.072432` and `+0.049779/+0.190395`, respectively.
+- Behavior passed only `3/5`. Seed 1101 left the met-station and FC4 channels
+  unused, and seed 1105 left the met-station, radiometer, and FC4 channels
+  unused. The omissions occur in both event and non-event epochs; seed 1105
+  also selected the empty subset for `27.9%` of test epochs.
+- Event-only guidance is therefore not adopted as the frozen configuration.
+  V94 changes only the nonlinear subset encoder to the previously tested linear
+  additive representation, which directly shares learned channel value across
+  every feasible subset containing that channel.
