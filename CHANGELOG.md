@@ -2494,3 +2494,15 @@ tar -czf "$OUT…`
   V94 changes only the nonlinear subset encoder to the previously tested linear
   additive representation, which directly shares learned channel value across
   every feasible subset containing that channel.
+### 2026-08-23 | V94 rejects linear subset representation on V83a
+
+- Replaced only the nonlinear subset encoder with a linear additive action
+  representation while retaining the effective V93 guidance, objective, frozen
+  scenes, and policy seeds.
+- Joint wins fell to `3/5` against strongest static and `4/5` against
+  conventional dynamic references. Behavior remained `3/5`; seeds 1101 and
+  1105 still left multiple channels unused.
+- Linear composition has now failed to meet the complete gate on two scene
+  families and is closed. V95 restores the nonlinear encoder and performs the
+  originally intended event-only scope test for both retained guidance losses,
+  which V93 did not execute because of the corrected launcher overwrite.
