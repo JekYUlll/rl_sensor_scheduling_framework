@@ -1149,3 +1149,15 @@ tar -czf "$OUT…`
   dynamic upper bound. Further PPO coefficient tuning stops. The next bounded
   screen increases physically plausible event-process persistence and reduces
   shared microstructure correlation before any policy training.
+
+### 2026-08-22 | Flexible-subset v31 persistent-microstructure screen
+
+- Two development-only scenes increased event-process persistence and reduced
+  shared particle microstructure correlation. The moderate V31a setting
+  (`sigma=0.12`, `alpha=0.60`, correlation `0.10`, subtype-latent alpha `0.55`)
+  matched the more aggressive alternative's upper margin and was retained.
+- Under frozen truth and forecasters, privileged dynamic schedules beat the
+  strongest hindsight static mask on ordinary mean loss in all three V31a
+  development seeds. Margins were `+0.00497`, `+0.00154`, and `+0.00173` for
+  seeds 601--603. The scene upper-bound gate passes; V29 training is now tested
+  without further scene changes.
