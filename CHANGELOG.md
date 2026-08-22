@@ -1052,3 +1052,13 @@ tar -czf "$OUT…`
   and dwell constraint. It had zero aborts and only `0.00362` switches per step.
   The scenario gate therefore passes, and V25 will train PD-PPO on the frozen
   V24 evidence path before any seed expansion.
+
+### 2026-08-22 | Flexible-subset v25 trained policy on passed scene
+
+- Despite the positive V24 dynamic upper bound, checkpointed PD-PPO reached mean
+  `0.15812` and normalized subtype macro `0.63718`, losing to static
+  `0.14540/0.56057`.
+- The selected policy again became nearly static, with one always-on channel,
+  three always-off channels, and only `0.00608` switches per step. V26 removes
+  validation checkpoint restoration while keeping the frozen scene, oracle,
+  reward, and no-prior nonlinear actor unchanged.
