@@ -622,6 +622,7 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
     parser.add_argument("--oracle-rollouts-per-policy", type=int, default=6)
+    parser.add_argument("--oracle-full-open-repeat", type=int, default=3)
     parser.add_argument("--oracle-epochs", type=int, default=18)
     parser.add_argument("--oracle-batch-size", type=int, default=512)
     parser.add_argument("--oracle-loss-clip", type=float, default=10.0)
@@ -1122,6 +1123,7 @@ def main() -> None:
             "use_candidate_prior": bool(args.use_candidate_prior),
             "candidate_prior_scale": float(args.candidate_prior_scale),
             "oracle_candidate_mask_repeat": int(args.oracle_candidate_mask_repeat),
+            "oracle_full_open_repeat": int(args.oracle_full_open_repeat),
             "oracle_candidate_mask_limit": int(args.oracle_candidate_mask_limit),
             "oracle_subtype_teacher_repeat": int(args.oracle_subtype_teacher_repeat),
             "oracle_subtype_teacher_lookahead_steps": int(args.oracle_subtype_teacher_lookahead_steps),
@@ -1252,6 +1254,8 @@ def main() -> None:
         str(int(args.oracle_rollout_steps)),
         "--oracle-rollouts-per-policy",
         str(int(args.oracle_rollouts_per_policy)),
+        "--oracle-full-open-repeat",
+        str(int(args.oracle_full_open_repeat)),
         "--oracle-epochs",
         str(int(args.oracle_epochs)),
         "--oracle-batch-size",
