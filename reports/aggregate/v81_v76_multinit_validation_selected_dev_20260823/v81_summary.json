@@ -1,0 +1,12 @@
+{
+  "selected_static_joint_wins": 2,
+  "selected_dynamic_joint_wins": 4,
+  "selected_mean_static_margin_ordinary": 0.022101294120269212,
+  "selected_mean_static_margin_macro": 0.029833496634693278,
+  "selected_mean_dynamic_margin_ordinary": 0.017621575664573653,
+  "selected_mean_dynamic_margin_macro": 0.03662815633141496,
+  "selected_behavior_passes": 4,
+  "validation_matches_posthoc_test_best": 3,
+  "scenes_with_any_static_joint_win": 4,
+  "mean_validation_test_spearman": 0.3
+}

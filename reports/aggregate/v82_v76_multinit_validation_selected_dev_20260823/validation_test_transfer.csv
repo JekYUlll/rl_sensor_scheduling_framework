@@ -1,0 +1,6 @@
+data_seed,validation_test_spearman,selected_policy_seed,posthoc_test_best_policy_seed,selection_matches_posthoc_test_best,any_static_joint_win,all_static_joint_win
+901,-0.5,1701,1703,False,True,False
+902,1.0,1703,1703,True,True,True
+903,1.0,1701,1701,True,True,True
+904,1.0,1701,1701,True,False,False
+905,1.0,1701,1701,True,True,True

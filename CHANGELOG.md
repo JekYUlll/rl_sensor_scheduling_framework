@@ -2310,3 +2310,25 @@ tar -czf "$OUT…`
   selects one of three independent initializations using validation losses
   only. This gives the learned policy the same validation-selection discipline
   already used by the strongest static baseline without inspecting test loss.
+
+### 2026-08-23 | Flexible-subset v81-v82 validation-only initialization selection
+
+- Added independent data and policy seeds and trained three V76 policy
+  initializations for each of the five frozen development scenes. The locked
+  selector minimized the worse of the two validation loss ratios relative to
+  the strongest validation static candidate; test metrics were read only after
+  the selection manifest and input hashes had been written.
+- V81 exposed an aggregation mismatch: its selector used unnormalized subtype
+  macro loss, while the frozen co-primary endpoint is static-normalized subtype
+  macro loss. V81 is retained as a diagnostic and is not used for a gate.
+- V82 recorded the correct normalized macro validation metric. Selected
+  policies jointly beat strongest static in `3/5` scenes and conventional
+  dynamic references in `4/5`; mean ordinary/normalized-macro margins were
+  `+0.022101/+0.136017` against static and `+0.017622/+0.052372` against
+  dynamic references. Behavior passed in `4/5` scenes.
+- Validation ranking matched the post-hoc test-best initialization in `4/5`
+  scenes, but one scene had no successful initialization and only `4/5` scenes
+  contained any post-hoc static joint winner. Initialization selection is
+  therefore closed. The next scene gate must require a deployable online-
+  context policy, not only a privileged future-loss upper bound, to beat static
+  robustly before any further PPO training.

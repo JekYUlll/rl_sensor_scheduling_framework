@@ -1,0 +1,2 @@
+update,timesteps,oracle_loss_mean,oracle_loss_macro_subtype_event,oracle_loss_macro_subtype_event_staticnorm,selection_score_name,selection_score
+40,40960,0.362661320832558,0.6418785544691158,0.8271075693223255,oracle_loss_mean,0.362661320832558
