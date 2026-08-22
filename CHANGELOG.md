@@ -969,3 +969,14 @@ tar -czf "$OUT…`
   changed from the V15 action 8 to action 1, so it is positive development
   evidence but not a strict single-variable ablation. V18 will reuse the frozen
   V15 control artifacts to isolate the action-prior effect.
+
+### 2026-08-22 | Flexible-subset v18 frozen no-action-prior control
+
+- Reusing the exact V15 seed-406 truth, oracle, windows, and static reference,
+  disabling the state-independent action prior reduced PD-PPO mean loss from
+  `0.29292` to `0.27352` and normalized subtype macro loss from `0.96089` to
+  `0.91173`.
+- The controlled variant still lost to static (`0.25439`, `0.85606`) and left
+  one channel effectively off. The prior is therefore a verified source of
+  static bias, but removing it alone does not pass the prediction or behavior
+  gates. The next bounded control adds validation-only checkpoint selection.
