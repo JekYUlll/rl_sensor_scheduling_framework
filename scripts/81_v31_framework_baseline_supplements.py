@@ -18,7 +18,7 @@ import re
 import sys
 from dataclasses import replace
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -299,6 +299,70 @@ def build_context_action_indices(validation_table: pd.DataFrame) -> dict[str, in
     }
 
 
+def coordinate_select_context_actions(
+    validation_table: pd.DataFrame,
+    evaluate_mapping: Callable[[dict[str, int]], tuple[float, float]],
+    *,
+    pool_size: int = 4,
+    passes: int = 2,
+) -> tuple[dict[str, int], pd.DataFrame]:
+    """Select a complete context policy using constrained calibration replay."""
+    labels = ("calm", "particle", "flux", "thermal")
+    columns = {
+        "calm": "oracle_loss_non_event",
+        "particle": "oracle_loss_subtype_particle",
+        "flux": "oracle_loss_subtype_flux",
+        "thermal": "oracle_loss_subtype_thermal",
+    }
+    selected = build_context_action_indices(validation_table)
+    pools: dict[str, list[int]] = {}
+    for label in labels:
+        column = columns[label]
+        ranked = validation_table.copy()
+        ranked["_score"] = pd.to_numeric(ranked[column], errors="coerce")
+        ranked = ranked[np.isfinite(ranked["_score"])].sort_values(
+            ["_score", "oracle_loss_mean", "action_idx"]
+        )
+        candidates = [int(value) for value in ranked["action_idx"].head(max(1, int(pool_size)))]
+        pools[label] = list(dict.fromkeys([int(selected[label]), *candidates]))
+
+    ledger: list[dict[str, Any]] = []
+
+    def score(mapping: dict[str, int], *, pass_idx: int, changed_label: str) -> tuple[float, float]:
+        primary, secondary = evaluate_mapping(mapping)
+        ledger.append(
+            {
+                "pass": int(pass_idx),
+                "changed_label": str(changed_label),
+                **{label: int(mapping[label]) for label in labels},
+                "selection_primary": float(primary),
+                "selection_secondary": float(secondary),
+            }
+        )
+        return float(primary), float(secondary)
+
+    best = score(selected, pass_idx=0, changed_label="initial")
+    for pass_idx in range(1, max(1, int(passes)) + 1):
+        changed = False
+        for label in labels:
+            label_best = best
+            label_action = int(selected[label])
+            for action_idx in pools[label]:
+                trial = dict(selected)
+                trial[label] = int(action_idx)
+                trial_score = score(trial, pass_idx=pass_idx, changed_label=label)
+                if trial_score < label_best:
+                    label_best = trial_score
+                    label_action = int(action_idx)
+            if label_action != int(selected[label]):
+                selected[label] = label_action
+                best = label_best
+                changed = True
+        if not changed:
+            break
+    return selected, pd.DataFrame(ledger)
+
+
 def build_physical_context_action_indices(
     metadata: dict[str, Any],
     sensors: list[Any],
@@ -493,6 +557,9 @@ def evaluate_run(
         fallback_path = run_dir / "reward_staticnorm_fallback_candidates.csv"
         if fallback_path.exists():
             context_action_table = pd.read_csv(fallback_path)
+    static_table_path = run_dir / replay_dir / "split_static_candidate_event_table.csv"
+    static_table = pd.read_csv(static_table_path) if static_table_path.exists() else validation_table.copy()
+    normalizers = subtype_static_normalizers(static_table)
     if str(context_action_source) == "physical":
         action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
     elif str(context_action_source) == "continuity_guarded":
@@ -518,11 +585,59 @@ def evaluate_run(
                 np.isfinite(calm_score) and specialist_score >= calm_score
             ):
                 action_indices[label] = calm_action
+    elif str(context_action_source) == "replay_calibrated":
+        checkpoint_cfg = dict(metadata.get("checkpoint_selection", {}))
+        calibration_starts = tuple(int(value) for value in checkpoint_cfg.get("start_indices", ()))
+        calibration_steps = int(checkpoint_cfg.get("steps", 0))
+        if not calibration_starts or calibration_steps <= 0:
+            raise ValueError("Replay-calibrated context actions require checkpoint-selection starts")
+        calibration_cfg = replace(
+            eval_cfg,
+            episode_len=calibration_steps,
+            seed=int(metadata["seed"]) + 12_000,
+        )
+        best_static_ordinary = float(pd.to_numeric(validation_table["oracle_loss_mean"], errors="coerce").min())
+        static_macro_values = pd.to_numeric(
+            add_staticnorm_macro(validation_table, normalizers).get(
+                STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN, pd.Series(dtype=float)
+            ),
+            errors="coerce",
+        )
+        best_static_macro = float(static_macro_values.min())
+
+        def evaluate_context_mapping(mapping: dict[str, int]) -> tuple[float, float]:
+            policy = ContextAlertBanditPolicy(
+                sensors=sensors,
+                candidate_masks=candidate_masks,
+                action_indices=mapping,
+                threshold=0.5,
+                name="context_calibration_candidate",
+            )
+            result, metrics = helpers.evaluate_score_policy_over_starts(
+                truth=truth,
+                sensors=sensors,
+                constraints=constraints,
+                cfg=calibration_cfg,
+                oracle=oracle,
+                policy=policy,
+                steps=calibration_steps,
+                start_indices=calibration_starts,
+            )
+            row = append_subtype_loss_split(dict(metrics), result, truth)
+            scored = add_staticnorm_macro(pd.DataFrame([row]), normalizers).iloc[0]
+            ordinary = finite_float(scored.get("oracle_loss_mean"))
+            macro = finite_float(scored.get(STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN))
+            ordinary_ratio = ordinary / best_static_ordinary
+            macro_ratio = macro / best_static_macro
+            return max(ordinary_ratio, macro_ratio), ordinary_ratio + macro_ratio
+
+        action_indices, calibration_ledger = coordinate_select_context_actions(
+            context_action_table,
+            evaluate_context_mapping,
+        )
+        calibration_ledger.to_csv(out_dir / "context_replay_calibration_ledger.csv", index=False)
     else:
         action_indices = build_context_action_indices(context_action_table)
-    static_table_path = run_dir / replay_dir / "split_static_candidate_event_table.csv"
-    static_table = pd.read_csv(static_table_path) if static_table_path.exists() else validation_table.copy()
-    normalizers = subtype_static_normalizers(static_table)
 
     policy_objects: list[Any] = []
     selected_action_rows: list[dict[str, Any]] = []
@@ -742,7 +857,7 @@ def main() -> None:
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
     parser.add_argument(
         "--context-action-source",
-        choices=["validation", "physical", "hybrid", "guarded_hybrid", "continuity_guarded"],
+        choices=["validation", "physical", "hybrid", "guarded_hybrid", "continuity_guarded", "replay_calibrated"],
         default="validation",
     )
     parser.add_argument(
