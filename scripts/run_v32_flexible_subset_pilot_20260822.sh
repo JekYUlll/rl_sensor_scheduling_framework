@@ -35,6 +35,9 @@ CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
 NONLINEAR_ACTION_EMBEDDING="${NONLINEAR_ACTION_EMBEDDING:-0}"
 EVENT_SUBTYPE_LATENT_ALPHA="${EVENT_SUBTYPE_LATENT_ALPHA:-0.22}"
+PARTICLE_HUMIDITY_BOOST="${PARTICLE_HUMIDITY_BOOST:-1.0}"
+FLUX_WIND_BOOST="${FLUX_WIND_BOOST:-1.0}"
+THERMAL_AIR_TEMP_DROP="${THERMAL_AIR_TEMP_DROP:-1.0}"
 PARTICLE_LATENT_DIAMETER_SCALE="${PARTICLE_LATENT_DIAMETER_SCALE:-0.14}"
 PARTICLE_LATENT_VELOCITY_SCALE="${PARTICLE_LATENT_VELOCITY_SCALE:-2.4}"
 FLUX_LATENT_SIGMA="${FLUX_LATENT_SIGMA:-1.2}"
@@ -135,9 +138,9 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-flux-diameter-shift-mm -0.05 \
     --event-subtype-flux-velocity-boost-ms 0.8 \
     --event-subtype-thermal-surface-drop-c 2.4 \
-    --event-subtype-particle-humidity-boost-pct 1.0 \
-    --event-subtype-flux-wind-boost-ms 1.0 \
-    --event-subtype-thermal-air-temp-drop-c 1.0 \
+    --event-subtype-particle-humidity-boost-pct "$PARTICLE_HUMIDITY_BOOST" \
+    --event-subtype-flux-wind-boost-ms "$FLUX_WIND_BOOST" \
+    --event-subtype-thermal-air-temp-drop-c "$THERMAL_AIR_TEMP_DROP" \
     --event-subtype-latent-alpha "$EVENT_SUBTYPE_LATENT_ALPHA" \
     --event-subtype-particle-latent-diameter-scale-mm "$PARTICLE_LATENT_DIAMETER_SCALE" \
     --event-subtype-particle-latent-velocity-scale-ms "$PARTICLE_LATENT_VELOCITY_SCALE" \

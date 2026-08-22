@@ -1316,3 +1316,17 @@ tar -czf "$OUT…`
   gate and is rejected. Because four seeds remain positive while one frozen
   TCN ranking is a large outlier, V41 holds the V38 scene fixed and increases
   evaluator candidate coverage and fitting epochs before any policy training.
+
+### 2026-08-22 | Flexible-subset v41 evaluator-stability screen
+
+- V41 restored lookback 20, doubled candidate-mask forecaster rollouts, raised
+  subtype-teacher repeats from 4 to 6, and trained the frozen TCN for 20 epochs
+  on new seeds 841--845. Exact upper margins were `-0.01104`, `-0.00912`,
+  `+0.01195`, `+0.00071`, and `+0.03493` (3/5; mean `+0.00549`). Evaluator
+  capacity alone does not remove the static shortcut.
+- Environment reset inspection found no truth-history leakage: histories start
+  at fitting-partition means with zero masks, and inactive variables are carried
+  forward. The generator does, however, inject subtype-specific changes into
+  shared humidity, wind, and air-temperature channels. V42 removes those three
+  cross-channel subtype proxies while retaining specialist latents and physical
+  targets; launcher defaults remain unchanged for historical runs.
