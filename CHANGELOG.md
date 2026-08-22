@@ -1183,3 +1183,15 @@ tar -czf "$OUT…`
   Calibration labels improved action value but coefficient `0.1` dominated
   exploration. V33 tests the same labels at `0.05`; no new module, scene, or
   action rule is introduced.
+
+### 2026-08-22 | Flexible-subset v33 calibrated-guidance interpolation
+
+- Halving calibrated event guidance restored broader execution but did not
+  preserve the V32 performance gain. Aggregate ordinary loss `0.20242` was
+  worse than static `0.19815` and AoI `0.20193`; paired joint wins were only
+  `1/3` against each.
+- The V31a scene is rejected for learned-policy confirmation. Its privileged
+  ordinary-loss headroom was only `0.0015--0.0050`, insufficient relative to
+  policy variation. The next scene-only upper-bound screen raises event
+  coverage from `0.55` to `0.65` while holding costs, actions, constraints,
+  persistent dynamics, and subtype generation fixed.
