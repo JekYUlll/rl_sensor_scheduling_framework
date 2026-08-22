@@ -1954,3 +1954,17 @@ tar -czf "$OUT…`
   groups but only 6 subtype-dynamic and 3 full-open groups. The launcher now
   exposes `ORACLE_FULL_OPEN_REPEAT`; V65 will rebalance fitting coverage without
   changing the simulator, action space, estimator, reward, or online policy.
+
+### 2026-08-22 | Flexible-subset v65 evaluator-mixture screen
+
+- V65 changed only frozen-evaluator fitting coverage to 12 full-open, 12
+  subtype-dynamic, and one repeat of each of the 35 feasible static masks. The
+  recorded full-open fraction rose to 23.5%, confirming that the requested
+  mixture was applied.
+- Full-open nevertheless beat static jointly in only `2/5` seeds; mean ordinary
+  and macro margins were `+0.014249` and `+0.013195`. Reweighting trajectory
+  families is rejected as an evaluator-stability fix, and no online-policy or
+  PPO evaluation was authorized.
+- The split protocol and flexible launcher now expose the existing `linear` and
+  `tcn` frozen-oracle implementations. V66 will isolate predictor-family
+  sensitivity under the unchanged V64 scene and estimator.

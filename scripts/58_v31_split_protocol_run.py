@@ -621,6 +621,7 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
+    parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
     parser.add_argument("--oracle-rollouts-per-policy", type=int, default=6)
     parser.add_argument("--oracle-full-open-repeat", type=int, default=3)
     parser.add_argument("--oracle-epochs", type=int, default=18)
@@ -1249,7 +1250,7 @@ def main() -> None:
         "--event-subtype-context-noise-std",
         str(float(args.event_subtype_context_noise_std)),
         "--oracle-type",
-        "tcn",
+        str(args.oracle_type),
         "--oracle-rollout-steps",
         str(int(args.oracle_rollout_steps)),
         "--oracle-rollouts-per-policy",
