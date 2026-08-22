@@ -1292,3 +1292,15 @@ tar -czf "$OUT…`
   event residence so specialist observations can amortize warm-up and forecast
   history transitions. The launcher now exposes duration controls while
   preserving all historical defaults.
+
+### 2026-08-22 | Flexible-subset v39 long-regime screen
+
+- V39 retained V38 specialist effects but extended event duration to 48--96
+  steps, minimum gaps to 24 steps, and event lead to 12 steps on new seeds
+  821--825. Exact-geometry dynamic upper margins were `+0.00052`, `+0.01556`,
+  `+0.00621`, `-0.00309`, and `-0.01257` (3/5; mean `+0.00133`).
+- Longer residence did not overcome static history retention and is rejected.
+  V40 instead shortens the 20-step observation/forecaster lookback to the
+  8-step forecast horizon while restoring V38 event durations. The launcher
+  exposes `LOOKBACK` with historical default 20; no PPO run is authorized until
+  the exact upper gate passes.
