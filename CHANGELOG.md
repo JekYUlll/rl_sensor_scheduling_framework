@@ -1,5 +1,30 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V48 Complete Context Encoding Improved Dynamic Baselines
+
+### Result
+
+- Assigned all 20 online alert-context features to the dedicated context branch
+  and retained the corrected full-rollout V46 training protocol.
+- PD-PPO jointly beat the strongest conventional dynamic reference in `5/5`
+  seeds. Mean ordinary/macro margins were `+0.015078/+0.041426`.
+- Against the strongest static reference, joint wins remained `2/5`; mean
+  ordinary/macro margins were `-0.002139/+0.035182`. Behavior passed `5/5`,
+  with zero always-on channels, one unused channel, five intermediate-duty
+  channels, and zero warm-up aborts.
+
+### Decision
+
+- Retain complete context encoding as the corrected architecture. Do not switch
+  to calibration-selected action labels, whose cross-partition transfer was
+  previously unstable.
+- The exact dynamic upper bound averages only `+0.010995` over static, leaving
+  insufficient room for a learned online policy. Screen a new development-only
+  scene that increases particle and flux specialist-specific target innovations
+  by 1.5x while preserving thermal dynamics, online warnings, costs, budget,
+  action geometry, and deployment constraints. No PPO training occurs before
+  a stronger exact-geometry upper pass.
+
 ## 2026-08-22 - V47 Checkpoint Selection Failed; Context Split Audited
 
 ### Result
