@@ -52,6 +52,7 @@ AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0.0}"
 SUBTYPE_ACTION_EVENT_ONLY="${SUBTYPE_ACTION_EVENT_ONLY:-0}"
+SUBTYPE_LOSS_WEIGHTING="${SUBTYPE_LOSS_WEIGHTING:-1}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
@@ -98,6 +99,11 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--subtype-action-event-only)
   else
     control_args+=(--no-subtype-action-event-only)
+  fi
+  if [[ "$SUBTYPE_LOSS_WEIGHTING" == "1" ]]; then
+    control_args+=(--subtype-loss-weighting)
+  else
+    control_args+=(--no-subtype-loss-weighting)
   fi
 
   "$PY" scripts/58_v31_split_protocol_run.py \
@@ -224,7 +230,6 @@ for seed in "${SEEDS[@]}"; do
     --no-primary-eval-duty-guard \
     --min-dwell-steps 6 \
     --target-weights 0.25 0.35 0.30 0.10 0.10 0.20 18.0 8.0 8.0 \
-    --subtype-loss-weighting \
     --subtype-particle-target-weights 0.10 0.10 0.20 0.05 0.05 0.10 4.0 14.0 14.0 \
     --subtype-flux-target-weights 0.10 0.10 0.30 0.05 0.05 0.10 24.0 4.0 4.0 \
     --subtype-thermal-target-weights 0.50 10.0 0.20 0.05 0.05 0.20 2.0 2.0 2.0 \

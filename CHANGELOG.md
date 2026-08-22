@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V44 No-Action-CE Control Failed
+
+### Result
+
+- Removed only the event-action cross-entropy term while retaining the V43
+  scene, frozen evaluator assets, behavior-cloning initialization, reward,
+  action geometry, and 40k-step PPO protocol.
+- Joint wins fell to `1/5` against both strongest static and conventional
+  dynamic references. Mean ordinary/macro margins were
+  `-0.038535/-0.063711` against static and `-0.021318/-0.057467` against
+  conventional dynamic policies.
+- Four of five runs passed the behavior gate. No channel was always on or off
+  in any seed, but seed852 had only four intermediate-duty channels.
+
+### Decision
+
+- Reject removal of event-action cross-entropy. The physical guide is helpful
+  but does not resolve the V43 endpoint tradeoff.
+- The next matched control restores V43 supervision and disables subtype-
+  dependent reward weights. This tests the observed mismatch between a
+  subtype-weighted training objective and the ordinary forecast-loss endpoint;
+  all scene, evaluator, action, cost, and PPO-budget settings remain frozen.
+
 ## 2026-08-22 - V43 Matched Policy Development Gate Failed
 
 ### Result
