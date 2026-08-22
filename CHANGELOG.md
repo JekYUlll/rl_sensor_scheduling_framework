@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V61 Stratified Subtypes Failed the Online Gate
+
+### Result
+
+- Changed only subtype assignment from random to stratified on new seeds
+  901--905, retaining V51 sensor physics, costs, budget, warnings, and noise.
+- The physical online context policy passed the static joint gate in `3/5`
+  seeds; the validation-selected all-subset mapping passed `2/5`. Both had
+  negative mean ordinary and macro margins.
+
+### Interpretation and Decision
+
+- Subtype balance does not fix online learnability. At `B=1.25`, the feasible
+  surface is dominated by two-channel subsets; switching to a specialist drops
+  broad-variable continuity and can sharply worsen thermal forecasts.
+- V62 reuses V61 truth and evaluator while increasing only the natural power
+  and startup budgets to `1.65/2.0`. This admits three-channel subsets without
+  a required core, cardinality rule, or full-open action. Screen the online gate
+  before PPO.
+
 ## 2026-08-22 - V51 Online Context Gate Failed but Localized the Scene Defect
 
 ### Result
