@@ -2370,3 +2370,16 @@ tar -czf "$OUT…`
 - V83a therefore passes both prespecified scene-identifiability gates without
   changing the physical costs, arbitrary-subset geometry, or signal amplitudes.
   Full PD-PPO training is authorized on these frozen assets.
+
+### 2026-08-23 | V84 complete PD-PPO learner-transfer result
+
+- Trained the frozen complete PD-PPO configuration on all five V83a scenes with
+  independent policy seeds 2101--2105. PD-PPO beat the conventional dynamic
+  family jointly in `5/5` seeds and passed behavior checks in every seed.
+- Strongest-static joint wins were only `2/5`; mean ordinary and
+  static-normalized macro margins were `-0.009387/+0.004910`. No fresh
+  confirmation is authorized.
+- The experiment retained the historical per-subtype static/physical teacher,
+  while the pre-training gate showed that only a complete policy selected by
+  constrained calibration replay transfers robustly. V85 changes only the
+  training-time teacher masks to those locked calibration-selected actions.

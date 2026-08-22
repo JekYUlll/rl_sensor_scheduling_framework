@@ -58,6 +58,10 @@ read -r -a TEACHER_CALM_SENSOR_ARGS <<< "${TEACHER_CALM_SENSORS:-met_station_cor
 read -r -a TEACHER_PARTICLE_SENSOR_ARGS <<< "${TEACHER_PARTICLE_SENSORS:-met_station_core laser_disdrometer}"
 read -r -a TEACHER_FLUX_SENSOR_ARGS <<< "${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}"
 read -r -a TEACHER_THERMAL_SENSOR_ARGS <<< "${TEACHER_THERMAL_SENSORS:-shielded_thermo_hygro surface_temp_ir}"
+read -r -a AWBC_TEACHER_CALM_SENSOR_ARGS <<< "${AWBC_TEACHER_CALM_SENSORS:-${TEACHER_CALM_SENSORS:-met_station_core radiometer_basic}}"
+read -r -a AWBC_TEACHER_PARTICLE_SENSOR_ARGS <<< "${AWBC_TEACHER_PARTICLE_SENSORS:-${TEACHER_PARTICLE_SENSORS:-met_station_core laser_disdrometer}}"
+read -r -a AWBC_TEACHER_FLUX_SENSOR_ARGS <<< "${AWBC_TEACHER_FLUX_SENSORS:-${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}}"
+read -r -a AWBC_TEACHER_THERMAL_SENSOR_ARGS <<< "${AWBC_TEACHER_THERMAL_SENSORS:-${TEACHER_THERMAL_SENSORS:-shielded_thermo_hygro surface_temp_ir}}"
 REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
 REWARD_PROXY_MODE="${REWARD_PROXY_MODE:-forecast}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
@@ -217,10 +221,10 @@ for seed in "${SEEDS[@]}"; do
     --subtype-action-supervision-mode "$SUBTYPE_ACTION_SUPERVISION_MODE" \
     --no-subtype-router \
     --awbc-teacher-mode "$AWBC_TEACHER_MODE" \
-    --awbc-teacher-subtype-calm-sensors "${TEACHER_CALM_SENSOR_ARGS[@]}" \
-    --awbc-teacher-subtype-particle-sensors "${TEACHER_PARTICLE_SENSOR_ARGS[@]}" \
-    --awbc-teacher-subtype-flux-sensors "${TEACHER_FLUX_SENSOR_ARGS[@]}" \
-    --awbc-teacher-subtype-thermal-sensors "${TEACHER_THERMAL_SENSOR_ARGS[@]}" \
+    --awbc-teacher-subtype-calm-sensors "${AWBC_TEACHER_CALM_SENSOR_ARGS[@]}" \
+    --awbc-teacher-subtype-particle-sensors "${AWBC_TEACHER_PARTICLE_SENSOR_ARGS[@]}" \
+    --awbc-teacher-subtype-flux-sensors "${AWBC_TEACHER_FLUX_SENSOR_ARGS[@]}" \
+    --awbc-teacher-subtype-thermal-sensors "${AWBC_TEACHER_THERMAL_SENSOR_ARGS[@]}" \
     --awbc-teacher-auto-score-mode staticnorm \
     --awbc-teacher-event-lookahead-steps 8 \
     --awbc-teacher-dwell-steps 6 \
