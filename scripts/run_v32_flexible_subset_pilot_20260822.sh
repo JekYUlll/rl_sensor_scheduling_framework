@@ -22,6 +22,10 @@ LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
 EVENT_SUBTYPE_LATENT_ALPHA="${EVENT_SUBTYPE_LATENT_ALPHA:-0.22}"
+PARTICLE_LATENT_DIAMETER_SCALE="${PARTICLE_LATENT_DIAMETER_SCALE:-0.14}"
+PARTICLE_LATENT_VELOCITY_SCALE="${PARTICLE_LATENT_VELOCITY_SCALE:-2.4}"
+FLUX_LATENT_SIGMA="${FLUX_LATENT_SIGMA:-1.2}"
+THERMAL_LATENT_SURFACE_SCALE="${THERMAL_LATENT_SURFACE_SCALE:-2.4}"
 read -r -a TEACHER_CALM_SENSOR_ARGS <<< "${TEACHER_CALM_SENSORS:-met_station_core radiometer_basic shielded_thermo_hygro}"
 read -r -a TEACHER_PARTICLE_SENSOR_ARGS <<< "${TEACHER_PARTICLE_SENSORS:-met_station_core laser_disdrometer}"
 read -r -a TEACHER_FLUX_SENSOR_ARGS <<< "${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}"
@@ -107,10 +111,10 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-flux-wind-boost-ms 1.0 \
     --event-subtype-thermal-air-temp-drop-c 1.0 \
     --event-subtype-latent-alpha "$EVENT_SUBTYPE_LATENT_ALPHA" \
-    --event-subtype-particle-latent-diameter-scale-mm 0.14 \
-    --event-subtype-particle-latent-velocity-scale-ms 2.4 \
-    --event-subtype-flux-latent-sigma 1.2 \
-    --event-subtype-thermal-latent-surface-scale-c 2.4 \
+    --event-subtype-particle-latent-diameter-scale-mm "$PARTICLE_LATENT_DIAMETER_SCALE" \
+    --event-subtype-particle-latent-velocity-scale-ms "$PARTICLE_LATENT_VELOCITY_SCALE" \
+    --event-subtype-flux-latent-sigma "$FLUX_LATENT_SIGMA" \
+    --event-subtype-thermal-latent-surface-scale-c "$THERMAL_LATENT_SURFACE_SCALE" \
     --event-subtype-latent-target-lag-steps 4 \
     --event-subtype-context-lead-steps 8 \
     --event-subtype-context-noise-std 0.05 \

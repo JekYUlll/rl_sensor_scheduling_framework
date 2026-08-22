@@ -904,3 +904,16 @@ tar -czf "$OUT…`
   `0.22` to `0.55`. Faster event-specific evolution should make stale specialist
   observations costly while preserving the physical channel model and online
   warning lead.
+
+### 2026-08-22 | Flexible-subset v13 fast-latent diagnostics
+
+- Raising latent update alpha from `0.22` to `0.55` degraded PD-PPO; average
+  margins were `-0.034975/-0.098079` against static and
+  `-0.020109/-0.065995` against conventional dynamic policies.
+- Warning thresholds from 0.3 to 0.7 did not create stable dynamic-over-static
+  value. Privileged exact-label replay also failed, including when actions were
+  fixed to the prespecified physical specialist pairs.
+- Faster latent innovations reduce future predictability from current
+  specialist observations. V13 is rejected. The next bounded calibration
+  restores alpha `0.22` and increases only the subtype-latent target amplitudes
+  to strengthen specialist information value without changing action geometry.
