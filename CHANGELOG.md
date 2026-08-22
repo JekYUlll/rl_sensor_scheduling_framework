@@ -1,5 +1,26 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V59 Longer Forecast-Gain PPO Passed Seed881
+
+### Result
+
+- Extended the V57 no-BC forecast-gain policy from 40,960 to 200,704
+  transitions without changing scene, reward, architecture, constraints, or
+  evaluation.
+- PD-PPO beat static by `+0.028736/+0.043429` ordinary/macro margin and AoI by
+  `+0.000320/+0.004320`. All six channels had intermediate duty, no channel was
+  always on or off, and warm-up aborts were zero.
+
+### Interpretation and Decision
+
+- With the exogenous forecast-difficulty component removed from the reward,
+  longer on-policy exploration can learn the flexible 20-action surface. The
+  dynamic-reference advantage is still small on this seed and requires
+  replication.
+- Freeze V59 exactly and run seeds882--885. Require at least 4/5 joint wins
+  against both static and conventional dynamic references, positive mean
+  margins on both endpoints, and at least 4/5 behavior passes.
+
 ## 2026-08-22 - V58 Soft Initialization plus Forecast Gain Failed
 
 ### Result
