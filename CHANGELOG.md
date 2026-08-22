@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V51 Specialist-Specific Observation Screen Improved but Failed
+
+### Result
+
+- Kept V42's six channels, 20 feasible subsets, fixed costs, budget, event
+  process, target amplitudes, and frozen-TCN protocol. Reduced only the ability
+  of a specialist sensor to substitute for a different event state's primary
+  measurement; cross-state measurements remain available with finite noise.
+- On fresh development seeds `881--885`, exact dynamic-over-static margins were
+  `+0.036090`, `-0.006879`, `+0.002882`, `+0.019608`, and `+0.016084`.
+  The mean improved to `+0.013557`, but the `4/5` win count failed the gate.
+
+### Interpretation and Decision
+
+- Specialist-specific observation quality is a productive physical mechanism,
+  but it is insufficient by itself. No PPO policy is trained on V51.
+- V52 retains V51 unchanged and tests one forecast-specific mechanism: align
+  the specialist-latent target lag with the eight-step forecast horizon
+  (`4 -> 8`) on new seeds `891--895`. This asks whether an early specialist
+  observation has value across the complete prediction window. The exact upper
+  gate remains `5/5` with mean margin at least `+0.02`.
+
 ## 2026-08-22 - V50 Persistence-Only Screen Rejected
 
 ### Result
