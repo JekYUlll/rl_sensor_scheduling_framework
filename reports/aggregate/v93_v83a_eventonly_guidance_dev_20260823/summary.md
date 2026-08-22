@@ -1,10 +1,10 @@
 # V93 event-only retained-guidance development summary
 
-V93 changes only the scope of the retained training guidance relative to V86:
-AWBC and subtype-action supervision are applied to event samples, while calm
-samples remain governed by the original forecast-loss PPO objective. The V83a
-truth, forecaster, candidate set, costs, budget, policy seeds, and remaining
-training controls are frozen.
+V93 changes the scope of retained AWBC relative to V86: AWBC labels are applied
+only to event samples. A launcher overwrite left subtype-action inclusion
+supervision at its V86 all-sample setting, so V93 does not isolate event-only
+scope for both guidance losses. The V83a truth, forecaster, candidate set,
+costs, budget, policy seeds, and remaining training controls are frozen.
 
 ## Gate result
 
@@ -18,8 +18,8 @@ training controls are frozen.
 The performance gate passes, but the complete gate does not. Seed 1101 leaves
 the met-station and FC4 channels unused; seed 1105 leaves the met-station,
 radiometer, and FC4 channels unused. These channels remain unused during both
-event and non-event epochs, so restricting guidance to event samples did not
-repair deterministic channel collapse.
+event and non-event epochs, so restricting AWBC to event samples did not repair
+deterministic channel collapse.
 
 The failure is not explained by insufficient switching alone. Every run has a
 nonzero switch rate, while the two failed policies repeatedly choose a small
@@ -29,8 +29,8 @@ as the frozen primary configuration.
 
 ## Next bounded test
 
-V94 retains the V93 objective and event-only guidance and changes only the
-subset representation from nonlinear to linear additive action embeddings.
+V94 retains the effective V93 objective and guidance settings and changes only
+the subset representation from nonlinear to linear additive action embeddings.
 This test is motivated by the earlier V80 result, where the additive
 representation passed the behavior gate in all five matched scenes. V94 must
 retain at least 4/5 strongest-static wins, 5/5 conventional-dynamic wins, and

@@ -2478,8 +2478,11 @@ tar -czf "$OUT…`
   calibrated guidance only in event windows and frees calm/transition actions.
 ### 2026-08-23 | V93 event-only guidance retains performance but not coverage
 
-- Restricted retained AWBC and subtype-action guidance to event samples while
-  keeping the V83a scene, forecaster, action geometry, reward, and policy seeds
+- Restricted retained AWBC to event samples while keeping subtype-action
+  inclusion supervision at its V86 all-sample setting. A duplicate launcher
+  assignment had overridden the requested event-only subtype setting; this is
+  recorded explicitly rather than attributing V93 to a two-loss scope change.
+  The V83a scene, forecaster, action geometry, reward, and policy seeds remained
   fixed. PD-PPO jointly beat the strongest static family in `4/5` seeds and
   conventional dynamic references in `5/5`; mean ordinary/macro margins were
   `+0.010409/+0.072432` and `+0.049779/+0.190395`, respectively.
