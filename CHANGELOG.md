@@ -1264,3 +1264,17 @@ tar -czf "$OUT…`
   `-0.00863`, and `-0.00435` (mean `+0.00402`). This confirms that the current
   scene still admits a cross-seed static shortcut. Further PPO tuning stops;
   future scene screens must pass an exact-geometry upper gate before training.
+
+### 2026-08-22 | Flexible-subset v37 innovation-timescale screen
+
+- V37a tested a mechanistic scene-only change on new development seeds
+  801--805: event and subtype innovations used `alpha=0.25`, event
+  microstructure sigma was `0.18`, and particle/flux microstructure correlation
+  was zero. Costs, targets, constraints, and the 20-action geometry were held
+  fixed; no PPO training was used for selection.
+- Exact-geometry privileged dynamic schedules beat hindsight static in only
+  `2/5` seeds. Margins were `+0.00896`, `-0.01305`, `-0.03034`, `-0.00055`,
+  and `+0.01206` (mean `-0.00458`). Faster shared innovations are rejected.
+  Candidate rankings show that thermal specialization is stable while particle
+  and flux specialist value is not, motivating a bounded screen of stronger
+  specialist-specific latent effects rather than another global perturbation.
