@@ -1,5 +1,30 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V43 Matched Policy Development Gate Failed
+
+### Result
+
+- Trained the frozen V36b policy configuration for 40k steps on the five V42
+  truth/evaluator assets. Control-source hashes, final-test starts, action
+  geometry, costs, reward, and scene parameters were held fixed.
+- PD-PPO jointly beat the strongest static reference on both endpoints in `3/5`
+  seeds and the strongest conventional dynamic reference in `3/5` seeds. Mean
+  ordinary/macro margins were `-0.006348/+0.017032` against static and
+  `+0.010868/+0.023276` against conventional dynamic policies.
+- Operational behavior passed in `5/5` seeds. Every run had zero always-on
+  channels, exactly one unused channel, five intermediate-duty channels, zero
+  warm-up aborts, and switching rates from `0.0120` to `0.0269` per step.
+
+### Decision
+
+- The policy development gate requires at least `4/5` joint wins against both
+  baseline families and therefore failed. No fresh confirmation seeds are
+  authorized.
+- Because the matched V42 privileged upper gate passed `5/5`, the remaining
+  failure is learner/supervision transfer, not action feasibility or lack of
+  dynamic scene value. Test one matched no-action-cross-entropy policy control
+  on the same assets. Do not change the scene, reward, costs, or PPO budget.
+
 ## 2026-08-22 - V42 Exact-Geometry Scene Gate Passed
 
 ### Change
