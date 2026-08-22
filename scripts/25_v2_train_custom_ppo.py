@@ -1414,7 +1414,10 @@ def main() -> None:
                     selection_metrics["oracle_loss_macro_subtype_event"]
                 ),
                 "oracle_loss_macro_subtype_event_staticnorm": float(
-                    selection_metrics["oracle_loss_macro_subtype_event_staticnorm"]
+                    selection_metrics.get(
+                        "oracle_loss_macro_subtype_event_staticnorm",
+                        float("nan"),
+                    )
                 ),
                 "selection_score_name": checkpoint_score_name,
                 "selection_score": score,
