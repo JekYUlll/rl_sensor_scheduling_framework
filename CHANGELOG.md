@@ -2526,3 +2526,18 @@ tar -czf "$OUT…`
   preserve every historical run.
 - This change permits auditable objective calibration without copying or
   editing the training command. Shell syntax and the complete test suite pass.
+### 2026-08-23 | V96 passes the flexible-scene readiness gate
+
+- Changed only the nine base forecast-target weights to equal values after the
+  existing physical scaling. Event-subtype weights and all scene, sensor,
+  constraint, warning, evaluator, and temporal settings remained fixed.
+- The deployable context replay beat the strongest static subset on both
+  endpoints in `4/5` seeds by ordinary loss and `5/5` by macro loss. Mean
+  ordinary/macro margins were `+0.027521/+0.111938`; behavior passed `4/5`.
+- The exact-label diagnostic reached `5/5` wins on both endpoints. More
+  importantly, the exact-receding upper beat static in `5/5` seeds with mean
+  ordinary margin `+0.064679`, exercised all 35 non-empty feasible actions,
+  gave all six channels intermediate duty, and had zero warm-up aborts.
+- V96 therefore has genuine dynamic headroom without required channels,
+  cardinality limits, or duty quotas. Scene-weight tuning is closed; the next
+  stage trains PD-PPO on the frozen V96 assets with fresh policy seeds.

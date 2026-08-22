@@ -1,0 +1,6 @@
+seed,dynamic_oracle_loss_mean,best_static_oracle_loss_mean,best_static_sensor_ids,ordinary_margin_vs_best_static,always_on_sensor_count,always_off_sensor_count,mid_duty_sensor_count,switches_per_step,warmup_abort_count,receding_action_coverage
+1101,0.3521907459297735,0.4140664387959987,met_station_core|surface_temp_ir|fc4_flux,0.0618756928662252,0,0,6,0.061197916666666664,0,35
+1102,0.4100275311761329,0.5160502806765079,shielded_thermo_hygro|surface_temp_ir,0.1060227495003750,0,0,6,0.06307870370370369,0,35
+1103,0.4875033133753782,0.5443868818062280,met_station_core|surface_temp_ir|fc4_flux,0.0568835684308498,0,0,6,0.058738425925925916,0,35
+1104,0.38030405759733793,0.41942243055058903,shielded_thermo_hygro|surface_temp_ir|fc4_flux,0.0391183729532511,0,0,6,0.06213831018518518,0,35
+1105,0.32069230098244994,0.38018889728118666,met_station_core|surface_temp_ir|fc4_flux,0.0594965962987367,0,0,6,0.05685763888888889,0,35
