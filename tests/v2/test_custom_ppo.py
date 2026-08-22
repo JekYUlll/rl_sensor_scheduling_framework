@@ -675,6 +675,17 @@ def test_awbc_coefficient_can_decay_to_zero_without_changing_default() -> None:
     assert decayed._effective_awbc_coef(20_000) == 0.0
 
 
+def test_awbc_event_only_filters_calm_labels() -> None:
+    trainer = CustomPPO.__new__(CustomPPO)
+    trainer.cfg = CustomPPOConfig(awbc_event_only=True)
+    assert not trainer._awbc_label_allowed(0, 1.0)
+    assert not trainer._awbc_label_allowed(1, 0.0)
+    assert trainer._awbc_label_allowed(1, 1.0)
+
+    trainer.cfg = CustomPPOConfig(awbc_event_only=False)
+    assert trainer._awbc_label_allowed(0, 0.0)
+
+
 def test_train_update_callback_receives_completed_updates() -> None:
     truth = _truth(32)
     trainer = CustomPPO(

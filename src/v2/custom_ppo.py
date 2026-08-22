@@ -63,6 +63,7 @@ class CustomPPOConfig:
     awbc_coef: float = 0.1
     awbc_decay_timesteps: int = 0
     awbc_label_stride: int = 4
+    awbc_event_only: bool = False
     bc_pretrain_steps: int = 0
     bc_pretrain_epochs: int = 4
     bc_pretrain_batch_size: int = 128
@@ -694,7 +695,11 @@ class CustomPPO:
                 logprob_t = dist.log_prob(action_t)
                 value_t = self.model.value(obs_t, event_t)
             action = int(action_t.detach().cpu().item())
-            should_label = float(self._current_awbc_coef()) > 0.0 and (step % label_stride == 0)
+            should_label = (
+                float(self._current_awbc_coef()) > 0.0
+                and (step % label_stride == 0)
+                and self._awbc_label_allowed(subtype_label, subtype_valid)
+            )
             if should_label:
                 greedy = self._awbc_teacher_action(env, action_mask_np)
                 awbc_valid = 1.0
@@ -937,6 +942,11 @@ class CustomPPO:
         label = int(active[0]) if active.size else 0
         label = int(np.clip(label, 0, max(0, int(self.cfg.subtype_aux_classes) - 1)))
         return label, 1.0
+
+    def _awbc_label_allowed(self, subtype_label: int, subtype_valid: float) -> bool:
+        if not bool(self.cfg.awbc_event_only):
+            return True
+        return float(subtype_valid) > 0.5 and int(subtype_label) > 0
 
     def _awbc_teacher_action(self, env: WarmupSchedulingEnv, action_mask: np.ndarray) -> int:
         mode = str(self.cfg.awbc_teacher_mode or "oracle_greedy")

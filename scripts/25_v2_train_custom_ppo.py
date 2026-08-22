@@ -535,6 +535,7 @@ def main() -> None:
     parser.add_argument("--awbc-coef", type=float, default=0.1)
     parser.add_argument("--awbc-decay-timesteps", type=int, default=0)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
+    parser.add_argument("--awbc-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
     parser.add_argument(
         "--checkpoint-selection-score",
@@ -1297,6 +1298,7 @@ def main() -> None:
             awbc_coef=float(args.awbc_coef),
             awbc_decay_timesteps=max(0, int(args.awbc_decay_timesteps)),
             awbc_label_stride=int(args.awbc_label_stride),
+            awbc_event_only=bool(args.awbc_event_only),
             bc_pretrain_steps=int(args.bc_pretrain_steps),
             bc_pretrain_epochs=int(args.bc_pretrain_epochs),
             bc_pretrain_batch_size=int(args.bc_pretrain_batch_size),
@@ -2217,6 +2219,7 @@ def as_serializable_config(
         "awbc_coef": float(cfg.awbc_coef),
         "awbc_decay_timesteps": int(cfg.awbc_decay_timesteps),
         "awbc_label_stride": int(cfg.awbc_label_stride),
+        "awbc_event_only": bool(cfg.awbc_event_only),
         "bc_pretrain_steps": int(cfg.bc_pretrain_steps),
         "bc_pretrain_epochs": int(cfg.bc_pretrain_epochs),
         "bc_pretrain_batch_size": int(cfg.bc_pretrain_batch_size),

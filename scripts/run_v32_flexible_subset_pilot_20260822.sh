@@ -30,6 +30,7 @@ STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
 BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
 AWBC_COEF="${AWBC_COEF:-0.15}"
 AWBC_DECAY_TIMESTEPS="${AWBC_DECAY_TIMESTEPS:-0}"
+AWBC_EVENT_ONLY="${AWBC_EVENT_ONLY:-0}"
 BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
 BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
@@ -142,6 +143,11 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--subtype-action-event-only)
   else
     control_args+=(--no-subtype-action-event-only)
+  fi
+  if [[ "$AWBC_EVENT_ONLY" == "1" ]]; then
+    control_args+=(--awbc-event-only)
+  else
+    control_args+=(--no-awbc-event-only)
   fi
   if [[ "$SUBTYPE_LOSS_WEIGHTING" == "1" ]]; then
     control_args+=(--subtype-loss-weighting)

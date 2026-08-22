@@ -2466,3 +2466,13 @@ tar -czf "$OUT…`
   0/5 in every replicate and conventional-dynamic wins were 2/5, 3/5, and 2/5.
 - Unit-temperature sampling is therefore diagnostic only. Any lower-temperature
   execution must be selected on calibration/validation before final replay.
+## 2026-08-23 - V92 closes execution-temperature calibration
+
+- Selected execution temperature per scene on validation replay from
+  `0, 0.05, 0.1, 0.2, 0.5`, with temperature zero representing argmax.
+- Validation selected argmax in three scenes and low temperatures in two.
+- Final results remained at 3/5 strongest-static wins, 5/5 conventional-dynamic
+  wins, and 2/5 behavior passes. Temperature selection did not resolve the
+  performance/diversity conflict.
+- Closed execution-temperature tuning. The next bounded training test retains
+  calibrated guidance only in event windows and frees calm/transition actions.

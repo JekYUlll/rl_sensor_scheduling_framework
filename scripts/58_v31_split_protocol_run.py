@@ -666,6 +666,7 @@ def main() -> None:
     parser.add_argument("--awbc-coef", type=float, default=0.1)
     parser.add_argument("--awbc-decay-timesteps", type=int, default=0)
     parser.add_argument("--awbc-label-stride", type=int, default=4)
+    parser.add_argument("--awbc-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
     parser.add_argument(
         "--checkpoint-selection-score",
@@ -1121,6 +1122,7 @@ def main() -> None:
             "awbc_coef": float(args.awbc_coef),
             "awbc_decay_timesteps": max(0, int(args.awbc_decay_timesteps)),
             "awbc_label_stride": int(args.awbc_label_stride),
+            "awbc_event_only": bool(args.awbc_event_only),
             "checkpoint_selection_interval_updates": max(
                 0, int(args.checkpoint_selection_interval_updates)
             ),
@@ -1362,6 +1364,7 @@ def main() -> None:
         str(max(0, int(args.awbc_decay_timesteps))),
         "--awbc-label-stride",
         str(int(args.awbc_label_stride)),
+        "--awbc-event-only" if bool(args.awbc_event_only) else "--no-awbc-event-only",
         "--checkpoint-selection-interval-updates",
         str(max(0, int(args.checkpoint_selection_interval_updates))),
         "--checkpoint-selection-score",
