@@ -2353,3 +2353,20 @@ tar -czf "$OUT…`
   transition-aware execution do not transfer stably across partitions. The
   next diagnostic must select the complete context policy by constrained
   calibration replay before any further scene amplification or PPO training.
+
+### 2026-08-23 | V83a constrained-calibration and upper-bound gates
+
+- Added `replay_calibrated` context-policy selection. It evaluates complete
+  state-conditioned action maps on calibration/validation windows through the
+  same power, startup, warm-up, and dwell-constrained environment, then locks
+  the selected map before test replay. Unit and full test suites pass.
+- The deployable warning-driven policy beat the strongest static family on
+  both co-primary endpoints in all five V83a development scenes. Mean ordinary
+  and static-normalized macro margins were `+0.016272/+0.096203`; every run had
+  zero warm-up aborts and four or five intermediate-duty channels.
+- The exact-geometry eight-step receding diagnostic independently passed
+  `5/5`, with mean margins `+0.066626/+0.174036`. It exercised all 35 feasible
+  actions, kept all six channels at intermediate duty, and had zero aborts.
+- V83a therefore passes both prespecified scene-identifiability gates without
+  changing the physical costs, arbitrary-subset geometry, or signal amplitudes.
+  Full PD-PPO training is authorized on these frozen assets.
