@@ -1928,3 +1928,15 @@ tar -czf "$OUT…`
   every channel at intermediate duty with zero aborts. Because both online
   mappings failed in seeds 902 and 905, the natural-budget branch is closed;
   subsequent screens must improve online regime identifiability, not budget.
+
+### 2026-08-22 | Variance-consistent carried-state estimator
+
+- Added an opt-in `variance_weighted` measurement update to the warm-up
+  scheduling environment. It uses the existing normalized process and sensor
+  variances to update both the carried state mean and posterior variance with a
+  matched predict--update step; wind direction uses a circular innovation.
+  Historical runs retain the backward-compatible `direct` update default.
+- Propagated the mode through split-protocol training, baseline selection,
+  evaluation, metadata, and the flexible-subset launcher. Static candidate
+  replay now also inherits the uncertainty configuration instead of silently
+  reverting to defaults. The complete test suite passes (`110` tests).

@@ -689,6 +689,12 @@ def main() -> None:
     parser.add_argument("--alert-context-columns", nargs="*", default=None)
     parser.add_argument("--alert-context-threshold", type=float, default=0.5)
     parser.add_argument("--alert-context-trend-lookback", type=int, default=6)
+    parser.add_argument(
+        "--measurement-update-mode",
+        choices=["direct", "variance_weighted"],
+        default="direct",
+        help="How a new noisy measurement updates the carried estimator state.",
+    )
     parser.add_argument("--eval-duty-constrained-baselines", action="store_true")
     parser.add_argument("--baseline-duty-hard-low", type=float, default=None)
     parser.add_argument("--baseline-duty-hard-high", type=float, default=None)
@@ -1007,6 +1013,7 @@ def main() -> None:
         alert_context_threshold=float(args.alert_context_threshold),
         alert_context_trend_lookback=max(1, int(args.alert_context_trend_lookback)),
         uncertainty_process_variance=uncertainty_process_variance,
+        measurement_update_mode=str(args.measurement_update_mode),
         **energy_kwargs(args),
     )
     reward_loss_normalizers: tuple[float, float, float] | None = None
@@ -1422,6 +1429,7 @@ def main() -> None:
         alert_context_threshold=float(args.alert_context_threshold),
         alert_context_trend_lookback=max(1, int(args.alert_context_trend_lookback)),
         uncertainty_process_variance=uncertainty_process_variance,
+        measurement_update_mode=str(args.measurement_update_mode),
         oracle_loss_reward_normalizers=reward_loss_normalizers,
         oracle_loss_reward_default_normalizer=float(reward_loss_default_normalizer),
         **energy_kwargs(args),
@@ -1876,6 +1884,7 @@ def main() -> None:
             "initial_variance": float(train_cfg.uncertainty_initial_variance),
             "max_variance": float(train_cfg.uncertainty_max_variance),
             "measurement_variance_source": "sensor noise_std propagated to observed state columns",
+            "measurement_update_mode": str(train_cfg.measurement_update_mode),
         },
         "custom_ppo": as_serializable_config(trainer.cfg, candidate_count=int(candidate_masks.shape[0])),
         "checkpoint_selection": {
@@ -2219,6 +2228,10 @@ def build_oracle_candidate_prior(
                     alert_context_columns=cfg.alert_context_columns,
                     alert_context_threshold=cfg.alert_context_threshold,
                     alert_context_trend_lookback=cfg.alert_context_trend_lookback,
+                    uncertainty_process_variance=cfg.uncertainty_process_variance,
+                    uncertainty_initial_variance=cfg.uncertainty_initial_variance,
+                    uncertainty_max_variance=cfg.uncertainty_max_variance,
+                    measurement_update_mode=cfg.measurement_update_mode,
                 ),
                 oracle=oracle,
             )

@@ -243,6 +243,64 @@ def test_uncertainty_reward_decreases_when_target_is_observed() -> None:
     assert str(observed_info["reward_proxy_mode"]) == "uncertainty"
 
 
+def _single_temperature_env(*, noise_std: float, update_mode: str) -> WarmupSchedulingEnv:
+    truth = _truth(24).copy()
+    truth.loc[0, "air_temperature_c"] = 10.0
+    sensor = SensorSpecV2(
+        "temperature",
+        ("air_temperature_c",),
+        0.5,
+        0.5,
+        warmup_steps=0,
+        noise_std={"air_temperature_c": noise_std},
+    )
+    cfg = WarmupEnvConfig(
+        state_columns=STATE_COLUMNS,
+        lookback=1,
+        episode_len=1,
+        seed=3,
+        normalization_mean=tuple(0.0 for _ in STATE_COLUMNS),
+        normalization_std=tuple(1.0 for _ in STATE_COLUMNS),
+        uncertainty_process_variance=tuple(0.05 for _ in STATE_COLUMNS),
+        uncertainty_initial_variance=1.0,
+        measurement_update_mode=update_mode,
+    )
+    return WarmupSchedulingEnv(
+        truth,
+        [sensor],
+        PowerConstraintsV2(max_active=1, per_step_budget=1.0, startup_peak_budget=1.0),
+        cfg,
+    )
+
+
+def test_variance_weighted_measurement_update_accepts_exact_measurement() -> None:
+    env = _single_temperature_env(noise_std=0.0, update_mode="variance_weighted")
+    env.reset()
+
+    env.step_mask(np.asarray([True]))
+
+    idx = env.state_index["air_temperature_c"]
+    assert env.last_observation[idx] == pytest.approx(10.0)
+    assert env.posterior_variance[idx] < 1.0e-8
+
+
+def test_variance_weighted_measurement_update_smooths_noisy_measurement() -> None:
+    direct_env = _single_temperature_env(noise_std=1.0, update_mode="direct")
+    filtered_env = _single_temperature_env(noise_std=1.0, update_mode="variance_weighted")
+    direct_env.reset()
+    filtered_env.reset()
+
+    direct_env.step_mask(np.asarray([True]))
+    filtered_env.step_mask(np.asarray([True]))
+
+    idx = direct_env.state_index["air_temperature_c"]
+    expected_gain = 1.05 / (1.05 + 1.0)
+    assert filtered_env.last_observation[idx] == pytest.approx(
+        expected_gain * direct_env.last_observation[idx]
+    )
+    assert abs(filtered_env.last_observation[idx]) < abs(direct_env.last_observation[idx])
+
+
 def test_online_event_context_prefers_observable_alert_proxy() -> None:
     truth = _truth(24).copy()
     truth["event_flag"] = True

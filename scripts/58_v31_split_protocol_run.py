@@ -806,6 +806,11 @@ def main() -> None:
     parser.add_argument("--alert-context-columns", nargs="*", default=None)
     parser.add_argument("--alert-context-threshold", type=float, default=0.5)
     parser.add_argument("--alert-context-trend-lookback", type=int, default=6)
+    parser.add_argument(
+        "--measurement-update-mode",
+        choices=["direct", "variance_weighted"],
+        default="direct",
+    )
     parser.add_argument("--eval-duty-constrained-baselines", action="store_true")
     parser.add_argument("--baseline-duty-hard-low", type=float, default=None)
     parser.add_argument("--baseline-duty-hard-high", type=float, default=None)
@@ -1474,6 +1479,7 @@ def main() -> None:
         cmd.append("--include-alert-context-features")
     cmd.extend(["--alert-context-threshold", str(float(args.alert_context_threshold))])
     cmd.extend(["--alert-context-trend-lookback", str(max(1, int(args.alert_context_trend_lookback)))])
+    cmd.extend(["--measurement-update-mode", str(args.measurement_update_mode)])
     if bool(args.duty_hard_guard):
         cmd.append("--duty-hard-guard")
     if bool(args.eval_duty_constrained_baselines):

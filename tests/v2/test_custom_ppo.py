@@ -169,6 +169,7 @@ def test_custom_ppo_episode_env_preserves_complete_config() -> None:
         ),
         include_event_flag_in_state=False,
         uncertainty_process_variance=tuple(0.02 for _ in STATE_COLUMNS),
+        measurement_update_mode="variance_weighted",
     )
     trainer = CustomPPO(
         truth_df=truth,
@@ -187,6 +188,7 @@ def test_custom_ppo_episode_env_preserves_complete_config() -> None:
     assert episode_env.cfg.oracle_loss_reward_normalizers == (1.1, 2.2, 3.3)
     assert episode_env.cfg.min_dwell_steps == 6
     assert not episode_env.cfg.include_event_flag_in_state
+    assert episode_env.cfg.measurement_update_mode == "variance_weighted"
     assert episode_env.cfg.seed == 13
 
 

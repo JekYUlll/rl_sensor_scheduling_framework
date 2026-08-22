@@ -71,6 +71,7 @@ class WarmupEnvConfig:
     uncertainty_process_variance: tuple[float, ...] | None = None
     uncertainty_initial_variance: float = 1.0
     uncertainty_max_variance: float = 25.0
+    measurement_update_mode: str = "direct"
 
 
 class WarmupSchedulingEnv:
@@ -152,6 +153,10 @@ class WarmupSchedulingEnv:
             if np.any(~np.isfinite(process_variance)) or np.any(process_variance < 0.0):
                 raise ValueError("uncertainty_process_variance must be finite and non-negative")
         self.uncertainty_process_variance = np.maximum(process_variance, 1e-8)
+        if str(cfg.measurement_update_mode) not in {"direct", "variance_weighted"}:
+            raise ValueError(
+                "measurement_update_mode must be 'direct' or 'variance_weighted'"
+            )
         self.posterior_variance = np.full(
             len(self.state_columns),
             max(float(cfg.uncertainty_initial_variance), 1e-8),
@@ -330,14 +335,29 @@ class WarmupSchedulingEnv:
             else:
                 fused_value = float(np.sum(weights * values) / weight_sum)
             col_idx = self.state_index[variable]
-            observation[col_idx] = fused_value
-            observed_this_step[col_idx] = 1.0
             physical_variance = float(
                 1.0 / np.sum(1.0 / np.maximum(np.square(noise_stds), 1.0e-12))
             )
-            observation_variance[col_idx] = physical_variance / max(float(self.state_std[col_idx]) ** 2, 1.0e-12)
+            normalized_measurement_variance = physical_variance / max(
+                float(self.state_std[col_idx]) ** 2, 1.0e-12
+            )
+            observation_variance[col_idx] = normalized_measurement_variance
+            updated_value = fused_value
+            if str(self.cfg.measurement_update_mode) == "variance_weighted":
+                gain = float(
+                    prior_variance[col_idx]
+                    / max(prior_variance[col_idx] + normalized_measurement_variance, 1.0e-12)
+                )
+                prior_value = float(observation[col_idx])
+                if variable == "wind_direction_deg":
+                    innovation = ((fused_value - prior_value + 180.0) % 360.0) - 180.0
+                    updated_value = float((prior_value + gain * innovation) % 360.0)
+                else:
+                    updated_value = float(prior_value + gain * (fused_value - prior_value))
+            observation[col_idx] = updated_value
+            observed_this_step[col_idx] = 1.0
             if variable == "wind_direction_deg":
-                theta = np.deg2rad(fused_value)
+                theta = np.deg2rad(updated_value)
                 angular_variance = physical_variance * (np.pi / 180.0) ** 2
                 if "wind_dir_sin" in self.state_index:
                     sin_idx = self.state_index["wind_dir_sin"]
