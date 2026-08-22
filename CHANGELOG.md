@@ -1111,3 +1111,14 @@ tar -czf "$OUT…`
   learned flexible-subset configuration to pass both performance comparisons
   without fixed-mask degeneration. The configuration is frozen for independent
   development-seed replication; no further seed-406 tuning is permitted.
+
+### 2026-08-22 | Flexible-subset v29 development replication
+
+- Independent scenes for seeds 405--407 gave mean PD-PPO losses
+  `0.18213/0.59862` for the ordinary and normalized subtype-macro endpoints,
+  compared with static `0.18353/0.78110` and AoI `0.19377/0.65420`.
+- PD-PPO beat AoI on both endpoints in `3/3` seeds and static on both in `2/3`;
+  seed 405 won static macro but not ordinary mean loss. Every seed had five
+  intermediate-duty channels, no always-on channel, one unused channel, and
+  zero aborts. The configuration and fresh confirmation seeds 501--505 are now
+  locked; no further method or scene calibration is allowed.
