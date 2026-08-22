@@ -1895,3 +1895,36 @@ tar -czf "$OUT…`
   shared humidity, wind, and air-temperature channels. V42 removes those three
   cross-channel subtype proxies while retaining specialist latents and physical
   targets; launcher defaults remain unchanged for historical runs.
+
+### 2026-08-22 | Flexible-subset v62 natural-budget geometry screen
+
+- V62 retained the V61 stratified scene, six-channel effective-cost model, and
+  seeds 901--905, but increased the per-step and startup budgets from
+  `1.25/1.70` to `1.65/2.00`. The matched geometry contains 28 executable
+  subsets, including all six single channels and six three-channel subsets;
+  full-open operation remains infeasible. Regenerated truth files are
+  byte-identical to V61, while the oracle/evaluator mixture was refitted for the
+  enlarged action surface. No PPO training was run.
+- The validation-selected online warning policy beat the strongest static
+  reference on both endpoints in `3/5` seeds. Its mean static-minus-policy
+  margins were `+0.007610` for ordinary loss and `+0.068168` for macro loss.
+  The physically specified warning policy also passed jointly in `3/5`, with
+  mean margins `-0.008923` and `+0.090644`. It exercised all six channels at
+  intermediate duty in every seed with zero aborts, but did not meet the
+  prespecified `5/5` online gate. V62 is rejected before privileged replay or
+  PPO training; increasing budget alone does not remove the static shortcut.
+
+### 2026-08-22 | Flexible-subset v63 specialist-triple geometry screen
+
+- A deterministic geometry audit showed that V62 did not admit laser plus two
+  broad-observation channels. V63 tested the first buffered geometry above that
+  discrete threshold at steady/startup budgets `1.75/2.15`. It contains 35
+  executable actions, including 13 triples and no four-channel action; all five
+  truth files remain byte-identical to V61/V62. No PPO training was run.
+- The validation-selected warning policy passed both endpoints against the
+  strongest static reference in `3/5` seeds, with mean ordinary and macro
+  margins `+0.023569` and `+0.032368`. The physical warning policy also passed
+  `3/5`, but its means were `-0.005040` and `-0.024229`. Physical behavior used
+  every channel at intermediate duty with zero aborts. Because both online
+  mappings failed in seeds 902 and 905, the natural-budget branch is closed;
+  subsequent screens must improve online regime identifiability, not budget.
