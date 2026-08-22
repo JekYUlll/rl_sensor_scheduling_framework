@@ -791,7 +791,6 @@ def main() -> None:
     parser.add_argument("--include-observable-regime-belief", action="store_true")
     parser.add_argument("--regime-belief-lookback", type=int, default=6)
     parser.add_argument("--agent-context-columns", nargs="*", default=None)
-    parser.add_argument("--additional-state-columns", nargs="*", default=None)
     parser.add_argument("--include-event-flag-in-state", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--include-alert-context-features", action="store_true")
     parser.add_argument("--alert-context-columns", nargs="*", default=None)
@@ -925,7 +924,6 @@ def main() -> None:
         "truth_steps": int(args.truth_steps),
         "seed": int(args.seed),
         "budget": float(args.budget),
-        "additional_state_columns": [str(x) for x in (args.additional_state_columns or ())],
         "target_weights": None if args.target_weights is None else [float(x) for x in args.target_weights],
         "target_scales": None if args.target_scales is None else [float(x) for x in args.target_scales],
         "subtype_loss_weighting": bool(args.subtype_loss_weighting),
@@ -1530,11 +1528,6 @@ def main() -> None:
         cmd,
         "--agent-context-columns",
         None if args.agent_context_columns is None else [str(x) for x in args.agent_context_columns],
-    )
-    append_option(
-        cmd,
-        "--additional-state-columns",
-        None if args.additional_state_columns is None else [str(x) for x in args.additional_state_columns],
     )
     append_option(
         cmd,

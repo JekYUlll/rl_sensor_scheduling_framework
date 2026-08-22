@@ -934,3 +934,17 @@ tar -czf "$OUT…`
   power-feasible actions, no required channel, no cardinality cap, broad subset
   use, and no forced duty quotas. Stable prediction superiority remains an open
   algorithm/scenario-transfer problem and is not claimed from these dev runs.
+
+### 2026-08-22 | V16 invalid precursor-alias diagnostic
+
+- A source audit initially used the state definition from the wrong pipeline
+  helper and incorrectly concluded that the three subtype latent observations
+  were absent from custom-PPO execution. V15 rollout artifacts instead confirm
+  a 15-dimensional state with all three latent columns observed conditionally.
+- V16 duplicated the same latent variables under new precursor aliases. Its
+  frozen-oracle losses saturated near the clipping ceiling for every policy, so
+  the run is classified as an invalid implementation diagnostic and is excluded
+  from scientific comparisons.
+- The alias configuration and state-column extension are removed. Exploration
+  resumes from V15 with event-window and transition-level analysis of the
+  seed-406 transfer failure.

@@ -9,7 +9,6 @@ RUN_PREFIX="${RUN_PREFIX:-v32_flexible_subset_v1_dev}"
 TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-30000}"
 TRUTH_STEPS="${TRUTH_STEPS:-36000}"
 SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
-read -r -a ADDITIONAL_STATE_COLUMN_ARGS <<< "${ADDITIONAL_STATE_COLUMNS:-}"
 BUDGET="${BUDGET:-1.35}"
 STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
 BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
@@ -76,7 +75,6 @@ for seed in "${SEEDS[@]}"; do
     --out-dir "$out_dir" \
     "${control_args[@]}" \
     --sensor-cfg "$SENSOR_CFG" \
-    --additional-state-columns "${ADDITIONAL_STATE_COLUMN_ARGS[@]}" \
     --seed "$seed" \
     --budget "$BUDGET" \
     --startup-peak-budget "$STARTUP_BUDGET" \

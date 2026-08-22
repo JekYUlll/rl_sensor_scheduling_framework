@@ -452,15 +452,6 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
-    parser.add_argument(
-        "--additional-state-columns",
-        nargs="*",
-        default=None,
-        help=(
-            "Optional observed predictor inputs appended to the physical state. "
-            "They are not forecast targets unless separately listed as reward targets."
-        ),
-    )
     parser.add_argument("--out-dir", "--output-dir", dest="out_dir", default="reports/v2_custom_ppo_probe/budget1p70_seed41")
     parser.add_argument("--checkpoint-path", default=None)
     parser.add_argument("--lookback", type=int, default=20)
@@ -725,16 +716,6 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     truth_path = helpers.ensure_truth(args)
     truth = helpers.ensure_state_columns(pd.read_csv(truth_path))
-    additional_state_columns = tuple(str(x) for x in (args.additional_state_columns or ()))
-    if len(set(additional_state_columns)) != len(additional_state_columns):
-        raise ValueError("--additional-state-columns contains duplicates")
-    overlap = sorted(set(additional_state_columns).intersection(helpers.STATE_COLUMNS))
-    if overlap:
-        raise ValueError(f"additional state columns already exist in the base state: {overlap}")
-    missing_additional = [name for name in additional_state_columns if name not in truth.columns]
-    if missing_additional:
-        raise ValueError(f"additional state columns are absent from truth: {missing_additional}")
-    state_columns = tuple(helpers.STATE_COLUMNS) + additional_state_columns
     sensor_cfg_path = resolve_sensor_cfg(str(args.sensor_cfg))
     sensors = load_sensor_specs(sensor_cfg_path)
     coverage_groups = () if bool(args.disable_coverage_groups) else helpers.DEFAULT_COVERAGE_GROUPS
@@ -943,8 +924,6 @@ def main() -> None:
             subtype_teacher_thermal_mask=oracle_subtype_teacher_thermal_mask,
             base_freq_s=int(args.freq_s),
             seed=int(args.seed),
-            state_columns=state_columns,
-            reward_target_columns=tuple(helpers.REWARD_TARGET_COLUMNS),
         )
         oracle_path = out_dir / ("v2_tcn_oracle.pt" if args.oracle_type == "tcn" else "v2_linear_oracle.npz")
         oracle.save(str(oracle_path))
@@ -962,10 +941,10 @@ def main() -> None:
             raise ValueError(
                 f"Invalid normalization partition [{normalization_start}, {normalization_end}) for truth length {len(truth)}"
             )
-        normalization_values = truth.iloc[normalization_start:normalization_end][list(state_columns)].to_numpy(dtype=float)
+        normalization_values = truth.iloc[normalization_start:normalization_end][list(helpers.STATE_COLUMNS)].to_numpy(dtype=float)
         normalization_mean = tuple(float(x) for x in np.mean(normalization_values, axis=0))
         normalization_std = tuple(float(x) for x in np.maximum(np.std(normalization_values, axis=0), 1e-6))
-    process_values = truth.iloc[normalization_start:normalization_end][list(state_columns)].to_numpy(dtype=float)
+    process_values = truth.iloc[normalization_start:normalization_end][list(helpers.STATE_COLUMNS)].to_numpy(dtype=float)
     process_mean = np.asarray(
         normalization_mean if normalization_mean is not None else np.mean(process_values, axis=0),
         dtype=float,
@@ -981,7 +960,7 @@ def main() -> None:
         for value in np.clip(np.nanvar(process_differences, axis=0), 1e-6, 1.0)
     )
     train_cfg = WarmupEnvConfig(
-        state_columns=state_columns,
+        state_columns=helpers.STATE_COLUMNS,
         reward_target_columns=helpers.REWARD_TARGET_COLUMNS,
         reward_proxy_mode=str(args.reward_proxy_mode),
         lookback=int(args.lookback),
@@ -1392,7 +1371,7 @@ def main() -> None:
             seed=int(args.seed) + 1777,
         )
     eval_cfg = WarmupEnvConfig(
-        state_columns=state_columns,
+        state_columns=helpers.STATE_COLUMNS,
         reward_target_columns=helpers.REWARD_TARGET_COLUMNS,
         reward_proxy_mode=str(args.reward_proxy_mode),
         lookback=int(args.lookback),
@@ -1455,7 +1434,7 @@ def main() -> None:
         out_dir / "rollout_custom_ppo.npz",
         custom_result,
         sensor_ids=[s.sensor_id for s in sensors],
-        state_columns=state_columns,
+        state_columns=helpers.STATE_COLUMNS,
     )
 
     eval_policy_names = ["custom_ppo"]
@@ -1481,7 +1460,7 @@ def main() -> None:
                 out_dir / f"rollout_{dwell_name}.npz",
                 result,
                 sensor_ids=[s.sensor_id for s in sensors],
-                state_columns=state_columns,
+                state_columns=helpers.STATE_COLUMNS,
             )
 
     oracle_static_summary = None
@@ -1540,7 +1519,7 @@ def main() -> None:
             out_dir / f"rollout_{selected_static_name}.npz",
             oracle_static_result,
             sensor_ids=[s.sensor_id for s in sensors],
-            state_columns=state_columns,
+            state_columns=helpers.STATE_COLUMNS,
         )
         oracle_static_summary = {
             "source": selected_static_source,
@@ -1573,7 +1552,7 @@ def main() -> None:
         out_dir / "rollout_full_open_unconstrained.npz",
         full_open_result,
         sensor_ids=[s.sensor_id for s in sensors],
-        state_columns=state_columns,
+        state_columns=helpers.STATE_COLUMNS,
     )
 
     for policy in helpers.default_policies(len(sensors), seed=int(args.seed) + 100):
@@ -1593,7 +1572,7 @@ def main() -> None:
             out_dir / f"rollout_{result.policy_name}.npz",
             result,
             sensor_ids=[s.sensor_id for s in sensors],
-            state_columns=state_columns,
+            state_columns=helpers.STATE_COLUMNS,
         )
 
     constrained_baseline_settings = {
@@ -1639,7 +1618,7 @@ def main() -> None:
                 out_dir / f"rollout_{result.policy_name}.npz",
                 result,
                 sensor_ids=[s.sensor_id for s in sensors],
-                state_columns=state_columns,
+                state_columns=helpers.STATE_COLUMNS,
             )
         for policy in helpers.default_policies(len(sensors), seed=int(args.seed) + 10100):
             original_name = str(policy.name)
@@ -1660,7 +1639,7 @@ def main() -> None:
                 out_dir / f"rollout_{result.policy_name}.npz",
                 result,
                 sensor_ids=[s.sensor_id for s in sensors],
-                state_columns=state_columns,
+                state_columns=helpers.STATE_COLUMNS,
             )
 
     dynamic_policy_names = {"round_robin", "aoi", "random"}
@@ -1691,7 +1670,7 @@ def main() -> None:
                     out_dir / f"rollout_{result.policy_name}.npz",
                     result,
                     sensor_ids=[s.sensor_id for s in sensors],
-                    state_columns=state_columns,
+                    state_columns=helpers.STATE_COLUMNS,
                 )
 
         if bool(args.eval_duty_constrained_baselines):
@@ -1721,7 +1700,7 @@ def main() -> None:
                         out_dir / f"rollout_{result.policy_name}.npz",
                         result,
                         sensor_ids=[s.sensor_id for s in sensors],
-                        state_columns=state_columns,
+                        state_columns=helpers.STATE_COLUMNS,
                     )
 
     metrics_frame = pd.DataFrame(rows)
@@ -1792,8 +1771,6 @@ def main() -> None:
         },
         "oracle_inference_device": str(args.oracle_inference_device),
         "oracle_use_mask_channels": not bool(args.oracle_disable_mask_channels),
-        "state_columns": list(state_columns),
-        "additional_state_columns": list(additional_state_columns),
         "reward_target_columns": list(helpers.REWARD_TARGET_COLUMNS),
         "target_weights": list(target_weights),
         "target_scales": list(target_scales),

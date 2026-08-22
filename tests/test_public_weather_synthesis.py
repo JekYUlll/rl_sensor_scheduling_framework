@@ -67,11 +67,6 @@ def test_generate_public_weather_truth_is_training_compatible(tmp_path: Path) ->
     assert 0.20 <= float(df["event_flag"].mean()) <= 0.80
     assert meta["steps"] == 32
     assert "blowing_snow_event_coverage_actual" in meta
-    assert df["particle_spectrum_precursor"].equals(df["event_subtype_particle_latent"])
-    assert df["flux_burst_precursor"].equals(df["event_subtype_flux_latent"])
-    assert df["surface_thermal_gradient_precursor"].equals(
-        df["event_subtype_thermal_latent"]
-    )
 
 
 def test_validation_report_contains_core_variables(tmp_path: Path) -> None:

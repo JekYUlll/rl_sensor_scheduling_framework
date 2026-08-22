@@ -220,32 +220,6 @@ def test_warmup_env_uses_external_normalization_statistics() -> None:
     assert np.allclose(env.state_std, np.ones(len(STATE_COLUMNS)))
 
 
-def test_optional_precursor_is_observed_only_with_its_physical_channel() -> None:
-    precursor = "particle_spectrum_precursor"
-    truth = _truth(24)
-    truth[precursor] = np.linspace(-1.0, 1.0, len(truth))
-    state_columns = (*STATE_COLUMNS, precursor)
-    sensors = [
-        SensorSpecV2("met", ("wind_speed_ms",), 0.5, 0.6, warmup_steps=0),
-        SensorSpecV2("laser", ("snow_particle_mean_diameter_mm", precursor), 0.7, 0.8, warmup_steps=0),
-    ]
-    env = WarmupSchedulingEnv(
-        truth,
-        sensors,
-        PowerConstraintsV2(max_active=None, per_step_budget=0.8, startup_peak_budget=0.9),
-        WarmupEnvConfig(state_columns=state_columns, lookback=2, episode_len=4, seed=3),
-    )
-    env.reset(start_idx=2)
-    precursor_idx = state_columns.index(precursor)
-
-    env.step_mask(np.asarray([True, False]))
-    assert env.observed_mask[precursor_idx] == 0.0
-
-    env.step_mask(np.asarray([False, True]))
-    assert env.observed_mask[precursor_idx] == 1.0
-    assert np.isclose(env.last_observation[precursor_idx], truth.iloc[3][precursor])
-
-
 def test_uncertainty_reward_decreases_when_target_is_observed() -> None:
     cfg = WarmupEnvConfig(
         state_columns=STATE_COLUMNS,
