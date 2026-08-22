@@ -18,6 +18,9 @@ EVENT_MICROSTRUCTURE_SIGMA="${EVENT_MICROSTRUCTURE_SIGMA:-0.08}"
 EVENT_MICROSTRUCTURE_ALPHA="${EVENT_MICROSTRUCTURE_ALPHA:-0.22}"
 EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION="${EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION:-0.35}"
 SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
+ORACLE_EPOCHS="${ORACLE_EPOCHS:-10}"
+ORACLE_CANDIDATE_MASK_REPEAT="${ORACLE_CANDIDATE_MASK_REPEAT:-1}"
+ORACLE_SUBTYPE_TEACHER_REPEAT="${ORACLE_SUBTYPE_TEACHER_REPEAT:-4}"
 BUDGET="${BUDGET:-1.35}"
 STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
 BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
@@ -145,12 +148,12 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-context-noise-std 0.05 \
     --oracle-rollout-steps 2048 \
     --oracle-rollouts-per-policy 4 \
-    --oracle-epochs 10 \
+    --oracle-epochs "$ORACLE_EPOCHS" \
     --oracle-batch-size 512 \
     --oracle-loss-clip 20 \
-    --oracle-candidate-mask-repeat 1 \
+    --oracle-candidate-mask-repeat "$ORACLE_CANDIDATE_MASK_REPEAT" \
     --oracle-candidate-mask-limit 0 \
-    --oracle-subtype-teacher-repeat 4 \
+    --oracle-subtype-teacher-repeat "$ORACLE_SUBTYPE_TEACHER_REPEAT" \
     --oracle-subtype-teacher-lookahead-steps 8 \
     --oracle-subtype-teacher-calm-sensors "${TEACHER_CALM_SENSOR_ARGS[@]}" \
     --oracle-subtype-teacher-particle-sensors "${TEACHER_PARTICLE_SENSOR_ARGS[@]}" \

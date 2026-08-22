@@ -1304,3 +1304,15 @@ tar -czf "$OUT…`
   8-step forecast horizon while restoring V38 event durations. The launcher
   exposes `LOOKBACK` with historical default 20; no PPO run is authorized until
   the exact upper gate passes.
+
+### 2026-08-22 | Flexible-subset v40 matched-horizon lookback screen
+
+- V40 restored V38 durations and reduced observation/forecaster lookback from
+  20 to 8 on seeds 831--835. An initial launch exited at argument parsing before
+  truth fitting; the split-protocol entry point was then updated to propagate
+  the parameter, tested, and the same unused seeds were rerun successfully.
+- Exact upper margins were `+0.00147`, `-0.03994`, `+0.00909`, `+0.01936`, and
+  `+0.01057` (4/5; mean `+0.00011`). Shorter history did not stabilize the
+  gate and is rejected. Because four seeds remain positive while one frozen
+  TCN ranking is a large outlier, V41 holds the V38 scene fixed and increases
+  evaluator candidate coverage and fitting epochs before any policy training.
