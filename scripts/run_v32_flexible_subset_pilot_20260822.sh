@@ -37,6 +37,7 @@ REWARD_LOSS_NORMALIZATION="${REWARD_LOSS_NORMALIZATION:-none}"
 AWBC_TEACHER_MODE="${AWBC_TEACHER_MODE:-subtype_static_auto}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0.0}"
+SUBTYPE_ACTION_EVENT_ONLY="${SUBTYPE_ACTION_EVENT_ONLY:-0}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
@@ -78,6 +79,11 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--nonlinear-action-embedding)
   else
     control_args+=(--no-nonlinear-action-embedding)
+  fi
+  if [[ "$SUBTYPE_ACTION_EVENT_ONLY" == "1" ]]; then
+    control_args+=(--subtype-action-event-only)
+  else
+    control_args+=(--no-subtype-action-event-only)
   fi
 
   "$PY" scripts/58_v31_split_protocol_run.py \

@@ -40,6 +40,7 @@ class CustomPPOConfig:
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
     subtype_action_ce_coef: float = 0.0
+    subtype_action_event_only: bool = False
     subtype_action_margin_coef: float = 0.0
     subtype_action_margin: float = 0.5
     subtype_router_enabled: bool = False
@@ -1234,6 +1235,8 @@ class CustomPPO:
         safe_labels = labels.clamp(min=0, max=int(action_by_subtype.shape[0]) - 1)
         targets = action_by_subtype[safe_labels]
         base_valid = (valid.detach().float() > 0.5) & (targets >= 0) & (targets < n_actions)
+        if bool(self.cfg.subtype_action_event_only):
+            base_valid = base_valid & (safe_labels > 0)
         if action_masks is not None:
             safe_targets = targets.clamp(min=0, max=max(0, n_actions - 1)).reshape(-1, 1)
             target_feasible = action_masks.bool().gather(1, safe_targets).reshape(-1)

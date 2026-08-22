@@ -1086,3 +1086,16 @@ tar -czf "$OUT…`
   supervision is rejected; the next diagnostic checks whether its prototype
   labels agree with per-window forecast-loss-optimal feasible subsets before
   any further policy training.
+
+### 2026-08-22 | Flexible-subset v28 physical event prototypes
+
+- Replacing calibration-selected subtype actions with prespecified physical
+  prototypes improved custom PPO to mean loss `0.14291` and normalized subtype
+  macro loss `0.49512`. It beat static on both endpoints
+  (`0.14540/0.56057`) and beat AoI on macro loss (`0.51523`), while using all
+  six channels at intermediate duty with zero aborts.
+- The remaining miss was narrow and localized: AoI retained lower mean loss
+  (`0.14180`) because its non-event loss was lower, although PD-PPO was better
+  during events. A backward-compatible event-only option is added to the
+  existing subtype-action auxiliary so calm actions remain governed by the
+  forecast objective instead of a fixed prototype.

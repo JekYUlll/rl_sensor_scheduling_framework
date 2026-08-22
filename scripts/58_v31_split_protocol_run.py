@@ -656,6 +656,7 @@ def main() -> None:
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
     parser.add_argument("--subtype-action-ce-coef", type=float, default=0.0)
+    parser.add_argument("--subtype-action-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--subtype-action-margin-coef", type=float, default=0.0)
     parser.add_argument("--subtype-action-margin", type=float, default=0.5)
     parser.add_argument("--subtype-router", action=argparse.BooleanOptionalAction, default=False)
@@ -1300,6 +1301,7 @@ def main() -> None:
         str(max(0, int(args.subtype_aux_lookahead_steps))),
         "--subtype-action-ce-coef",
         str(float(args.subtype_action_ce_coef)),
+        "--subtype-action-event-only" if bool(args.subtype_action_event_only) else "--no-subtype-action-event-only",
         "--subtype-action-margin-coef",
         str(float(args.subtype_action_margin_coef)),
         "--subtype-action-margin",

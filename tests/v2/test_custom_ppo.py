@@ -598,3 +598,27 @@ def test_train_update_callback_receives_completed_updates() -> None:
     observed: list[tuple[int, int]] = []
     trainer.train(on_update=lambda _trainer, update, steps, _metrics: observed.append((update, steps)))
     assert observed == [(1, 1), (2, 2)]
+
+
+def test_subtype_action_event_only_excludes_calm_samples() -> None:
+    trainer = CustomPPO.__new__(CustomPPO)
+    trainer.cfg = CustomPPOConfig(
+        subtype_action_ce_coef=1.0,
+        subtype_action_event_only=True,
+        awbc_teacher_subtype_calm_action=0,
+        awbc_teacher_subtype_particle_action=1,
+        awbc_teacher_subtype_flux_action=2,
+        awbc_teacher_subtype_thermal_action=3,
+    )
+    logits = torch.tensor([[8.0, 0.0, 0.0, 0.0], [8.0, 0.0, 0.0, 0.0]])
+    dist = torch.distributions.Categorical(logits=logits)
+    masks = torch.ones((2, 4), dtype=torch.bool)
+    labels = torch.tensor([0, 1], dtype=torch.long)
+    valid = torch.ones(2)
+
+    ce_loss, margin_loss, valid_rate = trainer._subtype_action_losses(dist, masks, labels, valid)
+
+    expected = -torch.log_softmax(logits[1], dim=0)[1]
+    assert torch.allclose(ce_loss, expected)
+    assert float(margin_loss) == 0.0
+    assert valid_rate == 0.5
