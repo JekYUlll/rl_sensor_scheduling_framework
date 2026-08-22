@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V58 Soft Initialization plus Forecast Gain Failed
+
+### Result
+
+- Combined V56's soft forecast-value warm start with V57's forecast-gain PPO
+  reward on the frozen seed881 screen.
+- PD-PPO loss rose to `0.399985`, worse than static `0.381965` and AoI
+  `0.353549`; the macro score was also worse. One channel became always off and
+  only five channels retained intermediate duty.
+
+### Interpretation and Decision
+
+- The two training signals do not compose cleanly. The soft target optimizes
+  absolute future cost ordering while the gain reward optimizes incremental
+  measurement value, and PPO moves away from the useful initialization.
+- Reject the combined design. Run one final no-BC forecast-gain duration test
+  at 200k transitions on seed881; this distinguishes exploration time from
+  objective mismatch without another architecture or scene change.
+
 ## 2026-08-22 - V57 Forecast-Gain Reward Fixed Credit Scale but Missed AoI
 
 ### Result
