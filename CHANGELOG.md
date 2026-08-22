@@ -1208,3 +1208,14 @@ tar -czf "$OUT…`
   microstructure and subtype-latent alpha to `0.08`, matching the 8-step
   forecast horizon, while restoring coverage `0.55` and retaining low shared
   correlation.
+
+### 2026-08-22 | Flexible-subset v35 long-memory upper bound
+
+- Correctly lowering event and subtype-latent alpha to `0.08` produced a robust
+  dynamic upper bound. Privileged dynamic ordinary-loss margins over hindsight
+  static were `+0.01570`, `+0.03241`, and `+0.01880` on seeds 607--609; all
+  subtype-macro comparisons also favored dynamic schedules.
+- Calibration-selected subtype actions remained inconsistent with final-window
+  rankings, so automatic action labels are not used. A seed607 method choice
+  compares forecast-reward learning without action CE against prespecified
+  physical event-only CE; both retain the same masked PPO and frozen evidence.
