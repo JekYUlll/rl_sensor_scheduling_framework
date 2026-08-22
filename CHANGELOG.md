@@ -1,5 +1,33 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V55 Stronger All-Action BC Failed
+
+### Result
+
+- Kept the frozen V51 scene, evaluator, action geometry, all-action teacher,
+  forecast-loss reward, and 40,960-step PPO protocol unchanged. The bounded
+  test increased one-time BC fitting from 12 to 40 epochs and reduced the PPO
+  entropy coefficient from `0.005` to `0.001`.
+- Joint wins fell to `1/5` against both the strongest static reference and the
+  strongest conventional dynamic reference. Mean ordinary/macro margins were
+  `-0.032479/-0.024542` against static and `-0.015722/-0.032312` against
+  conventional dynamic policies.
+- The strict behavior gate passed in `3/5` seeds. Seed884 collapsed to one
+  always-on and three always-off channels. BC accuracy improved to
+  `0.240--0.299`, but this did not transfer to forecast performance; final
+  entropy remained `1.711--2.273`.
+
+### Interpretation and Decision
+
+- Reject additional BC-epoch and entropy tuning. The privileged receding
+  teacher ranks actions using future targets, and its 20-action choice is not
+  reliably identifiable from the scheduler's online observation. Better label
+  fitting therefore does not solve the sequential prediction-credit problem.
+- Stop the all-action imitation learner line as predeclared. Preserve the V51
+  scene and the central prediction-driven masked-PPO method. The next work unit
+  will audit return attribution and action-value separation using online
+  information before implementing any bounded structural learner change.
+
 ## 2026-08-22 - V54 All-Action Warm Start Improved Coverage but Failed
 
 ### Result
