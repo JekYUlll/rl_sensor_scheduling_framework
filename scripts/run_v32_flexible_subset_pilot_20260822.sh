@@ -8,6 +8,7 @@ DEVICE="${DEVICE:-cuda}"
 RUN_PREFIX="${RUN_PREFIX:-v32_flexible_subset_v1_dev}"
 TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-30000}"
 TRUTH_STEPS="${TRUTH_STEPS:-36000}"
+EVENT_COVERAGE="${EVENT_COVERAGE:-0.45}"
 SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
 BUDGET="${BUDGET:-1.35}"
 STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
@@ -88,7 +89,7 @@ for seed in "${SEEDS[@]}"; do
     --truth-steps "$TRUTH_STEPS" \
     --freq-s 3600 \
     --split-ratios 0.35 0.50 0.075 0.075 \
-    --event-coverage 0.45 \
+    --event-coverage "$EVENT_COVERAGE" \
     --min-duration 20 \
     --max-duration 64 \
     --min-gap 12 \

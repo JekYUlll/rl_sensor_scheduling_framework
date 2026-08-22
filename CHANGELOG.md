@@ -1025,3 +1025,18 @@ tar -czf "$OUT…`
   dynamic reference itself passed only two of three V15 seeds, exploration
   moves to a prespecified stratified subtype generator that stabilizes event
   coverage across chronological partitions without using outcome feedback.
+
+### 2026-08-22 | Flexible-subset v23 stratified-subtype gate
+
+- Stratified event assignment prevented subtype-count drift, but checkpointed
+  PD-PPO collapsed to a fixed two-channel action. It beat static mean loss by
+  only `0.000118` and lost normalized subtype macro by `0.06382`; the learned
+  policy therefore failed the dynamic-behavior and joint-performance gates.
+- Frozen-oracle privileged replay confirmed that event adaptation is useful but
+  not yet sufficient overall. Its subtype-average event loss was about `0.2454`
+  versus the best static action's `0.2576`, while overall mean loss was narrowly
+  worse (`0.155844` versus `0.155428`) because calm and transition periods
+  offset the event gain.
+- The next scene-only gate increases the prespecified event coverage before any
+  PPO training. This tests whether an event-monitoring workload can support a
+  positive dynamic upper bound without changing actions or using test feedback.
