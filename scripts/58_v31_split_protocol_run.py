@@ -577,6 +577,7 @@ def main() -> None:
     parser.add_argument("--startup-peak-budget", type=float, default=3.20)
     parser.add_argument("--truth-steps", type=int, default=90000)
     parser.add_argument("--freq-s", type=int, default=3600)
+    parser.add_argument("--lookback", type=int, default=20)
     parser.add_argument("--split-ratios", nargs=4, type=float, default=[0.35, 0.50, 0.075, 0.075])
     parser.add_argument("--event-coverage", type=float, default=0.28)
     parser.add_argument("--min-duration", type=int, default=12)
@@ -925,6 +926,7 @@ def main() -> None:
         "control_source_run_dir": "" if control_source_dir is None else str(control_source_dir),
         "matched_control_assets": control_source_dir is not None,
         "truth_steps": int(args.truth_steps),
+        "lookback": int(args.lookback),
         "seed": int(args.seed),
         "budget": float(args.budget),
         "target_weights": None if args.target_weights is None else [float(x) for x in args.target_weights],
@@ -1147,6 +1149,8 @@ def main() -> None:
         str(int(args.truth_steps)),
         "--freq-s",
         str(int(args.freq_s)),
+        "--lookback",
+        str(int(args.lookback)),
         "--blowing-snow-event-coverage",
         str(float(args.event_coverage)),
         "--blowing-snow-event-model",
