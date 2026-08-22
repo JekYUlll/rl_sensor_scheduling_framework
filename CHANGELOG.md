@@ -2519,3 +2519,10 @@ tar -czf "$OUT…`
   loss assigns mass-flux weight `18` and particle weights `8/8`, so snow targets
   dominate even in calm periods. The next screen uses equal weights after the
   existing physical target scaling while retaining event-subtype weights.
+### 2026-08-23 | Configurable target-weight launcher
+
+- Replaced the flexible-subset launcher's hard-coded base and event-subtype
+  target-weight arguments with environment-overridable arrays. Defaults exactly
+  preserve every historical run.
+- This change permits auditable objective calibration without copying or
+  editing the training command. Shell syntax and the complete test suite pass.

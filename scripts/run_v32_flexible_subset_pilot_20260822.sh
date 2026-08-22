@@ -61,6 +61,10 @@ PARTICLE_LATENT_VELOCITY_SCALE="${PARTICLE_LATENT_VELOCITY_SCALE:-2.4}"
 FLUX_LATENT_SIGMA="${FLUX_LATENT_SIGMA:-1.2}"
 THERMAL_LATENT_SURFACE_SCALE="${THERMAL_LATENT_SURFACE_SCALE:-2.4}"
 EVENT_SUBTYPE_ASSIGNMENT="${EVENT_SUBTYPE_ASSIGNMENT:-random}"
+read -r -a TARGET_WEIGHT_ARGS <<< "${TARGET_WEIGHTS:-0.25 0.35 0.30 0.10 0.10 0.20 18.0 8.0 8.0}"
+read -r -a PARTICLE_TARGET_WEIGHT_ARGS <<< "${PARTICLE_TARGET_WEIGHTS:-0.10 0.10 0.20 0.05 0.05 0.10 4.0 14.0 14.0}"
+read -r -a FLUX_TARGET_WEIGHT_ARGS <<< "${FLUX_TARGET_WEIGHTS:-0.10 0.10 0.30 0.05 0.05 0.10 24.0 4.0 4.0}"
+read -r -a THERMAL_TARGET_WEIGHT_ARGS <<< "${THERMAL_TARGET_WEIGHTS:-0.50 10.0 0.20 0.05 0.05 0.20 2.0 2.0 2.0}"
 read -r -a TEACHER_CALM_SENSOR_ARGS <<< "${TEACHER_CALM_SENSORS:-met_station_core radiometer_basic}"
 read -r -a TEACHER_PARTICLE_SENSOR_ARGS <<< "${TEACHER_PARTICLE_SENSORS:-met_station_core laser_disdrometer}"
 read -r -a TEACHER_FLUX_SENSOR_ARGS <<< "${TEACHER_FLUX_SENSORS:-met_station_core fc4_flux}"
@@ -289,10 +293,10 @@ for seed in "${SEEDS[@]}"; do
     --no-duty-hard-guard \
     --no-primary-eval-duty-guard \
     --min-dwell-steps 6 \
-    --target-weights 0.25 0.35 0.30 0.10 0.10 0.20 18.0 8.0 8.0 \
-    --subtype-particle-target-weights 0.10 0.10 0.20 0.05 0.05 0.10 4.0 14.0 14.0 \
-    --subtype-flux-target-weights 0.10 0.10 0.30 0.05 0.05 0.10 24.0 4.0 4.0 \
-    --subtype-thermal-target-weights 0.50 10.0 0.20 0.05 0.05 0.20 2.0 2.0 2.0 \
+    --target-weights "${TARGET_WEIGHT_ARGS[@]}" \
+    --subtype-particle-target-weights "${PARTICLE_TARGET_WEIGHT_ARGS[@]}" \
+    --subtype-flux-target-weights "${FLUX_TARGET_WEIGHT_ARGS[@]}" \
+    --subtype-thermal-target-weights "${THERMAL_TARGET_WEIGHT_ARGS[@]}" \
     --disable-coverage-groups \
     --device "$DEVICE" \
     2>&1 | tee "${out_dir}/run_train_eval.log"
