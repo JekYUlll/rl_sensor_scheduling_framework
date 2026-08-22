@@ -16,6 +16,7 @@ from v2.custom_ppo import (  # noqa: E402
     advantage_weighted_bc_loss,
     feasible_candidate_mask,
     full_rollout_schedule,
+    soft_forecast_value_targets,
     restore_env,
     snapshot_env,
 )
@@ -45,6 +46,19 @@ def test_full_rollout_schedule_never_emits_short_tail_batch() -> None:
     assert full_rollout_schedule(40_000, 1_024) == (1_024,) * 40
     assert sum(full_rollout_schedule(40_000, 1_024)) == 40_960
     assert full_rollout_schedule(0, 1_024) == ()
+
+
+def test_soft_forecast_value_targets_normalize_per_state_and_mask_invalid_actions() -> None:
+    targets = soft_forecast_value_targets(
+        np.asarray([[3.0, 1.0, 2.0], [5.0, 5.0, 9.0]]),
+        np.asarray([[True, True, False], [True, True, False]]),
+        temperature=1.0,
+    )
+
+    assert np.allclose(targets.sum(axis=1), 1.0)
+    assert np.allclose(targets[:, 2], 0.0)
+    assert targets[0, 1] > targets[0, 0]
+    assert targets[1, 0] == pytest.approx(targets[1, 1])
 
 
 def _truth(rows: int = 64) -> pd.DataFrame:

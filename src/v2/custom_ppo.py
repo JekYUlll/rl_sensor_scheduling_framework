@@ -46,6 +46,8 @@ class CustomPPOConfig:
     bc_pretrain_epochs: int = 4
     bc_pretrain_batch_size: int = 128
     bc_pretrain_loss_coef: float = 1.0
+    bc_pretrain_target_mode: str = "hard"
+    bc_soft_temperature: float = 1.0
     subtype_aux_coef: float = 0.0
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
@@ -733,6 +735,7 @@ class CustomPPO:
         action_mask_rows: list[np.ndarray] = []
         subtype_label_rows: list[int] = []
         subtype_valid_rows: list[float] = []
+        teacher_distribution_rows: list[np.ndarray] = []
         episode_id = 0
         for step in range(int(n_steps)):
             obs_np = env._state().astype(np.float32)
@@ -741,7 +744,26 @@ class CustomPPO:
                 if bool(self.cfg.use_action_mask)
                 else np.ones(self.candidate_masks_np.shape[0], dtype=bool)
             )
-            teacher = int(self._awbc_teacher_action(env, action_mask_np))
+            if (
+                str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value"
+                and str(self.cfg.awbc_teacher_mode) == "oracle_greedy"
+            ):
+                teacher_costs = oracle_greedy_candidate_costs(
+                    env,
+                    self.candidate_masks_np,
+                    lookahead_steps=int(self.cfg.greedy_lookahead_steps),
+                )
+                teacher_distribution = soft_forecast_value_targets(
+                    teacher_costs.reshape(1, -1),
+                    action_mask_np.reshape(1, -1),
+                    temperature=float(self.cfg.bc_soft_temperature),
+                )[0]
+                teacher = int(np.argmax(teacher_distribution))
+            else:
+                teacher = int(self._awbc_teacher_action(env, action_mask_np))
+                teacher_distribution = np.zeros(len(action_mask_np), dtype=np.float32)
+                if 0 <= teacher < len(action_mask_np):
+                    teacher_distribution[teacher] = 1.0
             if not (0 <= teacher < len(action_mask_np) and bool(action_mask_np[teacher])):
                 feasible = np.flatnonzero(action_mask_np)
                 teacher = int(feasible[0]) if feasible.size else 0
@@ -749,6 +771,7 @@ class CustomPPO:
 
             obs_rows.append(obs_np)
             teacher_rows.append(int(teacher))
+            teacher_distribution_rows.append(teacher_distribution.astype(np.float32))
             event_rows.append(float(env.online_event_context()))
             action_mask_rows.append(action_mask_np.astype(bool))
             subtype_label_rows.append(int(subtype_label))
@@ -768,6 +791,7 @@ class CustomPPO:
         return {
             "obs": np.vstack(obs_rows).astype(np.float32),
             "teacher_actions": np.asarray(teacher_rows, dtype=np.int64),
+            "teacher_distributions": np.vstack(teacher_distribution_rows).astype(np.float32),
             "event_flags": np.asarray(event_rows, dtype=np.float32),
             "action_masks": np.vstack(action_mask_rows).astype(bool),
             "subtype_labels": np.asarray(subtype_label_rows, dtype=np.int64),
@@ -780,6 +804,7 @@ class CustomPPO:
         batch = self.collect_teacher_batch(int(n_steps), seed_offset=91_000)
         obs = torch_tensor(batch["obs"], device=self.device)
         teacher_actions = torch_tensor(batch["teacher_actions"], device=self.device, dtype=torch.long)
+        teacher_distributions = torch_tensor(batch["teacher_distributions"], device=self.device)
         event_flags = torch_tensor(batch["event_flags"], device=self.device)
         action_masks = torch_tensor(batch["action_masks"], device=self.device, dtype=torch.bool)
         subtype_labels = torch_tensor(batch["subtype_labels"], device=self.device, dtype=torch.long)
@@ -795,12 +820,16 @@ class CustomPPO:
                 idx = torch_tensor(indices[start : start + batch_size], device=self.device, dtype=torch.long)
                 mb_obs = obs[idx]
                 mb_teacher = teacher_actions[idx]
+                mb_teacher_distribution = teacher_distributions[idx]
                 mb_events = event_flags[idx]
                 mb_masks = action_masks[idx]
                 mb_subtype_labels = subtype_labels[idx]
                 mb_subtype_valid = subtype_valid[idx]
                 dist = self.model.dist(mb_obs, self.candidate_masks_t, mb_masks, mb_events)
-                bc_loss = -dist.log_prob(mb_teacher).mean()
+                if str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value":
+                    bc_loss = -(mb_teacher_distribution * torch.log(dist.probs.clamp_min(1.0e-12))).sum(dim=1).mean()
+                else:
+                    bc_loss = -dist.log_prob(mb_teacher).mean()
                 subtype_aux_loss, subtype_aux_acc = self._subtype_aux_loss(
                     mb_obs,
                     mb_events,
@@ -1502,10 +1531,19 @@ def oracle_greedy_candidate_index(
     *,
     lookahead_steps: int,
 ) -> int:
+    costs = oracle_greedy_candidate_costs(env, candidate_masks, lookahead_steps=lookahead_steps)
+    return int(np.argmin(costs))
+
+
+def oracle_greedy_candidate_costs(
+    env: WarmupSchedulingEnv,
+    candidate_masks: np.ndarray,
+    *,
+    lookahead_steps: int,
+) -> np.ndarray:
     snapshot = snapshot_env(env)
     feasible = feasible_candidate_mask(env, candidate_masks)
-    best_idx = int(np.flatnonzero(feasible)[0])
-    best_cost = float("inf")
+    costs_by_action = np.full(len(candidate_masks), np.inf, dtype=np.float32)
     for idx, mask in enumerate(np.asarray(candidate_masks, dtype=bool)):
         if not feasible[idx]:
             continue
@@ -1521,11 +1559,35 @@ def oracle_greedy_candidate_index(
             if done:
                 break
         avg_cost = float(np.mean(costs)) if costs else float("inf")
-        if avg_cost < best_cost:
-            best_cost = avg_cost
-            best_idx = int(idx)
+        costs_by_action[idx] = float(avg_cost)
     restore_env(env, snapshot)
-    return int(best_idx)
+    return costs_by_action
+
+
+def soft_forecast_value_targets(
+    costs: np.ndarray,
+    feasible: np.ndarray,
+    *,
+    temperature: float,
+) -> np.ndarray:
+    values = np.asarray(costs, dtype=np.float64)
+    valid = np.asarray(feasible, dtype=bool) & np.isfinite(values)
+    if values.ndim != 2 or valid.shape != values.shape:
+        raise ValueError("costs and feasible must be matched two-dimensional arrays")
+    if float(temperature) <= 0.0:
+        raise ValueError("temperature must be positive")
+    targets = np.zeros_like(values, dtype=np.float64)
+    for row in range(values.shape[0]):
+        row_valid = valid[row]
+        if not np.any(row_valid):
+            raise ValueError("every row requires at least one finite feasible action")
+        row_costs = values[row, row_valid]
+        scale = max(float(np.std(row_costs)), 1.0e-8)
+        logits = -(row_costs - float(np.mean(row_costs))) / (scale * float(temperature))
+        logits -= float(np.max(logits))
+        weights = np.exp(logits)
+        targets[row, row_valid] = weights / float(np.sum(weights))
+    return targets.astype(np.float32)
 
 
 def compute_gae(

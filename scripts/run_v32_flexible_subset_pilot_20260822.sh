@@ -29,6 +29,8 @@ AWBC_DECAY_TIMESTEPS="${AWBC_DECAY_TIMESTEPS:-0}"
 BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
 BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
+BC_PRETRAIN_TARGET_MODE="${BC_PRETRAIN_TARGET_MODE:-hard}"
+BC_SOFT_TEMPERATURE="${BC_SOFT_TEMPERATURE:-1.0}"
 ENT_COEF="${ENT_COEF:-0.02}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 GREEDY_LOOKAHEAD_STEPS="${GREEDY_LOOKAHEAD_STEPS:-4}"
@@ -187,6 +189,8 @@ for seed in "${SEEDS[@]}"; do
     --bc-pretrain-epochs "$BC_PRETRAIN_EPOCHS" \
     --bc-pretrain-batch-size 256 \
     --bc-pretrain-loss-coef "$BC_PRETRAIN_LOSS_COEF" \
+    --bc-pretrain-target-mode "$BC_PRETRAIN_TARGET_MODE" \
+    --bc-soft-temperature "$BC_SOFT_TEMPERATURE" \
     --subtype-aux-coef "$SUBTYPE_AUX_COEF" \
     --subtype-aux-classes 4 \
     --subtype-aux-lookahead-steps 8 \
