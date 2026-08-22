@@ -1,5 +1,39 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V42 Exact-Geometry Scene Gate Passed
+
+### Change
+
+- Retained the unrestricted six-channel, power-feasible subset geometry and the
+  fixed effective per-epoch sensor costs.
+- Removed subtype-specific perturbations from shared humidity, wind, and air-
+  temperature channels. Specialist-specific latent observations and forecast
+  targets remain unchanged. This prevents low-cost shared channels from acting
+  as substitute subtype sensors while preserving the physical channel mapping.
+- Used fresh development seeds `851--855`, a 20-step history, and independently
+  fitted frozen TCN evaluators. No PPO policy was selected or trained in this
+  scene screen.
+
+### Result
+
+- Under the exact no-required-channel action geometry, the best privileged
+  subtype-dependent dynamic schedule beat the best hindsight static subset in
+  all `5/5` seeds.
+- Ordinary forecast-loss margins were `+0.004466`, `+0.011498`, `+0.004429`,
+  `+0.011042`, and `+0.023542`; the mean margin was `+0.010995`.
+- The predeclared scene gate of `5/5` positive margins and mean margin at least
+  `+0.01` passed. The V42 truth sequences, evaluators, starts, action geometry,
+  and scene configuration are now frozen for matched policy training.
+
+### Decision
+
+- Train the previously selected clean V36b policy configuration on the same
+  V42 assets. Do not alter the reward, action geometry, effective costs, scene,
+  evaluator, or evaluation starts during this development replication.
+- Fresh confirmation seeds remain prohibited until the learned policy passes
+  the static, conventional-dynamic, behavior, and feasibility gates on at least
+  four of these five development seeds.
+
 ## 2026-07-03 - CA-PD-PPO Bounded Dev2 Failure-Guided Wave
 
 Objective: improve CA-PD-PPO against `context_alert_bandit_t0p5` without using
