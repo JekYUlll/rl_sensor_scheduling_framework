@@ -1172,3 +1172,14 @@ tar -czf "$OUT…`
   seeds, while V31 retained fixed physical event prototypes. V32 tests
   calibration-selected prototype actions only on event samples. Calm remains
   controlled by forecast reward, and no final-partition information is used.
+
+### 2026-08-22 | Flexible-subset v32 calibrated event actions
+
+- Calibration-selected event actions improved aggregate losses to
+  `0.18999/0.65486`, ahead of static `0.19815/0.75647` and AoI
+  `0.20193/0.70926`, with `2/3` joint wins against each family.
+- Behavior failed in two seeds: the policy used only two intermediate-duty
+  channels and converged to one always-on plus three always-off channels.
+  Calibration labels improved action value but coefficient `0.1` dominated
+  exploration. V33 tests the same labels at `0.05`; no new module, scene, or
+  action rule is introduced.
