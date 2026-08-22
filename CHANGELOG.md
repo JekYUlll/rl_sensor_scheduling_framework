@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V52 Forecast-Horizon Lag Screen Rejected
+
+### Result
+
+- Retained V51's channels, costs, action geometry, state-dependent measurement
+  quality, event process, evaluator protocol, and online context. Changed only
+  specialist-latent target lag from four to eight steps on fresh development
+  seeds `891--895`.
+- Exact dynamic-over-static margins were `+0.004239`, `+0.005831`, `-0.004535`,
+  `-0.015881`, and `-0.011356`; only `2/5` were positive and the mean was
+  `-0.004340`.
+
+### Interpretation and Decision
+
+- Reject direct horizon alignment. Increasing the target lag reduces the value
+  of the current measurement over much of the prediction window and does not
+  produce stable dynamic scheduling value.
+- Stop scalar generator tuning. Audit and replace the subtype-bucket upper
+  diagnostic with an arbitrary-mask, continuous state-dependent oracle
+  diagnostic before drawing another scene conclusion. The current diagnostic
+  considers only the top two aggregate masks for calm and each of three event
+  subtypes, which is narrower than the redesigned flexible scheduler.
+
 ## 2026-08-22 - V51 Specialist-Specific Observation Screen Improved but Failed
 
 ### Result
