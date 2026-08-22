@@ -1136,3 +1136,16 @@ tar -czf "$OUT…`
   IR, and thermal channels. A bounded development-only test halves the
   event-action auxiliary weight to determine whether the macro-versus-mean
   tradeoff can be reduced without changing the scene or action space.
+
+### 2026-08-22 | Flexible-subset v30 guidance-weight control
+
+- Halving event-action guidance to `0.05` did not improve the three development
+  seeds. Aggregate mean loss remained slightly worse than static
+  (`0.18354` versus `0.18166`), although macro loss remained better
+  (`0.59857` versus `0.63984`); static joint wins fell to `1/3`.
+- A frozen-seed privileged subtype scheduler beat the strongest hindsight
+  static mask on ordinary mean loss in only `3/5` confirmation scenes, with
+  mean margin `+0.00169`. The scene therefore lacks a robust ordinary-loss
+  dynamic upper bound. Further PPO coefficient tuning stops. The next bounded
+  screen increases physically plausible event-process persistence and reduces
+  shared microstructure correlation before any policy training.

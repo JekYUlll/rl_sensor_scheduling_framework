@@ -9,6 +9,9 @@ RUN_PREFIX="${RUN_PREFIX:-v32_flexible_subset_v1_dev}"
 TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-30000}"
 TRUTH_STEPS="${TRUTH_STEPS:-36000}"
 EVENT_COVERAGE="${EVENT_COVERAGE:-0.45}"
+EVENT_MICROSTRUCTURE_SIGMA="${EVENT_MICROSTRUCTURE_SIGMA:-0.08}"
+EVENT_MICROSTRUCTURE_ALPHA="${EVENT_MICROSTRUCTURE_ALPHA:-0.22}"
+EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION="${EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION:-0.35}"
 SENSOR_CFG="${SENSOR_CFG:-configs/sensors/windblown_sensors_flexible_subset_v1.yaml}"
 BUDGET="${BUDGET:-1.35}"
 STARTUP_BUDGET="${STARTUP_BUDGET:-1.65}"
@@ -105,11 +108,11 @@ for seed in "${SEEDS[@]}"; do
     --cred-hysteresis-on 0.6 \
     --cred-hysteresis-off 0.3 \
     --flux-wind-exponent 3.0 \
-    --event-microstructure-sigma 0.08 \
-    --event-microstructure-alpha 0.22 \
+    --event-microstructure-sigma "$EVENT_MICROSTRUCTURE_SIGMA" \
+    --event-microstructure-alpha "$EVENT_MICROSTRUCTURE_ALPHA" \
     --event-microstructure-diameter-scale 0.08 \
     --event-microstructure-velocity-scale 0.20 \
-    --event-particle-microstructure-correlation 0.35 \
+    --event-particle-microstructure-correlation "$EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION" \
     --event-subtypes-enabled \
     --event-subtype-assignment "$EVENT_SUBTYPE_ASSIGNMENT" \
     --event-subtype-particle-prob 0.36 \
