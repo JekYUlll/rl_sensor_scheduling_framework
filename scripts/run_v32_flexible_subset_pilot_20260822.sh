@@ -53,6 +53,7 @@ SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0.0}"
 SUBTYPE_ACTION_EVENT_ONLY="${SUBTYPE_ACTION_EVENT_ONLY:-0}"
 SUBTYPE_LOSS_WEIGHTING="${SUBTYPE_LOSS_WEIGHTING:-1}"
+CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-10}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
@@ -203,7 +204,7 @@ for seed in "${SEEDS[@]}"; do
     --event-aware-critic \
     --no-event-gated-actor \
     --context-encoder \
-    --context-feature-dim 10 \
+    --context-feature-dim "$CONTEXT_FEATURE_DIM" \
     --context-hidden-dim 64 \
     --context-fusion-mode gated_add \
     --context-layer-norm \

@@ -1,5 +1,32 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V47 Checkpoint Selection Failed; Context Split Audited
+
+### Result
+
+- Validation-only checkpoint selection every five full PPO updates produced
+  `2/5` static joint wins and `3/5` conventional-dynamic joint wins. Mean
+  ordinary/macro margins were `-0.012827/+0.000100` against static and
+  `+0.004390/+0.006343` against conventional dynamic policies.
+- All five behavior gates passed. Validation-selected updates varied from 10 to
+  40, but early selection did not improve final-partition transfer.
+
+### Architecture Finding
+
+- The environment appends 20 online alert-context features: three scores, three
+  threshold flags, a four-class argmax one-hot vector, maximum confidence,
+  alert age, three trends, previous-specialist one-hot, and remaining dwell.
+- The launcher configured the dedicated context encoder for only the last 10
+  entries. Alert scores, flags, and argmax indicators were consequently left in
+  the large history encoder instead of the context branch.
+
+### Decision
+
+- Reject checkpoint selection as the remedy. V48 returns to final full-rollout
+  training and assigns the complete 20-dimensional online context tail to the
+  context encoder. No privileged labels, bandit dependence, scene changes, or
+  final-test selection are introduced.
+
 ## 2026-08-22 - V46 Full-Rollout Correction Did Not Pass
 
 ### Result
