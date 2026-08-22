@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V50 Persistence-Only Screen Rejected
+
+### Result
+
+- Restored the V42 specialist amplitudes and removed shared subtype proxies,
+  then changed only specialist-latent persistence (`alpha 0.15 -> 0.08`) on
+  fresh development seeds `871--875`; no PPO policy was trained.
+- Exact-geometry privileged dynamic schedules beat hindsight static in `4/5`
+  seeds. Per-seed ordinary margins were `+0.002771`, `+0.022561`, `+0.003055`,
+  `-0.005636`, and `+0.012574`; the mean was `+0.007065`.
+
+### Interpretation and Decision
+
+- Reject persistence alone as the next scene. It does not reproduce V42's
+  `5/5` upper-bound wins and its mean headroom is smaller than V42's
+  `+0.010995`, so PPO training would test a learner near an even lower ceiling.
+- Keep V48's complete 20-feature context encoder as the corrected method. The
+  next scene hypothesis must change a physically interpretable online
+  observability mechanism that affects the value and timeliness of specialist
+  measurements. Raw amplitude, event duration, lookback, and latent alpha are
+  closed as isolated tuning directions.
+
 ## 2026-08-22 - V49 Specialist-Amplitude Screen Rejected
 
 ### Result
