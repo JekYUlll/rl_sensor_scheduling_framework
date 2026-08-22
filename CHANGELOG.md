@@ -1,5 +1,26 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V46 Full-Rollout Correction Did Not Pass
+
+### Result
+
+- Repeated V43 on the same frozen V42 assets after eliminating the 64-sample
+  tail update. Every seed used forty complete 1,024-step PPO rollouts.
+- Joint wins were `2/5` against both strongest static and conventional dynamic
+  references. Mean ordinary/macro margins were `-0.001583/+0.014512` against
+  static and `+0.015633/+0.020756` against conventional dynamic policies.
+- Behavior passed `5/5`, with zero always-on channels, one unused channel, five
+  intermediate-duty channels, and zero warm-up aborts.
+
+### Decision
+
+- Retain the full-rollout implementation correction, but do not treat V46 as a
+  performance pass. It reduced the mean ordinary static deficit without fixing
+  cross-seed endpoint instability.
+- V47 adds only validation-partition checkpoint selection every five complete
+  updates. Test metrics remain unavailable to selection, and all scene,
+  evaluator, reward, action, and optimization settings remain fixed.
+
 ## 2026-08-22 - V45 Reward-Weight Flag Audit and PPO Tail Fix
 
 ### Result
