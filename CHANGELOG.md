@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V56 Soft Forecast-Value Replication Failed
+
+### Result
+
+- Frozen V56 was replicated on all V51 development seeds. Joint wins were
+  `2/5` against static and `3/5` against conventional dynamic references.
+  Mean ordinary/macro margins were `-0.015741/-0.022948` against static and
+  `+0.001016/-0.030718` against conventional dynamic policies.
+- Behavior passed in `4/5` seeds with no always-on or always-off channels.
+  Soft-target argmax fit rose to `0.631--0.829`, but seed883 and seed884 still
+  had large negative prediction margins.
+
+### Interpretation and Decision
+
+- Soft action-value supervision improves label learnability and channel usage,
+  but it does not repair the scalar PPO credit signal. Do not tune its
+  temperature or pretraining duration.
+- The next bounded method test will express the same forecast objective as
+  information gain over a no-new-measurement counterfactual at the same epoch.
+  This removes exogenous event difficulty from the reward while retaining
+  online inputs, masked PPO, hard feasibility constraints, and absolute
+  forecast-loss evaluation.
+
 ## 2026-08-22 - V56 Soft Forecast-Value Warm Start Passed Seed881
 
 ### Result
