@@ -1195,3 +1195,16 @@ tar -czf "$OUT…`
   policy variation. The next scene-only upper-bound screen raises event
   coverage from `0.55` to `0.65` while holding costs, actions, constraints,
   persistent dynamics, and subtype generation fixed.
+
+### 2026-08-22 | V31--V34 persistence-semantics correction
+
+- Source inspection corrected the interpretation of generator `alpha`:
+  `_lowpass` updates as `x[t] = x[t-1] + alpha * (raw[t] - x[t-1])`, so raising
+  alpha from `0.22` to `0.60` shortened memory instead of increasing it. V31--V34
+  remain valid negative diagnostics, but their directory label "persistent"
+  does not describe the implemented dynamics.
+- Raising event coverage to `0.65` also left the privileged ordinary-loss
+  margin at only `+0.00144` on seed 604 and is rejected. V35 lowers both event
+  microstructure and subtype-latent alpha to `0.08`, matching the 8-step
+  forecast horizon, while restoring coverage `0.55` and retaining low shared
+  correlation.
