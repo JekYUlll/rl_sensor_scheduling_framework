@@ -1161,3 +1161,14 @@ tar -czf "$OUT…`
   development seeds. Margins were `+0.00497`, `+0.00154`, and `+0.00173` for
   seeds 601--603. The scene upper-bound gate passes; V29 training is now tested
   without further scene changes.
+
+### 2026-08-22 | Flexible-subset v31 learned-policy check
+
+- V29 training on the frozen V31a scenes improved aggregate mean/macro losses
+  to `0.19544/0.68022`, ahead of static `0.19815/0.75647` and AoI
+  `0.20193/0.70926`. Seed-level joint wins remained only `1/3` against static
+  and `2/3` against AoI, so the replication gate did not pass.
+- Privileged upper schedules used different subtype combinations across these
+  seeds, while V31 retained fixed physical event prototypes. V32 tests
+  calibration-selected prototype actions only on event samples. Calm remains
+  controlled by forecast reward, and no final-partition information is used.
