@@ -1122,3 +1122,17 @@ tar -czf "$OUT…`
   intermediate-duty channels, no always-on channel, one unused channel, and
   zero aborts. The configuration and fresh confirmation seeds 501--505 are now
   locked; no further method or scene calibration is allowed.
+
+### 2026-08-22 | Flexible-subset v29 frozen confirmation
+
+- On locked seeds 501--505, PD-PPO beat AoI on both endpoints in `4/5` seeds
+  and in aggregate (`0.20643/0.73332` versus `0.21414/0.76253`). Against static,
+  it won both endpoints in `1/5`; aggregate macro remained better
+  (`0.73332` versus `0.74957`) but ordinary mean loss was worse (`0.20643`
+  versus `0.19792`). The full confirmation gate therefore did not pass.
+- All five runs had zero aborts, no always-on channel, five intermediate-duty
+  channels, and one effectively unused radiometer. Static frequently selected
+  met-plus-laser or shield-plus-laser, while PD-PPO spent capacity across FC4,
+  IR, and thermal channels. A bounded development-only test halves the
+  event-action auxiliary weight to determine whether the macro-versus-mean
+  tradeoff can be reduced without changing the scene or action space.
