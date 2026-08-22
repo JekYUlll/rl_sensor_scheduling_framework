@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V51 Online Context Gate Failed but Localized the Scene Defect
+
+### Result
+
+- Replayed two online-only context policies on frozen V51. Validation-selected
+  context actions passed the static joint gate in `2/5` seeds. The prespecified
+  physical context mapping improved this to `3/5`.
+- Under the physical mapping, macro margins were positive in all five seeds,
+  while ordinary margins failed only in seeds883 and 884. All six channels had
+  intermediate duty on average and warm-up aborts were zero.
+
+### Interpretation and Decision
+
+- V51 contains online-responsive value, but random subtype composition makes
+  ordinary-loss transfer unstable. It therefore fails the strengthened scene
+  gate even though the privileged all-action upper passes.
+- V61 keeps V51 physics, costs, warnings, and noise unchanged and alters only
+  subtype assignment from random to stratified on new development seeds
+  901--905. Generate and screen online context before any PPO training.
+
 ## 2026-08-22 - V60 BC-Only Diagnostic Rejected V51 Learnability Gate
 
 ### Result
