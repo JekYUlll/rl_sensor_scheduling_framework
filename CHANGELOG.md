@@ -1040,3 +1040,15 @@ tar -czf "$OUT…`
 - The next scene-only gate increases the prespecified event coverage before any
   PPO training. This tests whether an event-monitoring workload can support a
   positive dynamic upper bound without changing actions or using test feedback.
+
+### 2026-08-22 | Flexible-subset v24 event-coverage upper bound
+
+- Increasing the prespecified synthetic event coverage from `0.45` to `0.55`
+  made privileged subtype adaptation beneficial on both endpoints. The best
+  dynamic replay reached mean loss `0.115125`, ahead of the best static action
+  at `0.123864`; its raw three-subtype average was about `0.1604` versus static
+  `0.1792`.
+- The dynamic upper bound used the same frozen TCN, final windows, power budget,
+  and dwell constraint. It had zero aborts and only `0.00362` switches per step.
+  The scenario gate therefore passes, and V25 will train PD-PPO on the frozen
+  V24 evidence path before any seed expansion.
