@@ -2383,3 +2383,16 @@ tar -czf "$OUT…`
   while the pre-training gate showed that only a complete policy selected by
   constrained calibration replay transfers robustly. V85 changes only the
   training-time teacher masks to those locked calibration-selected actions.
+
+### 2026-08-23 | V85 calibrated-teacher warm start
+
+- Replaced only the PD-PPO training guidance masks with each scene's
+  constrained-calibration-selected context map; frozen oracle assets, reward,
+  PPO settings, action geometry, and test protocol were unchanged.
+- V85 regressed to `1/5` strongest-static and `4/5` conventional-dynamic joint
+  wins, with mean static margins `-0.026645/-0.019071`. The variant is rejected.
+- Test-rollout action audits show that the final policy exactly matches the
+  calibrated online context action on only 0--57% of steps across seeds and is
+  often near zero during event steps. The failure is PPO-stage retention of the
+  warm start, not lack of deployable scene information. One bounded V86 run
+  retains the same guidance with existing AWBC coefficient `0.05`.
