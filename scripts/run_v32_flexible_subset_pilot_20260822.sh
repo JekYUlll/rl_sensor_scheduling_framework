@@ -31,6 +31,7 @@ BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
 ENT_COEF="${ENT_COEF:-0.02}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
+GREEDY_LOOKAHEAD_STEPS="${GREEDY_LOOKAHEAD_STEPS:-4}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
 NONLINEAR_ACTION_EMBEDDING="${NONLINEAR_ACTION_EMBEDDING:-0}"
@@ -200,7 +201,7 @@ for seed in "${SEEDS[@]}"; do
     --awbc-teacher-event-lookahead-steps 8 \
     --awbc-teacher-dwell-steps 6 \
     --prior-kl-coef 0.0 \
-    --greedy-lookahead-steps 4 \
+    --greedy-lookahead-steps "$GREEDY_LOOKAHEAD_STEPS" \
     --event-start-prob 0.70 \
     --event-aware-critic \
     --no-event-gated-actor \

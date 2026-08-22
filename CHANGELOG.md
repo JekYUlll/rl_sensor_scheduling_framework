@@ -1,5 +1,31 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-22 - V53 Frozen V51 PD-PPO Transfer Failed
+
+### Result
+
+- Trained the corrected 20-feature PD-PPO architecture for forty complete
+  1,024-step rollouts on each frozen V51 seed. Truth, evaluator, test starts,
+  baseline selection, action geometry, costs, and scene parameters were copied
+  from the V51 control assets.
+- Joint wins were `1/5` against the strongest static reference and `2/5`
+  against conventional dynamic policies. Mean ordinary/macro margins were
+  `-0.012256/+0.050620` against static and `+0.004501/+0.042850` against
+  conventional dynamic policies.
+- Behavior also failed: several seeds left two or three channels unused, and
+  seed884 had one always-on and three always-off channels. All runs had zero
+  warm-up aborts.
+
+### Interpretation and Decision
+
+- The scene has a verified 20-action continuous upper, but V53's initialization
+  and action auxiliary expose only three or four physical subtype prototypes.
+  This supervision geometry is inconsistent with the flexible scheduling goal.
+- V54 keeps the frozen V51 scene and complete PD-PPO method, removes prototype
+  action cross-entropy, and uses the existing all-action forecast-greedy teacher
+  only for BC initialization. Continuing AWBC remains disabled. This is a clean
+  training-design correction, not a bandit-dependent module.
+
 ## 2026-08-22 - V51 All-Action Continuous Dynamic Gate Passed
 
 ### Diagnostic Correction
