@@ -1235,3 +1235,18 @@ tar -czf "$OUT…`
   gate. All configuration choices are frozen, and seeds 701--705 are declared
   as the untouched confirmation set before launch; no tuning may use their
   results.
+
+### 2026-08-22 | Flexible-subset v36 frozen confirmation
+
+- The untouched seeds 701--705 did not confirm static superiority. PD-PPO's
+  aggregate ordinary/macro losses were `0.21954/0.71903`, compared with
+  `0.20686/0.71529` for the strongest static schedule. It jointly won both
+  endpoints in only `1/5` seeds; mean static margins were `-0.01268` and
+  `-0.00374`.
+- Against the strongest conventional dynamic schedule, PD-PPO retained positive
+  aggregate margins of `+0.01640/+0.04997` and `3/5` joint wins. All five runs
+  passed the behavior gate with no always-on channel, one unused channel, five
+  intermediate-duty channels, `0.0124--0.0203` switches per step, and zero
+  warm-up aborts. The configuration is rejected for a static-dominance claim.
+  Seeds 701--705 are frozen and may be used only for post-hoc diagnosis, never
+  for subsequent scene or policy selection.
