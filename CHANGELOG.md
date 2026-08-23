@@ -2665,3 +2665,15 @@ tar -czf "$OUT…`
   condition is not met; no multi-initialization sweep is launched. Subsequent
   work must address sequential credit assignment instead of repeating random
   restarts or scalar hyperparameter tuning.
+
+### 2026-08-23 | V107 establishes partial online identifiability
+
+- A training-partition-only policy learned hard eight-step forecast-value
+  action labels without PPO or subtype auxiliaries. Its action accuracy was
+  `24.9%` over 22 represented actions, versus `4.5%` uniform chance.
+- On frozen seed `1304`, ordinary/macro losses improved from
+  `0.620068/1.684553` to `0.539649/1.400319`. All six channels had intermediate
+  duty and no constraint or warm-up failure occurred.
+- The probe still trailed strongest static by `-0.011138/-0.039129`. The online
+  state is informative but hard privileged argmin labels do not fully transfer;
+  a continuous action-value mechanism is the next clean learner hypothesis.
