@@ -2688,3 +2688,19 @@ tar -czf "$OUT…`
 - Close target-temperature interpolation. The flat actor MLP currently receives
   a 20-step history and mask as one vector; V109 will test a structured temporal
   encoder under V107's hard-label observability protocol before any PPO run.
+
+### 2026-08-23 | V109 validates structured temporal observation encoding
+
+- Repeated V107's hard eight-step forecast-value supervision on frozen scene
+  seed `1304`, replacing only the actor's flattened history MLP with a GRU over
+  the existing 20-step value and observation-mask sequence.
+- Held-out ordinary/macro losses improved to `0.519187/1.311281`, beating the
+  strongest static reference by `+0.009325/+0.049909` and the best conventional
+  dynamic endpoints by `+0.008207/+0.103115`.
+- Training label accuracy decreased from `24.9%` to `20.8%`; the held-out gain
+  is therefore consistent with improved temporal generalization, not closer
+  memorization of privileged action labels.
+- The behavior gate passed with zero always-on, one always-off, five
+  intermediate-duty channels, switching `0.007816`, and zero aborts. One
+  strictly matched complete-PPO temporal control is authorized before any
+  multi-seed expansion.
