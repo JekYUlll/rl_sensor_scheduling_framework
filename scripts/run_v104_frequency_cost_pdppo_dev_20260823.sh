@@ -12,6 +12,7 @@ POLICY_PREFIX="${RUN_PREFIX_OVERRIDE:-v104_frequency_cost_pdppo_dev}"
 CONTEXT_OUT="${CONTEXT_OUT_OVERRIDE:-reports/aggregate/v103_frequency_cost_context_gate_20260823}"
 SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v5_frequency_cost.yaml
 mkdir -p logs/v104_frequency_cost_pdppo
+pids=()
 
 for i in "${!SEEDS[@]}"; do
   seed="${SEEDS[$i]}"
@@ -84,5 +85,13 @@ PY
     export EVALUATION_TEMPERATURE_CANDIDATES="${EVALUATION_TEMPERATURE_CANDIDATES:-}"
     bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
   ) >"logs/v104_frequency_cost_pdppo/seed${seed}.log" 2>&1 &
+  pids+=("$!")
 done
-wait
+
+status=0
+for pid in "${pids[@]}"; do
+  if ! wait "$pid"; then
+    status=1
+  fi
+done
+exit "$status"
