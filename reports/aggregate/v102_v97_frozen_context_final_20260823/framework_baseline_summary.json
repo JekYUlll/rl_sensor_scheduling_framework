@@ -1,0 +1,54 @@
+{
+  "complete_rows": 66,
+  "policies": [
+    {
+      "policy": "context_alert_bandit_t0p5",
+      "complete_seeds": 22,
+      "mean_oracle_loss": 0.43710041992164056,
+      "mean_loss_margin_vs_custom_ppo": -0.09108629036207344,
+      "median_loss_margin_vs_custom_ppo": -0.06959042112430319,
+      "pdppo_step_win_count": 0,
+      "pdppo_step_loss_count": 22,
+      "mean_staticnorm_macro": 0.9898058196656435,
+      "mean_staticnorm_macro_margin_vs_custom_ppo": -0.2533928997489112,
+      "pdppo_staticnorm_macro_win_count": 0,
+      "diagnostic_privilege": "supplied_synthetic_warning_scores",
+      "mean_switches_per_step": 0.015253490177502287,
+      "mean_mid_duty_sensor_count": 4.318181818181818,
+      "mean_warmup_abort_count": 0.0
+    },
+    {
+      "policy": "event_label_reference_l8",
+      "complete_seeds": 22,
+      "mean_oracle_loss": 0.4368229354407628,
+      "mean_loss_margin_vs_custom_ppo": -0.09136377484295123,
+      "median_loss_margin_vs_custom_ppo": -0.0696064155660375,
+      "pdppo_step_win_count": 0,
+      "pdppo_step_loss_count": 22,
+      "mean_staticnorm_macro": 0.987757677925683,
+      "mean_staticnorm_macro_margin_vs_custom_ppo": -0.25544104148887187,
+      "pdppo_staticnorm_macro_win_count": 0,
+      "diagnostic_privilege": "exact_final_event_subtype",
+      "mean_switches_per_step": 0.015227174041763656,
+      "mean_mid_duty_sensor_count": 4.318181818181818,
+      "mean_warmup_abort_count": 0.0
+    },
+    {
+      "policy": "forecast_greedy_one_step",
+      "complete_seeds": 22,
+      "mean_oracle_loss": 0.46821404963695307,
+      "mean_loss_margin_vs_custom_ppo": -0.0599726606467609,
+      "median_loss_margin_vs_custom_ppo": -0.04663974717388755,
+      "pdppo_step_win_count": 4,
+      "pdppo_step_loss_count": 18,
+      "mean_staticnorm_macro": 1.1203766122991519,
+      "mean_staticnorm_macro_margin_vs_custom_ppo": -0.12282210711540294,
+      "pdppo_staticnorm_macro_win_count": 5,
+      "diagnostic_privilege": "final_future_loss",
+      "mean_switches_per_step": 0.03616823905577699,
+      "mean_mid_duty_sensor_count": 3.0,
+      "mean_warmup_abort_count": 0.0
+    }
+  ],
+  "interpretation": "Positive margins mean the supplementary baseline has higher loss than PD-PPO. forecast_greedy_one_step is a privileged myopic diagnostic because it chooses masks using final-test future loss; context_alert_bandit uses supplied synthetic warning-score columns; event_label_reference uses exact final-test subtype labels and is privileged."
+}

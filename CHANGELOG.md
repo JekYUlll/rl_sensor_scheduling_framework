@@ -2605,3 +2605,20 @@ tar -czf "$OUT…`
   `-0.006112/-0.024157` against conventional dynamic references.
 - This teacher improves action breadth without preserving forecast quality and
   is not expanded. V97 remains frozen for fresh confirmation.
+### 2026-08-23 | V102 confirms dynamic value but not static dominance
+
+- Completed the locked 22-seed protocol with scene seeds `1201--1222` and
+  independent policy seeds `4201--4222`. No configuration changed after lock.
+- PD-PPO jointly beat conventional dynamic references in `18/22` seeds, with
+  mean ordinary/macro margins `+0.027555/+0.054944` and both bootstrap
+  intervals above zero. It also jointly beat the one-step forecast-greedy
+  diagnostic in `18/22`, with margins `+0.022473/+0.098269`.
+- Strongest-static ordinary/macro wins were `15/22` and `12/22`, with `11/22`
+  joint wins. Mean margins were positive (`+0.009987/+0.023076`), but both
+  confidence intervals included zero. Stable static dominance is not claimed.
+- Behavior and feasibility passed `22/22`: no invalid masks, no power or startup
+  violations, no warm-up aborts, nonzero switching, at most one constant-on/off
+  channel, and strong event-versus-calm duty changes in every seed.
+- The calibrated context and exact-label references themselves achieved only
+  `14/22` and `13/22` joint static wins. The scene/action geometry remains the
+  limiting factor; further V102 learner tuning is closed.
