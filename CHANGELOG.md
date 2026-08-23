@@ -2971,3 +2971,15 @@ tar -czf "$OUT…`
 - V130 is one bounded target-sharpness test on these two development scenes.
   It changes only soft-target temperature from `1.0` to `0.5`; no coefficient,
   architecture, reward, scene, or selector change is permitted.
+
+### 2026-08-23 | V130 fixes prediction deficits but over-sharpens behavior
+
+- Reducing soft-target temperature to `0.5` turned both failing scenes positive.
+  Seed1304 margins became `+0.028408/+0.089846`; seed1305 reached
+  `+0.041570/+0.141514`. Both also beat their best conventional dynamic policy.
+- Seed1304 passed behavior, but seed1305 selected radiometer at 0% and the
+  thermo-hygro channel at 0.87%, yielding two effectively always-off channels.
+  The sharper target shifted 88.9% duty to surface IR in that scene.
+- The prediction gain is real, but temperature0.5 fails the deployment-behavior
+  gate. V131 is the final bounded interpolation at temperature `0.75` on the
+  same two scenes; no wider scalar sweep is authorized.
