@@ -4,9 +4,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 PY="${PY:-/home/zhangzhuyu/.conda/envs/darts/bin/python}"
-SEEDS=(1301 1302 1303 1304 1305)
+read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1301 1302 1303 1304 1305}"
+read -r -a GPU_LIST <<< "${GPU_IDS:-0 1 2 3 4}"
+POLICY_SEED_OFFSET="${POLICY_SEED_OFFSET:-3000}"
 SCENE_PREFIX=v103_frequency_cost_scene_gate_dev
-POLICY_PREFIX=v104_frequency_cost_pdppo_dev
+POLICY_PREFIX="${RUN_PREFIX_OVERRIDE:-v104_frequency_cost_pdppo_dev}"
 CONTEXT_OUT=reports/aggregate/v103_frequency_cost_context_gate_20260823
 SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v5_frequency_cost.yaml
 mkdir -p logs/v104_frequency_cost_pdppo
@@ -14,7 +16,7 @@ mkdir -p logs/v104_frequency_cost_pdppo
 for i in "${!SEEDS[@]}"; do
   seed="${SEEDS[$i]}"
   (
-    export CUDA_VISIBLE_DEVICES="$i"
+    export CUDA_VISIBLE_DEVICES="${GPU_LIST[$((i % ${#GPU_LIST[@]}))]}"
     mapfile -t teacher_masks < <("$PY" - "$seed" "$CONTEXT_OUT" "$SCENE_PREFIX" <<'PY'
 import csv
 import json
@@ -34,7 +36,7 @@ PY
     export AWBC_TEACHER_THERMAL_SENSORS="${teacher_masks[3]}"
     export RUN_PREFIX="$POLICY_PREFIX"
     export CONTROL_SOURCE_RUN_DIR="reports/${SCENE_PREFIX}_seed${seed}_b1p75_20260822"
-    export POLICY_SEED="$((seed + 3000))"
+    export POLICY_SEED="$((seed + POLICY_SEED_OFFSET))"
     export SENSOR_CFG TOTAL_TIMESTEPS=40960 TRUTH_STEPS=36000 LOOKBACK=20
     export EVENT_COVERAGE=0.55 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12
     export EVENT_MICROSTRUCTURE_SIGMA=0.12 EVENT_MICROSTRUCTURE_ALPHA=0.15
@@ -58,6 +60,7 @@ PY
     export CONTEXT_FEATURE_DIM=20 CONTEXT_FUSION_MODE=gated_add
     export TRAINABLE_ACTION_PRIOR=0 NONLINEAR_ACTION_EMBEDDING=1
     export ENT_COEF=0.02 CHANNEL_MARGINAL_ENTROPY_COEF=0
+    export CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
     export EVALUATION_POLICY_MODE=deterministic
     bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
   ) >"logs/v104_frequency_cost_pdppo/seed${seed}.log" 2>&1 &
