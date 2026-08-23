@@ -2945,3 +2945,15 @@ tar -czf "$OUT…`
 - Authorize a bounded frozen expansion to seeds 1301 and 1302. Complete the
   five-scene wave only if that two-scene check preserves positive aggregate
   evidence and valid behavior.
+
+### 2026-08-23 | V128 authorizes completion of the development wave
+
+- The frozen soft-target configuration was evaluated on seeds 1301 and 1302
+  and aggregated with V127 seed1303. It beat static on ordinary loss in `2/3`
+  scenes, on the normalized event macro in `3/3`, and jointly in `2/3`.
+- Mean static margins were `+0.017156` ordinary and `+0.036321` macro. All
+  three scenes beat their best conventional dynamic policy on ordinary loss,
+  with mean margin `+0.053821`, and all passed the behavior gate.
+- Seed1301 missed static ordinary loss by `-0.009274` while retaining a
+  positive macro margin. The aggregate result authorizes a frozen completion
+  on development seeds 1304 and 1305; no configuration changes are permitted.
