@@ -362,6 +362,40 @@ def test_masked_actor_gated_context_fusion_preserves_feasible_mask() -> None:
     assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
 
 
+def test_masked_actor_temporal_encoder_uses_history_and_preserves_feasible_mask() -> None:
+    history_steps = 4
+    state_dim = 3
+    context_dim = 2
+    runtime_dim = 5
+    actor = MaskedActor(
+        obs_dim=2 * history_steps * state_dim + runtime_dim + context_dim,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        context_encoder_enabled=True,
+        context_feature_dim=context_dim,
+        context_hidden_dim=8,
+        temporal_encoder_enabled=True,
+        temporal_history_steps=history_steps,
+        temporal_state_dim=state_dim,
+        temporal_hidden_dim=7,
+    )
+    obs = torch.zeros((2, 2 * history_steps * state_dim + runtime_dim + context_dim))
+    obs[1, : history_steps * state_dim] = torch.arange(
+        history_steps * state_dim, dtype=torch.float32
+    )
+    candidate_masks = torch.eye(3)
+    action_mask = torch.tensor([[True, False, True], [True, True, False]])
+
+    contexts = actor.encode_context(obs)
+    probs = actor.dist(obs, candidate_masks, action_mask).probs
+
+    assert not torch.allclose(contexts[0], contexts[1])
+    assert probs[0, 1] == 0
+    assert probs[1, 2] == 0
+    assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
+
+
 def test_masked_actor_subtype_moe_routes_online_context_and_preserves_mask() -> None:
     actor = MaskedActor(
         obs_dim=25,

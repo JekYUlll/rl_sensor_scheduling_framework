@@ -657,6 +657,8 @@ def main() -> None:
         default="concat",
     )
     parser.add_argument("--context-layer-norm", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
     parser.add_argument("--device", default="auto")
@@ -1351,6 +1353,10 @@ def main() -> None:
             context_hidden_dim=max(1, int(args.context_hidden_dim)),
             context_fusion_mode=str(args.context_fusion_mode),
             context_layer_norm=bool(args.context_layer_norm),
+            temporal_encoder_enabled=bool(args.temporal_encoder),
+            temporal_history_steps=int(args.lookback),
+            temporal_state_dim=len(STATE_COLUMNS),
+            temporal_hidden_dim=max(1, int(args.temporal_hidden_dim)),
             soc_aux_horizon=int(args.soc_aux_horizon),
             soc_aux_coef=float(args.soc_aux_coef),
             device=str(args.device),
@@ -2114,6 +2120,7 @@ def main() -> None:
             "context_encoder": bool(args.context_encoder),
             "context_fusion_mode": str(args.context_fusion_mode),
             "context_layer_norm": bool(args.context_layer_norm),
+            "temporal_encoder": bool(args.temporal_encoder),
             "alert_context_features": bool(args.include_alert_context_features),
             "event_flag_in_state": bool(args.include_event_flag_in_state),
             "soc_aux_enabled": int(args.soc_aux_horizon) > 0 and float(args.soc_aux_coef) > 0.0,
@@ -2265,6 +2272,10 @@ def as_serializable_config(
         "context_hidden_dim": int(cfg.context_hidden_dim),
         "context_fusion_mode": str(cfg.context_fusion_mode),
         "context_layer_norm": int(bool(cfg.context_layer_norm)),
+        "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
+        "temporal_history_steps": int(cfg.temporal_history_steps),
+        "temporal_state_dim": int(cfg.temporal_state_dim),
+        "temporal_hidden_dim": int(cfg.temporal_hidden_dim),
         "soc_aux_horizon": int(cfg.soc_aux_horizon),
         "soc_aux_coef": float(cfg.soc_aux_coef),
         "device": str(cfg.device),

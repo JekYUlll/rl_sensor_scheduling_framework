@@ -754,6 +754,8 @@ def main() -> None:
         default="concat",
     )
     parser.add_argument("--context-layer-norm", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
     parser.add_argument("--learning-rate", type=float, default=3e-4)
@@ -1144,6 +1146,8 @@ def main() -> None:
             "subtype_router": bool(args.subtype_router),
             "subtype_router_min_confidence": float(args.subtype_router_min_confidence),
             "subtype_router_low_confidence_action": int(args.subtype_router_low_confidence_action),
+            "temporal_encoder": bool(args.temporal_encoder),
+            "temporal_hidden_dim": max(1, int(args.temporal_hidden_dim)),
             "awbc_teacher_calm_sensors": list(args.awbc_teacher_calm_sensors or ()),
             "awbc_teacher_event_sensors": list(args.awbc_teacher_event_sensors or ()),
             "awbc_teacher_subtype_calm_sensors": list(args.awbc_teacher_subtype_calm_sensors or ()),
@@ -1533,6 +1537,8 @@ def main() -> None:
     cmd.extend(["--context-hidden-dim", str(max(1, int(args.context_hidden_dim)))])
     cmd.extend(["--context-fusion-mode", str(args.context_fusion_mode)])
     cmd.append("--context-layer-norm" if bool(args.context_layer_norm) else "--no-context-layer-norm")
+    cmd.append("--temporal-encoder" if bool(args.temporal_encoder) else "--no-temporal-encoder")
+    cmd.extend(["--temporal-hidden-dim", str(max(1, int(args.temporal_hidden_dim)))])
     cmd.append(
         "--separate-actor-critic-grad-clip"
         if bool(args.separate_actor_critic_grad_clip)

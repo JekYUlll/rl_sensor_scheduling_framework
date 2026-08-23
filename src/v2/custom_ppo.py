@@ -118,6 +118,10 @@ class CustomPPOConfig:
     context_hidden_dim: int = 64
     context_fusion_mode: str = "concat"
     context_layer_norm: bool = False
+    temporal_encoder_enabled: bool = False
+    temporal_history_steps: int = 0
+    temporal_state_dim: int = 0
+    temporal_hidden_dim: int = 64
     soc_aux_horizon: int = 0
     soc_aux_coef: float = 0.0
     device: str = "auto"
@@ -192,6 +196,10 @@ class MaskedActor:
         context_hidden_dim: int = 64,
         context_fusion_mode: str = "concat",
         context_layer_norm: bool = False,
+        temporal_encoder_enabled: bool = False,
+        temporal_history_steps: int = 0,
+        temporal_state_dim: int = 0,
+        temporal_hidden_dim: int = 64,
     ) -> Any:
         torch, nn = _torch_modules()
 
@@ -209,6 +217,27 @@ class MaskedActor:
                     else 0
                 )
                 main_obs_dim = int(obs_dim) - int(self.context_feature_dim)
+                self.temporal_history_steps = (
+                    max(0, int(temporal_history_steps))
+                    if bool(temporal_encoder_enabled)
+                    else 0
+                )
+                self.temporal_state_dim = (
+                    max(0, int(temporal_state_dim))
+                    if bool(temporal_encoder_enabled)
+                    else 0
+                )
+                self.temporal_flat_dim = (
+                    2 * self.temporal_history_steps * self.temporal_state_dim
+                )
+                if bool(temporal_encoder_enabled) and (
+                    self.temporal_history_steps <= 0
+                    or self.temporal_state_dim <= 0
+                    or self.temporal_flat_dim > main_obs_dim
+                ):
+                    raise ValueError(
+                        "temporal encoder requires valid history/state dimensions within the main observation"
+                    )
                 if self.use_action_embedding:
                     self.action_embedding = ActionEmbedding(
                         int(n_sensors),
@@ -220,12 +249,37 @@ class MaskedActor:
                         raise ValueError("n_actions must be provided when use_action_embedding=False")
                     self.action_embedding = nn.Embedding(self.n_actions, int(embed_dim))
                     nn.init.normal_(self.action_embedding.weight, mean=0.0, std=0.08)
-                self.obs_encoder = nn.Sequential(
-                    nn.Linear(int(main_obs_dim), int(hidden_dim)),
-                    nn.Tanh(),
-                    nn.Linear(int(hidden_dim), int(embed_dim)),
-                    nn.Tanh(),
-                )
+                if self.temporal_flat_dim > 0:
+                    self.temporal_encoder = nn.GRU(
+                        input_size=2 * self.temporal_state_dim,
+                        hidden_size=max(1, int(temporal_hidden_dim)),
+                        batch_first=True,
+                    )
+                    remainder_dim = int(main_obs_dim) - int(self.temporal_flat_dim)
+                    self.runtime_encoder = (
+                        nn.Sequential(
+                            nn.Linear(remainder_dim, int(embed_dim)),
+                            nn.Tanh(),
+                        )
+                        if remainder_dim > 0
+                        else None
+                    )
+                    fusion_dim = max(1, int(temporal_hidden_dim)) + (
+                        int(embed_dim) if self.runtime_encoder is not None else 0
+                    )
+                    self.obs_encoder = nn.Sequential(
+                        nn.Linear(fusion_dim, int(embed_dim)),
+                        nn.Tanh(),
+                    )
+                else:
+                    self.temporal_encoder = None
+                    self.runtime_encoder = None
+                    self.obs_encoder = nn.Sequential(
+                        nn.Linear(int(main_obs_dim), int(hidden_dim)),
+                        nn.Tanh(),
+                        nn.Linear(int(hidden_dim), int(embed_dim)),
+                        nn.Tanh(),
+                    )
                 self.context_encoder = (
                     nn.Sequential(
                         nn.Linear(int(self.context_feature_dim), int(context_hidden_dim)),
@@ -317,13 +371,30 @@ class MaskedActor:
                 action_ids = torch.arange(self.n_actions, device=candidate_masks.device, dtype=torch.long)
                 return self.action_embedding(action_ids)
 
+            def _encode_main_observation(self, main_obs: Any) -> Any:
+                if self.temporal_encoder is None:
+                    return self.obs_encoder(main_obs)
+                history_size = self.temporal_history_steps * self.temporal_state_dim
+                values = main_obs[:, :history_size].reshape(
+                    main_obs.shape[0], self.temporal_history_steps, self.temporal_state_dim
+                )
+                masks = main_obs[:, history_size : 2 * history_size].reshape(
+                    main_obs.shape[0], self.temporal_history_steps, self.temporal_state_dim
+                )
+                sequence = torch_concat([values, masks], dim=2)
+                _, hidden = self.temporal_encoder(sequence)
+                pieces = [hidden[-1]]
+                if self.runtime_encoder is not None:
+                    pieces.append(self.runtime_encoder(main_obs[:, 2 * history_size :]))
+                return self.obs_encoder(torch_concat(pieces, dim=1))
+
             def encode_context(
                 self,
                 obs: Any,
                 event_flag: Any | None = None,
             ) -> Any:
                 main_obs, context_obs = self._split_obs(obs)
-                context = self.obs_encoder(main_obs)
+                context = self._encode_main_observation(main_obs)
                 if self.context_encoder is not None and context_obs is not None:
                     context_extra = self.context_encoder(context_obs)
                     if self.context_fusion_mode == "subtype_moe" and self.context_router is not None:
@@ -443,6 +514,10 @@ class ActorCritic:
         context_hidden_dim: int = 64,
         context_fusion_mode: str = "concat",
         context_layer_norm: bool = False,
+        temporal_encoder_enabled: bool = False,
+        temporal_history_steps: int = 0,
+        temporal_state_dim: int = 0,
+        temporal_hidden_dim: int = 64,
     ) -> Any:
         _, nn = _torch_modules()
 
@@ -466,6 +541,10 @@ class ActorCritic:
                     context_hidden_dim=int(context_hidden_dim),
                     context_fusion_mode=str(context_fusion_mode),
                     context_layer_norm=bool(context_layer_norm),
+                    temporal_encoder_enabled=bool(temporal_encoder_enabled),
+                    temporal_history_steps=int(temporal_history_steps),
+                    temporal_state_dim=int(temporal_state_dim),
+                    temporal_hidden_dim=int(temporal_hidden_dim),
                 )
                 self.critic = EventAwareCritic(int(obs_dim), int(hidden_dim), event_aware=bool(event_aware_critic))
                 self.soc_aux_horizon = max(0, int(soc_aux_horizon))
@@ -570,6 +649,10 @@ class CustomPPO:
             context_hidden_dim=int(cfg.context_hidden_dim),
             context_fusion_mode=str(cfg.context_fusion_mode),
             context_layer_norm=bool(cfg.context_layer_norm),
+            temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
+            temporal_history_steps=int(self.env_cfg.lookback),
+            temporal_state_dim=len(self.env_cfg.state_columns),
+            temporal_hidden_dim=int(cfg.temporal_hidden_dim),
         ).to(self.device)
         self.candidate_masks_t = torch_tensor(self.candidate_masks_np.astype(np.float32), device=self.device)
         self.candidate_prior_logits_t = (

@@ -84,11 +84,18 @@ SUBTYPE_ACTION_EVENT_ONLY="${SUBTYPE_ACTION_EVENT_ONLY:-0}"
 SUBTYPE_LOSS_WEIGHTING="${SUBTYPE_LOSS_WEIGHTING:-1}"
 CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-10}"
 CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
+TEMPORAL_ENCODER="${TEMPORAL_ENCODER:-0}"
+TEMPORAL_HIDDEN_DIM="${TEMPORAL_HIDDEN_DIM:-64}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
 POLICY_SEED="${POLICY_SEED:-}"
+
+TEMPORAL_ARGS=(--no-temporal-encoder)
+if [[ "$TEMPORAL_ENCODER" == "1" ]]; then
+  TEMPORAL_ARGS=(--temporal-encoder)
+fi
 
 if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
@@ -270,6 +277,8 @@ for seed in "${SEEDS[@]}"; do
     --context-hidden-dim 64 \
     --context-fusion-mode "$CONTEXT_FUSION_MODE" \
     --context-layer-norm \
+    "${TEMPORAL_ARGS[@]}" \
+    --temporal-hidden-dim "$TEMPORAL_HIDDEN_DIM" \
     --include-alert-context-features \
     --no-include-event-flag-in-state \
     --soc-aux-horizon 0 \

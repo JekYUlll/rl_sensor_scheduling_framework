@@ -2677,3 +2677,14 @@ tar -czf "$OUT…`
 - The probe still trailed strongest static by `-0.011138/-0.039129`. The online
   state is informative but hard privileged argmin labels do not fully transfer;
   a continuous action-value mechanism is the next clean learner hypothesis.
+
+### 2026-08-23 | V108 rejects soft forecast-value targets
+
+- Replaced V107's hard labels with a low-temperature (`0.05`) distribution over
+  the same eight-step forecast-value costs. No PPO or auxiliary update was used.
+- Training argmax accuracy remained `23.8%`, but held-out ordinary/macro losses
+  deteriorated to `0.737331/1.807278`; the probe is substantially below both
+  V107 and strongest static.
+- Close target-temperature interpolation. The flat actor MLP currently receives
+  a 20-step history and mask as one vector; V109 will test a structured temporal
+  encoder under V107's hard-label observability protocol before any PPO run.
