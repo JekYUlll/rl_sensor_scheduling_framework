@@ -2880,3 +2880,19 @@ tar -czf "$OUT…`
   policy-induced state distribution shift. Offline tree deployment is closed;
   any further method must learn forecast values on states visited by the
   current policy and retain forecast-loss PPO as the primary objective.
+
+### 2026-08-23 | V124 validates a sparse on-policy forecast-value auxiliary
+
+- Added a dense-action forecast-value regression term to the masked PPO actor.
+  Targets are computed from the frozen evaluator only at states visited by the
+  current training policy; the primary reward, PPO objective, feasibility mask,
+  and label-free final execution are unchanged.
+- The bounded seed-1303 pilot used coefficient `0.05`, stride `64`, and 20,480
+  PPO steps. It passed the behavior gate and beat AoI, random, and round-robin,
+  but trailed static by `0.004276` on ordinary loss and `0.086195` on the
+  static-normalized macro.
+- Validation `max_static_ratio` improved from `1.303862` at initialization to
+  `1.204061` at the selected final checkpoint. The auxiliary label rate was
+  only `0.015625`, and its regression loss did not converge.
+- V125 is the only authorized strength check: coefficient `0.5`, stride `16`,
+  with scene, seed, architecture, PPO length, reward, and selection frozen.
