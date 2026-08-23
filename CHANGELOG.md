@@ -2896,3 +2896,17 @@ tar -czf "$OUT…`
   only `0.015625`, and its regression loss did not converge.
 - V125 is the only authorized strength check: coefficient `0.5`, stride `16`,
   with scene, seed, architecture, PPO length, reward, and selection frozen.
+
+### 2026-08-23 | V125 authorizes a frozen multi-scene check
+
+- The denser seed-1303 pilot improved validation `max_static_ratio` from the
+  V124 value `1.204061` to `1.105692`. The selected checkpoint was update 15.
+- Final ordinary loss was `0.539172` versus static `0.548455`, a positive
+  margin of `+0.009283`. The static-normalized macro remained weaker at
+  `0.963249` versus `0.865771`, a margin of `-0.097478`.
+- Execution remained feasible, with no always-on or always-off channel, five
+  mid-duty channels, 0.040961 switches per step, and zero aborts. PD-PPO also
+  beat all three conventional dynamic policies on ordinary loss.
+- The frozen coefficient-0.5, stride-16 configuration is sufficiently improved
+  for one four-seed expansion. No coefficient, stride, architecture, or scene
+  changes are permitted during V126.
