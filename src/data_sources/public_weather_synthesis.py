@@ -92,6 +92,7 @@ class PublicWeatherSynthesisConfig:
     event_subtype_latent_target_lag_steps: int = 0
     event_subtype_context_lead_steps: int = 0
     event_subtype_context_noise_std: float = 0.08
+    event_subtype_context_latent_strength: float = 0.0
 
 
 def load_antaws_station(antaws_root: str | Path, station: str) -> pd.DataFrame:
@@ -489,6 +490,42 @@ def _lead_context_signal(
     return np.clip(out, 0.0, 1.0)
 
 
+def _intensity_conditioned_context_signal(
+    base_signal: np.ndarray,
+    target_latent: np.ndarray,
+    subtype_mask: np.ndarray,
+    *,
+    lead_steps: int,
+    strength: float,
+) -> np.ndarray:
+    """Blend a bounded forecast-intensity proxy into a subtype warning score."""
+
+    base = np.asarray(base_signal, dtype=float).reshape(-1)
+    latent = np.asarray(target_latent, dtype=float).reshape(-1)
+    mask = np.asarray(subtype_mask, dtype=bool).reshape(-1)
+    if not (base.shape == latent.shape == mask.shape):
+        raise ValueError("context signal, latent, and subtype mask must have equal length")
+    weight = float(np.clip(float(strength), 0.0, 1.0))
+    if weight <= 0.0:
+        return np.clip(base, 0.0, 1.0)
+
+    magnitude = np.abs(latent)
+    active = magnitude[mask]
+    scale = float(np.quantile(active, 0.90)) if active.size else 0.0
+    if not np.isfinite(scale) or scale <= 1.0e-8:
+        severity = np.zeros_like(magnitude)
+    else:
+        severity = np.clip(magnitude / scale, 0.0, 1.0)
+    forecast = np.zeros_like(severity)
+    lead = max(0, int(lead_steps))
+    if lead <= 0:
+        forecast[:] = severity
+    elif lead < severity.size:
+        forecast[:-lead] = severity[lead:]
+    conditioned = base * ((1.0 - weight) + weight * forecast)
+    return np.clip(conditioned, 0.0, 1.0)
+
+
 def _cred_probability(wind_speed: np.ndarray, *, weak_threshold: float, strong_threshold: float) -> np.ndarray:
     midpoint = 0.5 * (float(weak_threshold) + float(strong_threshold))
     scale = max(0.5, 0.25 * (float(strong_threshold) - float(weak_threshold)))
@@ -663,30 +700,6 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         rng=rng,
         alpha=latent_alpha,
     )
-    context_lead_steps = (
-        int(cfg.event_subtype_context_lead_steps)
-        if int(cfg.event_subtype_context_lead_steps) > 0
-        else int(cfg.blowing_snow_lead_steps)
-    )
-    context_noise_std = max(0.0, float(cfg.event_subtype_context_noise_std))
-    particle_context_alert = _lead_context_signal(
-        particle_event,
-        lead_steps=context_lead_steps,
-        noise_std=context_noise_std,
-        rng=rng,
-    )
-    flux_context_alert = _lead_context_signal(
-        flux_event,
-        lead_steps=context_lead_steps,
-        noise_std=context_noise_std,
-        rng=rng,
-    )
-    thermal_context_alert = _lead_context_signal(
-        thermal_event,
-        lead_steps=context_lead_steps,
-        noise_std=context_noise_std,
-        rng=rng,
-    )
     latent_target_lag_steps = max(0, int(cfg.event_subtype_latent_target_lag_steps))
     particle_target_latent = _lagged_effect(
         particle_subtype_latent,
@@ -700,6 +713,61 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         thermal_subtype_latent,
         lag_steps=latent_target_lag_steps,
     )
+    context_lead_steps = (
+        int(cfg.event_subtype_context_lead_steps)
+        if int(cfg.event_subtype_context_lead_steps) > 0
+        else int(cfg.blowing_snow_lead_steps)
+    )
+    context_noise_std = max(0.0, float(cfg.event_subtype_context_noise_std))
+    context_latent_strength = float(
+        np.clip(float(cfg.event_subtype_context_latent_strength), 0.0, 1.0)
+    )
+    particle_context_alert = _lead_context_signal(
+        particle_event,
+        lead_steps=context_lead_steps,
+        noise_std=0.0,
+        rng=rng,
+    )
+    flux_context_alert = _lead_context_signal(
+        flux_event,
+        lead_steps=context_lead_steps,
+        noise_std=0.0,
+        rng=rng,
+    )
+    thermal_context_alert = _lead_context_signal(
+        thermal_event,
+        lead_steps=context_lead_steps,
+        noise_std=0.0,
+        rng=rng,
+    )
+    particle_context_alert = _intensity_conditioned_context_signal(
+        particle_context_alert,
+        particle_target_latent,
+        particle_event,
+        lead_steps=context_lead_steps,
+        strength=context_latent_strength,
+    )
+    flux_context_alert = _intensity_conditioned_context_signal(
+        flux_context_alert,
+        flux_target_latent,
+        flux_event,
+        lead_steps=context_lead_steps,
+        strength=context_latent_strength,
+    )
+    thermal_context_alert = _intensity_conditioned_context_signal(
+        thermal_context_alert,
+        thermal_target_latent,
+        thermal_event,
+        lead_steps=context_lead_steps,
+        strength=context_latent_strength,
+    )
+    if context_noise_std > 0.0:
+        particle_context_alert += rng.normal(0.0, context_noise_std, size=int(cfg.steps))
+        flux_context_alert += rng.normal(0.0, context_noise_std, size=int(cfg.steps))
+        thermal_context_alert += rng.normal(0.0, context_noise_std, size=int(cfg.steps))
+    particle_context_alert = np.clip(particle_context_alert, 0.0, 1.0)
+    flux_context_alert = np.clip(flux_context_alert, 0.0, 1.0)
+    thermal_context_alert = np.clip(thermal_context_alert, 0.0, 1.0)
     if bool(cfg.event_subtypes_enabled):
         particle_smooth = _lowpass(particle_event.astype(float), alpha=0.20)
         flux_smooth = _lowpass(flux_event.astype(float), alpha=0.20)
@@ -932,6 +1000,7 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         "event_subtype_latent_target_lag_steps": int(cfg.event_subtype_latent_target_lag_steps),
         "event_subtype_context_lead_steps": int(context_lead_steps),
         "event_subtype_context_noise_std": float(context_noise_std),
+        "event_subtype_context_latent_strength": float(context_latent_strength),
     }
     return df, meta
 

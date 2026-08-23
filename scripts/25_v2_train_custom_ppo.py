@@ -453,6 +453,7 @@ def main() -> None:
     parser.add_argument("--event-subtype-latent-target-lag-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
+    parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
     parser.add_argument("--out-dir", "--output-dir", dest="out_dir", default="reports/v2_custom_ppo_probe/budget1p70_seed41")
     parser.add_argument("--checkpoint-path", default=None)
@@ -2182,6 +2183,7 @@ def main() -> None:
             "event_subtype_latent_target_lag_steps": int(args.event_subtype_latent_target_lag_steps),
             "event_subtype_context_lead_steps": int(args.event_subtype_context_lead_steps),
             "event_subtype_context_noise_std": float(args.event_subtype_context_noise_std),
+            "event_subtype_context_latent_strength": float(args.event_subtype_context_latent_strength),
         },
     }
     (out_dir / "v2_ppo_metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")

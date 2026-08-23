@@ -68,6 +68,7 @@ def main() -> None:
     parser.add_argument("--event-subtype-latent-target-lag-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
+    parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
     parser.add_argument("--out", default="data/generated/public_weather_truth.csv")
     parser.add_argument("--report-dir", default="reports/datasets/public_weather_truth")
     args = parser.parse_args()
@@ -130,6 +131,7 @@ def main() -> None:
         event_subtype_latent_target_lag_steps=int(args.event_subtype_latent_target_lag_steps),
         event_subtype_context_lead_steps=int(args.event_subtype_context_lead_steps),
         event_subtype_context_noise_std=float(args.event_subtype_context_noise_std),
+        event_subtype_context_latent_strength=float(args.event_subtype_context_latent_strength),
     )
     df, meta = generate_public_weather_truth(cfg)
 

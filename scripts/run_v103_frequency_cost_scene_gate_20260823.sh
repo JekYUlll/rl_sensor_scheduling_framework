@@ -5,9 +5,9 @@ cd "$(dirname "$0")/.."
 
 PY="${PY:-/home/zhangzhuyu/.conda/envs/darts/bin/python}"
 PHASE="${1:-all}"
-SEEDS=(1301 1302 1303 1304 1305)
-PREFIX=v103_frequency_cost_scene_gate_dev
-CONTEXT_OUT=reports/aggregate/v103_frequency_cost_context_gate_20260823
+read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1301 1302 1303 1304 1305}"
+PREFIX="${RUN_PREFIX_OVERRIDE:-v103_frequency_cost_scene_gate_dev}"
+CONTEXT_OUT="${CONTEXT_OUT_OVERRIDE:-reports/aggregate/v103_frequency_cost_context_gate_20260823}"
 SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v5_frequency_cost.yaml
 
 run_parallel() {
@@ -29,6 +29,7 @@ common_scene_env() {
   export PARTICLE_LATENT_DIAMETER_SCALE=0.28 PARTICLE_LATENT_VELOCITY_SCALE=4.8
   export FLUX_LATENT_SIGMA=2.0 THERMAL_LATENT_SURFACE_SCALE=2.4
   export EVENT_SUBTYPE_CONTEXT_LEAD_STEPS=12 EVENT_SUBTYPE_CONTEXT_NOISE_STD=0.02
+  export EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH="${EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH_OVERRIDE:-0.0}"
   export ORACLE_EPOCHS=10 ORACLE_FULL_OPEN_REPEAT=3 ORACLE_CANDIDATE_MASK_REPEAT=2
   export ORACLE_SUBTYPE_TEACHER_REPEAT=6 ORACLE_INFERENCE_DEVICE=cpu
   export BUDGET=1.75 STARTUP_BUDGET=2.15 BUDGET_LABEL=b1p75

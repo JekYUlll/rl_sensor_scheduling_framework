@@ -232,6 +232,8 @@ def ensure_truth(args: argparse.Namespace) -> Path:
         str(getattr(args, "event_subtype_context_lead_steps", 0)),
         "--event-subtype-context-noise-std",
         str(getattr(args, "event_subtype_context_noise_std", 0.08)),
+        "--event-subtype-context-latent-strength",
+        str(getattr(args, "event_subtype_context_latent_strength", 0.0)),
         "--out",
         str(truth),
         "--report-dir",
@@ -773,6 +775,7 @@ def main() -> None:
     parser.add_argument("--event-subtype-latent-target-lag-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
+    parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
     parser.add_argument("--out-dir", default="reports/v2_ppo")
     parser.add_argument("--lookback", type=int, default=20)

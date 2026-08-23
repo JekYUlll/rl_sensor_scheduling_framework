@@ -2734,3 +2734,19 @@ tar -czf "$OUT…`
   began after PPO update 1. The callback now exposes BC as update 0, with a
   regression test. V112 will select among update 0 and every fifth PPO update
   using calibration/validation data only.
+
+### 2026-08-23 | V112 closes checkpoint selection on V103
+
+- Added the forecast-value BC checkpoint as update 0 and compared it with every
+  fifth PPO update on calibration/validation data. Update 35 was selected with
+  validation ordinary loss `0.370136`; the static validation reference remained
+  stronger at `0.364751`.
+- The selected checkpoint reached test ordinary/macro losses
+  `0.561536/1.504863`, trailing strongest static by
+  `-0.033024/-0.143673`. All channels had nonzero duty and no abort occurred.
+- A two-endpoint static-normalized score would also select update 35, so another
+  selector rerun is not justified. V109's positive test result is a partition
+  reversal, not stable validation-to-test evidence.
+- Close further PPO tuning on V103. A deployable online method must first beat
+  static on validation across development scenes; privileged exact-receding
+  headroom alone is insufficient.

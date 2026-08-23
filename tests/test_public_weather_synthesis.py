@@ -9,10 +9,27 @@ from data_sources.public_weather_synthesis import (
     PublicWeatherSynthesisConfig,
     STATE_COLUMNS,
     _assign_event_subtypes,
+    _intensity_conditioned_context_signal,
     generate_public_weather_truth,
     load_antaws_station,
     validate_synthetic_against_anchor,
 )
+
+
+def test_intensity_conditioned_context_signal_is_bounded_and_optional() -> None:
+    base = np.asarray([0.0, 0.5, 1.0, 1.0, 0.0])
+    latent = np.asarray([0.0, 0.0, 0.2, 2.0, 0.0])
+    mask = np.asarray([False, False, True, True, False])
+
+    np.testing.assert_allclose(
+        _intensity_conditioned_context_signal(base, latent, mask, lead_steps=0, strength=0.0),
+        base,
+    )
+    conditioned = _intensity_conditioned_context_signal(
+        base, latent, mask, lead_steps=0, strength=1.0
+    )
+    assert np.all((0.0 <= conditioned) & (conditioned <= 1.0))
+    assert conditioned[3] > conditioned[2] > 0.0
 
 
 def test_stratified_event_subtypes_control_run_counts() -> None:

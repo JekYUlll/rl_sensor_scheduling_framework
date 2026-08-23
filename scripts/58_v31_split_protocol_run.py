@@ -158,6 +158,8 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(int(args.event_subtype_context_lead_steps)),
         "--event-subtype-context-noise-std",
         str(float(args.event_subtype_context_noise_std)),
+        "--event-subtype-context-latent-strength",
+        str(float(args.event_subtype_context_latent_strength)),
         "--out",
         str(truth_path),
         "--report-dir",
@@ -626,6 +628,7 @@ def main() -> None:
     parser.add_argument("--event-subtype-latent-target-lag-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
+    parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
     parser.add_argument("--oracle-rollouts-per-policy", type=int, default=6)
@@ -1040,6 +1043,7 @@ def main() -> None:
             "event_subtype_latent_target_lag_steps": int(args.event_subtype_latent_target_lag_steps),
             "event_subtype_context_lead_steps": int(args.event_subtype_context_lead_steps),
             "event_subtype_context_noise_std": float(args.event_subtype_context_noise_std),
+            "event_subtype_context_latent_strength": float(args.event_subtype_context_latent_strength),
         },
         "agent_context_columns": [str(x) for x in (args.agent_context_columns or ())],
         "primary_eval_duty_guard": bool(args.primary_eval_duty_guard),
@@ -1310,6 +1314,8 @@ def main() -> None:
         str(int(args.event_subtype_context_lead_steps)),
         "--event-subtype-context-noise-std",
         str(float(args.event_subtype_context_noise_std)),
+        "--event-subtype-context-latent-strength",
+        str(float(args.event_subtype_context_latent_strength)),
         "--oracle-type",
         str(args.oracle_type),
         "--oracle-rollout-steps",
