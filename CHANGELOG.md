@@ -3006,3 +3006,14 @@ tar -czf "$OUT…`
 - Scene seeds `1401--1406` are locked as fresh confirmation seeds before their
   truth generation or policy training. Method, costs, scene generator,
   evaluator, target temperature, selector, and behavior thresholds are frozen.
+
+### 2026-08-24 | V133 transfers directionally on six fresh scenes
+
+- On locked seeds 1401--1406, the frozen method beat selected static on
+  ordinary loss in `4/6`, on the normalized event macro in `4/6`, and jointly
+  in `4/6`. Mean margins remained positive at `+0.023355/+0.050355`.
+- It beat the best conventional dynamic policy in `5/6`, with mean margin
+  `+0.038907`, and all six behavior gates passed.
+- Six-seed bootstrap intervals versus static still include zero, driven mainly
+  by seed1401. No parameter is changed. V134 expands the locked confirmation
+  set through seed1424 to estimate stability with 24 fresh scenes.
