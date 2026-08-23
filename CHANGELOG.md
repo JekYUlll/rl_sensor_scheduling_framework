@@ -2704,3 +2704,18 @@ tar -czf "$OUT…`
   intermediate-duty channels, switching `0.007816`, and zero aborts. One
   strictly matched complete-PPO temporal control is authorized before any
   multi-seed expansion.
+
+### 2026-08-23 | V110 localizes failure beyond temporal representation
+
+- Added the V109 temporal encoder to the otherwise unchanged V104 complete PPO
+  run on matched scene seed `1304` and policy seed `4304`.
+- Ordinary/macro losses were `0.610400/1.652073`, still below strongest static
+  by `-0.081889/-0.290883`. The improvement over V104 was small and did not
+  preserve V109's positive margins.
+- The policy selected the empty subset in `963/2304` steps, never selected FC4,
+  and had mean power `0.582743`. This reproduces V104's overly sparse execution
+  despite the stronger history representation.
+- V111 will isolate PPO transfer by starting from V109's forecast-value BC
+  design, adding forecast-loss PPO, and disabling continuing imitation and
+  subtype auxiliary losses. No scene, action, reward, or constraint changes are
+  authorized.
