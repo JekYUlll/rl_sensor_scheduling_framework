@@ -2819,3 +2819,16 @@ tar -czf "$OUT…`
 - V119 freezes the complete V118 method and adds two policy initializations.
   Exactly one initialization per scene is selected by the frozen validation
   joint score before aggregating test metrics.
+
+### 2026-08-23 | V119 closes policy-initialization expansion
+
+- Validation-only selection among three frozen V118 initializations reached
+  `3/5` ordinary, `1/5` macro, and `1/5` joint static wins. Mean margins were
+  `-0.001688/-0.037760`; conventional-dynamic wins remained `3/5`.
+- Seed 1305 selected a policy with two always-off channels, so the aggregate
+  also fails the prespecified execution behavior gate. Additional restarts are
+  closed.
+- Failures remain concentrated in scenes 1301--1302, where the deployable
+  context gate itself does not beat static on ordinary loss. V120 therefore
+  tests full use of the noisy lead intensity forecast before any further
+  learner run.
