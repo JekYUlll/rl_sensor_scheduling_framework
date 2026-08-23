@@ -5,7 +5,12 @@ cd "$(dirname "$0")/.."
 
 PY="${PY:-/home/zhangzhuyu/.conda/envs/darts/bin/python}"
 PHASE="${1:-all}"
-MAX_GPUS="${MAX_GPUS:-5}"
+read -r -a GPU_LIST <<< "${GPU_IDS:-0 1 2 3 4}"
+MAX_GPUS="${MAX_GPUS:-${#GPU_LIST[@]}}"
+if ((MAX_GPUS < 1 || MAX_GPUS > ${#GPU_LIST[@]})); then
+  printf 'MAX_GPUS must be between 1 and the number of GPU_IDS\n' >&2
+  exit 2
+fi
 SEEDS=(1201 1202 1203 1204 1205 1206 1207 1208 1209 1210 1211 1212 1213 1214 1215 1216 1217 1218 1219 1220 1221 1222)
 SCENE_PREFIX=v102_v97_frozen_scene_final
 POLICY_PREFIX=v102_v97_frozen_pdppo_final
@@ -19,7 +24,7 @@ run_batches() {
     for ((slot=0; slot<MAX_GPUS && start+slot<${#SEEDS[@]}; slot++)); do
       i=$((start + slot))
       seed="${SEEDS[$i]}"
-      "$worker" "$seed" "$slot" &
+      "$worker" "$seed" "${GPU_LIST[$slot]}" &
     done
     wait
   done
