@@ -2957,3 +2957,17 @@ tar -czf "$OUT…`
 - Seed1301 missed static ordinary loss by `-0.009274` while retaining a
   positive macro margin. The aggregate result authorizes a frozen completion
   on development seeds 1304 and 1305; no configuration changes are permitted.
+
+### 2026-08-23 | V129 improves both means but misses the joint gate
+
+- The complete five-scene soft-target wave beat static in `3/5` scenes on
+  ordinary loss and `3/5` on the normalized event macro, with `2/5` joint
+  wins. Mean margins were positive at `+0.012938/+0.013238`.
+- It beat the best conventional dynamic policy in `4/5` scenes with mean
+  ordinary margin `+0.032916`, and all five behavior gates passed.
+- Remaining deficits are localized: seed1304 loses mainly on thermal windows,
+  while seed1305 loses mainly on particle windows. The result does not
+  authorize fresh confirmation.
+- V130 is one bounded target-sharpness test on these two development scenes.
+  It changes only soft-target temperature from `1.0` to `0.5`; no coefficient,
+  architecture, reward, scene, or selector change is permitted.
