@@ -146,8 +146,10 @@ def main() -> None:
         training_tables = {"validation_only": validation}
         rl_train_path = run / "receding_oracle_l8_rl_train_trace" / "receding_oracle_trace.csv"
         if rl_train_path.exists():
+            rl_train = pd.read_csv(rl_train_path)
+            training_tables["rl_train_only"] = rl_train
             training_tables["rl_train_plus_validation"] = pd.concat(
-                [pd.read_csv(rl_train_path), validation],
+                [rl_train, validation],
                 ignore_index=True,
             )
         for training_source, train in training_tables.items():
