@@ -691,6 +691,9 @@ def main() -> None:
         default="hard",
     )
     parser.add_argument("--bc-soft-temperature", type=float, default=1.0)
+    parser.add_argument("--forecast-value-aux-coef", type=float, default=0.0)
+    parser.add_argument("--forecast-value-aux-stride", type=int, default=64)
+    parser.add_argument("--forecast-value-aux-lookahead-steps", type=int, default=0)
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1139,6 +1142,9 @@ def main() -> None:
             "bc_pretrain_batch_size": int(args.bc_pretrain_batch_size),
             "bc_pretrain_loss_coef": float(args.bc_pretrain_loss_coef),
             "bc_pretrain_target_mode": str(args.bc_pretrain_target_mode),
+            "forecast_value_aux_coef": float(args.forecast_value_aux_coef),
+            "forecast_value_aux_stride": int(args.forecast_value_aux_stride),
+            "forecast_value_aux_lookahead_steps": int(args.forecast_value_aux_lookahead_steps),
             "bc_soft_temperature": float(args.bc_soft_temperature),
             "awbc_teacher_mode": str(args.awbc_teacher_mode),
             "awbc_teacher_alert_threshold": float(args.awbc_teacher_alert_threshold),
@@ -1392,6 +1398,12 @@ def main() -> None:
         str(args.bc_pretrain_target_mode),
         "--bc-soft-temperature",
         str(float(args.bc_soft_temperature)),
+        "--forecast-value-aux-coef",
+        str(float(args.forecast_value_aux_coef)),
+        "--forecast-value-aux-stride",
+        str(max(1, int(args.forecast_value_aux_stride))),
+        "--forecast-value-aux-lookahead-steps",
+        str(max(0, int(args.forecast_value_aux_lookahead_steps))),
         "--subtype-aux-coef",
         str(float(args.subtype_aux_coef)),
         "--subtype-aux-classes",

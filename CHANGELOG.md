@@ -2850,3 +2850,33 @@ tar -czf "$OUT…`
   calibration action mapping do not expose it reliably. V121 training is
   blocked pending an online-observable versus receding-action learnability
   audit; no further threshold or PPO restart sweep is authorized.
+
+### 2026-08-23 | V121--V122 quantify the online learnability gap
+
+- Added trace-level receding diagnostics on disjoint policy-training,
+  validation, and final partitions. Each trace records the complete online
+  scheduler observation, the 20 alert-context features, all 22 counterfactual
+  forecast costs, and the selected receding action.
+- With validation-only fitting, the best cost-sensitive model recovered 23.1%
+  of the receding diagnostic's one-step gain. Adding policy-training traces
+  raised the descriptive combined-partition result to 33.0%.
+- Under the strict policy-training-only fit, the best complete-state cost model
+  produced positive one-step proxy gains in `5/5` scenes but recovered only
+  25.5% of receding value. The warning-only model recovered 23.4%.
+- The audit confirms that the online observations contain some transferable
+  action-value information, while a large gap remains between privileged
+  receding values and a deployable mapping. V123 tests the selected diagnostic
+  model in an actual closed-loop rollout before any PPO integration.
+
+### 2026-08-23 | V123 rejects direct offline tree-policy deployment
+
+- A fixed ExtraTrees action-value model was fitted only on policy-training
+  receding traces and executed from online observations on the final partition.
+  It beat static in `3/5` scenes on both endpoints, but mean margins were
+  `-0.047145/-0.157208` because the loss increased sharply in seed 1301.
+- Operational behavior also failed: seed 1304 collapsed to two always-on and
+  four always-off channels, while seed 1305 had two always-off channels.
+- Positive one-step counterfactual estimates therefore do not survive the
+  policy-induced state distribution shift. Offline tree deployment is closed;
+  any further method must learn forecast values on states visited by the
+  current policy and retain forecast-loss PPO as the primary objective.

@@ -606,6 +606,9 @@ def test_custom_ppo_short_run(tmp_path: Path) -> None:
             embed_dim=8,
             hidden_dim=16,
             greedy_lookahead_steps=2,
+            forecast_value_aux_coef=0.05,
+            forecast_value_aux_stride=2,
+            forecast_value_aux_lookahead_steps=1,
             device="cpu",
             seed=5,
         ),
@@ -620,6 +623,8 @@ def test_custom_ppo_short_run(tmp_path: Path) -> None:
 
     assert trainer.history
     assert np.isfinite(float(trainer.history[-1]["loss"]))
+    assert np.isfinite(float(trainer.history[-1]["forecast_value_aux_loss"]))
+    assert float(trainer.history[-1]["forecast_value_label_rate"]) == 0.5
     assert (tmp_path / "custom_ppo.pt").exists()
     assert all(torch.equal(value, trainer.model.state_dict()[key]) for key, value in saved.items())
 

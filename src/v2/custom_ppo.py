@@ -87,6 +87,9 @@ class CustomPPOConfig:
     bc_pretrain_loss_coef: float = 1.0
     bc_pretrain_target_mode: str = "hard"
     bc_soft_temperature: float = 1.0
+    forecast_value_aux_coef: float = 0.0
+    forecast_value_aux_stride: int = 64
+    forecast_value_aux_lookahead_steps: int = 0
     subtype_aux_coef: float = 0.0
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
@@ -750,6 +753,8 @@ class CustomPPO:
                 f"subtype_acc={float(metrics.get('subtype_aux_accuracy', float('nan'))):.3f} "
                 f"subtype_action_ce={float(metrics.get('subtype_action_ce_loss', float('nan'))):.6f} "
                 f"subtype_action_margin={float(metrics.get('subtype_action_margin_loss', float('nan'))):.6f} "
+                f"forecast_value_aux={float(metrics.get('forecast_value_aux_loss', float('nan'))):.6f} "
+                f"forecast_value_rate={float(metrics.get('forecast_value_label_rate', 0.0)):.3f} "
                 f"awbc_coef={float(metrics['awbc_coef']):.6f} "
                 f"awbc_label_rate={float(metrics['awbc_label_rate']):.3f}",
                 flush=True,
@@ -773,6 +778,8 @@ class CustomPPO:
         awbc_valid_rows: list[float] = []
         subtype_label_rows: list[int] = []
         subtype_valid_rows: list[float] = []
+        forecast_value_target_rows: list[np.ndarray] = []
+        forecast_value_valid_rows: list[float] = []
         soc_rows: list[float] = []
         episode_rows: list[int] = []
 
@@ -797,6 +804,26 @@ class CustomPPO:
                 logprob_t = dist.log_prob(action_t)
                 value_t = self.model.value(obs_t, event_t)
             action = int(action_t.detach().cpu().item())
+            forecast_value_valid = (
+                float(self.cfg.forecast_value_aux_coef) > 0.0
+                and step % max(1, int(self.cfg.forecast_value_aux_stride)) == 0
+            )
+            if forecast_value_valid:
+                forecast_costs = oracle_greedy_candidate_costs(
+                    env,
+                    self.candidate_masks_np,
+                    lookahead_steps=max(
+                        1,
+                        int(self.cfg.forecast_value_aux_lookahead_steps)
+                        or int(self.cfg.greedy_lookahead_steps),
+                    ),
+                )
+                forecast_targets = standardized_negative_cost_targets(
+                    forecast_costs.reshape(1, -1),
+                    action_mask_np.reshape(1, -1),
+                )[0]
+            else:
+                forecast_targets = np.zeros(len(action_mask_np), dtype=np.float32)
             should_label = (
                 float(self._current_awbc_coef()) > 0.0
                 and (step % label_stride == 0)
@@ -822,6 +849,8 @@ class CustomPPO:
             awbc_valid_rows.append(float(awbc_valid))
             subtype_label_rows.append(int(subtype_label))
             subtype_valid_rows.append(float(subtype_valid))
+            forecast_value_target_rows.append(np.asarray(forecast_targets, dtype=np.float32))
+            forecast_value_valid_rows.append(float(forecast_value_valid))
             soc_rows.append(float(info.get("soc_ratio", 1.0)))
             episode_rows.append(int(episode_id))
             last_done = bool(done)
@@ -879,6 +908,8 @@ class CustomPPO:
             "awbc_valid": np.asarray(awbc_valid_rows, dtype=np.float32),
             "subtype_labels": np.asarray(subtype_label_rows, dtype=np.int64),
             "subtype_valid": np.asarray(subtype_valid_rows, dtype=np.float32),
+            "forecast_value_targets": np.vstack(forecast_value_target_rows).astype(np.float32),
+            "forecast_value_valid": np.asarray(forecast_value_valid_rows, dtype=np.float32),
             "soc_aux_targets": soc_targets.astype(np.float32),
             "soc_aux_mask": soc_mask.astype(np.float32),
         }
@@ -1312,6 +1343,8 @@ class CustomPPO:
         subtype_valid = torch_tensor(batch["subtype_valid"], device=self.device)
         soc_aux_targets = torch_tensor(batch["soc_aux_targets"], device=self.device)
         soc_aux_mask = torch_tensor(batch["soc_aux_mask"], device=self.device)
+        forecast_value_targets = torch_tensor(batch["forecast_value_targets"], device=self.device)
+        forecast_value_valid = torch_tensor(batch["forecast_value_valid"], device=self.device)
         if advantages.numel() > 1:
             advantages = (advantages - advantages.mean()) / (advantages.std(unbiased=False) + 1e-8)
 
@@ -1336,6 +1369,8 @@ class CustomPPO:
                 mb_subtype_valid = subtype_valid[idx]
                 mb_soc_targets = soc_aux_targets[idx]
                 mb_soc_mask = soc_aux_mask[idx]
+                mb_forecast_value_targets = forecast_value_targets[idx]
+                mb_forecast_value_valid = forecast_value_valid[idx]
 
                 dist = self.model.dist(mb_obs, self.candidate_masks_t, mb_masks, mb_events)
                 new_logprobs = dist.log_prob(mb_actions)
@@ -1374,6 +1409,21 @@ class CustomPPO:
                 subtype_action_ce_loss, subtype_action_margin_loss, subtype_action_valid_rate = (
                     self._subtype_action_losses(dist, mb_masks, mb_subtype_labels, mb_subtype_valid)
                 )
+                forecast_value_aux_loss = torch.zeros((), device=self.device)
+                forecast_rows = mb_forecast_value_valid > 0.5
+                if (
+                    float(self.cfg.forecast_value_aux_coef) > 0.0
+                    and bool(forecast_rows.any().detach().cpu().item())
+                ):
+                    actor_logits = self.model.actor.logits(
+                        mb_obs,
+                        self.candidate_masks_t,
+                        mb_masks,
+                        mb_events,
+                    )
+                    valid_entries = mb_masks & forecast_rows.unsqueeze(1)
+                    squared_error = (actor_logits - mb_forecast_value_targets).square()
+                    forecast_value_aux_loss = squared_error[valid_entries].mean()
                 loss = (
                     policy_loss
                     + float(self.cfg.vf_coef) * value_loss
@@ -1385,6 +1435,7 @@ class CustomPPO:
                     + float(self.cfg.subtype_aux_coef) * subtype_aux_loss
                     + float(self.cfg.subtype_action_ce_coef) * subtype_action_ce_loss
                     + float(self.cfg.subtype_action_margin_coef) * subtype_action_margin_loss
+                    + float(self.cfg.forecast_value_aux_coef) * forecast_value_aux_loss
                 )
                 self.optimizer.zero_grad(set_to_none=True)
                 loss.backward()
@@ -1407,6 +1458,7 @@ class CustomPPO:
                         "subtype_action_ce_loss": float(subtype_action_ce_loss.detach().cpu().item()),
                         "subtype_action_margin_loss": float(subtype_action_margin_loss.detach().cpu().item()),
                         "subtype_action_valid_rate": float(subtype_action_valid_rate),
+                        "forecast_value_aux_loss": float(forecast_value_aux_loss.detach().cpu().item()),
                     }
                 )
 
@@ -1426,6 +1478,8 @@ class CustomPPO:
             "subtype_action_ce_loss": _mean_metric(loss_rows, "subtype_action_ce_loss"),
             "subtype_action_margin_loss": _mean_metric(loss_rows, "subtype_action_margin_loss"),
             "subtype_action_valid_rate": _mean_metric(loss_rows, "subtype_action_valid_rate"),
+            "forecast_value_aux_loss": _mean_metric(loss_rows, "forecast_value_aux_loss"),
+            "forecast_value_label_rate": float(np.mean(batch["forecast_value_valid"])),
             "advantage_mean": float(np.mean(batch["advantages"])),
             "advantage_std": float(np.std(batch["advantages"])),
             "event_rate": float(np.mean(batch["event_flags"])),
