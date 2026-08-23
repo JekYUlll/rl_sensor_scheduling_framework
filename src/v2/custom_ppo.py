@@ -47,6 +47,23 @@ def channel_marginal_distribution_entropy(action_probs: Any, candidate_masks: An
     return entropy / float(np.log(float(n_sensors)))
 
 
+def standardized_negative_cost_targets(costs: np.ndarray, feasible: np.ndarray) -> np.ndarray:
+    """Convert per-state feasible action costs to zero-mean value targets."""
+    values = np.asarray(costs, dtype=np.float32)
+    valid = np.asarray(feasible, dtype=bool) & np.isfinite(values)
+    if values.ndim != 2 or valid.shape != values.shape:
+        raise ValueError("costs and feasible must be matched two-dimensional arrays")
+    targets = np.zeros_like(values, dtype=np.float32)
+    for row in range(values.shape[0]):
+        row_valid = valid[row]
+        if not np.any(row_valid):
+            raise ValueError("every row requires at least one finite feasible action")
+        row_costs = values[row, row_valid]
+        scale = max(float(np.std(row_costs)), 1.0e-6)
+        targets[row, row_valid] = -(row_costs - float(np.mean(row_costs))) / scale
+    return targets
+
+
 @dataclass(frozen=True)
 class CustomPPOConfig:
     total_timesteps: int = 100_000
@@ -877,6 +894,7 @@ class CustomPPO:
         subtype_label_rows: list[int] = []
         subtype_valid_rows: list[float] = []
         teacher_distribution_rows: list[np.ndarray] = []
+        teacher_cost_rows: list[np.ndarray] = []
         episode_id = 0
         for step in range(int(n_steps)):
             obs_np = env._state().astype(np.float32)
@@ -886,7 +904,7 @@ class CustomPPO:
                 else np.ones(self.candidate_masks_np.shape[0], dtype=bool)
             )
             if (
-                str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value"
+                str(self.cfg.bc_pretrain_target_mode) in {"soft_forecast_value", "forecast_value_regression"}
                 and str(self.cfg.awbc_teacher_mode) == "oracle_greedy"
             ):
                 teacher_costs = oracle_greedy_candidate_costs(
@@ -894,13 +912,17 @@ class CustomPPO:
                     self.candidate_masks_np,
                     lookahead_steps=int(self.cfg.greedy_lookahead_steps),
                 )
-                teacher_distribution = soft_forecast_value_targets(
-                    teacher_costs.reshape(1, -1),
-                    action_mask_np.reshape(1, -1),
-                    temperature=float(self.cfg.bc_soft_temperature),
-                )[0]
-                teacher = int(np.argmax(teacher_distribution))
+                teacher = int(np.argmin(teacher_costs))
+                if str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value":
+                    teacher_distribution = soft_forecast_value_targets(
+                        teacher_costs.reshape(1, -1),
+                        action_mask_np.reshape(1, -1),
+                        temperature=float(self.cfg.bc_soft_temperature),
+                    )[0]
+                else:
+                    teacher_distribution = np.zeros(len(action_mask_np), dtype=np.float32)
             else:
+                teacher_costs = np.full(len(action_mask_np), np.nan, dtype=np.float32)
                 teacher = int(self._awbc_teacher_action(env, action_mask_np))
                 teacher_distribution = np.zeros(len(action_mask_np), dtype=np.float32)
                 if 0 <= teacher < len(action_mask_np):
@@ -913,6 +935,7 @@ class CustomPPO:
             obs_rows.append(obs_np)
             teacher_rows.append(int(teacher))
             teacher_distribution_rows.append(teacher_distribution.astype(np.float32))
+            teacher_cost_rows.append(np.asarray(teacher_costs, dtype=np.float32))
             event_rows.append(float(env.online_event_context()))
             action_mask_rows.append(action_mask_np.astype(bool))
             subtype_label_rows.append(int(subtype_label))
@@ -933,6 +956,7 @@ class CustomPPO:
             "obs": np.vstack(obs_rows).astype(np.float32),
             "teacher_actions": np.asarray(teacher_rows, dtype=np.int64),
             "teacher_distributions": np.vstack(teacher_distribution_rows).astype(np.float32),
+            "teacher_costs": np.vstack(teacher_cost_rows).astype(np.float32),
             "event_flags": np.asarray(event_rows, dtype=np.float32),
             "action_masks": np.vstack(action_mask_rows).astype(bool),
             "subtype_labels": np.asarray(subtype_label_rows, dtype=np.int64),
@@ -946,6 +970,12 @@ class CustomPPO:
         obs = torch_tensor(batch["obs"], device=self.device)
         teacher_actions = torch_tensor(batch["teacher_actions"], device=self.device, dtype=torch.long)
         teacher_distributions = torch_tensor(batch["teacher_distributions"], device=self.device)
+        teacher_cost_targets = torch_tensor(
+            standardized_negative_cost_targets(batch["teacher_costs"], batch["action_masks"])
+            if str(self.cfg.bc_pretrain_target_mode) == "forecast_value_regression"
+            else np.zeros_like(batch["teacher_costs"], dtype=np.float32),
+            device=self.device,
+        )
         event_flags = torch_tensor(batch["event_flags"], device=self.device)
         action_masks = torch_tensor(batch["action_masks"], device=self.device, dtype=torch.bool)
         subtype_labels = torch_tensor(batch["subtype_labels"], device=self.device, dtype=torch.long)
@@ -962,6 +992,7 @@ class CustomPPO:
                 mb_obs = obs[idx]
                 mb_teacher = teacher_actions[idx]
                 mb_teacher_distribution = teacher_distributions[idx]
+                mb_teacher_cost_targets = teacher_cost_targets[idx]
                 mb_events = event_flags[idx]
                 mb_masks = action_masks[idx]
                 mb_subtype_labels = subtype_labels[idx]
@@ -969,6 +1000,16 @@ class CustomPPO:
                 dist = self.model.dist(mb_obs, self.candidate_masks_t, mb_masks, mb_events)
                 if str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value":
                     bc_loss = -(mb_teacher_distribution * torch.log(dist.probs.clamp_min(1.0e-12))).sum(dim=1).mean()
+                elif str(self.cfg.bc_pretrain_target_mode) == "forecast_value_regression":
+                    actor_logits = self.model.actor.logits(
+                        mb_obs,
+                        self.candidate_masks_t,
+                        mb_masks,
+                        mb_events,
+                    )
+                    valid_logits = torch.where(mb_masks, actor_logits, mb_teacher_cost_targets)
+                    squared_error = (valid_logits - mb_teacher_cost_targets).square()
+                    bc_loss = squared_error[mb_masks].mean()
                 else:
                     bc_loss = -dist.log_prob(mb_teacher).mean()
                 subtype_aux_loss, subtype_aux_acc = self._subtype_aux_loss(

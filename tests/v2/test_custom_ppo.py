@@ -20,6 +20,7 @@ from v2.custom_ppo import (  # noqa: E402
     soft_forecast_value_targets,
     restore_env,
     snapshot_env,
+    standardized_negative_cost_targets,
 )
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
 from v2.oracle import LinearFrozenForecastOracle, OracleConfig, build_supervised_windows  # noqa: E402
@@ -76,6 +77,18 @@ def test_soft_forecast_value_targets_normalize_per_state_and_mask_invalid_action
     assert np.allclose(targets[:, 2], 0.0)
     assert targets[0, 1] > targets[0, 0]
     assert targets[1, 0] == pytest.approx(targets[1, 1])
+
+
+def test_standardized_negative_cost_targets_preserve_feasible_ranking() -> None:
+    targets = standardized_negative_cost_targets(
+        np.asarray([[3.0, 1.0, 2.0], [5.0, np.inf, 9.0]]),
+        np.asarray([[True, True, True], [True, False, True]]),
+    )
+
+    assert int(np.argmax(targets[0])) == 1
+    assert targets[1, 1] == 0.0
+    assert targets[1, 0] > targets[1, 2]
+    assert np.mean(targets[0]) == pytest.approx(0.0, abs=1.0e-6)
 
 
 def _truth(rows: int = 64) -> pd.DataFrame:

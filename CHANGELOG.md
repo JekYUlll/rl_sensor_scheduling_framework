@@ -2781,3 +2781,16 @@ tar -czf "$OUT…`
   freezes V113 and combines the existing
   temporal and online-context encoders with forecast-value initialization,
   forecast-loss PPO, and validation-only checkpoint selection.
+
+### 2026-08-23 | V116 rejects hard argmin transfer across flexible masks
+
+- Trained the clean temporal/context PD-PPO configuration on all five frozen
+  V113 scenes. Validation selected BC step zero for seeds 1301--1302 and PPO
+  updates 20, 35, and 5 for seeds 1303--1305.
+- The selected policies reached only `2/5` ordinary and `0/5` macro wins over
+  static, with mean margins `-0.060953/-0.170601`. Behavior remained feasible:
+  zero always-on channels, at most one always-off channel, and zero aborts.
+- Hard argmin forecast-value labels are unstable over 22 near-competing masks.
+  V117 retains the matched scene and PPO design but pretrains the actor logits
+  against standardized forecast values for all feasible actions. No context
+  baseline, subtype label, or final-test feedback enters this target.
