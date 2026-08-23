@@ -677,6 +677,7 @@ def main() -> None:
             "oracle_loss_mean",
             "oracle_loss_macro_subtype_event",
             "oracle_loss_macro_subtype_event_staticnorm",
+            "max_static_ratio",
         ],
         default="oracle_loss_mean",
     )

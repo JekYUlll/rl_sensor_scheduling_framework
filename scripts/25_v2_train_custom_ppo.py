@@ -544,6 +544,7 @@ def main() -> None:
             "oracle_loss_mean",
             "oracle_loss_macro_subtype_event",
             "oracle_loss_macro_subtype_event_staticnorm",
+            "max_static_ratio",
         ],
         default="oracle_loss_mean",
     )
@@ -1377,11 +1378,27 @@ def main() -> None:
     checkpoint_starts = tuple(int(x) for x in (args.static_selection_start_indices or ()))
     checkpoint_score_name = str(args.checkpoint_selection_score)
     checkpoint_normalizers: dict[str, float] = {}
+    checkpoint_static_ordinary = float("nan")
+    checkpoint_static_macro = float("nan")
     if (checkpoint_interval > 0 or args.evaluation_temperature_candidates) and control_source_dir is not None:
         checkpoint_static_path = control_source_dir / "validation_static_candidates.csv"
         if checkpoint_static_path.is_file():
-            checkpoint_normalizers = subtype_static_normalizers(pd.read_csv(checkpoint_static_path))
-    if checkpoint_score_name == STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN:
+            checkpoint_static_table = pd.read_csv(checkpoint_static_path)
+            checkpoint_normalizers = subtype_static_normalizers(checkpoint_static_table)
+            checkpoint_static_ordinary = float(
+                pd.to_numeric(checkpoint_static_table["oracle_loss_mean"], errors="coerce").min()
+            )
+            checkpoint_static_scored = add_staticnorm_macro(
+                checkpoint_static_table, checkpoint_normalizers
+            )
+            if STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN in checkpoint_static_scored:
+                checkpoint_static_macro = float(
+                    pd.to_numeric(
+                        checkpoint_static_scored[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN],
+                        errors="coerce",
+                    ).min()
+                )
+    if checkpoint_score_name in {STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN, "max_static_ratio"}:
         if not checkpoint_normalizers:
             raise ValueError(
                 "static-normalized macro checkpoint selection requires a control source "
@@ -1423,7 +1440,13 @@ def main() -> None:
             selection_metrics = add_staticnorm_macro(
                 pd.DataFrame([selection_metrics]), checkpoint_normalizers
             ).iloc[0].to_dict()
-        score = float(selection_metrics[checkpoint_score_name])
+        if checkpoint_score_name == "max_static_ratio":
+            score = max(
+                float(selection_metrics["oracle_loss_mean"]) / checkpoint_static_ordinary,
+                float(selection_metrics[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN]) / checkpoint_static_macro,
+            )
+        else:
+            score = float(selection_metrics[checkpoint_score_name])
         checkpoint_selection_rows.append(
             {
                 "update": int(update_idx),

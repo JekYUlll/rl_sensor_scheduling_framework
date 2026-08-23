@@ -2794,3 +2794,16 @@ tar -czf "$OUT…`
   V117 retains the matched scene and PPO design but pretrains the actor logits
   against standardized forecast values for all feasible actions. No context
   baseline, subtype label, or final-test feedback enters this target.
+
+### 2026-08-23 | V117 improves mean transfer but does not pass the scene gate
+
+- All-action forecast-value regression completed on all five matched scenes.
+  It reached `1/5` ordinary and `0/5` macro wins over static, with mean margins
+  `-0.036658/-0.106775`; this improves the V116 means but not robustness.
+- All policies passed the behavior gate. The remaining failure is not caused by
+  constant channels, excessive switching, warm-up aborts, or infeasible masks.
+- V118 consolidates the clean context-aware method: a subtype mixture-of-experts
+  encoder, the existing training-only context auxiliary, all-action forecast
+  values, forecast-loss PPO, and a validation selector minimizing the worse of
+  ordinary/static and macro/static loss ratios. Final execution remains label
+  free.
