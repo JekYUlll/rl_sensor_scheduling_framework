@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+# Clean learner on the frozen V113 information gate. The trainable method uses
+# online warning scores and carried histories only. Exact subtype labels,
+# context-bandit actions, and test feedback are excluded from policy training.
+SEEDS_OVERRIDE="${SEEDS_OVERRIDE:-1301 1302 1303 1304 1305}" \
+GPU_IDS="${GPU_IDS:-0 1 2 3 4}" \
+POLICY_SEED_OFFSET="${POLICY_SEED_OFFSET:-9000}" \
+SCENE_PREFIX_OVERRIDE=v113_frequency_cost_intensity_context_gate_dev \
+RUN_PREFIX_OVERRIDE="${RUN_PREFIX_OVERRIDE:-v116_intensity_temporal_forecastbc_ckptppo}" \
+EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH_OVERRIDE=0.75 \
+TOTAL_TIMESTEPS_OVERRIDE="${TOTAL_TIMESTEPS_OVERRIDE:-40960}" \
+BC_PRETRAIN_STEPS_OVERRIDE="${BC_PRETRAIN_STEPS_OVERRIDE:-4096}" \
+BC_PRETRAIN_EPOCHS_OVERRIDE="${BC_PRETRAIN_EPOCHS_OVERRIDE:-20}" \
+BC_PRETRAIN_TARGET_MODE_OVERRIDE=hard \
+AWBC_TEACHER_MODE_OVERRIDE=oracle_greedy \
+GREEDY_LOOKAHEAD_STEPS_OVERRIDE=8 \
+AWBC_COEF_OVERRIDE=0 \
+SUBTYPE_AUX_COEF_OVERRIDE=0 \
+SUBTYPE_ACTION_CE_COEF_OVERRIDE=0 \
+TEMPORAL_ENCODER_OVERRIDE=1 \
+TEMPORAL_HIDDEN_DIM_OVERRIDE=64 \
+CHECKPOINT_SELECTION_INTERVAL_UPDATES=5 \
+bash scripts/run_v104_frequency_cost_pdppo_dev_20260823.sh

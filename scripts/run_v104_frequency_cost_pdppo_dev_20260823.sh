@@ -7,9 +7,9 @@ PY="${PY:-/home/zhangzhuyu/.conda/envs/darts/bin/python}"
 read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1301 1302 1303 1304 1305}"
 read -r -a GPU_LIST <<< "${GPU_IDS:-0 1 2 3 4}"
 POLICY_SEED_OFFSET="${POLICY_SEED_OFFSET:-3000}"
-SCENE_PREFIX=v103_frequency_cost_scene_gate_dev
+SCENE_PREFIX="${SCENE_PREFIX_OVERRIDE:-v103_frequency_cost_scene_gate_dev}"
 POLICY_PREFIX="${RUN_PREFIX_OVERRIDE:-v104_frequency_cost_pdppo_dev}"
-CONTEXT_OUT=reports/aggregate/v103_frequency_cost_context_gate_20260823
+CONTEXT_OUT="${CONTEXT_OUT_OVERRIDE:-reports/aggregate/v103_frequency_cost_context_gate_20260823}"
 SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v5_frequency_cost.yaml
 mkdir -p logs/v104_frequency_cost_pdppo
 
@@ -17,7 +17,15 @@ for i in "${!SEEDS[@]}"; do
   seed="${SEEDS[$i]}"
   (
     export CUDA_VISIBLE_DEVICES="${GPU_LIST[$((i % ${#GPU_LIST[@]}))]}"
-    mapfile -t teacher_masks < <("$PY" - "$seed" "$CONTEXT_OUT" "$SCENE_PREFIX" <<'PY'
+    if [[ "${AWBC_TEACHER_MODE_OVERRIDE:-subtype_static_auto}" == "oracle_greedy" ]]; then
+      teacher_masks=(
+        "met_station_core radiometer_basic"
+        "met_station_core laser_disdrometer"
+        "met_station_core fc4_flux"
+        "shielded_thermo_hygro surface_temp_ir"
+      )
+    else
+      mapfile -t teacher_masks < <("$PY" - "$seed" "$CONTEXT_OUT" "$SCENE_PREFIX" <<'PY'
 import csv
 import json
 import sys
@@ -29,7 +37,8 @@ geometry = json.loads(Path(f"reports/{scene_prefix}_seed{seed}_b1p75_20260822/ac
 for label in ("calm", "particle", "flux", "thermal"):
     print(" ".join(geometry["masks"][int(row[label])]["sensor_ids"]))
 PY
-    )
+      )
+    fi
     export AWBC_TEACHER_CALM_SENSORS="${teacher_masks[0]}"
     export AWBC_TEACHER_PARTICLE_SENSORS="${teacher_masks[1]}"
     export AWBC_TEACHER_FLUX_SENSORS="${teacher_masks[2]}"
@@ -46,6 +55,7 @@ PY
     export PARTICLE_LATENT_DIAMETER_SCALE=0.28 PARTICLE_LATENT_VELOCITY_SCALE=4.8
     export FLUX_LATENT_SIGMA=2.0 THERMAL_LATENT_SURFACE_SCALE=2.4
     export EVENT_SUBTYPE_CONTEXT_LEAD_STEPS=12 EVENT_SUBTYPE_CONTEXT_NOISE_STD=0.02
+    export EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH="${EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH_OVERRIDE:-0.0}"
     export ORACLE_EPOCHS=10 ORACLE_FULL_OPEN_REPEAT=3 ORACLE_CANDIDATE_MASK_REPEAT=2
     export ORACLE_SUBTYPE_TEACHER_REPEAT=6 ORACLE_INFERENCE_DEVICE=cpu
     export BUDGET=1.75 STARTUP_BUDGET=2.15 BUDGET_LABEL=b1p75

@@ -2758,11 +2758,26 @@ tar -czf "$OUT…`
   action geometry, evaluator, and test partitions.
 - The exact eight-step receding diagnostic beat the strongest static action in
   all five scenes, with ordinary-loss margins from `+0.056991` to `+0.112564`.
-- The validation-calibrated one-threshold context policy beat static in only
-  `3/5` scenes on ordinary loss and `0/5` on the static-normalized event macro.
-  It discards the new magnitude signal by reducing each alert to a binary
-  threshold, so this result does not yet establish an information failure.
+- The validation-calibrated one-threshold context policy beat static in `3/5`
+  scenes on ordinary loss and `5/5` on the static-normalized event macro, with
+  mean margins `+0.038383/+0.106384`. An initial audit incorrectly reported the
+  macro count by comparing unlike columns; the corrected values use the
+  static-normalized reference column and filter the context-policy rows.
 - Added a bounded low/high intensity context diagnostic. Its seven action
   mappings are selected only on calibration replay and final execution reads
   only the online warning scores. PPO remains blocked until this stronger
   information gate is evaluated.
+
+### 2026-08-23 | V114--V115 validate magnitude use and close threshold tuning
+
+- V114 used a fixed `0.75` high-intensity boundary and calibration-selected
+  calm/low/high actions. It beat static in `3/5` scenes on ordinary loss and
+  `5/5` on the static-normalized event macro, with mean margins
+  `+0.028183/+0.074529`. Operational behavior remained feasible.
+- V115 selected the high boundary from `0.65/0.75/0.85` using calibration
+  replay only. It reached `3/5` wins on both endpoints and did not improve V114;
+  threshold search is therefore closed.
+- The information gate is sufficient for one clean learner experiment. V116
+  freezes V113 and combines the existing
+  temporal and online-context encoders with forecast-value initialization,
+  forecast-loss PPO, and validation-only checkpoint selection.
