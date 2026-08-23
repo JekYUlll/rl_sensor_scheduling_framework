@@ -2910,3 +2910,22 @@ tar -czf "$OUT…`
 - The frozen coefficient-0.5, stride-16 configuration is sufficiently improved
   for one four-seed expansion. No coefficient, stride, architecture, or scene
   changes are permitted during V126.
+
+### 2026-08-23 | V126 rejects direct actor-logit value regression
+
+- The frozen V125 configuration was expanded to seeds 1301, 1302, 1304, and
+  1305 and aggregated with the completed seed-1303 pilot. It beat the selected
+  static schedule on ordinary loss in `2/5` scenes and on the normalized event
+  macro in `1/5`; only `1/5` scenes passed both endpoints.
+- Mean margins versus static were `+0.001768` for ordinary loss and `-0.036311`
+  for the event macro. PD-PPO beat the best conventional dynamic policy in
+  `3/5` scenes, with mean ordinary margin `+0.021746`.
+- All five scenes passed the operational gate, but seed 1305 approached a
+  compact schedule with one always-on and one always-off channel. Endpoint
+  failures were event-specific: thermal dominated seed 1301, while particle
+  dominated seeds 1303--1305.
+- Close direct squared-error regression from standardized action values to raw
+  actor logits. The next bounded test preserves the forecast-loss PPO reward,
+  observations, scene, and feasible actions, but represents the same on-policy
+  forecast values as a masked soft action distribution and trains their ranking
+  with cross-entropy. No confirmatory seed expansion is authorized yet.

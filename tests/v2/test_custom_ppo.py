@@ -17,6 +17,7 @@ from v2.custom_ppo import (  # noqa: E402
     channel_marginal_distribution_entropy,
     feasible_candidate_mask,
     full_rollout_schedule,
+    masked_soft_target_cross_entropy,
     soft_forecast_value_targets,
     restore_env,
     snapshot_env,
@@ -627,6 +628,69 @@ def test_custom_ppo_short_run(tmp_path: Path) -> None:
     assert float(trainer.history[-1]["forecast_value_label_rate"]) == 0.5
     assert (tmp_path / "custom_ppo.pt").exists()
     assert all(torch.equal(value, trainer.model.state_dict()[key]) for key, value in saved.items())
+
+
+def test_custom_ppo_short_run_with_soft_forecast_value_auxiliary(tmp_path: Path) -> None:
+    truth = _truth(64)
+    sensors = _sensors()
+    trainer = CustomPPO(
+        truth_df=truth,
+        sensor_specs=sensors,
+        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        env_cfg=WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=STATE_COLUMNS,
+            lookback=4,
+            episode_len=12,
+            seed=3,
+        ),
+        oracle=_oracle(truth),
+        candidate_masks=np.asarray(
+            [[True, False, False], [False, True, False], [True, False, True]], dtype=bool
+        ),
+        cfg=CustomPPOConfig(
+            total_timesteps=16,
+            n_steps=8,
+            batch_size=4,
+            n_epochs=1,
+            embed_dim=8,
+            hidden_dim=16,
+            greedy_lookahead_steps=2,
+            forecast_value_aux_coef=0.5,
+            forecast_value_aux_stride=2,
+            forecast_value_aux_lookahead_steps=1,
+            forecast_value_aux_loss="soft_ce",
+            forecast_value_aux_temperature=1.0,
+            device="cpu",
+            seed=6,
+        ),
+    )
+
+    trainer.train()
+
+    assert np.isfinite(float(trainer.history[-1]["forecast_value_aux_loss"]))
+    assert float(trainer.history[-1]["forecast_value_label_rate"]) == 0.5
+
+
+def test_masked_soft_target_cross_entropy_respects_preferences_and_logit_shifts() -> None:
+    targets = torch.tensor([[2.0, 0.0, -8.0]], dtype=torch.float32)
+    feasible = torch.tensor([[True, True, False]])
+    rows = torch.tensor([True])
+    aligned = torch.tensor([[3.0, -1.0, 100.0]], dtype=torch.float32)
+    reversed_logits = torch.tensor([[-1.0, 3.0, -100.0]], dtype=torch.float32)
+
+    aligned_loss = masked_soft_target_cross_entropy(
+        aligned, targets, feasible, rows, temperature=0.5
+    )
+    shifted_loss = masked_soft_target_cross_entropy(
+        aligned + 17.0, targets, feasible, rows, temperature=0.5
+    )
+    reversed_loss = masked_soft_target_cross_entropy(
+        reversed_logits, targets, feasible, rows, temperature=0.5
+    )
+
+    assert torch.allclose(aligned_loss, shifted_loss, atol=1.0e-6)
+    assert aligned_loss < reversed_loss
 
 
 def test_custom_ppo_samples_only_inside_configured_training_partition() -> None:

@@ -64,6 +64,31 @@ def standardized_negative_cost_targets(costs: np.ndarray, feasible: np.ndarray) 
     return targets
 
 
+def masked_soft_target_cross_entropy(
+    actor_logits: Any,
+    value_targets: Any,
+    feasible: Any,
+    row_mask: Any,
+    *,
+    temperature: float,
+) -> Any:
+    """Match feasible categorical preferences induced by forecast values."""
+    torch, _ = _torch_modules()
+    if actor_logits.ndim != 2 or value_targets.shape != actor_logits.shape:
+        raise ValueError("actor logits and value targets must be matched rank-2 tensors")
+    valid = feasible.bool()
+    selected_rows = row_mask.bool()
+    if valid.shape != actor_logits.shape or selected_rows.shape != actor_logits.shape[:1]:
+        raise ValueError("feasible and row masks must match the actor batch")
+    if not bool(selected_rows.any().detach().cpu().item()):
+        return torch.zeros((), device=actor_logits.device, dtype=actor_logits.dtype)
+    scale = max(float(temperature), 1.0e-6)
+    target_logits = (value_targets / scale).masked_fill(~valid, -1.0e9)
+    target_probs = torch.softmax(target_logits, dim=1)
+    actor_log_probs = torch.log_softmax(actor_logits.masked_fill(~valid, -1.0e9), dim=1)
+    return (-(target_probs * actor_log_probs).sum(dim=1))[selected_rows].mean()
+
+
 @dataclass(frozen=True)
 class CustomPPOConfig:
     total_timesteps: int = 100_000
@@ -90,6 +115,8 @@ class CustomPPOConfig:
     forecast_value_aux_coef: float = 0.0
     forecast_value_aux_stride: int = 64
     forecast_value_aux_lookahead_steps: int = 0
+    forecast_value_aux_loss: str = "mse"
+    forecast_value_aux_temperature: float = 1.0
     subtype_aux_coef: float = 0.0
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
@@ -1422,8 +1449,17 @@ class CustomPPO:
                         mb_events,
                     )
                     valid_entries = mb_masks & forecast_rows.unsqueeze(1)
-                    squared_error = (actor_logits - mb_forecast_value_targets).square()
-                    forecast_value_aux_loss = squared_error[valid_entries].mean()
+                    if str(self.cfg.forecast_value_aux_loss).strip().lower() == "soft_ce":
+                        forecast_value_aux_loss = masked_soft_target_cross_entropy(
+                            actor_logits,
+                            mb_forecast_value_targets,
+                            mb_masks,
+                            forecast_rows,
+                            temperature=float(self.cfg.forecast_value_aux_temperature),
+                        )
+                    else:
+                        squared_error = (actor_logits - mb_forecast_value_targets).square()
+                        forecast_value_aux_loss = squared_error[valid_entries].mean()
                 loss = (
                     policy_loss
                     + float(self.cfg.vf_coef) * value_loss

@@ -694,6 +694,8 @@ def main() -> None:
     parser.add_argument("--forecast-value-aux-coef", type=float, default=0.0)
     parser.add_argument("--forecast-value-aux-stride", type=int, default=64)
     parser.add_argument("--forecast-value-aux-lookahead-steps", type=int, default=0)
+    parser.add_argument("--forecast-value-aux-loss", choices=("mse", "soft_ce"), default="mse")
+    parser.add_argument("--forecast-value-aux-temperature", type=float, default=1.0)
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1145,6 +1147,8 @@ def main() -> None:
             "forecast_value_aux_coef": float(args.forecast_value_aux_coef),
             "forecast_value_aux_stride": int(args.forecast_value_aux_stride),
             "forecast_value_aux_lookahead_steps": int(args.forecast_value_aux_lookahead_steps),
+            "forecast_value_aux_loss": str(args.forecast_value_aux_loss),
+            "forecast_value_aux_temperature": float(args.forecast_value_aux_temperature),
             "bc_soft_temperature": float(args.bc_soft_temperature),
             "awbc_teacher_mode": str(args.awbc_teacher_mode),
             "awbc_teacher_alert_threshold": float(args.awbc_teacher_alert_threshold),
@@ -1404,6 +1408,10 @@ def main() -> None:
         str(max(1, int(args.forecast_value_aux_stride))),
         "--forecast-value-aux-lookahead-steps",
         str(max(0, int(args.forecast_value_aux_lookahead_steps))),
+        "--forecast-value-aux-loss",
+        str(args.forecast_value_aux_loss),
+        "--forecast-value-aux-temperature",
+        str(max(1.0e-6, float(args.forecast_value_aux_temperature))),
         "--subtype-aux-coef",
         str(float(args.subtype_aux_coef)),
         "--subtype-aux-classes",
