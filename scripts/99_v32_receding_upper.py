@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Run the exact-geometry receding diagnostic for one frozen V32 run."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run-dir", required=True, type=Path)
+    parser.add_argument("--output-subdir", default="receding_oracle_l8_scene_gate")
+    parser.add_argument("--device", default="cuda")
+    args = parser.parse_args()
+
+    run = args.run_dir.resolve()
+    root = Path(__file__).resolve().parents[1]
+    metadata = json.loads((run / "v2_ppo_metadata.json").read_text())
+    manifest = json.loads((run / "split_protocol_manifest.json").read_text())
+    geometry = json.loads((run / "action_geometry.json").read_text())
+    command = [
+        sys.executable,
+        str(root / "scripts/49_v31_physical_event_oracle_lift.py"),
+        "--truth-csv", str(run / "truth_v31_split.csv"),
+        "--out-dir", str(run / args.output_subdir),
+        "--sensor-cfg", str(geometry["sensor_cfg"]),
+        "--budget", str(geometry["budget"]),
+        "--startup-peak-budget", str(geometry["startup_peak_budget"]),
+        "--max-active", str(len(geometry["sensor_ids"])),
+        "--required-sensors",
+        "--target-weights", *map(str, metadata["target_weights"]),
+        "--target-scales", *map(str, metadata["target_scales"]),
+        "--lookback", str(metadata["lookback"]),
+        "--horizon", str(metadata["horizon"]),
+        "--oracle-type", "tcn",
+        "--oracle-path", str(run / "v2_tcn_oracle.pt"),
+        "--oracle-inference-device", args.device,
+        "--oracle-loss-clip", str(manifest["ppo_controls"]["oracle_loss_clip"]),
+        "--freq-s", str(metadata["freq_s"]),
+        "--eval-steps", str(manifest["final_test"]["eval_steps"]),
+        "--eval-rollouts", str(metadata["eval_rollouts"]),
+        "--eval-start-indices", *map(str, metadata["eval_start_indices"]),
+        "--env-min-dwell-steps", str(metadata["reward_shaping"]["min_dwell_steps"]),
+        "--schedule-diagnostics",
+        "--schedule-family", "receding_oracle",
+        "--receding-oracle-lookahead-steps", str(metadata["horizon"]),
+        "--seed", str(manifest["seed"]),
+    ]
+    subprocess.run(command, cwd=root, check=True)
+
+
+if __name__ == "__main__":
+    main()
