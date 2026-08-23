@@ -68,7 +68,8 @@ run_context() {
       scripts/81_v31_framework_baseline_supplements.py \
       --run-glob "reports/${SCENE_PREFIX}_seed${seed}_b1p75_20260822" \
       --seeds "$seed" --out-root "$CONTEXT_OUT" --router-eval-dir . \
-      --replay-dir __none__ --oracle-device cuda --policies context_bandit event_label \
+      --replay-dir __none__ --oracle-device cuda \
+      --policies context_bandit forecast_greedy event_label \
       --context-thresholds 0.5 --context-action-source replay_calibrated \
       --greedy-max-steps 0 --no-aggregate
   ) >"logs/v102_context_seed${seed}.log" 2>&1
@@ -121,7 +122,8 @@ case "$PHASE" in
       scripts/81_v31_framework_baseline_supplements.py \
       --run-glob "reports/${SCENE_PREFIX}_seed*_b1p75_20260822" \
       --seeds "${SEEDS[@]}" --out-root "$CONTEXT_OUT" --router-eval-dir . \
-      --replay-dir __none__ --oracle-device cpu --policies context_bandit event_label \
+      --replay-dir __none__ --oracle-device cpu \
+      --policies context_bandit forecast_greedy event_label \
       --context-thresholds 0.5 --context-action-source replay_calibrated \
       --greedy-max-steps 0 --reuse-existing-seed-metrics \
       >logs/v102_context_aggregate.log 2>&1
