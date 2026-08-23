@@ -2622,3 +2622,19 @@ tar -czf "$OUT…`
 - The calibrated context and exact-label references themselves achieved only
   `14/22` and `13/22` joint static wins. The scene/action geometry remains the
   limiting factor; further V102 learner tuning is closed.
+### 2026-08-23 | V103 exposes within-regime dynamic value
+
+- Raised only the six fixed effective per-epoch costs, representing fixed
+  within-epoch sampling load. Under the unchanged `1.75` budget, all 6 single
+  and all 15 pair subsets remain feasible; triples become infeasible from power
+  alone. No cardinality rule or frequency action was added.
+- The exact-receding diagnostic beat strongest static in `5/5` development
+  seeds with mean ordinary margin `+0.121575`, used all 22 feasible actions,
+  gave all six channels intermediate duty, and had zero aborts.
+- Four-state calibrated context reached only `3/5` joint static wins; the fixed
+  physical map reached `2/5`. The gap is therefore not a lack of dynamic
+  headroom. A single subtype-to-mask mapping cannot express useful variation
+  within an event subtype.
+- One bounded V104 run is authorized because the action set is smaller and the
+  exact sequential headroom is substantially larger. It freezes the complete
+  V97 learner and changes no training hyperparameter.
