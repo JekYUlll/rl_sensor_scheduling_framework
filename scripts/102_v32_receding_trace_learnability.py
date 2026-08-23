@@ -8,8 +8,9 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import ExtraTreesRegressor, HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -81,6 +82,54 @@ def evaluate_model(
     }
 
 
+def evaluate_cost_regressor(
+    *,
+    seed: int,
+    model_name: str,
+    feature_set: str,
+    model: object,
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    columns: list[str],
+    cost_columns: list[str],
+) -> dict[str, object]:
+    x_train = np.nan_to_num(train[columns].to_numpy(dtype=float))
+    x_test = np.nan_to_num(test[columns].to_numpy(dtype=float))
+    train_costs = train[cost_columns].to_numpy(dtype=float)
+    test_costs = test[cost_columns].to_numpy(dtype=float)
+    if not np.all(np.isfinite(train_costs)):
+        raise ValueError("Training candidate costs must be finite for cost regression")
+    model.fit(x_train, train_costs)
+    predicted_costs = np.asarray(model.predict(x_test), dtype=float)
+    predicted_costs[~np.isfinite(test_costs)] = np.inf
+    predicted = np.argmin(predicted_costs, axis=1)
+    y_test = test["selected_action_idx"].to_numpy(dtype=int)
+    row_indices = np.arange(len(test))
+    oracle_cost = test_costs[row_indices, y_test]
+    predicted_cost = test_costs[row_indices, predicted]
+    static_action = int(np.argmin(np.mean(train_costs, axis=0)))
+    static_cost = test_costs[:, static_action]
+    valid = np.isfinite(oracle_cost) & np.isfinite(predicted_cost) & np.isfinite(static_cost)
+    oracle_gap = float(np.mean(static_cost[valid] - oracle_cost[valid]))
+    model_gain = float(np.mean(static_cost[valid] - predicted_cost[valid]))
+    return {
+        "seed": int(seed),
+        "model": model_name,
+        "feature_set": feature_set,
+        "train_rows": int(len(train)),
+        "test_rows": int(len(test)),
+        "train_action_coverage": int(train["selected_action_idx"].nunique()),
+        "test_action_coverage": int(test["selected_action_idx"].nunique()),
+        "top1_action_accuracy": float(np.mean(predicted == y_test)),
+        "top3_action_accuracy": float("nan"),
+        "mean_action_cost_regret": float(np.mean(predicted_cost[valid] - oracle_cost[valid])),
+        "mean_gain_vs_validation_static_action": model_gain,
+        "receding_gain_vs_validation_static_action": oracle_gap,
+        "fraction_of_receding_gain_recovered": model_gain / oracle_gap if oracle_gap > 0.0 else float("nan"),
+        "validation_static_action_idx": static_action,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dirs", nargs="+", type=Path, required=True)
@@ -112,6 +161,27 @@ def main() -> None:
             }
             for model_name, model in models.items():
                 rows.append(evaluate_model(
+                    seed=seed,
+                    model_name=model_name,
+                    feature_set=feature_set,
+                    model=model,
+                    train=train,
+                    test=test,
+                    columns=columns,
+                    cost_columns=cost_columns,
+                ))
+            regressors = {
+                "ridge_cost_regression": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+                "extra_trees_cost_regression": ExtraTreesRegressor(
+                    n_estimators=200,
+                    min_samples_leaf=4,
+                    max_features=0.7,
+                    n_jobs=-1,
+                    random_state=seed,
+                ),
+            }
+            for model_name, model in regressors.items():
+                rows.append(evaluate_cost_regressor(
                     seed=seed,
                     model_name=model_name,
                     feature_set=feature_set,
