@@ -280,6 +280,33 @@ class ContextAlertBanditPolicy:
         return np.where(mask, 1.0, -1.0)
 
 
+class IntensityBinnedContextPolicy(ContextAlertBanditPolicy):
+    """Online context policy with calibration-selected low/high intensity actions."""
+
+    def __init__(self, *, high_threshold: float, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.high_threshold = float(high_threshold)
+        if self.high_threshold <= self.threshold:
+            raise ValueError("high_threshold must exceed the calm threshold")
+
+    def act_mask(self, env: Any) -> np.ndarray:
+        row = env.truth_df.iloc[int(env.current_idx)]
+        best_label = "calm"
+        best_value = -float("inf")
+        for label, column in self.alert_columns.items():
+            value = finite_float(row.get(column, 0.0))
+            if value > best_value:
+                best_value = value
+                best_label = label
+        if not np.isfinite(best_value) or best_value < self.threshold:
+            action_label = "calm"
+        else:
+            level = "high" if best_value >= self.high_threshold else "low"
+            action_label = f"{best_label}_{level}"
+        action_idx = int(self.action_indices.get(action_label, self.action_indices.get("calm", 0)))
+        return np.asarray(self.candidate_masks[action_idx], dtype=bool).copy()
+
+
 def best_action_by_column(table: pd.DataFrame, column: str, *, fallback: str = "oracle_loss_mean") -> int:
     score_col = column if column in table.columns else fallback
     values = pd.to_numeric(table[score_col], errors="coerce")
@@ -339,6 +366,69 @@ def coordinate_select_context_actions(
                 "selection_secondary": float(secondary),
             }
         )
+        return float(primary), float(secondary)
+
+    best = score(selected, pass_idx=0, changed_label="initial")
+    for pass_idx in range(1, max(1, int(passes)) + 1):
+        changed = False
+        for label in labels:
+            label_best = best
+            label_action = int(selected[label])
+            for action_idx in pools[label]:
+                trial = dict(selected)
+                trial[label] = int(action_idx)
+                trial_score = score(trial, pass_idx=pass_idx, changed_label=label)
+                if trial_score < label_best:
+                    label_best = trial_score
+                    label_action = int(action_idx)
+            if label_action != int(selected[label]):
+                selected[label] = label_action
+                best = label_best
+                changed = True
+        if not changed:
+            break
+    return selected, pd.DataFrame(ledger)
+
+
+def coordinate_select_intensity_actions(
+    validation_table: pd.DataFrame,
+    evaluate_mapping: Callable[[dict[str, int]], tuple[float, float]],
+    *,
+    pool_size: int = 4,
+    passes: int = 2,
+) -> tuple[dict[str, int], pd.DataFrame]:
+    """Calibrate calm and subtype-specific low/high actions on held-out replay."""
+    labels = ("calm", "particle_low", "particle_high", "flux_low", "flux_high", "thermal_low", "thermal_high")
+    columns = {
+        "calm": "oracle_loss_non_event",
+        "particle_low": "oracle_loss_subtype_particle",
+        "particle_high": "oracle_loss_subtype_particle",
+        "flux_low": "oracle_loss_subtype_flux",
+        "flux_high": "oracle_loss_subtype_flux",
+        "thermal_low": "oracle_loss_subtype_thermal",
+        "thermal_high": "oracle_loss_subtype_thermal",
+    }
+    base = build_context_action_indices(validation_table)
+    selected = {label: int(base[label.split("_")[0]]) for label in labels}
+    pools: dict[str, list[int]] = {}
+    for label in labels:
+        ranked = validation_table.copy()
+        ranked["_score"] = pd.to_numeric(ranked[columns[label]], errors="coerce")
+        ranked = ranked[np.isfinite(ranked["_score"])].sort_values(["_score", "oracle_loss_mean", "action_idx"])
+        candidates = [int(value) for value in ranked["action_idx"].head(max(1, int(pool_size)))]
+        pools[label] = list(dict.fromkeys([int(selected[label]), *candidates]))
+
+    ledger: list[dict[str, Any]] = []
+
+    def score(mapping: dict[str, int], *, pass_idx: int, changed_label: str) -> tuple[float, float]:
+        primary, secondary = evaluate_mapping(mapping)
+        ledger.append({
+            "pass": int(pass_idx),
+            "changed_label": str(changed_label),
+            **{label: int(mapping[label]) for label in labels},
+            "selection_primary": float(primary),
+            "selection_secondary": float(secondary),
+        })
         return float(primary), float(secondary)
 
     best = score(selected, pass_idx=0, changed_label="initial")
@@ -498,6 +588,7 @@ def evaluate_run(
     oracle_device: str,
     policies: tuple[str, ...],
     context_thresholds: tuple[float, ...],
+    context_high_threshold: float,
     greedy_max_steps: int,
     context_action_source: str,
 ) -> pd.DataFrame:
@@ -560,6 +651,7 @@ def evaluate_run(
     static_table_path = run_dir / replay_dir / "split_static_candidate_event_table.csv"
     static_table = pd.read_csv(static_table_path) if static_table_path.exists() else validation_table.copy()
     normalizers = subtype_static_normalizers(static_table)
+    intensity_binned = str(context_action_source) == "intensity_replay_calibrated"
     if str(context_action_source) == "physical":
         action_indices = build_physical_context_action_indices(metadata, sensors, candidate_masks)
     elif str(context_action_source) == "continuity_guarded":
@@ -585,7 +677,7 @@ def evaluate_run(
                 np.isfinite(calm_score) and specialist_score >= calm_score
             ):
                 action_indices[label] = calm_action
-    elif str(context_action_source) == "replay_calibrated":
+    elif str(context_action_source) in {"replay_calibrated", "intensity_replay_calibrated"}:
         checkpoint_cfg = dict(metadata.get("checkpoint_selection", {}))
         calibration_starts = tuple(int(value) for value in checkpoint_cfg.get("start_indices", ()))
         calibration_steps = int(checkpoint_cfg.get("steps", 0))
@@ -606,13 +698,17 @@ def evaluate_run(
         best_static_macro = float(static_macro_values.min())
 
         def evaluate_context_mapping(mapping: dict[str, int]) -> tuple[float, float]:
-            policy = ContextAlertBanditPolicy(
-                sensors=sensors,
-                candidate_masks=candidate_masks,
-                action_indices=mapping,
-                threshold=0.5,
-                name="context_calibration_candidate",
-            )
+            policy_class = IntensityBinnedContextPolicy if intensity_binned else ContextAlertBanditPolicy
+            policy_kwargs: dict[str, Any] = {
+                "sensors": sensors,
+                "candidate_masks": candidate_masks,
+                "action_indices": mapping,
+                "threshold": 0.5,
+                "name": "context_calibration_candidate",
+            }
+            if intensity_binned:
+                policy_kwargs["high_threshold"] = float(context_high_threshold)
+            policy = policy_class(**policy_kwargs)
             result, metrics = helpers.evaluate_score_policy_over_starts(
                 truth=truth,
                 sensors=sensors,
@@ -631,10 +727,8 @@ def evaluate_run(
             macro_ratio = macro / best_static_macro
             return max(ordinary_ratio, macro_ratio), ordinary_ratio + macro_ratio
 
-        action_indices, calibration_ledger = coordinate_select_context_actions(
-            context_action_table,
-            evaluate_context_mapping,
-        )
+        selector = coordinate_select_intensity_actions if intensity_binned else coordinate_select_context_actions
+        action_indices, calibration_ledger = selector(context_action_table, evaluate_context_mapping)
         calibration_ledger.to_csv(out_dir / "context_replay_calibration_ledger.csv", index=False)
     else:
         action_indices = build_context_action_indices(context_action_table)
@@ -643,21 +737,34 @@ def evaluate_run(
     selected_action_rows: list[dict[str, Any]] = []
     if "context_bandit" in policies:
         for threshold in context_thresholds:
-            name = f"context_alert_bandit_t{str(threshold).replace('.', 'p')}"
-            policy_objects.append(
-                ContextAlertBanditPolicy(
+            if intensity_binned:
+                name = (
+                    f"context_alert_intensity_t{str(threshold).replace('.', 'p')}_"
+                    f"h{str(context_high_threshold).replace('.', 'p')}"
+                )
+                policy_objects.append(IntensityBinnedContextPolicy(
+                    sensors=sensors,
+                    candidate_masks=candidate_masks,
+                    action_indices=action_indices,
+                    threshold=float(threshold),
+                    high_threshold=float(context_high_threshold),
+                    name=name,
+                ))
+            else:
+                name = f"context_alert_bandit_t{str(threshold).replace('.', 'p')}"
+                policy_objects.append(ContextAlertBanditPolicy(
                     sensors=sensors,
                     candidate_masks=candidate_masks,
                     action_indices=action_indices,
                     threshold=float(threshold),
                     name=name,
-                )
-            )
+                ))
             selected_action_rows.append(
                 {
                     "policy": name,
                     **action_indices,
                     "threshold": float(threshold),
+                    "high_threshold": float(context_high_threshold) if intensity_binned else float("nan"),
                     "action_source": str(context_action_source),
                 }
             )
@@ -855,9 +962,18 @@ def main() -> None:
         default=["context_bandit", "forecast_greedy", "event_label"],
     )
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
+    parser.add_argument("--context-high-threshold", type=float, default=0.75)
     parser.add_argument(
         "--context-action-source",
-        choices=["validation", "physical", "hybrid", "guarded_hybrid", "continuity_guarded", "replay_calibrated"],
+        choices=[
+            "validation",
+            "physical",
+            "hybrid",
+            "guarded_hybrid",
+            "continuity_guarded",
+            "replay_calibrated",
+            "intensity_replay_calibrated",
+        ],
         default="validation",
     )
     parser.add_argument(
@@ -901,6 +1017,7 @@ def main() -> None:
                 oracle_device=str(args.oracle_device),
                 policies=tuple(str(x) for x in args.policies),
                 context_thresholds=tuple(float(x) for x in args.context_thresholds),
+                context_high_threshold=float(args.context_high_threshold),
                 greedy_max_steps=int(args.greedy_max_steps),
                 context_action_source=str(args.context_action_source),
             )

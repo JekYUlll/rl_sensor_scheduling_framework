@@ -84,3 +84,61 @@ def test_coordinate_selector_optimizes_complete_mapping() -> None:
     assert selected == {"calm": 1, "particle": 2, "flux": 0, "thermal": 1}
     assert not ledger.empty
     assert {"selection_primary", "selection_secondary"}.issubset(ledger.columns)
+
+
+def test_intensity_policy_uses_calm_low_and_high_actions() -> None:
+    sensors = [SimpleNamespace(sensor_id="a")]
+    masks = np.asarray([[0], [1]], dtype=bool)
+    mapping = {
+        "calm": 0,
+        "particle_low": 0,
+        "particle_high": 1,
+        "flux_low": 0,
+        "flux_high": 1,
+        "thermal_low": 0,
+        "thermal_high": 1,
+    }
+    policy = MODULE.IntensityBinnedContextPolicy(
+        sensors=sensors,
+        candidate_masks=masks,
+        action_indices=mapping,
+        threshold=0.5,
+        high_threshold=0.75,
+        name="test",
+    )
+    env = SimpleNamespace(current_idx=0)
+    for value, expected in ((0.4, False), (0.6, False), (0.8, True)):
+        env.truth_df = pd.DataFrame({
+            "agent_context_particle_alert": [value],
+            "agent_context_flux_alert": [0.0],
+            "agent_context_thermal_alert": [0.0],
+        })
+        assert bool(policy.act_mask(env)[0]) is expected
+
+
+def test_intensity_coordinate_selector_can_separate_levels() -> None:
+    table = pd.DataFrame({
+        "action_idx": [0, 1],
+        "oracle_loss_mean": [0.1, 0.2],
+        "oracle_loss_non_event": [0.1, 0.2],
+        "oracle_loss_subtype_particle": [0.1, 0.2],
+        "oracle_loss_subtype_flux": [0.1, 0.2],
+        "oracle_loss_subtype_thermal": [0.1, 0.2],
+    })
+    target = {
+        "calm": 0,
+        "particle_low": 0,
+        "particle_high": 1,
+        "flux_low": 0,
+        "flux_high": 1,
+        "thermal_low": 0,
+        "thermal_high": 1,
+    }
+
+    def evaluate(mapping: dict[str, int]) -> tuple[float, float]:
+        distance = sum(int(mapping[label] != action) for label, action in target.items())
+        return float(distance), float(sum(mapping.values()))
+
+    selected, ledger = MODULE.coordinate_select_intensity_actions(table, evaluate, pool_size=2, passes=2)
+    assert selected == target
+    assert not ledger.empty

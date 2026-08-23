@@ -2750,3 +2750,19 @@ tar -czf "$OUT…`
 - Close further PPO tuning on V103. A deployable online method must first beat
   static on validation across development scenes; privileged exact-receding
   headroom alone is insufficient.
+
+### 2026-08-23 | V113 retains dynamic headroom but rejects one-threshold context control
+
+- Added a noisy lead forecast of continuous subtype intensity to the three
+  online warning scores while preserving the V103 truth dynamics, costs,
+  action geometry, evaluator, and test partitions.
+- The exact eight-step receding diagnostic beat the strongest static action in
+  all five scenes, with ordinary-loss margins from `+0.056991` to `+0.112564`.
+- The validation-calibrated one-threshold context policy beat static in only
+  `3/5` scenes on ordinary loss and `0/5` on the static-normalized event macro.
+  It discards the new magnitude signal by reducing each alert to a binary
+  threshold, so this result does not yet establish an information failure.
+- Added a bounded low/high intensity context diagnostic. Its seven action
+  mappings are selected only on calibration replay and final execution reads
+  only the online warning scores. PPO remains blocked until this stronger
+  information gate is evaluated.
