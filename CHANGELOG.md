@@ -2983,3 +2983,14 @@ tar -czf "$OUT…`
 - The prediction gain is real, but temperature0.5 fails the deployment-behavior
   gate. V131 is the final bounded interpolation at temperature `0.75` on the
   same two scenes; no wider scalar sweep is authorized.
+
+### 2026-08-23 | V131 passes prediction and behavior at temperature 0.75
+
+- The bracketed temperature `0.75` check passed both endpoints in both failing
+  scenes. Seed1304 margins were `+0.041823/+0.170972`; seed1305 margins were
+  `+0.026305/+0.110441`. Both beat their best conventional dynamic policy.
+- Neither scene had an always-on or always-off channel. All six physical-system
+  channels were used, with switching rates 0.023448 and 0.021856 per step.
+- Temperature0.75 is frozen. V132 completes the same configuration on seeds
+  1301--1303; the resulting consistent five-scene aggregate determines whether
+  fresh confirmation is justified.
