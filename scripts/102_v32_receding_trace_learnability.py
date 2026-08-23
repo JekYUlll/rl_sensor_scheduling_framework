@@ -134,12 +134,15 @@ def main() -> None:
         positive_gain_seeds=("mean_gain_vs_validation_static_action", lambda values: int(np.sum(values > 0.0))),
     )
     summary.to_csv(args.output_dir / "summary.csv", index=False)
-    (args.output_dir / "summary.md").write_text(
-        "# Receding-action online learnability audit\n\n"
-        + summary.to_markdown(index=False, floatfmt=".6f")
-        + "\n",
-        encoding="utf-8",
-    )
+    summary_lines = [
+        "# Receding-action online learnability audit",
+        "",
+        "```text",
+        summary.to_string(index=False, float_format=lambda value: f"{value:.6f}"),
+        "```",
+        "",
+    ]
+    (args.output_dir / "summary.md").write_text("\n".join(summary_lines), encoding="utf-8")
     print(summary.to_string(index=False))
 
 
