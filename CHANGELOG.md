@@ -2929,3 +2929,19 @@ tar -czf "$OUT…`
   observations, scene, and feasible actions, but represents the same on-policy
   forecast values as a masked soft action distribution and trains their ranking
   with cross-entropy. No confirmatory seed expansion is authorized yet.
+
+### 2026-08-23 | V127 validates categorical forecast-value supervision
+
+- V127 changed only the on-policy forecast-value auxiliary from raw-logit MSE
+  to masked soft-target cross-entropy on seed 1303. It beat selected static by
+  `+0.035874` on ordinary loss and `+0.014179` on the normalized event macro,
+  and beat the best conventional dynamic policy by `+0.065721`.
+- Execution passed with no always-on channel, one always-off channel, five
+  intermediate-duty channels, 0.039369 switches per step, and zero aborts.
+- Update 20 was selected by the frozen validation rule and had the lowest
+  ordinary validation loss, so the result does not use test feedback for
+  checkpoint selection. No validation checkpoint beat static on ordinary loss,
+  however; V127 remains a development pilot rather than confirmatory evidence.
+- Authorize a bounded frozen expansion to seeds 1301 and 1302. Complete the
+  five-scene wave only if that two-scene check preserves positive aggregate
+  evidence and valid behavior.
