@@ -235,6 +235,62 @@ class ForecastGreedyOneStepPolicy:
         return np.where(mask, 1.0, -1.0)
 
 
+class TraceDistilledForecastValuePolicy:
+    """Online policy distilled from policy-training receding forecast values."""
+
+    def __init__(
+        self,
+        *,
+        candidate_masks: np.ndarray,
+        trace: pd.DataFrame,
+        seed: int,
+        name: str = "trace_distilled_forecast_value",
+    ) -> None:
+        from sklearn.ensemble import ExtraTreesRegressor
+
+        self.candidate_masks = np.asarray(candidate_masks, dtype=bool)
+        self.name = str(name)
+        self.feature_columns = sorted(
+            (column for column in trace.columns if column.startswith("online_state_")),
+            key=lambda column: int(column.rsplit("_", 1)[1]),
+        )
+        self.cost_columns = sorted(
+            (column for column in trace.columns if column.startswith("candidate_cost_")),
+            key=lambda column: int(column.rsplit("_", 1)[1]),
+        )
+        if len(self.cost_columns) != len(self.candidate_masks):
+            raise ValueError("Trace candidate costs do not match the executable action geometry")
+        features = np.nan_to_num(trace[self.feature_columns].to_numpy(dtype=float))
+        costs = trace[self.cost_columns].to_numpy(dtype=float)
+        if not np.all(np.isfinite(costs)):
+            raise ValueError("Policy-training candidate costs must be finite")
+        self.model = ExtraTreesRegressor(
+            n_estimators=200,
+            min_samples_leaf=4,
+            max_features=0.7,
+            n_jobs=-1,
+            random_state=int(seed),
+        ).fit(features, costs)
+
+    def reset(self) -> None:
+        return None
+
+    def act_mask(self, env: Any) -> np.ndarray:
+        features = np.asarray(env._state(), dtype=float).reshape(1, -1)
+        predicted_costs = np.asarray(self.model.predict(features)[0], dtype=float)
+        for action_idx, mask in enumerate(self.candidate_masks):
+            projection = env.projector.project_mask(mask, env.runtimes)
+            if not bool(projection.feasible) or not np.array_equal(
+                projection.selected_mask.astype(bool), mask
+            ):
+                predicted_costs[action_idx] = float("inf")
+        return np.asarray(self.candidate_masks[int(np.argmin(predicted_costs))], dtype=bool).copy()
+
+    def act_scores(self, env: Any) -> np.ndarray:
+        mask = self.act_mask(env)
+        return np.where(mask, 1.0, -1.0)
+
+
 class ContextAlertBanditPolicy:
     """Context-alert bandit driven by supplied synthetic warning scores."""
 
@@ -770,6 +826,15 @@ def evaluate_run(
             )
     if "forecast_greedy" in policies:
         policy_objects.append(ForecastGreedyOneStepPolicy(candidate_masks, name="forecast_greedy_one_step"))
+    if "trace_distilled" in policies:
+        trace_path = run_dir / "receding_oracle_l8_rl_train_trace" / "receding_oracle_trace.csv"
+        if not trace_path.exists():
+            raise FileNotFoundError(f"Missing policy-training receding trace: {trace_path}")
+        policy_objects.append(TraceDistilledForecastValuePolicy(
+            candidate_masks=candidate_masks,
+            trace=pd.read_csv(trace_path),
+            seed=int(metadata["seed"]),
+        ))
     if "event_label" in policies:
         if "event_subtype_id" not in truth.columns:
             raise ValueError("event-label reference requires event_subtype_id for offline replay")
@@ -822,7 +887,11 @@ def evaluate_run(
             else (
                 "exact_final_event_subtype"
                 if str(policy.name).startswith("event_label_reference")
-                else "supplied_synthetic_warning_scores"
+                else (
+                    "policy_training_future_loss_distillation"
+                    if policy.name == "trace_distilled_forecast_value"
+                    else "supplied_synthetic_warning_scores"
+                )
             )
         )
         rows.append(row)
@@ -958,7 +1027,7 @@ def main() -> None:
     parser.add_argument(
         "--policies",
         nargs="+",
-        choices=["context_bandit", "forecast_greedy", "event_label"],
+        choices=["context_bandit", "forecast_greedy", "event_label", "trace_distilled"],
         default=["context_bandit", "forecast_greedy", "event_label"],
     )
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
