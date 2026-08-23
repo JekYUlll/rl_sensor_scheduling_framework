@@ -15,6 +15,7 @@ def main() -> None:
     parser.add_argument("--run-dir", required=True, type=Path)
     parser.add_argument("--output-subdir", default="receding_oracle_l8_scene_gate")
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--partition", choices=("validation", "final_test"), default="final_test")
     args = parser.parse_args()
 
     run = args.run_dir.resolve()
@@ -22,6 +23,12 @@ def main() -> None:
     metadata = json.loads((run / "v2_ppo_metadata.json").read_text())
     manifest = json.loads((run / "split_protocol_manifest.json").read_text())
     geometry = json.loads((run / "action_geometry.json").read_text())
+    if args.partition == "validation":
+        start_indices = manifest["validation"]["static_selection_starts"]
+        eval_steps = manifest["validation"]["static_selection_steps"]
+    else:
+        start_indices = manifest["final_test"]["eval_starts"]
+        eval_steps = manifest["final_test"]["eval_steps"]
     command = [
         sys.executable,
         str(root / "scripts/49_v31_physical_event_oracle_lift.py"),
@@ -41,9 +48,9 @@ def main() -> None:
         "--oracle-inference-device", args.device,
         "--oracle-loss-clip", str(manifest["ppo_controls"]["oracle_loss_clip"]),
         "--freq-s", str(metadata["freq_s"]),
-        "--eval-steps", str(manifest["final_test"]["eval_steps"]),
+        "--eval-steps", str(eval_steps),
         "--eval-rollouts", str(metadata["eval_rollouts"]),
-        "--eval-start-indices", *map(str, metadata["eval_start_indices"]),
+        "--eval-start-indices", *map(str, start_indices),
         "--env-min-dwell-steps", str(metadata["reward_shaping"]["min_dwell_steps"]),
         "--schedule-diagnostics",
         "--schedule-family", "receding_oracle",

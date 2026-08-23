@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
-from v2.custom_ppo import oracle_greedy_candidate_index  # noqa: E402
+from v2.custom_ppo import oracle_greedy_candidate_costs  # noqa: E402
 from v2.oracle import make_oracle_feature  # noqa: E402
 from v2.oracle import LinearFrozenForecastOracle  # noqa: E402
 from v2.policies import StaticMaskPolicy  # noqa: E402
@@ -911,6 +911,7 @@ def _receding_oracle_rows(
     start_indices: tuple[int, ...],
     steps: int,
     lookahead_steps: int,
+    trace_path: Path | None = None,
 ) -> pd.DataFrame:
     """Evaluate a privileged all-action receding-horizon structural diagnostic."""
     losses: list[float] = []
@@ -924,6 +925,7 @@ def _receding_oracle_rows(
     action_counts = np.zeros(len(candidate_masks), dtype=int)
     aborts = 0
     total_steps = 0
+    trace_rows: list[dict[str, object]] = []
     subtype_ids = (
         truth["event_subtype_id"].to_numpy(dtype=int)
         if "event_subtype_id" in truth.columns
@@ -938,12 +940,17 @@ def _receding_oracle_rows(
             oracle=oracle,
         )
         env.reset(start_idx=int(start_idx))
-        for _ in range(int(steps)):
-            action_idx = oracle_greedy_candidate_index(
+        for rollout_step in range(int(steps)):
+            step_idx = int(env.current_idx)
+            dwell_hold_before_action = int(env.dwell_hold_remaining)
+            online_state = np.asarray(env._state(), dtype=float).reshape(-1)
+            alert_features = np.asarray(env._alert_context_features(), dtype=float).reshape(-1)
+            action_costs = oracle_greedy_candidate_costs(
                 env,
                 candidate_masks,
                 lookahead_steps=max(1, int(lookahead_steps)),
             )
+            action_idx = int(np.argmin(action_costs))
             action_counts[action_idx] += 1
             _, _, done, info = env.step_mask(candidate_masks[action_idx])
             loss = float(info.get("oracle_loss", float("nan")))
@@ -961,6 +968,27 @@ def _receding_oracle_rows(
             switches.append(float(info.get("switch_rate", 0.0)))
             aborts += int(info.get("warmup_abort_delta", 0))
             selected_counts += np.asarray(info.get("selected_mask", [0] * len(sensors)), dtype=float)
+            trace_row: dict[str, object] = {
+                "rollout_idx": int(offset),
+                "rollout_step": int(rollout_step),
+                "truth_step_idx": int(step_idx),
+                "selected_action_idx": int(action_idx),
+                "selected_action_cost": float(action_costs[action_idx]),
+                "second_best_action_cost": float(np.partition(action_costs, 1)[1]),
+                "action_cost_gap": float(np.partition(action_costs, 1)[1] - action_costs[action_idx]),
+                "event_subtype_id": int(subtype_ids[min(step_idx, len(subtype_ids) - 1)]),
+                "executed_oracle_loss": float(info.get("oracle_loss", float("nan"))),
+                "dwell_hold_remaining_before_action": dwell_hold_before_action,
+            }
+            for feature_idx, value in enumerate(online_state):
+                trace_row[f"online_state_{feature_idx}"] = float(value)
+            for feature_idx, value in enumerate(alert_features):
+                trace_row[f"alert_feature_{feature_idx}"] = float(value)
+            for candidate_idx, value in enumerate(action_costs):
+                trace_row[f"candidate_cost_{candidate_idx}"] = float(value)
+            for sensor_idx, value in enumerate(np.asarray(info.get("selected_mask", []), dtype=int)):
+                trace_row[f"executed_sensor_{sensor_idx}"] = int(value)
+            trace_rows.append(trace_row)
             total_steps += 1
             if done:
                 break
@@ -1006,6 +1034,9 @@ def _receding_oracle_rows(
     }
     for idx, spec in enumerate(sensors):
         row[f"duty__{str(spec.sensor_id).replace('/', '_')}"] = float(duties[idx])
+    if trace_path is not None:
+        trace_path.parent.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(trace_rows).to_csv(trace_path, index=False)
     return pd.DataFrame([row])
 
 
@@ -1554,6 +1585,7 @@ def main() -> None:
                     start_indices=tuple(int(x) for x in eval_start_indices),
                     steps=int(args.eval_steps),
                     lookahead_steps=int(args.receding_oracle_lookahead_steps),
+                    trace_path=out_dir / "receding_oracle_trace.csv",
                 )
             )
         if tables:

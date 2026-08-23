@@ -2832,3 +2832,21 @@ tar -czf "$OUT…`
   context gate itself does not beat static on ordinary loss. V120 therefore
   tests full use of the noisy lead intensity forecast before any further
   learner run.
+
+### 2026-08-23 | V120 preserves dynamic value but rejects full-intensity thresholding
+
+- V120 increased only the online continuous warning-intensity contribution
+  from `0.75` to `1.0`; truth dynamics, effective channel costs, feasible
+  subsets, evaluator, partitions, and test seeds remained frozen.
+- The calibration-defined context policy beat the validation-selected static
+  schedule in `3/5` scenes on ordinary loss and `4/5` on the static-normalized
+  subtype macro. Mean margins were `+0.005443/+0.031276`. Two scenes also had
+  two always-off channels, so the policy did not pass the execution gate.
+- The exact eight-step receding diagnostic beat the best fixed feasible subset
+  in all five scenes. Its ordinary-loss margins were `+0.073649` to
+  `+0.121511` (mean `+0.089451`), all six channels had intermediate duty, and
+  switching remained near `0.05` per step.
+- Dynamic value therefore remains present, while a fixed warning threshold and
+  calibration action mapping do not expose it reliably. V121 training is
+  blocked pending an online-observable versus receding-action learnability
+  audit; no further threshold or PPO restart sweep is authorized.
