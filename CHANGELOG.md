@@ -2719,3 +2719,18 @@ tar -czf "$OUT…`
   design, adding forecast-loss PPO, and disabling continuing imitation and
   subtype auxiliary losses. No scene, action, reward, or constraint changes are
   authorized.
+
+### 2026-08-23 | V111 identifies post-BC PPO degradation
+
+- Added 40,960 forecast-loss PPO steps to V109's temporal forecast-value BC
+  initialization with continuing imitation and subtype auxiliary losses off.
+- Ordinary/macro losses degraded from V109's `0.519187/1.311281` to
+  `0.539342/1.399040`, leaving static margins `-0.010830/-0.037850`.
+- The final policy used 13 subsets, all six channels had nonzero duty, and no
+  abort occurred. The loss is therefore not caused by V110's sparse empty-
+  action behavior; PPO updates changed a broadly dynamic but less predictive
+  mapping.
+- Checkpoint selection previously omitted the BC checkpoint because callbacks
+  began after PPO update 1. The callback now exposes BC as update 0, with a
+  regression test. V112 will select among update 0 and every fifth PPO update
+  using calibration/validation data only.

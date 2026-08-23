@@ -706,6 +706,8 @@ class CustomPPO:
                 f"unique_actions={int(metrics.get('greedy_unique_actions', 0))}",
                 flush=True,
             )
+            if on_update is not None:
+                on_update(self, 0, 0, metrics)
         steps_done = 0
         for update_idx, rollout_steps in enumerate(
             full_rollout_schedule(self.cfg.total_timesteps, self.cfg.n_steps),

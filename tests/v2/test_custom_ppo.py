@@ -753,6 +753,41 @@ def test_train_update_callback_receives_completed_updates() -> None:
     assert observed == [(1, 1), (2, 2)]
 
 
+def test_train_update_callback_includes_bc_checkpoint_at_step_zero() -> None:
+    truth = _truth(32)
+    trainer = CustomPPO(
+        truth_df=truth,
+        sensor_specs=_sensors(),
+        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        env_cfg=WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=STATE_COLUMNS,
+            lookback=4,
+            episode_len=2,
+            seed=3,
+        ),
+        oracle=_oracle(truth),
+        candidate_masks=np.asarray([[True, False, False]], dtype=bool),
+        cfg=CustomPPOConfig(
+            total_timesteps=1,
+            n_steps=1,
+            batch_size=1,
+            n_epochs=1,
+            bc_pretrain_steps=2,
+            bc_pretrain_epochs=1,
+            embed_dim=8,
+            hidden_dim=16,
+            device="cpu",
+            seed=5,
+            train_start_min=20,
+            train_start_max=20,
+        ),
+    )
+    observed: list[tuple[int, int]] = []
+    trainer.train(on_update=lambda _trainer, update, steps, _metrics: observed.append((update, steps)))
+    assert observed == [(0, 0), (1, 1)]
+
+
 def test_subtype_action_event_only_excludes_calm_samples() -> None:
     trainer = CustomPPO.__new__(CustomPPO)
     trainer.cfg = CustomPPOConfig(
