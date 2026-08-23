@@ -2807,3 +2807,15 @@ tar -czf "$OUT…`
   values, forecast-loss PPO, and a validation selector minimizing the worse of
   ordinary/static and macro/static loss ratios. Final execution remains label
   free.
+
+### 2026-08-23 | V118 validates the cohesive CA-PD-PPO direction
+
+- The context MoE, training-only context auxiliary, forecast-value regression,
+  forecast-loss PPO, and joint validation selector reduced mean static gaps to
+  `-0.007026/-0.046756`. Wins were `2/5` ordinary, `2/5` macro, and `1/5`
+  jointly; conventional-dynamic wins improved to `3/5`.
+- All five policies passed the execution behavior gate. The remaining pattern
+  is dominated by policy-initialization variance, not a structural collapse.
+- V119 freezes the complete V118 method and adds two policy initializations.
+  Exactly one initialization per scene is selected by the frozen validation
+  joint score before aggregating test metrics.
