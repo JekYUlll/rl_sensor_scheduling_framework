@@ -15,7 +15,11 @@ def main() -> None:
     parser.add_argument("--run-dir", required=True, type=Path)
     parser.add_argument("--output-subdir", default="receding_oracle_l8_scene_gate")
     parser.add_argument("--device", default="cuda")
-    parser.add_argument("--partition", choices=("validation", "final_test"), default="final_test")
+    parser.add_argument(
+        "--partition",
+        choices=("rl_train", "validation", "final_test"),
+        default="final_test",
+    )
     args = parser.parse_args()
 
     run = args.run_dir.resolve()
@@ -23,7 +27,10 @@ def main() -> None:
     metadata = json.loads((run / "v2_ppo_metadata.json").read_text())
     manifest = json.loads((run / "split_protocol_manifest.json").read_text())
     geometry = json.loads((run / "action_geometry.json").read_text())
-    if args.partition == "validation":
+    if args.partition == "rl_train":
+        start_indices = manifest["rl_train"]["candidate_prior_starts"]
+        eval_steps = manifest["rl_train"]["candidate_prior_steps"]
+    elif args.partition == "validation":
         start_indices = manifest["validation"]["static_selection_starts"]
         eval_steps = manifest["validation"]["static_selection_steps"]
     else:

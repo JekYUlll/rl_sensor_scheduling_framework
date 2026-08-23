@@ -66,6 +66,7 @@ def evaluate_model(
     model_gain = float(np.mean(static_cost[valid] - predicted_cost[valid]))
     return {
         "seed": int(seed),
+        "training_source": str(train.attrs.get("training_source", "validation_only")),
         "model": model_name,
         "feature_set": feature_set,
         "train_rows": int(len(train)),
@@ -114,6 +115,7 @@ def evaluate_cost_regressor(
     model_gain = float(np.mean(static_cost[valid] - predicted_cost[valid]))
     return {
         "seed": int(seed),
+        "training_source": str(train.attrs.get("training_source", "validation_only")),
         "model": model_name,
         "feature_set": feature_set,
         "train_rows": int(len(train)),
@@ -138,63 +140,72 @@ def main() -> None:
     rows: list[dict[str, object]] = []
     for run in args.run_dirs:
         seed = int(run.name.split("seed", 1)[1].split("_", 1)[0])
-        train = pd.read_csv(run / "receding_oracle_l8_validation_trace" / "receding_oracle_trace.csv")
+        validation = pd.read_csv(run / "receding_oracle_l8_validation_trace" / "receding_oracle_trace.csv")
         test = pd.read_csv(run / "receding_oracle_l8_final_trace" / "receding_oracle_trace.csv")
         cost_columns = feature_columns(test, "candidate_cost_")
-        feature_sets = {
-            "alert_context": feature_columns(train, "alert_feature_"),
-            "complete_online_state": feature_columns(train, "online_state_"),
-        }
-        for feature_set, columns in feature_sets.items():
-            models = {
-                "multinomial_logistic": make_pipeline(
-                    StandardScaler(),
-                    LogisticRegression(max_iter=2000, C=1.0, random_state=seed),
-                ),
-                "hist_gradient_boosting": HistGradientBoostingClassifier(
-                    max_iter=200,
-                    max_leaf_nodes=31,
-                    learning_rate=0.08,
-                    l2_regularization=1.0,
-                    random_state=seed,
-                ),
+        training_tables = {"validation_only": validation}
+        rl_train_path = run / "receding_oracle_l8_rl_train_trace" / "receding_oracle_trace.csv"
+        if rl_train_path.exists():
+            training_tables["rl_train_plus_validation"] = pd.concat(
+                [pd.read_csv(rl_train_path), validation],
+                ignore_index=True,
+            )
+        for training_source, train in training_tables.items():
+            train.attrs["training_source"] = training_source
+            feature_sets = {
+                "alert_context": feature_columns(train, "alert_feature_"),
+                "complete_online_state": feature_columns(train, "online_state_"),
             }
-            for model_name, model in models.items():
-                rows.append(evaluate_model(
-                    seed=seed,
-                    model_name=model_name,
-                    feature_set=feature_set,
-                    model=model,
-                    train=train,
-                    test=test,
-                    columns=columns,
-                    cost_columns=cost_columns,
-                ))
-            regressors = {
-                "ridge_cost_regression": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
-                "extra_trees_cost_regression": ExtraTreesRegressor(
-                    n_estimators=200,
-                    min_samples_leaf=4,
-                    max_features=0.7,
-                    n_jobs=-1,
-                    random_state=seed,
-                ),
-            }
-            for model_name, model in regressors.items():
-                rows.append(evaluate_cost_regressor(
-                    seed=seed,
-                    model_name=model_name,
-                    feature_set=feature_set,
-                    model=model,
-                    train=train,
-                    test=test,
-                    columns=columns,
-                    cost_columns=cost_columns,
-                ))
-    output = pd.DataFrame(rows).sort_values(["feature_set", "model", "seed"])
+            for feature_set, columns in feature_sets.items():
+                models = {
+                    "multinomial_logistic": make_pipeline(
+                        StandardScaler(),
+                        LogisticRegression(max_iter=2000, C=1.0, random_state=seed),
+                    ),
+                    "hist_gradient_boosting": HistGradientBoostingClassifier(
+                        max_iter=200,
+                        max_leaf_nodes=31,
+                        learning_rate=0.08,
+                        l2_regularization=1.0,
+                        random_state=seed,
+                    ),
+                }
+                for model_name, model in models.items():
+                    rows.append(evaluate_model(
+                        seed=seed,
+                        model_name=model_name,
+                        feature_set=feature_set,
+                        model=model,
+                        train=train,
+                        test=test,
+                        columns=columns,
+                        cost_columns=cost_columns,
+                    ))
+                regressors = {
+                    "ridge_cost_regression": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+                    "extra_trees_cost_regression": ExtraTreesRegressor(
+                        n_estimators=200,
+                        min_samples_leaf=4,
+                        max_features=0.7,
+                        n_jobs=-1,
+                        random_state=seed,
+                    ),
+                }
+                for model_name, model in regressors.items():
+                    rows.append(evaluate_cost_regressor(
+                        seed=seed,
+                        model_name=model_name,
+                        feature_set=feature_set,
+                        model=model,
+                        train=train,
+                        test=test,
+                        columns=columns,
+                        cost_columns=cost_columns,
+                    ))
+    output = pd.DataFrame(rows).sort_values(["training_source", "feature_set", "model", "seed"])
     args.output_dir.mkdir(parents=True, exist_ok=True)
     output.to_csv(args.output_dir / "seed_metrics.csv", index=False)
-    summary = output.groupby(["feature_set", "model"], as_index=False).agg(
+    summary = output.groupby(["training_source", "feature_set", "model"], as_index=False).agg(
         seeds=("seed", "count"),
         mean_top1_accuracy=("top1_action_accuracy", "mean"),
         mean_top3_accuracy=("top3_action_accuracy", "mean"),
