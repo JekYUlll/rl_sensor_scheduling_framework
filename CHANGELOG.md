@@ -2594,3 +2594,14 @@ tar -czf "$OUT…`
 - The behavior gate follows the physical-system requirement: at most one
   always-on and at most one always-off channel per seed, nonzero switching,
   zero warm-up aborts, and state-dependent channel allocation.
+### 2026-08-23 | V99 rejects the forecast-greedy training teacher
+
+- Replaced only V97's four-state static teacher with an eight-step
+  frozen-forecaster greedy teacher on the policy-training partition. The
+  teacher exercised all 35 non-empty feasible actions, but AWBC cross-entropy
+  remained near the 36-action random scale.
+- Final execution used 24 subsets and gave all six channels intermediate duty,
+  but margins were `-0.019192/+0.003126` against strongest static and
+  `-0.006112/-0.024157` against conventional dynamic references.
+- This teacher improves action breadth without preserving forecast quality and
+  is not expanded. V97 remains frozen for fresh confirmation.
