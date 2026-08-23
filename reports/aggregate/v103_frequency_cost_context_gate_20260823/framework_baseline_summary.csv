@@ -1,0 +1,3 @@
+policy,complete_seeds,mean_oracle_loss,mean_loss_margin_vs_custom_ppo,median_loss_margin_vs_custom_ppo,pdppo_step_win_count,pdppo_step_loss_count,mean_staticnorm_macro,mean_staticnorm_macro_margin_vs_custom_ppo,pdppo_staticnorm_macro_win_count,diagnostic_privilege,mean_switches_per_step,mean_mid_duty_sensor_count,mean_warmup_abort_count
+context_alert_bandit_t0p5,5,0.49994210031161657,-0.11336113384135786,-0.1264099133081294,0,5,1.1100010587131313,-0.36444176614406865,0,supplied_synthetic_warning_scores,0.012997539441308381,4.0,0.0
+event_label_reference_l8,5,0.5002035814541159,-0.11309965269885851,-0.1207698917973579,0,5,1.1091479963736695,-0.36529482848353034,0,exact_final_event_subtype,0.012910696193370921,4.0,0.0

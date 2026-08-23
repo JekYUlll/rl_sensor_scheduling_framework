@@ -37,6 +37,16 @@ def main() -> None:
     parser.add_argument("--policy-glob", required=True)
     parser.add_argument("--context-csv", required=True, type=Path)
     parser.add_argument("--out-dir", required=True, type=Path)
+    parser.add_argument(
+        "--title",
+        default="Flexible-subset PD-PPO evaluation",
+        help="Markdown report title without the leading hash.",
+    )
+    parser.add_argument(
+        "--protocol-description",
+        default="The protocol completed {seed_count} scene/policy seed pairs.",
+        help="First report sentence; {seed_count} is replaced with the observed count.",
+    )
     args = parser.parse_args()
 
     run_dirs = sorted({p.parent for p in Path().glob(args.policy_glob)})
@@ -162,9 +172,9 @@ def main() -> None:
     summary.to_csv(args.out_dir / "family_summary.csv", index=False)
 
     lines = [
-        "# Frozen V97 flexible-subset confirmation",
+        f"# {args.title}",
         "",
-        f"The locked protocol completed {len(seeds)} fresh scene/policy seed pairs.",
+        args.protocol_description.format(seed_count=len(seeds)),
         "Positive margins indicate lower PD-PPO loss than the comparator.",
         "",
         "| Comparator | Ordinary wins | Macro wins | Joint wins | Mean ordinary margin (95% CI) | Mean macro margin (95% CI) |",

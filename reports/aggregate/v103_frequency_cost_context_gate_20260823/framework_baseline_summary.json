@@ -1,0 +1,38 @@
+{
+  "complete_rows": 10,
+  "policies": [
+    {
+      "policy": "context_alert_bandit_t0p5",
+      "complete_seeds": 5,
+      "mean_oracle_loss": 0.49994210031161657,
+      "mean_loss_margin_vs_custom_ppo": -0.11336113384135786,
+      "median_loss_margin_vs_custom_ppo": -0.1264099133081294,
+      "pdppo_step_win_count": 0,
+      "pdppo_step_loss_count": 5,
+      "mean_staticnorm_macro": 1.1100010587131313,
+      "mean_staticnorm_macro_margin_vs_custom_ppo": -0.36444176614406865,
+      "pdppo_staticnorm_macro_win_count": 0,
+      "diagnostic_privilege": "supplied_synthetic_warning_scores",
+      "mean_switches_per_step": 0.012997539441308381,
+      "mean_mid_duty_sensor_count": 4.0,
+      "mean_warmup_abort_count": 0.0
+    },
+    {
+      "policy": "event_label_reference_l8",
+      "complete_seeds": 5,
+      "mean_oracle_loss": 0.5002035814541159,
+      "mean_loss_margin_vs_custom_ppo": -0.11309965269885851,
+      "median_loss_margin_vs_custom_ppo": -0.1207698917973579,
+      "pdppo_step_win_count": 0,
+      "pdppo_step_loss_count": 5,
+      "mean_staticnorm_macro": 1.1091479963736695,
+      "mean_staticnorm_macro_margin_vs_custom_ppo": -0.36529482848353034,
+      "pdppo_staticnorm_macro_win_count": 0,
+      "diagnostic_privilege": "exact_final_event_subtype",
+      "mean_switches_per_step": 0.012910696193370921,
+      "mean_mid_duty_sensor_count": 4.0,
+      "mean_warmup_abort_count": 0.0
+    }
+  ],
+  "interpretation": "Positive margins mean the supplementary baseline has higher loss than PD-PPO. forecast_greedy_one_step is a privileged myopic diagnostic because it chooses masks using final-test future loss; context_alert_bandit uses supplied synthetic warning-score columns; event_label_reference uses exact final-test subtype labels and is privileged."
+}

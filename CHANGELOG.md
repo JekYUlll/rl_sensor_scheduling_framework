@@ -2638,3 +2638,30 @@ tar -czf "$OUT…`
 - One bounded V104 run is authorized because the action set is smaller and the
   exact sequential headroom is substantially larger. It freezes the complete
   V97 learner and changes no training hyperparameter.
+
+### 2026-08-23 | V104 rejects direct learner transfer
+
+- The unchanged complete V97 learner reached only `2/5` joint wins against the
+  strongest static family and `4/5` against conventional dynamic schedules.
+  Mean static margins were `+0.005510` ordinary and `-0.010522` macro; the
+  behavior/feasibility gate passed `3/5` seeds.
+- Seed `1304` was the principal failure, with static margins
+  `-0.091556/-0.323363`. Across all seeds there were no invalid actions, power
+  violations, startup-peak violations, or warm-up aborts.
+- The V103 exact-receding policy remains `5/5` over static with mean ordinary
+  margin `+0.121575`. The scene contains substantial sequential headroom, but
+  the existing PPO training scaffold does not recover it reliably.
+
+### 2026-08-23 | V105--V106 close initialization selection
+
+- A second policy initialization was tested only on frozen scene seed `1304`.
+  Its validation ordinary loss (`0.387165`) was lower than the replayed V104
+  initialization (`0.392805`), and its test losses improved in the same
+  direction.
+- The selected second initialization still lost to strongest static by
+  `-0.064061` ordinary and `-0.265963` macro margin, and to conventional
+  dynamic by `-0.065179/-0.212757`.
+- Initialization variance is real but insufficient. The predeclared expansion
+  condition is not met; no multi-initialization sweep is launched. Subsequent
+  work must address sequential credit assignment instead of repeating random
+  restarts or scalar hyperparameter tuning.
