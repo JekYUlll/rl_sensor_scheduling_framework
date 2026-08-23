@@ -2994,3 +2994,15 @@ tar -czf "$OUT…`
 - Temperature0.75 is frozen. V132 completes the same configuration on seeds
   1301--1303; the resulting consistent five-scene aggregate determines whether
   fresh confirmation is justified.
+
+### 2026-08-24 | V132 passes the frozen five-scene development gate
+
+- With temperature `0.75` fixed across all five scenes, PD-PPO beat selected
+  static on ordinary loss in `5/5`, on the normalized event macro in `4/5`,
+  and jointly in `4/5`. Mean margins were `+0.032846/+0.091491`.
+- It beat the best conventional dynamic policy in `5/5`, with mean ordinary
+  margin `+0.052825`. All behavior gates passed, with no always-on or always-off
+  channel in any scene.
+- Scene seeds `1401--1406` are locked as fresh confirmation seeds before their
+  truth generation or policy training. Method, costs, scene generator,
+  evaluator, target temperature, selector, and behavior thresholds are frozen.
