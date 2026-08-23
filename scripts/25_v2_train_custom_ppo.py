@@ -1355,7 +1355,7 @@ def main() -> None:
             context_layer_norm=bool(args.context_layer_norm),
             temporal_encoder_enabled=bool(args.temporal_encoder),
             temporal_history_steps=int(args.lookback),
-            temporal_state_dim=len(STATE_COLUMNS),
+            temporal_state_dim=len(helpers.STATE_COLUMNS),
             temporal_hidden_dim=max(1, int(args.temporal_hidden_dim)),
             soc_aux_horizon=int(args.soc_aux_horizon),
             soc_aux_coef=float(args.soc_aux_coef),
