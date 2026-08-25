@@ -93,6 +93,7 @@ CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
 TEMPORAL_ENCODER="${TEMPORAL_ENCODER:-0}"
 TEMPORAL_HIDDEN_DIM="${TEMPORAL_HIDDEN_DIM:-64}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
+EXCLUDE_SUBTYPE_LATENTS_FROM_STATE="${EXCLUDE_SUBTYPE_LATENTS_FROM_STATE:-0}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
@@ -170,6 +171,9 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--subtype-loss-weighting)
   else
     control_args+=(--no-subtype-loss-weighting)
+  fi
+  if [[ "$EXCLUDE_SUBTYPE_LATENTS_FROM_STATE" == "1" ]]; then
+    control_args+=(--exclude-subtype-latents-from-state)
   fi
 
   "$PY" scripts/58_v31_split_protocol_run.py \

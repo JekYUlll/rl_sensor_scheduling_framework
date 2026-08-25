@@ -1318,6 +1318,7 @@ def main() -> None:
     parser.add_argument("--coverage-groups", action="store_true")
     parser.add_argument("--target-weights", nargs="*", type=float, default=[0.8, 0.8, 1.2, 0.4, 0.4, 0.55, 4.0, 2.5, 2.5])
     parser.add_argument("--target-scales", nargs="*", type=float, default=list(helpers.DEFAULT_TARGET_SCALES))
+    parser.add_argument("--state-columns", nargs="*", default=list(helpers.STATE_COLUMNS))
     parser.add_argument("--lookback", type=int, default=20)
     parser.add_argument("--horizon", type=int, default=8)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="linear")
@@ -1380,6 +1381,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=41)
     parser.add_argument("--force-truth", action="store_true")
     args = parser.parse_args()
+    helpers.STATE_COLUMNS = tuple(str(name) for name in args.state_columns)
 
     if len(args.target_weights) != len(helpers.REWARD_TARGET_COLUMNS):
         raise ValueError(f"--target-weights must contain {len(helpers.REWARD_TARGET_COLUMNS)} values")

@@ -5,9 +5,9 @@ cd "$(dirname "$0")/.."
 
 PY="${PY:-/home/zhangzhuyu/.conda/envs/darts/bin/python}"
 PHASE="${1:-all}"
-SEEDS=(1501 1502 1503 1504 1505)
-PREFIX=v137_generic_physical_scene_gate_dev
-CONTEXT_OUT=reports/aggregate/v137_generic_physical_context_gate_20260826
+read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1501 1502 1503 1504 1505}"
+PREFIX="${RUN_PREFIX_OVERRIDE:-v137_generic_physical_scene_gate_dev}"
+CONTEXT_OUT="${CONTEXT_OUT_OVERRIDE:-reports/aggregate/v137_generic_physical_context_gate_20260826}"
 SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml
 
 run_parallel() {
@@ -21,6 +21,7 @@ run_parallel() {
 
 scene_env() {
   export SENSOR_CFG TOTAL_TIMESTEPS=1024 TRUTH_STEPS=36000 LOOKBACK=20
+  export EXCLUDE_SUBTYPE_LATENTS_FROM_STATE=1
   export EVENT_COVERAGE=0.55 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12
   export EVENT_MICROSTRUCTURE_SIGMA=0.12 EVENT_MICROSTRUCTURE_ALPHA=0.15
   export EVENT_PARTICLE_MICROSTRUCTURE_CORRELATION=0.0

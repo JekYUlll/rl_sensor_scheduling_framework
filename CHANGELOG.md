@@ -1,5 +1,18 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-26 - V137 Invalidated; V138 Repairs State Inputs
+
+- Removed simulator-only subtype latent variables from the generic physical
+  channel configuration and disabled subtype-weighted objectives and auxiliaries.
+- V137 revealed that the shared scheduler/forecaster state list still appended
+  the three latent columns, causing TCN loss saturation up to the clip value.
+  V137 is invalid and contributes no scene evidence.
+- Made state columns explicit run metadata and propagated them through training,
+  strong-reference replay, and receding diagnostics. Legacy runs retain their
+  original default state surface.
+- V138 repeats the unchanged V137 scene gate with the corrected 12-column
+  physical state. The complete test suite passes `125/125` before launch.
+
 ## 2026-08-26 - V136 Multi-Initialization Control Failed
 
 - Added two independent policy initializations to each frozen V132 development

@@ -737,6 +737,11 @@ def main() -> None:
     parser.add_argument("--alert-context-threshold", type=float, default=0.5)
     parser.add_argument("--alert-context-trend-lookback", type=int, default=6)
     parser.add_argument(
+        "--exclude-subtype-latents-from-state",
+        action="store_true",
+        help="Exclude simulator-only subtype latent columns from scheduler and forecaster inputs.",
+    )
+    parser.add_argument(
         "--measurement-update-mode",
         choices=["direct", "variance_weighted"],
         default="direct",
@@ -754,6 +759,9 @@ def main() -> None:
     parser.add_argument("--event-start-prob", type=float, default=0.67)
     parser.add_argument("--skip-evaluation", action="store_true")
     args = parser.parse_args()
+    if bool(args.exclude_subtype_latents_from_state):
+        optional = set(helpers.OPTIONAL_STATE_COLUMNS)
+        helpers.STATE_COLUMNS = tuple(name for name in helpers.STATE_COLUMNS if name not in optional)
     policy_seed = int(args.seed if args.policy_seed is None else args.policy_seed)
 
     target_weights = tuple(float(x) for x in args.target_weights)
@@ -1977,6 +1985,7 @@ def main() -> None:
         },
         "oracle_inference_device": str(args.oracle_inference_device),
         "oracle_use_mask_channels": not bool(args.oracle_disable_mask_channels),
+        "state_columns": list(helpers.STATE_COLUMNS),
         "reward_target_columns": list(helpers.REWARD_TARGET_COLUMNS),
         "target_weights": list(target_weights),
         "target_scales": list(target_scales),

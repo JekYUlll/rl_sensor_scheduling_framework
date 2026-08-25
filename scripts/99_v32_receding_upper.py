@@ -64,6 +64,8 @@ def main() -> None:
         "--receding-oracle-lookahead-steps", str(metadata["horizon"]),
         "--seed", str(manifest["seed"]),
     ]
+    if metadata.get("state_columns"):
+        command.extend(["--state-columns", *map(str, metadata["state_columns"])])
     subprocess.run(command, cwd=root, check=True)
 
 

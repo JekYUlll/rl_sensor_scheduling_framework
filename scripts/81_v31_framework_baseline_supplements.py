@@ -655,6 +655,7 @@ def evaluate_run(
     run_dir = Path(run_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     metadata = json.loads((run_dir / "v2_ppo_metadata.json").read_text(encoding="utf-8"))
+    helpers.STATE_COLUMNS = tuple(metadata.get("state_columns", helpers.STATE_COLUMNS))
     policy_cfg = dict(metadata.get("custom_ppo", {}))
     alert_cfg = dict(metadata.get("agent_alert_context", {}))
     if bool(policy_cfg.get("subtype_router_enabled", False)):

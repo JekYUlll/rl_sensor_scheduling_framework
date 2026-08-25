@@ -629,6 +629,7 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
+    parser.add_argument("--exclude-subtype-latents-from-state", action="store_true")
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
     parser.add_argument("--oracle-rollouts-per-policy", type=int, default=6)
@@ -1586,6 +1587,8 @@ def main() -> None:
     cmd.extend(["--alert-context-threshold", str(float(args.alert_context_threshold))])
     cmd.extend(["--alert-context-trend-lookback", str(max(1, int(args.alert_context_trend_lookback)))])
     cmd.extend(["--measurement-update-mode", str(args.measurement_update_mode)])
+    if bool(args.exclude_subtype_latents_from_state):
+        cmd.append("--exclude-subtype-latents-from-state")
     if bool(args.duty_hard_guard):
         cmd.append("--duty-hard-guard")
     if bool(args.eval_duty_constrained_baselines):
