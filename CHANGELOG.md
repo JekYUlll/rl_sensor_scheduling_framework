@@ -1,5 +1,19 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-26 - V135 Fresh Strong-Reference Replay
+
+- Completed online warning-context and privileged one-step forecast-greedy
+  replays on all 24 frozen confirmation scenes.
+- Rejoined raw reference losses to the final V133/V134 policy metrics, avoiding
+  stale placeholder-policy margin fields emitted by the baseline runner.
+- PD-PPO beat the online warning-context policy in `15/24` ordinary and `17/24`
+  macro comparisons, with positive mean margins of `+0.012670/+0.038143`.
+- PD-PPO beat privileged forecast-greedy in `16/24` ordinary and `20/24` macro
+  comparisons, with positive means of `+0.014895/+0.083304`; only the macro
+  bootstrap interval remained clearly above zero.
+- The result supports competitiveness with strong context-aware references, not
+  stable two-endpoint dominance. No confirmation seed is used for further tuning.
+
 ## 2026-08-26 - V134 Fresh Behavior-Complexity Audit
 
 - Audited all 24 frozen arbitrary-subset PD-PPO rollouts for fixed-mask,
