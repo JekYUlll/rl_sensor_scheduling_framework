@@ -1,5 +1,18 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-26 - V136 Multi-Initialization Control Failed
+
+- Added two independent policy initializations to each frozen V132 development
+  scene and selected among three policies using validation score only.
+- Selected policies achieved ordinary/macro/joint static wins of `4/5`, `3/5`,
+  and `3/5`; conventional-dynamic wins were `5/5` and behavior passed `4/5`.
+- Although every scene contained a joint-positive candidate, validation selected
+  a poor held-out candidate in two scenes. Random restarts therefore expose but
+  cannot reliably select the desired behavior.
+- Closed multi-initialization selection and withheld fresh confirmation. The next
+  development stage targets condition-dependent sensor information value in the
+  simulator, without changing arbitrary-subset feasibility.
+
 ## 2026-08-26 - V135 Fresh Strong-Reference Replay
 
 - Completed online warning-context and privileged one-step forecast-greedy
