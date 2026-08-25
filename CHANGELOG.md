@@ -3104,3 +3104,27 @@ tar -czf "$OUT…`
   with the main evaluator, and equals `0.794282` versus static `0.898495`.
   Future aggregation must exclude absent strata instead of averaging their
   sentinel `inf` values.
+
+### 2026-08-26 | V139 exposes deterministic policy collapse
+
+- Generic PD-PPO beat the best AoI, round-robin, or random policy in `5/5`
+  development scenes, with mean ordinary margin `+0.032821`.
+- It beat validation-selected static on ordinary/macro loss in `2/5` and `3/5`
+  scenes, with only `2/5` joint wins. Mean margins were
+  `-0.003344/+0.025271`, so fresh confirmation is not authorized.
+- Only `1/5` scenes passed the basic six-channel behavior gate. Training action
+  entropy remained high, but deterministic execution made one channel always on
+  in four scenes and produced up to three always-off channels. The failure is
+  localized to action-value separation and deterministic decoding, not the
+  feasibility projector or conventional-dynamic comparison.
+
+### 2026-08-26 | V140 rejects temperature sampling as a standalone repair
+
+- Validation-only selection over deterministic execution and temperatures
+  `0.1`, `0.25`, `0.5`, `0.75`, and `1.0` improved behavior to `3/5` scenes but
+  reduced held-out performance to `1/5` joint static wins.
+- Mean ordinary/macro margins became `-0.011795/-0.001873`; all five policies
+  still beat the best conventional dynamic reference.
+- Post-training sampling is closed. V141 instead sharpens the forecast-value
+  target and weakens entropy regularization during training on the two hardest
+  development scenes.

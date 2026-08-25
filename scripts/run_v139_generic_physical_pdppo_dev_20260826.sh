@@ -6,8 +6,8 @@ cd "$(dirname "$0")/.."
 PY="${PY:-/home/zhangzhuyu/.conda/envs/darts/bin/python}"
 read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1501 1502 1503 1504 1505}"
 read -r -a GPU_LIST <<< "${GPU_IDS:-0 1 2 3 4}"
-SCENE_PREFIX=v138_generic_physical_statefix_gate_dev
-RUN_PREFIX=v139_generic_physical_pdppo_dev
+SCENE_PREFIX="${SCENE_PREFIX_OVERRIDE:-v138_generic_physical_statefix_gate_dev}"
+RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v139_generic_physical_pdppo_dev}"
 SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml
 mkdir -p logs/v139_generic_physical_pdppo
 pids=()
@@ -18,7 +18,7 @@ for i in "${!SEEDS[@]}"; do
     export CUDA_VISIBLE_DEVICES="${GPU_LIST[$((i % ${#GPU_LIST[@]}))]}"
     export RUN_PREFIX CONTROL_SOURCE_RUN_DIR="reports/${SCENE_PREFIX}_seed${seed}_b1p75_20260822"
     export POLICY_SEED="$((seed + 18000))"
-    export SENSOR_CFG TOTAL_TIMESTEPS=20480 TRUTH_STEPS=36000 LOOKBACK=20
+    export SENSOR_CFG TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS_OVERRIDE:-20480}" TRUTH_STEPS=36000 LOOKBACK=20
     export EXCLUDE_SUBTYPE_LATENTS_FROM_STATE=1
     export EVENT_COVERAGE=0.55 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12
     export EVENT_MICROSTRUCTURE_SIGMA=0.12 EVENT_MICROSTRUCTURE_ALPHA=0.15
@@ -38,9 +38,9 @@ for i in "${!SEEDS[@]}"; do
     # policy-training partition. They never expose subtype labels at runtime.
     export BC_PRETRAIN_STEPS=4096 BC_PRETRAIN_EPOCHS=20 BC_PRETRAIN_LOSS_COEF=1.0
     export BC_PRETRAIN_TARGET_MODE=forecast_value_regression BC_SOFT_TEMPERATURE=1.0
-    export FORECAST_VALUE_AUX_COEF=0.5 FORECAST_VALUE_AUX_STRIDE=16
+    export FORECAST_VALUE_AUX_COEF="${FORECAST_VALUE_AUX_COEF_OVERRIDE:-0.5}" FORECAST_VALUE_AUX_STRIDE=16
     export FORECAST_VALUE_AUX_LOOKAHEAD_STEPS=8 FORECAST_VALUE_AUX_LOSS=soft_ce
-    export FORECAST_VALUE_AUX_TEMPERATURE=0.75
+    export FORECAST_VALUE_AUX_TEMPERATURE="${FORECAST_VALUE_AUX_TEMPERATURE_OVERRIDE:-0.75}"
     export AWBC_COEF=0 AWBC_DECAY_TIMESTEPS=0 AWBC_EVENT_ONLY=0
     export AWBC_TEACHER_MODE=oracle_greedy GREEDY_LOOKAHEAD_STEPS=8
     export SUBTYPE_AUX_COEF=0 SUBTYPE_ACTION_CE_COEF=0 SUBTYPE_LOSS_WEIGHTING=0
@@ -48,7 +48,7 @@ for i in "${!SEEDS[@]}"; do
     export CONTEXT_FEATURE_DIM=20 CONTEXT_FUSION_MODE=gated_add
     export TEMPORAL_ENCODER=1 TEMPORAL_HIDDEN_DIM=64
     export TRAINABLE_ACTION_PRIOR=0 NONLINEAR_ACTION_EMBEDDING=1
-    export ENT_COEF=0.02 CHANNEL_MARGINAL_ENTROPY_COEF=0
+    export ENT_COEF="${ENT_COEF_OVERRIDE:-0.02}" CHANNEL_MARGINAL_ENTROPY_COEF=0
     export CHECKPOINT_SELECTION_INTERVAL_UPDATES=5
     export CHECKPOINT_SELECTION_SCORE=max_static_ratio
     export EVALUATION_POLICY_MODE=deterministic
