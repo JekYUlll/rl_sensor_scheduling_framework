@@ -31,6 +31,7 @@ BUDGET_LABEL="${BUDGET_LABEL:-b1p35}"
 AWBC_COEF="${AWBC_COEF:-0.15}"
 AWBC_DECAY_TIMESTEPS="${AWBC_DECAY_TIMESTEPS:-0}"
 AWBC_EVENT_ONLY="${AWBC_EVENT_ONLY:-0}"
+AWBC_LABEL_STRIDE="${AWBC_LABEL_STRIDE:-4}"
 BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
 BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
@@ -253,7 +254,7 @@ for seed in "${SEEDS[@]}"; do
     --channel-marginal-entropy-coef "$CHANNEL_MARGINAL_ENTROPY_COEF" \
     --awbc-coef "$AWBC_COEF" \
     --awbc-decay-timesteps "$AWBC_DECAY_TIMESTEPS" \
-    --awbc-label-stride 4 \
+    --awbc-label-stride "$AWBC_LABEL_STRIDE" \
     --checkpoint-selection-interval-updates "$CHECKPOINT_SELECTION_INTERVAL_UPDATES" \
     --checkpoint-selection-score "$CHECKPOINT_SELECTION_SCORE" \
     --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \

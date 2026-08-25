@@ -3142,3 +3142,14 @@ tar -czf "$OUT…`
   final same-objective density test on seed1505: on-policy forecast-value labels
   every four steps with direct standardized-value regression. Failure closes
   scalar tuning and requires a structural actor/value redesign.
+
+### 2026-08-26 | V142 closes scalar forecast-value tuning
+
+- Dense on-policy value regression reduced the auxiliary loss to `0.750971`
+  with a 25% label rate and increased switching to `0.031119` per step.
+- It nevertheless lost to selected static by `-0.019464/-0.043004` on
+  ordinary/macro loss and retained one always-on and one always-off channel.
+- Temperature, entropy, label density, and value-regression scaling are closed.
+  V143 replaces diffuse value matching with masked hard-action supervision from
+  the same frozen forecast evaluator on policy-visited training states. No
+  subtype labels, bandit actions, or final-partition feedback are introduced.
