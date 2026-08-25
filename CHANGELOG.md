@@ -1,5 +1,16 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-26 - V134 Fresh Behavior-Complexity Audit
+
+- Audited all 24 frozen arbitrary-subset PD-PPO rollouts for fixed-mask,
+  deterministic-cycle, action-diversity, and event/subtype-dependence behavior.
+- No rollout was fixed-like or cyclic; 23/24 showed event- or subtype-dependent
+  behavior and 22/24 passed the complete prespecified complexity gate.
+- Recorded seed1407's slightly low mask entropy and seed1415's weak conditional
+  dependence as frozen confirmation exceptions; neither seed is used for tuning.
+- Added the seed-level audit and aggregate interpretation under
+  `reports/aggregate/v134_fresh_behavior_complexity_20260826/`.
+
 ## 2026-08-22 - V61 Stratified Subtypes Failed the Online Gate
 
 ### Result
