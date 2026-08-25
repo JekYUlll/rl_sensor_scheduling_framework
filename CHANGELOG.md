@@ -3084,3 +3084,23 @@ tar -czf "$OUT…`
   fixed-priority feasible references, but not stable superiority over the
   validation-selected static shortcut. V135 adds the missing online-context
   and privileged one-step forecast-greedy replays without retuning PD-PPO.
+
+### 2026-08-26 | V138 validates dynamic value in the generic physical-channel scene
+
+- V138 removes simulator subtype latents from both channel measurements and the
+  scheduler/forecaster state. It also disables subtype-weighted reward and the
+  subtype auxiliary objective, leaving twelve physical state variables and six
+  independently selectable physical-system channels.
+- The exact-geometry receding forecast reference beat the validation-selected
+  static subset on both endpoints in `5/5` new development scenes. Mean margins
+  were `+0.032692` for ordinary forecast loss and `+0.134500` for the
+  validation-normalized event macro.
+- The online context rule and one-step forecast-greedy reference each achieved
+  only `2/5` joint wins. The scene therefore contains robust dynamic value, but
+  the currently exposed online context does not yet identify that value
+  reliably enough to authorize PPO training.
+- Seed1505 contains no particle-subtype sample in the final partition. Its
+  receding macro is computed over the two represented event strata, consistent
+  with the main evaluator, and equals `0.794282` versus static `0.898495`.
+  Future aggregation must exclude absent strata instead of averaging their
+  sentinel `inf` values.
