@@ -117,6 +117,9 @@ class CustomPPOConfig:
     forecast_value_aux_lookahead_steps: int = 0
     forecast_value_aux_loss: str = "mse"
     forecast_value_aux_temperature: float = 1.0
+    forecast_value_head_enabled: bool = False
+    forecast_value_head_scale: float = 1.0
+    forecast_value_head_hidden_dim: int = 128
     subtype_aux_coef: float = 0.0
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
@@ -247,6 +250,9 @@ class MaskedActor:
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
         temporal_hidden_dim: int = 64,
+        forecast_value_head_enabled: bool = False,
+        forecast_value_head_scale: float = 1.0,
+        forecast_value_head_hidden_dim: int = 128,
     ) -> Any:
         torch, nn = _torch_modules()
 
@@ -258,6 +264,8 @@ class MaskedActor:
                 self.n_actions = int(n_actions or 0)
                 self.subtype_aux_classes = max(0, int(subtype_aux_classes))
                 self.context_fusion_mode = str(context_fusion_mode)
+                self.forecast_value_head_enabled = bool(forecast_value_head_enabled)
+                self.forecast_value_head_scale = float(forecast_value_head_scale)
                 self.context_feature_dim = (
                     max(0, min(int(context_feature_dim), int(obs_dim) - 1))
                     if bool(context_encoder_enabled)
@@ -395,6 +403,24 @@ class MaskedActor:
                     else None
                 )
                 self.action_bias = nn.Linear(int(embed_dim), 1)
+                if self.forecast_value_head_enabled:
+                    forecast_hidden = max(1, int(forecast_value_head_hidden_dim))
+                    self.forecast_state_encoder = nn.Sequential(
+                        nn.Linear(int(obs_dim), forecast_hidden),
+                        nn.GELU(),
+                        nn.Linear(forecast_hidden, int(embed_dim)),
+                        nn.Tanh(),
+                    )
+                    self.forecast_action_embedding = ActionEmbedding(
+                        int(n_sensors),
+                        int(embed_dim),
+                        nonlinear=True,
+                    )
+                    self.forecast_action_bias = nn.Linear(int(embed_dim), 1)
+                else:
+                    self.forecast_state_encoder = None
+                    self.forecast_action_embedding = None
+                    self.forecast_action_bias = None
                 prior_len = int(n_actions or 0)
                 if candidate_prior_logits is not None:
                     prior = torch.as_tensor(np.asarray(candidate_prior_logits, dtype=np.float32).reshape(-1))
@@ -492,6 +518,35 @@ class MaskedActor:
                 logits = logits + self.action_bias(action_emb).reshape(1, -1)
                 if self.action_prior is not None:
                     logits = logits + self.action_prior.reshape(1, -1)
+                if self.forecast_value_head_enabled:
+                    forecast_logits = self.forecast_value_logits(
+                        obs,
+                        candidate_masks,
+                        action_mask,
+                    )
+                    logits = logits + self.forecast_value_head_scale * forecast_logits.detach()
+                if action_mask is not None:
+                    valid = action_mask.bool()
+                    if valid.ndim == 1:
+                        valid = valid.reshape(1, -1).expand_as(logits)
+                    logits = logits.masked_fill(~valid, -1.0e9)
+                return logits
+
+            def forecast_value_logits(
+                self,
+                obs: Any,
+                candidate_masks: Any,
+                action_mask: Any | None = None,
+            ) -> Any:
+                if self.forecast_state_encoder is None or self.forecast_action_embedding is None:
+                    raise RuntimeError("forecast-value head is not enabled")
+                state = self.forecast_state_encoder(obs)
+                action_emb = self.forecast_action_embedding(candidate_masks)
+                logits = state @ action_emb.transpose(0, 1) / max(
+                    float(action_emb.shape[-1]) ** 0.5,
+                    1.0,
+                )
+                logits = logits + self.forecast_action_bias(action_emb).reshape(1, -1)
                 if action_mask is not None:
                     valid = action_mask.bool()
                     if valid.ndim == 1:
@@ -565,6 +620,9 @@ class ActorCritic:
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
         temporal_hidden_dim: int = 64,
+        forecast_value_head_enabled: bool = False,
+        forecast_value_head_scale: float = 1.0,
+        forecast_value_head_hidden_dim: int = 128,
     ) -> Any:
         _, nn = _torch_modules()
 
@@ -592,6 +650,9 @@ class ActorCritic:
                     temporal_history_steps=int(temporal_history_steps),
                     temporal_state_dim=int(temporal_state_dim),
                     temporal_hidden_dim=int(temporal_hidden_dim),
+                    forecast_value_head_enabled=bool(forecast_value_head_enabled),
+                    forecast_value_head_scale=float(forecast_value_head_scale),
+                    forecast_value_head_hidden_dim=int(forecast_value_head_hidden_dim),
                 )
                 self.critic = EventAwareCritic(int(obs_dim), int(hidden_dim), event_aware=bool(event_aware_critic))
                 self.soc_aux_horizon = max(0, int(soc_aux_horizon))
@@ -700,6 +761,9 @@ class CustomPPO:
             temporal_history_steps=int(self.env_cfg.lookback),
             temporal_state_dim=len(self.env_cfg.state_columns),
             temporal_hidden_dim=int(cfg.temporal_hidden_dim),
+            forecast_value_head_enabled=bool(cfg.forecast_value_head_enabled),
+            forecast_value_head_scale=float(cfg.forecast_value_head_scale),
+            forecast_value_head_hidden_dim=int(cfg.forecast_value_head_hidden_dim),
         ).to(self.device)
         self.candidate_masks_t = torch_tensor(self.candidate_masks_np.astype(np.float32), device=self.device)
         self.candidate_prior_logits_t = (
@@ -1059,11 +1123,19 @@ class CustomPPO:
                 if str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value":
                     bc_loss = -(mb_teacher_distribution * torch.log(dist.probs.clamp_min(1.0e-12))).sum(dim=1).mean()
                 elif str(self.cfg.bc_pretrain_target_mode) == "forecast_value_regression":
-                    actor_logits = self.model.actor.logits(
-                        mb_obs,
-                        self.candidate_masks_t,
-                        mb_masks,
-                        mb_events,
+                    actor_logits = (
+                        self.model.actor.forecast_value_logits(
+                            mb_obs,
+                            self.candidate_masks_t,
+                            mb_masks,
+                        )
+                        if bool(self.cfg.forecast_value_head_enabled)
+                        else self.model.actor.logits(
+                            mb_obs,
+                            self.candidate_masks_t,
+                            mb_masks,
+                            mb_events,
+                        )
                     )
                     valid_logits = torch.where(mb_masks, actor_logits, mb_teacher_cost_targets)
                     squared_error = (valid_logits - mb_teacher_cost_targets).square()
@@ -1442,11 +1514,19 @@ class CustomPPO:
                     float(self.cfg.forecast_value_aux_coef) > 0.0
                     and bool(forecast_rows.any().detach().cpu().item())
                 ):
-                    actor_logits = self.model.actor.logits(
-                        mb_obs,
-                        self.candidate_masks_t,
-                        mb_masks,
-                        mb_events,
+                    actor_logits = (
+                        self.model.actor.forecast_value_logits(
+                            mb_obs,
+                            self.candidate_masks_t,
+                            mb_masks,
+                        )
+                        if bool(self.cfg.forecast_value_head_enabled)
+                        else self.model.actor.logits(
+                            mb_obs,
+                            self.candidate_masks_t,
+                            mb_masks,
+                            mb_events,
+                        )
                     )
                     valid_entries = mb_masks & forecast_rows.unsqueeze(1)
                     if str(self.cfg.forecast_value_aux_loss).strip().lower() == "soft_ce":

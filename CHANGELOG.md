@@ -3153,3 +3153,13 @@ tar -czf "$OUT…`
   V143 replaces diffuse value matching with masked hard-action supervision from
   the same frozen forecast evaluator on policy-visited training states. No
   subtype labels, bandit actions, or final-partition feedback are introduced.
+
+### 2026-08-26 | V143 rejects hard teacher loss on shared actor logits
+
+- Seed1505 lost to static by `-0.022025/-0.005542` on ordinary/macro loss.
+  Hard forecast-teacher supervision reduced switching to `0.002605` and yielded
+  one always-on, two always-off, and no mid-duty channels.
+- Increasing teacher pressure on the shared PPO logits is closed. The actor now
+  receives a separate forecast-value action head whose output is added to PPO
+  residual logits before feasibility masking. Forecast supervision updates only
+  this head; PPO gradients cannot overwrite its action-value output directly.

@@ -42,6 +42,9 @@ FORECAST_VALUE_AUX_STRIDE="${FORECAST_VALUE_AUX_STRIDE:-64}"
 FORECAST_VALUE_AUX_LOOKAHEAD_STEPS="${FORECAST_VALUE_AUX_LOOKAHEAD_STEPS:-0}"
 FORECAST_VALUE_AUX_LOSS="${FORECAST_VALUE_AUX_LOSS:-mse}"
 FORECAST_VALUE_AUX_TEMPERATURE="${FORECAST_VALUE_AUX_TEMPERATURE:-1.0}"
+FORECAST_VALUE_HEAD="${FORECAST_VALUE_HEAD:-0}"
+FORECAST_VALUE_HEAD_SCALE="${FORECAST_VALUE_HEAD_SCALE:-1.0}"
+FORECAST_VALUE_HEAD_HIDDEN_DIM="${FORECAST_VALUE_HEAD_HIDDEN_DIM:-128}"
 ENT_COEF="${ENT_COEF:-0.02}"
 CHANNEL_MARGINAL_ENTROPY_COEF="${CHANNEL_MARGINAL_ENTROPY_COEF:-0}"
 POLICY_CHECKPOINT_SOURCE="${POLICY_CHECKPOINT_SOURCE:-}"
@@ -139,6 +142,13 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--evaluation-sampling-seed "$EVALUATION_SAMPLING_SEED")
   fi
   control_args+=(--evaluation-sampling-temperature "$EVALUATION_SAMPLING_TEMPERATURE")
+  if [[ "$FORECAST_VALUE_HEAD" == "1" ]]; then
+    control_args+=(--forecast-value-head)
+  else
+    control_args+=(--no-forecast-value-head)
+  fi
+  control_args+=(--forecast-value-head-scale "$FORECAST_VALUE_HEAD_SCALE")
+  control_args+=(--forecast-value-head-hidden-dim "$FORECAST_VALUE_HEAD_HIDDEN_DIM")
   if [[ -n "$EVALUATION_TEMPERATURE_CANDIDATES" ]]; then
     read -r -a evaluation_temperature_args <<< "$EVALUATION_TEMPERATURE_CANDIDATES"
     control_args+=(--evaluation-temperature-candidates "${evaluation_temperature_args[@]}")

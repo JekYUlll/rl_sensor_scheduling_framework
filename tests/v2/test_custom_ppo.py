@@ -163,6 +163,38 @@ def test_masked_actor_can_disable_state_independent_action_prior() -> None:
     assert actor.action_prior is None
 
 
+def test_forecast_value_head_is_masked_and_gradient_isolated_from_policy_logits() -> None:
+    actor = MaskedActor(
+        obs_dim=5,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        n_actions=3,
+        forecast_value_head_enabled=True,
+    )
+    obs = torch.randn((2, 5), dtype=torch.float32)
+    candidate_masks = torch.tensor(
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]],
+        dtype=torch.float32,
+    )
+    feasible = torch.tensor([[True, False, True], [True, True, False]])
+
+    actor.logits(obs, candidate_masks, feasible).sum().backward()
+    forecast_parameters = [
+        parameter
+        for name, parameter in actor.named_parameters()
+        if name.startswith("forecast_")
+    ]
+    assert forecast_parameters
+    assert all(parameter.grad is None for parameter in forecast_parameters)
+
+    actor.zero_grad(set_to_none=True)
+    forecast_logits = actor.forecast_value_logits(obs, candidate_masks, feasible)
+    assert torch.all(forecast_logits[~feasible] < -1.0e8)
+    forecast_logits[feasible].sum().backward()
+    assert any(parameter.grad is not None for parameter in forecast_parameters)
+
+
 def test_nonlinear_action_embedding_encodes_subset_interactions() -> None:
     actor = MaskedActor(
         obs_dim=5,
@@ -610,6 +642,8 @@ def test_custom_ppo_short_run(tmp_path: Path) -> None:
             forecast_value_aux_coef=0.05,
             forecast_value_aux_stride=2,
             forecast_value_aux_lookahead_steps=1,
+            forecast_value_head_enabled=True,
+            forecast_value_head_hidden_dim=16,
             device="cpu",
             seed=5,
         ),
