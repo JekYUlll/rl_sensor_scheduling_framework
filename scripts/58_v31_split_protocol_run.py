@@ -697,6 +697,9 @@ def main() -> None:
     parser.add_argument("--forecast-value-aux-lookahead-steps", type=int, default=0)
     parser.add_argument("--forecast-value-aux-loss", choices=("mse", "soft_ce"), default="mse")
     parser.add_argument("--forecast-value-aux-temperature", type=float, default=1.0)
+    parser.add_argument("--forecast-value-head", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-head-scale", type=float, default=1.0)
+    parser.add_argument("--forecast-value-head-hidden-dim", type=int, default=128)
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1413,6 +1416,10 @@ def main() -> None:
         str(args.forecast_value_aux_loss),
         "--forecast-value-aux-temperature",
         str(max(1.0e-6, float(args.forecast_value_aux_temperature))),
+        "--forecast-value-head-scale",
+        str(float(args.forecast_value_head_scale)),
+        "--forecast-value-head-hidden-dim",
+        str(max(1, int(args.forecast_value_head_hidden_dim))),
         "--subtype-aux-coef",
         str(float(args.subtype_aux_coef)),
         "--subtype-aux-classes",
@@ -1540,6 +1547,7 @@ def main() -> None:
         "--soc-aux-coef",
         str(float(args.soc_aux_coef)),
     ]
+    cmd.append("--forecast-value-head" if bool(args.forecast_value_head) else "--no-forecast-value-head")
     if args.policy_seed is not None:
         cmd.extend(["--policy-seed", str(int(args.policy_seed))])
     if control_source_dir is not None:
