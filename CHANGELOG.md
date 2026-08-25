@@ -3017,3 +3017,19 @@ tar -czf "$OUT…`
 - Six-seed bootstrap intervals versus static still include zero, driven mainly
   by seed1401. No parameter is changed. V134 expands the locked confirmation
   set through seed1424 to estimate stability with 24 fresh scenes.
+
+### 2026-08-26 | V134 completes frozen 24-scene confirmation
+
+- The unchanged temperature-0.75 method beat validation-selected static in
+  `15/24` scenes on ordinary loss, `14/24` on the normalized event macro, and
+  `13/24` jointly. Mean margins were `+0.017872/+0.033640`, but both 95%
+  bootstrap intervals included zero.
+- It beat fixed-priority feasible static in `20/24` with mean ordinary margin
+  `+0.033916` and a positive 95% interval. It beat the best AoI, round-robin,
+  or random policy in `21/24`, with mean `+0.039625` and a positive interval.
+- All 24 scenes passed the behavior gate. No channel was always on; at most one
+  was always off, and switching ranged from 0.008829 to 0.040527 per step.
+- The frozen evidence supports robust gains over conventional dynamic and
+  fixed-priority feasible references, but not stable superiority over the
+  validation-selected static shortcut. V135 adds the missing online-context
+  and privileged one-step forecast-greedy replays without retuning PD-PPO.
