@@ -3128,3 +3128,17 @@ tar -czf "$OUT…`
 - Post-training sampling is closed. V141 instead sharpens the forecast-value
   target and weakens entropy regularization during training on the two hardest
   development scenes.
+
+### 2026-08-26 | V141 sharpens action values but remains behavior-limited
+
+- On seed1502, temperature `0.25` and entropy coefficient `0.005` changed the
+  ordinary/macro static margins from `-0.014601/-0.000517` to
+  `+0.000102/+0.017699`. The selected checkpoint moved from update 0 to update
+  20 and no channel was always on.
+- Seed1505 improved from `-0.012909/-0.032847` to
+  `-0.011123/-0.013798`, but retained one always-on and one always-off channel.
+  Both seeds continued to beat the best conventional dynamic reference.
+- Target sharpness is directionally useful but insufficient. V142 performs one
+  final same-objective density test on seed1505: on-policy forecast-value labels
+  every four steps with direct standardized-value regression. Failure closes
+  scalar tuning and requires a structural actor/value redesign.
