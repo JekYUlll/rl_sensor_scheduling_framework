@@ -1488,7 +1488,12 @@ def main() -> None:
                         errors="coerce",
                     ).min()
                 )
-    if checkpoint_score_name in {STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN, "max_static_ratio"}:
+    if (
+        checkpoint_interval > 0 or args.evaluation_temperature_candidates
+    ) and checkpoint_score_name in {
+        STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN,
+        "max_static_ratio",
+    }:
         if not checkpoint_normalizers:
             raise ValueError(
                 "static-normalized macro checkpoint selection requires a control source "
