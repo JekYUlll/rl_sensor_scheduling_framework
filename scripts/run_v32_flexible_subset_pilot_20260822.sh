@@ -101,6 +101,7 @@ CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
 TEMPORAL_ENCODER="${TEMPORAL_ENCODER:-0}"
 TEMPORAL_HIDDEN_DIM="${TEMPORAL_HIDDEN_DIM:-64}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
+COMMON_RANDOM_NUMBERS="${COMMON_RANDOM_NUMBERS:-0}"
 CHANNEL_QUALITY_ENABLED="${CHANNEL_QUALITY_ENABLED:-0}"
 CHANNEL_QUALITY_DEGRADED_COVERAGE="${CHANNEL_QUALITY_DEGRADED_COVERAGE:-0.0}"
 CHANNEL_QUALITY_MIN_DURATION_STEPS="${CHANNEL_QUALITY_MIN_DURATION_STEPS:-12}"
@@ -137,6 +138,10 @@ if [[ "$CHANNEL_QUALITY_ENABLED" == "1" ]]; then
     --sensor-quality-max-noise-multiplier "$SENSOR_QUALITY_MAX_NOISE_MULTIPLIER"
     --sensor-quality-availability-floor "$SENSOR_QUALITY_AVAILABILITY_FLOOR"
   )
+fi
+CRN_ARGS=(--no-common-random-numbers)
+if [[ "$COMMON_RANDOM_NUMBERS" == "1" ]]; then
+  CRN_ARGS=(--common-random-numbers)
 fi
 
 if [[ "$#" -gt 0 ]]; then
@@ -342,6 +347,7 @@ for seed in "${SEEDS[@]}"; do
     --context-encoder \
     --context-feature-dim "$CONTEXT_FEATURE_DIM" \
     --measurement-update-mode "$MEASUREMENT_UPDATE_MODE" \
+    "${CRN_ARGS[@]}" \
     --context-hidden-dim 64 \
     --context-fusion-mode "$CONTEXT_FUSION_MODE" \
     --context-layer-norm \

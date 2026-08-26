@@ -3361,3 +3361,20 @@ tar -czf "$OUT…`
   and 0.5, respectively, while retaining context-dim 26 and behavior-valid
   checkpoint selection. No new architecture, reward term, or information is
   introduced.
+
+## 2026-08-26 - Reject soft action-ranking variants and repair comparison fairness
+
+- V160 (temperature 0.25) retained valid behavior but lost ordinary forecast
+  loss to static by `0.019139`; V161 (temperature 0.5) lost both endpoints and
+  produced two always-off channels. Both soft-target variants are rejected.
+- Auditing the candidate teacher exposed an experimental-protocol defect. With
+  common random numbers disabled, different sensor masks consumed different
+  random observation draws, so horizon-cost labels included action-dependent
+  sampling-path noise. The static-candidate evaluator also reconstructed an
+  environment config manually and omitted the new sensor-quality fields.
+- Added explicit common-random-number propagation across training, frozen
+  replay, operational baselines, and receding diagnostics. Static candidate
+  evaluation now copies the complete frozen environment config. V152--V161
+  remain useful architecture diagnostics, but their quality-scene rankings are
+  not confirmatory evidence. V162 regenerates all five scenes under the
+  corrected protocol before any further policy selection.

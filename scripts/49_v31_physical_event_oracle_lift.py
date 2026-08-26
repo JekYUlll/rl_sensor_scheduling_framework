@@ -1287,6 +1287,7 @@ def main() -> None:
     parser.add_argument("--eval-rollouts", type=int, default=4)
     parser.add_argument("--eval-event-fraction", type=float, default=0.67)
     parser.add_argument("--env-min-dwell-steps", type=int, default=1)
+    parser.add_argument("--common-random-numbers", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--sensor-quality-columns", nargs="*", default=[])
     parser.add_argument("--sensor-quality-max-noise-multiplier", type=float, default=1.0)
     parser.add_argument("--sensor-quality-availability-floor", type=float, default=1.0)
@@ -1426,6 +1427,7 @@ def main() -> None:
         reserve_energy=float(args.reserve_energy),
         lambda_energy_deficit=float(args.lambda_energy_deficit),
         min_dwell_steps=int(max(1, int(args.env_min_dwell_steps))),
+        common_random_numbers=bool(args.common_random_numbers),
         sensor_quality_columns=tuple(str(col) for col in args.sensor_quality_columns),
         sensor_quality_max_noise_multiplier=float(args.sensor_quality_max_noise_multiplier),
         sensor_quality_availability_floor=float(args.sensor_quality_availability_floor),

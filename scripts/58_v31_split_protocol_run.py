@@ -884,6 +884,7 @@ def main() -> None:
     parser.add_argument("--duty-hard-low", type=float, default=0.08)
     parser.add_argument("--duty-hard-high", type=float, default=0.92)
     parser.add_argument("--duty-hard-score", type=float, default=8.0)
+    parser.add_argument("--common-random-numbers", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--min-dwell-steps", type=int, default=1)
     parser.add_argument("--include-agent-cycle-phase", action="store_true")
     parser.add_argument("--agent-cycle-period-steps", type=int, default=0)
@@ -1667,6 +1668,7 @@ def main() -> None:
         cmd.append("--exclude-subtype-latents-from-state")
     if bool(args.duty_hard_guard):
         cmd.append("--duty-hard-guard")
+    cmd.append("--common-random-numbers" if bool(args.common_random_numbers) else "--no-common-random-numbers")
     if bool(args.eval_duty_constrained_baselines):
         cmd.append("--eval-duty-constrained-baselines")
     append_option(

@@ -116,6 +116,7 @@ def env_kwargs_from_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
         "duty_hard_high": float(shaping.get("duty_hard_high", 0.92)),
         "duty_hard_score": float(shaping.get("duty_hard_score", 8.0)),
         "min_dwell_steps": int(shaping.get("min_dwell_steps", 1)),
+        "common_random_numbers": bool(shaping.get("common_random_numbers", False)),
         "energy_account_enabled": bool(energy.get("enabled", False)),
         "energy_capacity": float(energy.get("energy_capacity", 0.0)),
         "initial_energy": float(energy.get("initial_energy", 0.0)),

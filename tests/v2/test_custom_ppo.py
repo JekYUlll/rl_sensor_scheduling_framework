@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -352,6 +353,30 @@ def test_oracle_lookahead_snapshot_restores_uncertainty_and_constraint_state() -
     assert np.allclose(env.posterior_variance, snapshot["posterior_variance"])
     assert env.dwell_hold_remaining == snapshot["dwell_hold_remaining"]
     assert env.current_idx == snapshot["current_idx"]
+
+
+def test_common_random_numbers_advance_rng_equally_for_different_masks() -> None:
+    truth = _truth(64)
+    constraints = PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0)
+    cfg = WarmupEnvConfig(
+        state_columns=STATE_COLUMNS,
+        reward_target_columns=STATE_COLUMNS,
+        lookback=4,
+        episode_len=8,
+        seed=23,
+        common_random_numbers=True,
+    )
+    met_env = WarmupSchedulingEnv(truth, _sensors(), constraints, cfg, oracle=_oracle(truth))
+    rad_env = WarmupSchedulingEnv(truth, _sensors(), constraints, cfg, oracle=_oracle(truth))
+    met_env.reset(start_idx=4)
+    rad_env.reset(start_idx=4)
+
+    met_env.step_mask(np.asarray([True, False, False]))
+    rad_env.step_mask(np.asarray([False, False, True]))
+
+    met_rng = json.dumps(met_env.rng.bit_generator.state, sort_keys=True)
+    rad_rng = json.dumps(rad_env.rng.bit_generator.state, sort_keys=True)
+    assert met_rng == rad_rng
 
 
 def test_masked_actor_context_encoder_preserves_feasible_mask() -> None:

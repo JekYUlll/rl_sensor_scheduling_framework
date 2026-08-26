@@ -81,6 +81,12 @@ def main() -> None:
     if metadata.get("state_columns"):
         command.extend(["--state-columns", *map(str, metadata["state_columns"])])
     append_sensor_quality_args(command, metadata)
+    shaping = dict(metadata.get("reward_shaping") or {})
+    command.append(
+        "--common-random-numbers"
+        if bool(shaping.get("common_random_numbers", False))
+        else "--no-common-random-numbers"
+    )
     subprocess.run(command, cwd=root, check=True)
 
 
