@@ -3163,3 +3163,14 @@ tar -czf "$OUT…`
   receives a separate forecast-value action head whose output is added to PPO
   residual logits before feasibility masking. Forecast supervision updates only
   this head; PPO gradients cannot overwrite its action-value output directly.
+
+### 2026-08-26 | V144 isolates candidate representation as the next bottleneck
+
+- The factorized forecast head reduced value-regression loss to `0.656085`, but
+  seed1505 still lost to static by `-0.021223/-0.046992` and selected one
+  always-on plus three always-off channels.
+- A leave-one-scene-out capacity audit on the two hardest scenes found 33.7%
+  top-1 teacher-action accuracy for the factorized mask embedding and 42.2% for
+  an independent candidate head at dwell-free decisions. V145 changes only the
+  forecast head to independent candidate outputs; the PPO actor retains its
+  compositional mask embedding and hard feasibility mask.

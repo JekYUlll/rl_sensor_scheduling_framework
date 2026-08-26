@@ -700,6 +700,11 @@ def main() -> None:
     parser.add_argument("--forecast-value-head", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--forecast-value-head-scale", type=float, default=1.0)
     parser.add_argument("--forecast-value-head-hidden-dim", type=int, default=128)
+    parser.add_argument(
+        "--forecast-value-head-mode",
+        choices=("factorized", "independent"),
+        default="factorized",
+    )
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1420,6 +1425,8 @@ def main() -> None:
         str(float(args.forecast_value_head_scale)),
         "--forecast-value-head-hidden-dim",
         str(max(1, int(args.forecast_value_head_hidden_dim))),
+        "--forecast-value-head-mode",
+        str(args.forecast_value_head_mode),
         "--subtype-aux-coef",
         str(float(args.subtype_aux_coef)),
         "--subtype-aux-classes",

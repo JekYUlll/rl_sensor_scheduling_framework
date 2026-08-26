@@ -163,7 +163,10 @@ def test_masked_actor_can_disable_state_independent_action_prior() -> None:
     assert actor.action_prior is None
 
 
-def test_forecast_value_head_is_masked_and_gradient_isolated_from_policy_logits() -> None:
+@pytest.mark.parametrize("head_mode", ["factorized", "independent"])
+def test_forecast_value_head_is_masked_and_gradient_isolated_from_policy_logits(
+    head_mode: str,
+) -> None:
     actor = MaskedActor(
         obs_dim=5,
         n_sensors=3,
@@ -171,6 +174,7 @@ def test_forecast_value_head_is_masked_and_gradient_isolated_from_policy_logits(
         hidden_dim=16,
         n_actions=3,
         forecast_value_head_enabled=True,
+        forecast_value_head_mode=head_mode,
     )
     obs = torch.randn((2, 5), dtype=torch.float32)
     candidate_masks = torch.tensor(

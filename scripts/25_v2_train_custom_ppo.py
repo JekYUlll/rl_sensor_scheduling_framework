@@ -566,6 +566,11 @@ def main() -> None:
     parser.add_argument("--forecast-value-head", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--forecast-value-head-scale", type=float, default=1.0)
     parser.add_argument("--forecast-value-head-hidden-dim", type=int, default=128)
+    parser.add_argument(
+        "--forecast-value-head-mode",
+        choices=("factorized", "independent"),
+        default="factorized",
+    )
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1333,6 +1338,7 @@ def main() -> None:
             forecast_value_head_enabled=bool(args.forecast_value_head),
             forecast_value_head_scale=float(args.forecast_value_head_scale),
             forecast_value_head_hidden_dim=max(1, int(args.forecast_value_head_hidden_dim)),
+            forecast_value_head_mode=str(args.forecast_value_head_mode),
             subtype_aux_coef=float(args.subtype_aux_coef),
             subtype_aux_classes=max(2, int(args.subtype_aux_classes)),
             subtype_aux_lookahead_steps=max(0, int(args.subtype_aux_lookahead_steps)),
@@ -2284,6 +2290,7 @@ def as_serializable_config(
         "forecast_value_head_enabled": bool(cfg.forecast_value_head_enabled),
         "forecast_value_head_scale": float(cfg.forecast_value_head_scale),
         "forecast_value_head_hidden_dim": int(cfg.forecast_value_head_hidden_dim),
+        "forecast_value_head_mode": str(cfg.forecast_value_head_mode),
         "awbc_event_only": bool(cfg.awbc_event_only),
         "bc_pretrain_steps": int(cfg.bc_pretrain_steps),
         "bc_pretrain_epochs": int(cfg.bc_pretrain_epochs),
