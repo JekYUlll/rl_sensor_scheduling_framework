@@ -3273,3 +3273,15 @@ tar -czf "$OUT…`
   from run metadata into the receding diagnostic. The complete 133-test suite
   passes. The invalid receding outputs were incomplete and are excluded; the
   completed V152 scene and one-step baseline artifacts remain valid.
+## 2026-08-26 - Establish horizon-matched value in the V152 quality scene
+
+- Corrected five-seed diagnostics show that the online one-step
+  forecast-greedy policy does not beat the validation-selected static schedule
+  (`0/5` ordinary and `1/5` macro wins).
+- The eight-step receding forecaster diagnostic beats static in both endpoints
+  for all five seeds. Mean ordinary and static-normalized macro margins are
+  `+0.026327` and `+0.110197`; all six channels have intermediate duty in every
+  seed, with no always-on/off channels or warm-up aborts.
+- This separates horizon-matched dynamic headroom from myopic value. Added a
+  reproducible V152 collector and authorized one bounded complete-PD-PPO pilot;
+  no quality-specific reward, action prior, or heuristic imitation was added.

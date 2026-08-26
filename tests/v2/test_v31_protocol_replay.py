@@ -164,3 +164,24 @@ def test_receding_diagnostic_propagates_frozen_sensor_quality_config() -> None:
         "--sensor-quality-availability-floor",
         "0.2",
     ]
+
+
+def test_quality_gate_reconstructs_static_normalized_macro() -> None:
+    module = _load_script("103_v32_collect_quality_scene_gate.py")
+    import pandas as pd
+
+    static = pd.Series({
+        "oracle_loss_subtype_particle": 0.4,
+        "oracle_loss_subtype_particle_staticnorm": 0.8,
+        "oracle_loss_subtype_flux": 0.6,
+        "oracle_loss_subtype_flux_staticnorm": 1.2,
+        "oracle_loss_subtype_thermal": 0.5,
+        "oracle_loss_subtype_thermal_staticnorm": 1.0,
+    })
+    candidate = pd.Series({
+        "oracle_loss_subtype_particle": 0.25,
+        "oracle_loss_subtype_flux": 0.50,
+        "oracle_loss_subtype_thermal": 0.75,
+    })
+
+    assert module.staticnorm_macro(candidate, static) == 1.0
