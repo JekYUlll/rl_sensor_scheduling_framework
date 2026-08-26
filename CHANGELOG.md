@@ -3246,3 +3246,18 @@ tar -czf "$OUT…`
 - No threshold or held-out-specific tuning is authorized. V151 runs all five
   leave-one-scene-out folds under the identical behavior-aware protocol to
   measure whether multi-scene transfer is reproducible before fresh evaluation.
+
+### 2026-08-26 | V151 closes generic multi-scene transfer
+
+- Five leave-one-scene-out folds completed under identical four-scene training
+  and behavior-aware validation selection. Ordinary/macro static wins were
+  `1/5` and `2/5`; behavior passed `3/5`; no fold passed the joint gate.
+- Mean ordinary/macro margins against validation-selected static were
+  `-0.009487/-0.014571`. PD-PPO retained `4/5` wins over the best conventional
+  dynamic schedule with mean margin `+0.026678`.
+- Every selected checkpoint had zero behavior failures on its four validation
+  scenes, but this did not predict held-out behavior or static-relative loss.
+  Multi-scene training and checkpoint selection are therefore closed.
+- The next scene must expose dynamic value through physically available online
+  signals. Sensor self-diagnostic quality and condition-dependent reliability
+  will be screened before any further PPO training.

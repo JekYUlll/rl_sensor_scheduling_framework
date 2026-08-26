@@ -1,0 +1,2 @@
+seed_count,ordinary_static_wins,macro_static_wins,dynamic_wins,behavior_passes,joint_gate_passes,mean_ordinary_margin_vs_static,mean_macro_margin_vs_static,mean_ordinary_margin_vs_dynamic,continue_to_fresh_confirmation
+5,1,2,4,3,0,-0.009486722083400106,-0.014571214867988559,0.026678122946759687,false
