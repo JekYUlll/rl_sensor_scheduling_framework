@@ -3410,3 +3410,18 @@ tar -czf "$OUT…`
   forecast-value action head. The retest is justified because V154 used the
   now-invalid action-dependent labels. Replication is allowed only if V164
   improves both static endpoints and retains valid behavior.
+
+## 2026-08-26 - Reject V164 and revise quality-state persistence
+
+- The corrected-label factorized forecast head fails seed1601, with ordinary
+  and macro static margins `-0.047745/-0.297162`, two always-off channels, and
+  weak quality-conditioned duty. The head is rejected without replication.
+- The quality generator currently places abrupt, independently random
+  degradation intervals. A receding diagnostic observes those future truth
+  values during simulation, while an online scheduler cannot predict an unseen
+  onset. This inflates upper headroom without making all of it learnable.
+- V165 tests a physical persistence correction on fresh development seeds:
+  degradation duration changes from 12--48 to 48--96 hourly steps and minimum
+  separation to 24 steps. Coverage, quality severity, action geometry, reward,
+  CRN protocol, and all weather/event settings remain fixed. No policy training
+  is allowed until receding and online learnability gates are recomputed.
