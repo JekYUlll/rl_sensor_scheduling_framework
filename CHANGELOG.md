@@ -3328,3 +3328,13 @@ tar -czf "$OUT…`
   V158 repeats the identical deterministic training with the previously frozen
   behavior-valid checkpoint constraint; this tests selection transfer without
   adding a loss, guard, or action prior.
+## 2026-08-26 - Pass the V158 behavior-selected pilot
+
+- Repeating V155 with the frozen behavior-valid checkpoint rule selects update15
+  exactly as predicted by the validation ledger. Seed1601 retains positive
+  static margins (`+0.003464/+0.018083`) while improving deployment behavior to
+  zero always-on, one always-off, four mid-duty channels, nonzero switching,
+  and zero aborts.
+- Ordinary loss remains `0.002654` behind the best conventional dynamic on this
+  seed. The complete V158 configuration is now frozen while seeds1602--1605 run;
+  no further variant selection is allowed from seed1601.
