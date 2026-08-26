@@ -3378,3 +3378,19 @@ tar -czf "$OUT…`
   remain useful architecture diagnostics, but their quality-scene rankings are
   not confirmatory evidence. V162 regenerates all five scenes under the
   corrected protocol before any further policy selection.
+
+## 2026-08-26 - Pass the corrected V162 dynamic-value gate
+
+- V162 regenerates five quality-varying scenes with common random numbers and
+  complete sensor-quality configuration in static selection. The eight-step
+  receding diagnostic beats the selected static schedule on both endpoints in
+  all five validation and all five final partitions.
+- Mean validation margins are `+0.047193` ordinary and `+0.107315` macro; mean
+  final margins are `+0.032779` and `+0.120173`. All six channels have
+  intermediate duty, nonzero switching, and zero warm-up aborts in every run.
+  One-step forecast greedy passes only `2/5`, confirming that the headroom is
+  horizon-dependent.
+- An online learnability audit recovers positive alert-context gain in all five
+  seeds but only about 14.6% of receding headroom. V163 therefore keeps the
+  dedicated 26-feature alert-plus-quality encoder and behavior-valid checkpoint
+  selection; it changes no reward, feasibility constraint, or runtime input.
