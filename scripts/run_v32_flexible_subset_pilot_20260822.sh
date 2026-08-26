@@ -98,6 +98,7 @@ SUBTYPE_ACTION_EVENT_ONLY="${SUBTYPE_ACTION_EVENT_ONLY:-0}"
 SUBTYPE_LOSS_WEIGHTING="${SUBTYPE_LOSS_WEIGHTING:-1}"
 CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-10}"
 CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
+ALIGNED_QUALITY_ACTION_SCORE="${ALIGNED_QUALITY_ACTION_SCORE:-0}"
 TEMPORAL_ENCODER="${TEMPORAL_ENCODER:-0}"
 TEMPORAL_HIDDEN_DIM="${TEMPORAL_HIDDEN_DIM:-64}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
@@ -142,6 +143,10 @@ fi
 CRN_ARGS=(--no-common-random-numbers)
 if [[ "$COMMON_RANDOM_NUMBERS" == "1" ]]; then
   CRN_ARGS=(--common-random-numbers)
+fi
+QUALITY_SCORE_ARGS=(--no-aligned-quality-action-score)
+if [[ "$ALIGNED_QUALITY_ACTION_SCORE" == "1" ]]; then
+  QUALITY_SCORE_ARGS=(--aligned-quality-action-score)
 fi
 
 if [[ "$#" -gt 0 ]]; then
@@ -351,6 +356,7 @@ for seed in "${SEEDS[@]}"; do
     --context-hidden-dim 64 \
     --context-fusion-mode "$CONTEXT_FUSION_MODE" \
     --context-layer-norm \
+    "${QUALITY_SCORE_ARGS[@]}" \
     "${TEMPORAL_ARGS[@]}" \
     --temporal-hidden-dim "$TEMPORAL_HIDDEN_DIM" \
     --include-alert-context-features \

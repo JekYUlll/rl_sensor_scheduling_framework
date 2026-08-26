@@ -169,6 +169,7 @@ class CustomPPOConfig:
     context_hidden_dim: int = 64
     context_fusion_mode: str = "concat"
     context_layer_norm: bool = False
+    aligned_quality_action_score: bool = False
     temporal_encoder_enabled: bool = False
     temporal_history_steps: int = 0
     temporal_state_dim: int = 0
@@ -247,6 +248,7 @@ class MaskedActor:
         context_hidden_dim: int = 64,
         context_fusion_mode: str = "concat",
         context_layer_norm: bool = False,
+        aligned_quality_action_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -277,6 +279,16 @@ class MaskedActor:
                     else 0
                 )
                 main_obs_dim = int(obs_dim) - int(self.context_feature_dim)
+                self.aligned_quality_action_score = bool(aligned_quality_action_score)
+                if self.aligned_quality_action_score and self.context_feature_dim < int(n_sensors):
+                    raise ValueError(
+                        "aligned quality action scoring requires one leading context feature per sensor"
+                    )
+                self.quality_action_scale_raw = (
+                    nn.Parameter(torch.tensor(1.0, dtype=torch.float32))
+                    if self.aligned_quality_action_score
+                    else None
+                )
                 self.temporal_history_steps = (
                     max(0, int(temporal_history_steps))
                     if bool(temporal_encoder_enabled)
@@ -532,6 +544,14 @@ class MaskedActor:
                 action_emb = self._action_embeddings(candidate_masks)
                 logits = context @ action_emb.transpose(0, 1) / max(float(action_emb.shape[-1]) ** 0.5, 1.0)
                 logits = logits + self.action_bias(action_emb).reshape(1, -1)
+                if self.quality_action_scale_raw is not None:
+                    _, context_obs = self._split_obs(obs)
+                    quality = context_obs[:, : int(n_sensors)]
+                    masks = candidate_masks.float()
+                    selected_count = masks.sum(dim=1).clamp_min(1.0)
+                    selected_quality = quality @ masks.transpose(0, 1) / selected_count.reshape(1, -1)
+                    scale = torch.nn.functional.softplus(self.quality_action_scale_raw)
+                    logits = logits + scale * selected_quality
                 if self.action_prior is not None:
                     logits = logits + self.action_prior.reshape(1, -1)
                 if self.forecast_value_head_enabled:
@@ -635,6 +655,7 @@ class ActorCritic:
         context_hidden_dim: int = 64,
         context_fusion_mode: str = "concat",
         context_layer_norm: bool = False,
+        aligned_quality_action_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -666,6 +687,7 @@ class ActorCritic:
                     context_hidden_dim=int(context_hidden_dim),
                     context_fusion_mode=str(context_fusion_mode),
                     context_layer_norm=bool(context_layer_norm),
+                    aligned_quality_action_score=bool(aligned_quality_action_score),
                     temporal_encoder_enabled=bool(temporal_encoder_enabled),
                     temporal_history_steps=int(temporal_history_steps),
                     temporal_state_dim=int(temporal_state_dim),
@@ -786,6 +808,7 @@ class CustomPPO:
             context_hidden_dim=int(cfg.context_hidden_dim),
             context_fusion_mode=str(cfg.context_fusion_mode),
             context_layer_norm=bool(cfg.context_layer_norm),
+            aligned_quality_action_score=bool(cfg.aligned_quality_action_score),
             temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
             temporal_history_steps=int(self.env_cfg.lookback),
             temporal_state_dim=len(self.env_cfg.state_columns),

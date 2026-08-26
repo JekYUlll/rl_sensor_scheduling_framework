@@ -3425,3 +3425,18 @@ tar -czf "$OUT…`
   separation to 24 steps. Coverage, quality severity, action geometry, reward,
   CRN protocol, and all weather/event settings remain fixed. No policy training
   is allowed until receding and online learnability gates are recomputed.
+
+## 2026-08-26 - Close persistence-only tuning and add aligned quality scoring
+
+- V165's longer quality states preserve dynamic headroom but do not solve
+  learnability. The receding diagnostic records `5/5` ordinary and `4/5` macro
+  wins; the best online ExtraTrees audit is positive in `4/5` seeds and
+  recovers 20.7% of receding gain. Persistence alone is therefore closed.
+- The actor audit identified a representation mismatch: six ordered channel
+  health values were mixed as generic context although each value corresponds
+  exactly to one bit of every candidate mask. Added an optional aligned
+  mask-quality score that computes selected-channel health for each candidate
+  and adds it to masked actor logits through a learned positive scale.
+- The option preserves arbitrary feasible subsets, the forecast-loss reward,
+  PPO updates, and hard feasibility masking. It is disabled by default and
+  covered by the 136-test suite. V166 tests only seed1601 before replication.

@@ -803,6 +803,7 @@ def main() -> None:
         default="concat",
     )
     parser.add_argument("--context-layer-norm", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--aligned-quality-action-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
@@ -1669,6 +1670,11 @@ def main() -> None:
     if bool(args.duty_hard_guard):
         cmd.append("--duty-hard-guard")
     cmd.append("--common-random-numbers" if bool(args.common_random_numbers) else "--no-common-random-numbers")
+    cmd.append(
+        "--aligned-quality-action-score"
+        if bool(args.aligned_quality_action_score)
+        else "--no-aligned-quality-action-score"
+    )
     if bool(args.eval_duty_constrained_baselines):
         cmd.append("--eval-duty-constrained-baselines")
     append_option(

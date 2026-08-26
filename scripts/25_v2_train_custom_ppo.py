@@ -706,6 +706,7 @@ def main() -> None:
         default="concat",
     )
     parser.add_argument("--context-layer-norm", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--aligned-quality-action-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
@@ -1489,6 +1490,7 @@ def main() -> None:
             context_hidden_dim=max(1, int(args.context_hidden_dim)),
             context_fusion_mode=str(args.context_fusion_mode),
             context_layer_norm=bool(args.context_layer_norm),
+            aligned_quality_action_score=bool(args.aligned_quality_action_score),
             temporal_encoder_enabled=bool(args.temporal_encoder),
             temporal_history_steps=int(args.lookback),
             temporal_state_dim=len(helpers.STATE_COLUMNS),
@@ -2576,6 +2578,7 @@ def as_serializable_config(
         "context_hidden_dim": int(cfg.context_hidden_dim),
         "context_fusion_mode": str(cfg.context_fusion_mode),
         "context_layer_norm": int(bool(cfg.context_layer_norm)),
+        "aligned_quality_action_score": int(bool(cfg.aligned_quality_action_score)),
         "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
         "temporal_history_steps": int(cfg.temporal_history_steps),
         "temporal_state_dim": int(cfg.temporal_state_dim),
