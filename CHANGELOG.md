@@ -3522,3 +3522,19 @@ tar -czf "$OUT…`
   noise amplification changes from 6.0 to 7.0 and the availability floor from
   0.20 to 0.05. This is the bounded alternative to increasing simultaneous
   degradation coverage; all other settings remain fixed on fresh seeds.
+
+## 2026-08-27 - Pass V170 gates and launch clean context26 PD-PPO
+
+- V170 passes the horizon-matched scene gate with `5/5` ordinary and `4/5`
+  scoreable macro wins over static. Mean receding margins are
+  `+0.026084/+0.090136`; all six channels have intermediate duty and all five
+  seeds have nonzero switching with zero warm-up aborts. One-step greedy loses
+  to static on average, preserving the sequential-decision requirement.
+- Validation-only alert/context models achieve positive final gain in `5/5`
+  seeds. ExtraTrees recovers 16.6% and histogram gradient boosting 15.2% of
+  receding gain on average. V170 therefore passes the online-information gate.
+- V171 trains the existing context26 PD-PPO on the five V170 scenes. It keeps
+  forecast-loss reward, arbitrary feasible subsets, temporal/context encoders,
+  forecast-value pretraining and auxiliary loss, and behavior-valid checkpoint
+  selection. AWBC, bandit priors, residual actions, aligned quality scoring,
+  subtype labels, and extra reward terms remain disabled.
