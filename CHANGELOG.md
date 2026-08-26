@@ -3394,3 +3394,19 @@ tar -czf "$OUT…`
   seeds but only about 14.6% of receding headroom. V163 therefore keeps the
   dedicated 26-feature alert-plus-quality encoder and behavior-valid checkpoint
   selection; it changes no reward, feasibility constraint, or runtime input.
+
+## 2026-08-26 - Reject V163 after corrected-label policy training
+
+- V163 passes the deployment-behavior gate in all five scenes and selects
+  higher-quality channels on average (`+0.059931` selected-minus-unselected
+  quality), but it does not recover the V162 dynamic headroom. It records
+  `0/5` ordinary and `1/5` macro wins against static, with mean margins
+  `-0.052749/-0.128358`.
+- Seed1602 exhibits a large validation-to-final transfer failure, while the
+  checkpoint ledger shows no behavior-valid validation checkpoint below the
+  static reference. The failure is therefore not repaired by longer training
+  or post-hoc checkpoint choice.
+- V164 is a single-seed bounded retest of the existing factorized
+  forecast-value action head. The retest is justified because V154 used the
+  now-invalid action-dependent labels. Replication is allowed only if V164
+  improves both static endpoints and retains valid behavior.
