@@ -3299,3 +3299,18 @@ tar -czf "$OUT…`
   using the existing independent forecast-value head. The comparison preserves
   the forecast reward, PPO objective, feasibility mask, and training-only
   information boundary.
+## 2026-08-26 - Reject V153 and localize quality-context representation
+
+- The complete five-seed V153 wave passes deployment behavior `5/5` but beats
+  the selected static schedule in only `1/5` seeds. Mean ordinary/macro margins
+  are `-0.036214/-0.122366`; ordinary wins against the best conventional
+  dynamic policy are `2/5`.
+- Selected channels have higher reported quality on average (`+0.062709`), so
+  the policy detects quality but does not map it reliably to horizon-optimal
+  masks. The factorized forecast-value-head comparison is also worse on the
+  shared pilot seed and is rejected.
+- The architecture audit found that the six quality signals were encoded by the
+  generic runtime branch while the dedicated context encoder still consumed
+  only the 20 alert features. A bounded representation wave now tests a
+  26-feature quality-plus-alert context tail with three existing supervision
+  forms; no new reward or baseline-dependent module is introduced.
