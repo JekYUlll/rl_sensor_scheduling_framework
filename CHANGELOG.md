@@ -3585,3 +3585,17 @@ tar -czf "$OUT…`
   auxiliary loss from soft cross-entropy to this standardized-cost regression,
   retaining V173's label stride, coefficient, actor, PPO reward, and seed1701
   gate.
+
+## 2026-08-27 - Bound V174 and isolate the factorized value head
+
+- V174 is the closest pilot in this wave: ordinary loss is `0.000061` better
+  than static, while macro loss remains `0.018495` worse and one channel is
+  always off. No validation checkpoint beats static on the macro selection
+  ratio, so the pilot is not replicated.
+- Standardized-cost MSE substantially changes the auxiliary signal, but direct
+  regression on actor logits still couples PPO ranking and cost calibration in
+  the same output. V175 enables the existing factorized forecast-value head,
+  trained with the same MSE labels and candidate-mask embeddings. Its detached
+  value logits guide the actor while PPO retains its own logits and reward.
+  This single-seed test preserves arbitrary-subset generalization and changes
+  no runtime information or feasibility rule.
