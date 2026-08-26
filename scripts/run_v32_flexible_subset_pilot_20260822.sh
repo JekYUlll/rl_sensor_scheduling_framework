@@ -50,6 +50,7 @@ ENT_COEF="${ENT_COEF:-0.02}"
 CHANNEL_MARGINAL_ENTROPY_COEF="${CHANNEL_MARGINAL_ENTROPY_COEF:-0}"
 POLICY_INIT_SOURCE="${POLICY_INIT_SOURCE:-}"
 POLICY_CHECKPOINT_SOURCE="${POLICY_CHECKPOINT_SOURCE:-}"
+TRAINING_CONTROL_SOURCE_RUN_DIRS="${TRAINING_CONTROL_SOURCE_RUN_DIRS:-}"
 EVALUATION_POLICY_MODE="${EVALUATION_POLICY_MODE:-deterministic}"
 EVALUATION_SAMPLING_SEED="${EVALUATION_SAMPLING_SEED:-}"
 EVALUATION_SAMPLING_TEMPERATURE="${EVALUATION_SAMPLING_TEMPERATURE:-1.0}"
@@ -141,6 +142,10 @@ for seed in "${SEEDS[@]}"; do
   fi
   if [[ -n "$POLICY_CHECKPOINT_SOURCE" ]]; then
     control_args+=(--policy-checkpoint-source "$POLICY_CHECKPOINT_SOURCE")
+  fi
+  if [[ -n "$TRAINING_CONTROL_SOURCE_RUN_DIRS" ]]; then
+    read -r -a training_control_sources <<< "$TRAINING_CONTROL_SOURCE_RUN_DIRS"
+    control_args+=(--training-control-source-run-dirs "${training_control_sources[@]}")
   fi
   control_args+=(--evaluation-policy-mode "$EVALUATION_POLICY_MODE")
   if [[ -n "$EVALUATION_SAMPLING_SEED" ]]; then

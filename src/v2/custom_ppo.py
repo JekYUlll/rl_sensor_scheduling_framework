@@ -723,6 +723,7 @@ class CustomPPO:
         candidate_masks: np.ndarray,
         cfg: CustomPPOConfig,
         candidate_prior_logits: np.ndarray | None = None,
+        training_scenarios: list[tuple[pd.DataFrame, WarmupEnvConfig, object]] | None = None,
     ) -> None:
         torch, _ = _torch_modules()
         self.truth_df = truth_df
@@ -730,6 +731,12 @@ class CustomPPO:
         self.constraints = constraints
         self.env_cfg = env_cfg
         self.oracle = oracle
+        self.training_scenarios = list(
+            training_scenarios or [(self.truth_df, self.env_cfg, self.oracle)]
+        )
+        if not self.training_scenarios:
+            raise ValueError("training_scenarios must contain at least one scene")
+        self._training_scenario_cursor = 0
         self.candidate_masks_np = np.asarray(candidate_masks, dtype=bool).reshape(-1, len(sensor_specs))
         if self.candidate_masks_np.shape[0] == 0:
             raise ValueError("candidate_masks must contain at least one action")
@@ -747,6 +754,7 @@ class CustomPPO:
 
         probe_env = self._make_env(seed_offset=0)
         probe_obs, _ = probe_env.reset()
+        self._training_scenario_cursor = 0
         self.obs_dim = int(np.asarray(probe_obs).shape[0])
         self.context_feature_dim = int(cfg.context_feature_dim)
         if self.context_feature_dim <= 0:
@@ -877,7 +885,11 @@ class CustomPPO:
     def collect_rollout(self, n_steps: int, *, seed_offset: int = 0) -> dict[str, np.ndarray]:
         torch, _ = _torch_modules()
         env = self._make_env(seed_offset=seed_offset)
-        env.reset(start_idx=self._sample_start_idx(self._sampling_window_steps(int(n_steps)), seed_offset=seed_offset))
+        env.reset(
+            start_idx=self._sample_start_idx(
+                self._sampling_window_steps(int(n_steps)), seed_offset=seed_offset, env=env
+            )
+        )
 
         obs_rows: list[np.ndarray] = []
         action_rows: list[int] = []
@@ -973,6 +985,7 @@ class CustomPPO:
                     start_idx=self._sample_start_idx(
                         self._sampling_window_steps(int(n_steps)),
                         seed_offset=seed_offset + step + 1,
+                        env=env,
                     )
                 )
                 last_done = False
@@ -1029,7 +1042,11 @@ class CustomPPO:
 
     def collect_teacher_batch(self, n_steps: int, *, seed_offset: int = 0) -> dict[str, np.ndarray]:
         env = self._make_env(seed_offset=seed_offset)
-        env.reset(start_idx=self._sample_start_idx(self._sampling_window_steps(int(n_steps)), seed_offset=seed_offset))
+        env.reset(
+            start_idx=self._sample_start_idx(
+                self._sampling_window_steps(int(n_steps)), seed_offset=seed_offset, env=env
+            )
+        )
 
         obs_rows: list[np.ndarray] = []
         teacher_rows: list[int] = []
@@ -1092,6 +1109,7 @@ class CustomPPO:
                     start_idx=self._sample_start_idx(
                         self._sampling_window_steps(int(n_steps)),
                         seed_offset=seed_offset + step + 1,
+                        env=env,
                     )
                 )
                 episode_id += 1
@@ -1853,16 +1871,28 @@ class CustomPPO:
         self.save_history(self.cfg.history_path)
 
     def _make_env(self, *, seed_offset: int) -> WarmupSchedulingEnv:
+        scenario_idx = self._training_scenario_cursor % len(self.training_scenarios)
+        self._training_scenario_cursor += 1
+        truth_df, env_cfg, oracle = self.training_scenarios[scenario_idx]
         return WarmupSchedulingEnv(
-            self.truth_df,
+            truth_df,
             self.sensor_specs,
             self.constraints,
-            replace(self.env_cfg, seed=int(self.env_cfg.seed) + int(seed_offset)),
-            oracle=self.oracle,
+            replace(env_cfg, seed=int(env_cfg.seed) + int(seed_offset)),
+            oracle=oracle,
         )
 
-    def _sample_start_idx(self, steps: int, *, seed_offset: int) -> int:
-        global_max_start = max(0, len(self.truth_df) - int(steps) - int(self.oracle.cfg.horizon) - 1)
+    def _sample_start_idx(
+        self,
+        steps: int,
+        *,
+        seed_offset: int,
+        env: WarmupSchedulingEnv | None = None,
+    ) -> int:
+        truth_df = self.truth_df if env is None else env.truth_df
+        oracle = self.oracle if env is None else env.oracle
+        env_cfg = self.env_cfg if env is None else env.cfg
+        global_max_start = max(0, len(truth_df) - int(steps) - int(oracle.cfg.horizon) - 1)
         min_start = max(0, int(self.cfg.train_start_min or 0))
         max_start = global_max_start
         if self.cfg.train_start_max is not None:
@@ -1878,9 +1908,9 @@ class CustomPPO:
             if starts.size:
                 return int(rng.choice(starts))
         event_flags = (
-            self.truth_df[self.env_cfg.event_column].astype(bool).to_numpy()
-            if self.env_cfg.event_column in self.truth_df.columns
-            else np.zeros(len(self.truth_df), dtype=bool)
+            truth_df[env_cfg.event_column].astype(bool).to_numpy()
+            if env_cfg.event_column in truth_df.columns
+            else np.zeros(len(truth_df), dtype=bool)
         )
         eligible_event_flags = np.zeros_like(event_flags, dtype=bool)
         eligible_event_flags[min_start : max_start + int(steps)] = event_flags[min_start : max_start + int(steps)]

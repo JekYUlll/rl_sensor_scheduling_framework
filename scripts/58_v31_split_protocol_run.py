@@ -574,6 +574,7 @@ def main() -> None:
         default=None,
         help="Reuse and validate truth, frozen forecaster, masks, and validation assets from this run.",
     )
+    parser.add_argument("--training-control-source-run-dirs", nargs="*", default=None)
     parser.add_argument("--validate-control-source-only", action="store_true")
     parser.add_argument("--antaws-root", default="../data/AntAWS/3_hourly")
     parser.add_argument("--stations", nargs="+", default=["Panda100", "Panda200", "Taishan"])
@@ -1711,6 +1712,11 @@ def main() -> None:
         cmd.extend(["--policy-init-source", str(args.policy_init_source)])
     if args.policy_checkpoint_source:
         cmd.extend(["--policy-checkpoint-source", str(args.policy_checkpoint_source)])
+    append_option(
+        cmd,
+        "--training-control-source-run-dirs",
+        args.training_control_source_run_dirs,
+    )
     cmd.extend(["--evaluation-policy-mode", str(args.evaluation_policy_mode)])
     if args.evaluation_sampling_seed is not None:
         cmd.extend(["--evaluation-sampling-seed", str(int(args.evaluation_sampling_seed))])

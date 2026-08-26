@@ -766,6 +766,59 @@ def test_custom_ppo_samples_only_inside_configured_training_partition() -> None:
     assert all(20 <= start <= 25 for start in starts)
 
 
+def test_custom_ppo_interleaves_training_scenarios_at_environment_boundaries() -> None:
+    truth_a = _truth(64)
+    truth_b = _truth(64)
+    truth_b["wind_speed_ms"] += 100.0
+    cfg_a = WarmupEnvConfig(
+        state_columns=STATE_COLUMNS,
+        reward_target_columns=STATE_COLUMNS,
+        lookback=4,
+        episode_len=8,
+        seed=3,
+    )
+    cfg_b = WarmupEnvConfig(
+        state_columns=STATE_COLUMNS,
+        reward_target_columns=STATE_COLUMNS,
+        lookback=4,
+        episode_len=8,
+        seed=7,
+    )
+    oracle_a = _oracle(truth_a)
+    oracle_b = _oracle(truth_b)
+    trainer = CustomPPO(
+        truth_df=truth_a,
+        sensor_specs=_sensors(),
+        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        env_cfg=cfg_a,
+        oracle=oracle_a,
+        candidate_masks=np.asarray([[True, False, False]], dtype=bool),
+        cfg=CustomPPOConfig(
+            total_timesteps=8,
+            n_steps=8,
+            batch_size=4,
+            n_epochs=1,
+            embed_dim=8,
+            hidden_dim=16,
+            device="cpu",
+            seed=5,
+        ),
+        training_scenarios=[
+            (truth_a, cfg_a, oracle_a),
+            (truth_b, cfg_b, oracle_b),
+        ],
+    )
+
+    env_a = trainer._make_env(seed_offset=0)
+    env_b = trainer._make_env(seed_offset=1)
+    env_a_again = trainer._make_env(seed_offset=2)
+
+    assert env_a.truth_df["wind_speed_ms"].iloc[0] == pytest.approx(8.0)
+    assert env_b.truth_df["wind_speed_ms"].iloc[0] == pytest.approx(108.0)
+    assert env_a_again.truth_df["wind_speed_ms"].iloc[0] == pytest.approx(8.0)
+    assert trainer._sample_start_idx(8, seed_offset=0, env=env_b) >= 0
+
+
 def test_ppo_actor_inputs_use_online_alert_in_rollout_and_teacher_batch() -> None:
     truth = _truth(32)
     trainer = CustomPPO(

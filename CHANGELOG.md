@@ -3187,3 +3187,19 @@ tar -czf "$OUT…`
 - Single-scene fitting is therefore the next controlled bottleneck. V146 carries
   one policy through training scenes 1501--1504 and evaluates the frozen result
   on held-out scene1505. No final-partition metric is used between stages.
+
+### 2026-08-26 | V146 rejects sequential multi-scene curriculum
+
+- The frozen policy carried through scenes1501--1504 failed on held-out
+  scene1505. Ordinary/macro margins against selected static were
+  `-0.044570/-0.109172`, and ordinary loss was `0.011141` worse than the best
+  AoI, round-robin, or random schedule.
+- Held-out behavior remained feasible and dynamic: no channel was always on or
+  off, five channels had mid-range duty, switching was `0.018092` per step, and
+  no warm-up abort occurred. The failure is cross-scene transfer, not action or
+  constraint collapse.
+- Sequential curriculum is closed because it exposes the policy to one scene at
+  a time and permits catastrophic forgetting. V147 interleaves four training
+  scenes at episode boundaries while sharing one model and optimizer, then
+  freezes the result for scene1505. Rewards, online inputs, and feasibility
+  rules remain unchanged.

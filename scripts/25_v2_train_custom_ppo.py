@@ -487,6 +487,12 @@ def main() -> None:
         help="Reuse truth-linked frozen evaluator and validation assets from an existing run.",
     )
     parser.add_argument(
+        "--training-control-source-run-dirs",
+        nargs="*",
+        default=None,
+        help="Additional matched scenes interleaved at training episode boundaries.",
+    )
+    parser.add_argument(
         "--validate-control-source-only",
         action="store_true",
         help="Validate matched-control assets and exit before loading models or training.",
@@ -1302,6 +1308,58 @@ def main() -> None:
             scale=float(args.candidate_prior_scale),
         )
         candidate_prior_table.to_csv(out_dir / "custom_ppo_candidate_prior.csv", index=False)
+    training_scenarios: list[tuple[pd.DataFrame, WarmupEnvConfig, object]] = [
+        (truth, train_cfg, oracle)
+    ]
+    training_control_sources: list[dict[str, object]] = []
+    if args.training_control_source_run_dirs:
+        import torch
+
+        for scenario_idx, source_value in enumerate(
+            args.training_control_source_run_dirs, start=1
+        ):
+            source_dir = Path(source_value).resolve()
+            metadata = load_json(source_dir / "v2_ppo_metadata.json")
+            scenario_truth_path = source_dir / "truth_v31_split.csv"
+            if not scenario_truth_path.is_file():
+                raise FileNotFoundError(
+                    f"training control source is missing truth: {scenario_truth_path}"
+                )
+            scenario_truth = helpers.ensure_state_columns(pd.read_csv(scenario_truth_path))
+            if len(scenario_truth) != len(truth):
+                raise ValueError("all interleaved training scenes must have equal truth length")
+            if Path(str(metadata.get("sensor_cfg", ""))).name != sensor_cfg_path.name:
+                raise ValueError("interleaved training scene sensor configuration does not match")
+            checkpoint = torch.load(
+                source_dir / "custom_ppo.pt", map_location="cpu", weights_only=False
+            )
+            source_masks = np.asarray(checkpoint.get("candidate_masks"), dtype=bool)
+            if source_masks.shape != candidate_masks.shape or not np.array_equal(
+                source_masks, candidate_masks
+            ):
+                raise ValueError("interleaved training scene action geometry does not match")
+            scenario_oracle_type = str(metadata.get("oracle_type", "tcn"))
+            if scenario_oracle_type == "tcn":
+                scenario_oracle_path = source_dir / "v2_tcn_oracle.pt"
+                scenario_oracle = TCNFrozenForecastOracle.load(
+                    scenario_oracle_path, device=str(args.oracle_inference_device)
+                )
+            else:
+                scenario_oracle_path = source_dir / "v2_linear_oracle.npz"
+                scenario_oracle = LinearFrozenForecastOracle.load(str(scenario_oracle_path))
+            scenario_cfg = replace(
+                train_cfg,
+                seed=int(policy_seed) + 100_003 * int(scenario_idx),
+            )
+            training_scenarios.append((scenario_truth, scenario_cfg, scenario_oracle))
+            training_control_sources.append(
+                {
+                    "run_dir": str(source_dir),
+                    "seed": int(metadata.get("seed", -1)),
+                    "truth_sha256": sha256_file(scenario_truth_path),
+                    "oracle_sha256": sha256_file(scenario_oracle_path),
+                }
+            )
     trainer = CustomPPO(
         truth_df=truth,
         sensor_specs=sensors,
@@ -1400,6 +1458,7 @@ def main() -> None:
             train_start_max=args.train_start_max,
         ),
         candidate_prior_logits=candidate_prior_logits,
+        training_scenarios=training_scenarios,
     )
     checkpoint_selection_rows: list[dict[str, float | int]] = []
     best_checkpoint_state = None
@@ -2015,6 +2074,7 @@ def main() -> None:
         "model_path": str(model_path),
         "policy_init_source": str(args.policy_init_source or ""),
         "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
+        "training_control_sources": training_control_sources,
         "evaluation_policy_mode": str(args.evaluation_policy_mode),
         "evaluation_sampling_seed": args.evaluation_sampling_seed,
         "evaluation_sampling_temperature": float(selected_evaluation_temperature),

@@ -36,7 +36,9 @@ for i in "${!SEEDS[@]}"; do
 
     # Forecast-value pretraining and the on-policy auxiliary use only the
     # policy-training partition. They never expose subtype labels at runtime.
-    export BC_PRETRAIN_STEPS=4096 BC_PRETRAIN_EPOCHS=20 BC_PRETRAIN_LOSS_COEF=1.0
+    export BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS_OVERRIDE:-4096}"
+    export BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS_OVERRIDE:-20}"
+    export BC_PRETRAIN_LOSS_COEF=1.0
     export BC_PRETRAIN_TARGET_MODE="${BC_PRETRAIN_TARGET_MODE_OVERRIDE:-forecast_value_regression}"
     export BC_SOFT_TEMPERATURE=1.0
     export FORECAST_VALUE_AUX_COEF="${FORECAST_VALUE_AUX_COEF_OVERRIDE:-0.5}"
@@ -55,7 +57,8 @@ for i in "${!SEEDS[@]}"; do
     export ENT_COEF="${ENT_COEF_OVERRIDE:-0.02}" CHANNEL_MARGINAL_ENTROPY_COEF=0
     export POLICY_INIT_SOURCE="${POLICY_INIT_SOURCE_OVERRIDE:-}"
     export POLICY_CHECKPOINT_SOURCE="${POLICY_CHECKPOINT_SOURCE_OVERRIDE:-}"
-    export CHECKPOINT_SELECTION_INTERVAL_UPDATES=5
+    export TRAINING_CONTROL_SOURCE_RUN_DIRS="${TRAINING_CONTROL_SOURCE_RUN_DIRS_OVERRIDE:-}"
+    export CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES_OVERRIDE:-5}"
     export CHECKPOINT_SELECTION_SCORE=max_static_ratio
     export EVALUATION_POLICY_MODE=deterministic
     bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
