@@ -1312,6 +1312,7 @@ def main() -> None:
         (truth, train_cfg, oracle)
     ]
     training_control_sources: list[dict[str, object]] = []
+    training_validation_inputs: list[dict[str, object]] = []
     if args.training_control_source_run_dirs:
         import torch
 
@@ -1352,6 +1353,15 @@ def main() -> None:
                 seed=int(policy_seed) + 100_003 * int(scenario_idx),
             )
             training_scenarios.append((scenario_truth, scenario_cfg, scenario_oracle))
+            training_validation_inputs.append(
+                {
+                    "source_dir": source_dir,
+                    "truth": scenario_truth,
+                    "env_cfg": scenario_cfg,
+                    "oracle": scenario_oracle,
+                    "metadata": metadata,
+                }
+            )
             training_control_sources.append(
                 {
                     "run_dir": str(source_dir),
@@ -1506,6 +1516,66 @@ def main() -> None:
         duty_score_feedback=0.0,
         duty_hard_guard=False,
     )
+    checkpoint_scene_specs: list[dict[str, object]] = []
+    if checkpoint_interval > 0 and checkpoint_starts and checkpoint_normalizers:
+        checkpoint_scene_specs.append(
+            {
+                "seed": int(args.seed),
+                "truth": truth,
+                "cfg": checkpoint_cfg,
+                "oracle": oracle,
+                "starts": checkpoint_starts,
+                "normalizers": checkpoint_normalizers,
+                "static_ordinary": checkpoint_static_ordinary,
+                "static_macro": checkpoint_static_macro,
+            }
+        )
+        for item in training_validation_inputs:
+            source_dir = Path(item["source_dir"])
+            metadata = dict(item["metadata"])
+            table_path = source_dir / "validation_static_candidates.csv"
+            if not table_path.is_file():
+                raise FileNotFoundError(
+                    f"interleaved validation source is missing {table_path.name}: {source_dir}"
+                )
+            table = pd.read_csv(table_path)
+            normalizers = subtype_static_normalizers(table)
+            scored = add_staticnorm_macro(table, normalizers)
+            static_ordinary = float(
+                pd.to_numeric(table["oracle_loss_mean"], errors="coerce").min()
+            )
+            static_macro = float(
+                pd.to_numeric(
+                    scored[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN], errors="coerce"
+                ).min()
+            )
+            starts = tuple(
+                int(value)
+                for value in dict(metadata.get("partition_protocol", {})).get(
+                    "static_selection_start_indices", ()
+                )
+            )
+            if not starts or not normalizers or not np.isfinite(static_macro):
+                raise ValueError(
+                    f"interleaved validation assets are incomplete: {source_dir}"
+                )
+            checkpoint_scene_specs.append(
+                {
+                    "seed": int(metadata.get("seed", -1)),
+                    "truth": item["truth"],
+                    "cfg": replace(
+                        item["env_cfg"],
+                        episode_len=int(args.static_selection_steps),
+                        duty_score_feedback=0.0,
+                        duty_hard_guard=False,
+                    ),
+                    "oracle": item["oracle"],
+                    "starts": starts,
+                    "normalizers": normalizers,
+                    "static_ordinary": static_ordinary,
+                    "static_macro": static_macro,
+                }
+            )
 
     def select_checkpoint(
         current_trainer: CustomPPO,
@@ -1519,27 +1589,47 @@ def main() -> None:
         final_update = int(timesteps) >= int(args.total_timesteps)
         if int(update_idx) % checkpoint_interval != 0 and not final_update:
             return
-        selection_result, selection_metrics = evaluate_custom_ppo(
-            trainer=current_trainer,
-            truth_df=truth,
-            sensor_specs=sensors,
-            constraints=constraints,
-            cfg=checkpoint_cfg,
-            oracle=oracle,
-            steps=int(args.static_selection_steps),
-            start_indices=checkpoint_starts,
-            policy_name="custom_ppo_checkpoint_selection",
-        )
-        selection_metrics = add_subtype_macro_metrics(selection_metrics, selection_result, truth)
-        if checkpoint_normalizers:
-            selection_metrics = add_staticnorm_macro(
-                pd.DataFrame([selection_metrics]), checkpoint_normalizers
-            ).iloc[0].to_dict()
-        if checkpoint_score_name == "max_static_ratio":
-            score = max(
-                float(selection_metrics["oracle_loss_mean"]) / checkpoint_static_ordinary,
-                float(selection_metrics[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN]) / checkpoint_static_macro,
+        scene_metrics: list[dict[str, float]] = []
+        for spec in checkpoint_scene_specs:
+            scene_truth = spec["truth"]
+            selection_result, raw_metrics = evaluate_custom_ppo(
+                trainer=current_trainer,
+                truth_df=scene_truth,
+                sensor_specs=sensors,
+                constraints=constraints,
+                cfg=spec["cfg"],
+                oracle=spec["oracle"],
+                steps=int(args.static_selection_steps),
+                start_indices=spec["starts"],
+                policy_name="custom_ppo_checkpoint_selection",
             )
+            raw_metrics = add_subtype_macro_metrics(
+                raw_metrics, selection_result, scene_truth
+            )
+            metrics = add_staticnorm_macro(
+                pd.DataFrame([raw_metrics]), spec["normalizers"]
+            ).iloc[0].to_dict()
+            scene_metrics.append(
+                {
+                    "ordinary": float(metrics["oracle_loss_mean"]),
+                    "macro": float(metrics[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN]),
+                    "ordinary_ratio": float(metrics["oracle_loss_mean"])
+                    / float(spec["static_ordinary"]),
+                    "macro_ratio": float(metrics[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN])
+                    / float(spec["static_macro"]),
+                }
+            )
+        selection_metrics = {
+            "oracle_loss_mean": finite_mean([row["ordinary"] for row in scene_metrics]),
+            "oracle_loss_macro_subtype_event": float("nan"),
+            STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN: finite_mean(
+                [row["macro"] for row in scene_metrics]
+            ),
+        }
+        ordinary_ratio = finite_mean([row["ordinary_ratio"] for row in scene_metrics])
+        macro_ratio = finite_mean([row["macro_ratio"] for row in scene_metrics])
+        if checkpoint_score_name == "max_static_ratio":
+            score = max(ordinary_ratio, macro_ratio)
         else:
             score = float(selection_metrics[checkpoint_score_name])
         checkpoint_selection_rows.append(
@@ -1558,6 +1648,9 @@ def main() -> None:
                 ),
                 "selection_score_name": checkpoint_score_name,
                 "selection_score": score,
+                "validation_scene_count": int(len(scene_metrics)),
+                "ordinary_static_ratio_mean": ordinary_ratio,
+                "macro_static_ratio_mean": macro_ratio,
             }
         )
         if np.isfinite(score) and score < best_checkpoint_score:

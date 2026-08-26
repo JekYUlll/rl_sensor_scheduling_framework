@@ -3203,3 +3203,16 @@ tar -czf "$OUT…`
   scenes at episode boundaries while sharing one model and optimizer, then
   freezes the result for scene1505. Rewards, online inputs, and feasibility
   rules remain unchanged.
+
+### 2026-08-26 | V147 validates interleaving but misses one held-out endpoint
+
+- Episode-level interleaving completed 81,920 PPO steps over scenes1501--1504
+  with one shared model and optimizer. The frozen policy improved held-out
+  seed1505 substantially over V146.
+- Against selected static, the ordinary margin was `-0.008223` while the macro
+  margin was `+0.014095`. PD-PPO beat the best conventional dynamic schedule by
+  `+0.025206` ordinary loss.
+- Behavior passed with zero always-on/off channels, five mid-duty channels,
+  `0.026849` switches per step, and zero warm-up aborts. Interleaving is retained;
+  V149 adds checkpoint selection aggregated over the four training scenes'
+  calibration/validation partitions instead of freezing the final update.

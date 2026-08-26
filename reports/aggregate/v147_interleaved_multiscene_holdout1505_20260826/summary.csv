@@ -1,0 +1,3 @@
+split,seed,pdppo_loss,selected_static_loss,ordinary_margin_vs_static,pdppo_macro,selected_static_macro,macro_margin_vs_static,best_dynamic_loss,ordinary_margin_vs_dynamic,switches_per_step,always_on,always_off,mid_duty,warmup_abort
+training_scene_test,1501,0.291566844,0.295080537,0.003513693,0.988703351,1.034097059,0.045393709,0.333504531,0.041937687,0.036474164,0,0,5,0
+heldout_scene_test,1505,0.245032603,0.236809816,-0.008222786,0.884520339,0.898615258,0.014094919,0.270238882,0.025206279,0.026849037,0,0,5,0
