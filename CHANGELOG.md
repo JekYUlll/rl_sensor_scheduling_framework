@@ -3338,3 +3338,12 @@ tar -czf "$OUT…`
 - Ordinary loss remains `0.002654` behind the best conventional dynamic on this
   seed. The complete V158 configuration is now frozen while seeds1602--1605 run;
   no further variant selection is allowed from seed1601.
+## 2026-08-26 - Reject V158 and audit validation headroom
+
+- Frozen V158 beats static in only `1/5` seeds on both endpoints. It beats the
+  best conventional dynamic in `3/5` seeds with mean ordinary margin
+  `+0.001875`, while deployment behavior transfers in `4/5` seeds.
+- Every selected checkpoint still has a validation max-static ratio above one.
+  V159 therefore evaluates the same eight-step receding diagnostic on the
+  validation partition. This distinguishes policy learnability from a missing
+  model-selection signal before any further architecture change.
