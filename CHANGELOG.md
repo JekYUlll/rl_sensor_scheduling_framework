@@ -3505,3 +3505,20 @@ tar -czf "$OUT…`
   degraded steps. V169 raises degraded coverage from 0.25 to 0.31, the rounded
   ratio needed to restore the original integrated deficit. All other V168
   settings remain fixed, and fresh seeds are used before any policy training.
+
+## 2026-08-27 - Reject coverage-based severity compensation
+
+- V169 restores dynamic headroom: the receding diagnostic records `5/5`
+  ordinary and `4/5` scoreable macro wins over static, with mean margins
+  `+0.029862/+0.131290` and valid six-channel behavior in every seed. One-step
+  greedy remains below static on average.
+- The higher degradation coverage destroys online learnability. On validation-
+  only traces, no model reaches more than `3/5` positive-gain seeds; complete-
+  state regressors have negative mean gain, and the best alert-only mean gain
+  is only `+0.000626`. V169 is therefore rejected before PPO training.
+- V170 returns to V168's 0.25 coverage and transition timing, preserving the
+  more identifiable channel-state distribution. It compensates transition-
+  diluted physical severity through the observation model instead: maximum
+  noise amplification changes from 6.0 to 7.0 and the availability floor from
+  0.20 to 0.05. This is the bounded alternative to increasing simultaneous
+  degradation coverage; all other settings remain fixed on fresh seeds.
