@@ -3572,3 +3572,16 @@ tar -czf "$OUT…`
   coefficient increases from 0.5 to 1.0. This fourfold denser supervision is a
   bounded seed1701 test; reward, PPO objective, runtime inputs, and constraints
   remain unchanged.
+
+## 2026-08-27 - Reject dense soft targets and test standardized cost regression
+
+- V173 narrows seed1701's ordinary static deficit to `0.002844`, but the macro
+  deficit remains `0.052453` and one channel remains always off. Increasing the
+  label rate to 25% leaves auxiliary cross-entropy at `2.989`; the soft target
+  remains too close to uniform for accurate action ranking.
+- The existing MSE path uses per-state standardized negative horizon costs,
+  not raw unscaled costs. It therefore preserves relative action-value spacing
+  that soft probabilities compress. V174 changes only the forecast-value
+  auxiliary loss from soft cross-entropy to this standardized-cost regression,
+  retaining V173's label stride, coefficient, actor, PPO reward, and seed1701
+  gate.
