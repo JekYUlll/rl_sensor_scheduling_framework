@@ -3285,3 +3285,17 @@ tar -czf "$OUT…`
 - This separates horizon-matched dynamic headroom from myopic value. Added a
   reproducible V152 collector and authorized one bounded complete-PD-PPO pilot;
   no quality-specific reward, action prior, or heuristic imitation was added.
+## 2026-08-26 - Complete the first V153 quality-aware PD-PPO pilot
+
+- Seed 1601 completes with ordinary/macro margins versus the selected static
+  schedule of `+0.000872/+0.031229`. Deployment behavior passes with zero
+  always-on, one always-off, four mid-duty channels, nonzero switching, and no
+  warm-up aborts.
+- The pilot remains slightly behind AoI and round-robin in ordinary forecast
+  loss. Checkpoint traces show stable validation selection but weak mapping of
+  22 horizon-value action targets (14.8% pretraining top-1 accuracy and policy
+  entropy near the 22-action maximum).
+- Authorized the remaining four baseline seeds plus one bounded comparison
+  using the existing independent forecast-value head. The comparison preserves
+  the forecast reward, PPO objective, feasibility mask, and training-only
+  information boundary.
