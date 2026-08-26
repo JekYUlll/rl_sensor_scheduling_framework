@@ -1,0 +1,2 @@
+seed_count,greedy_ordinary_wins,greedy_macro_wins,greedy_mean_ordinary_margin,greedy_mean_macro_margin,receding_ordinary_wins,receding_macro_wins,receding_mean_ordinary_margin,receding_mean_macro_margin,receding_behavior_passes,horizon_matched_headroom_gate,myopic_headroom_gate
+5,0,1,-0.006547111825461305,-0.010674747400739948,5,5,0.026327487599984222,0.11019739559584818,5,True,False
