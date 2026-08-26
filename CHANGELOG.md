@@ -3488,3 +3488,20 @@ tar -czf "$OUT…`
   arbitrary-subset, reward, and common-random-number settings remain fixed.
   Policy training is blocked until receding headroom and online learnability
   are recomputed. The implementation passes the 137-test suite.
+
+## 2026-08-27 - Calibrate gradual-quality integrated severity
+
+- V168's eight-step quality transitions preserve macro dynamic value in `5/5`
+  seeds but produce only `3/5` ordinary-loss wins over static. Mean receding
+  margins are `+0.010567` ordinary and `+0.060221` macro, with valid six-channel
+  dynamic behavior in all seeds. The scene therefore fails the dual-endpoint
+  headroom gate and no PPO is trained on V168.
+- Gradual quality is more learnable from online state. A complete-state ridge
+  model fitted on policy-training plus validation traces has positive final
+  gain in `5/5` seeds and recovers 32.2% of receding gain on average. Complete-
+  state ExtraTrees also passes `5/5`, recovering 22.2%.
+- The transition reduced integrated degradation severity: for the mean 44-step
+  episode, two eight-step ramps are equivalent to about eight fewer fully
+  degraded steps. V169 raises degraded coverage from 0.25 to 0.31, the rounded
+  ratio needed to restore the original integrated deficit. All other V168
+  settings remain fixed, and fresh seeds are used before any policy training.
