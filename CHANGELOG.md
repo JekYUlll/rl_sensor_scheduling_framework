@@ -3347,3 +3347,17 @@ tar -czf "$OUT…`
   V159 therefore evaluates the same eight-step receding diagnostic on the
   validation partition. This distinguishes policy learnability from a missing
   model-selection signal before any further architecture change.
+## 2026-08-26 - Confirm validation headroom and revise supervision ranking
+
+- V159 evaluates the eight-step receding diagnostic on the validation
+  partition. It beats that partition's best static candidate in both endpoints
+  for all five seeds, with mean ordinary/macro margins
+  `+0.051181/+0.104938`; behavior passes `5/5`.
+- Dynamic value is therefore present in both validation and final partitions.
+  The remaining failure is the policy's mapping from horizon costs to ranked
+  actions. Full-vector squared-error supervision is not aligned with top-action
+  selection when many candidate costs are close.
+- V160--V161 use the existing soft forecast-value target with temperatures 0.25
+  and 0.5, respectively, while retaining context-dim 26 and behavior-valid
+  checkpoint selection. No new architecture, reward term, or information is
+  introduced.
