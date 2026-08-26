@@ -3440,3 +3440,16 @@ tar -czf "$OUT…`
 - The option preserves arbitrary feasible subsets, the forecast-loss reward,
   PPO updates, and hard feasibility masking. It is disabled by default and
   covered by the 136-test suite. V166 tests only seed1601 before replication.
+
+## 2026-08-26 - Reject additive quality scoring and retest corrected AWBC labels
+
+- V166 increases the selected-minus-unselected quality gap to `+0.177258` and
+  passes behavior, but loses ordinary/macro forecast loss to static by
+  `0.025820/0.066192`. A health-only additive preference cannot represent the
+  interaction between channel condition and forecast-task value, so it is not
+  replicated as the primary method.
+- V167 returns to the unchanged context26 actor and enables the framework's
+  existing on-policy oracle-guided AWBC at coefficient 0.1 and stride 4. This
+  is a bounded retest because previous oracle-action labels were generated
+  before CRN correction. Runtime inputs, reward, action space, and feasibility
+  rules are unchanged; replication again requires both endpoints and behavior.
