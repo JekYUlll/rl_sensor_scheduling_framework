@@ -457,6 +457,7 @@ def main() -> None:
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
     parser.add_argument("--out-dir", "--output-dir", dest="out_dir", default="reports/v2_custom_ppo_probe/budget1p70_seed41")
     parser.add_argument("--checkpoint-path", default=None)
+    parser.add_argument("--policy-init-source", default=None)
     parser.add_argument("--policy-checkpoint-source", default=None)
     parser.add_argument(
         "--evaluation-policy-mode",
@@ -1500,6 +1501,12 @@ def main() -> None:
             best_checkpoint_update = int(update_idx)
             best_checkpoint_state = copy.deepcopy(current_trainer.model.state_dict())
 
+    if args.policy_init_source and args.policy_checkpoint_source:
+        raise ValueError(
+            "--policy-init-source and --policy-checkpoint-source are mutually exclusive"
+        )
+    if args.policy_init_source:
+        trainer.load_policy_checkpoint(Path(args.policy_init_source))
     if args.policy_checkpoint_source:
         trainer.load_policy_checkpoint(Path(args.policy_checkpoint_source))
     else:
@@ -2006,6 +2013,7 @@ def main() -> None:
         "subtype_flux_target_weights": None if subtype_flux_target_weights is None else list(subtype_flux_target_weights),
         "subtype_thermal_target_weights": None if subtype_thermal_target_weights is None else list(subtype_thermal_target_weights),
         "model_path": str(model_path),
+        "policy_init_source": str(args.policy_init_source or ""),
         "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
         "evaluation_policy_mode": str(args.evaluation_policy_mode),
         "evaluation_sampling_seed": args.evaluation_sampling_seed,

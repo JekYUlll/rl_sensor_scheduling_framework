@@ -3174,3 +3174,16 @@ tar -czf "$OUT…`
   an independent candidate head at dwell-free decisions. V145 changes only the
   forecast head to independent candidate outputs; the PPO actor retains its
   compositional mask embedding and hard feasibility mask.
+
+### 2026-08-26 | V145 restores behavior but motivates multi-scene training
+
+- The independent candidate head removed always-on channels on seed1505 and
+  produced five mid-duty channels, one always-off channel, and a switching rate
+  of `0.010855` per step.
+- Forecast performance still trailed the validation-selected static subset by
+  `-0.021706/-0.067269` on ordinary/macro loss. Deployable TCN forecast
+  summaries also failed to improve cross-scene teacher-action prediction over
+  the existing online state.
+- Single-scene fitting is therefore the next controlled bottleneck. V146 carries
+  one policy through training scenes 1501--1504 and evaluates the frozen result
+  on held-out scene1505. No final-partition metric is used between stages.

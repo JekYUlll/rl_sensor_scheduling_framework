@@ -648,6 +648,7 @@ def main() -> None:
     parser.add_argument("--oracle-device", default="auto")
     parser.add_argument("--oracle-inference-device", default="cpu")
     parser.add_argument("--total-timesteps", type=int, default=100000)
+    parser.add_argument("--policy-init-source", default=None)
     parser.add_argument("--policy-checkpoint-source", default=None)
     parser.add_argument(
         "--evaluation-policy-mode",
@@ -1133,6 +1134,7 @@ def main() -> None:
         "ppo_controls": {
             "ent_coef": float(args.ent_coef),
             "channel_marginal_entropy_coef": float(args.channel_marginal_entropy_coef),
+            "policy_init_source": str(args.policy_init_source or ""),
             "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
             "evaluation_policy_mode": str(args.evaluation_policy_mode),
             "evaluation_sampling_seed": args.evaluation_sampling_seed,
@@ -1705,6 +1707,8 @@ def main() -> None:
         cmd.append("--use-oracle-candidate-prior")
     if bool(args.skip_rollout_evaluation):
         cmd.append("--skip-evaluation")
+    if args.policy_init_source:
+        cmd.extend(["--policy-init-source", str(args.policy_init_source)])
     if args.policy_checkpoint_source:
         cmd.extend(["--policy-checkpoint-source", str(args.policy_checkpoint_source)])
     cmd.extend(["--evaluation-policy-mode", str(args.evaluation_policy_mode)])
