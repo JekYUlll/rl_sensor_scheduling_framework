@@ -550,6 +550,29 @@ def test_aligned_quality_score_prefers_masks_with_healthier_channels() -> None:
     assert int(torch.argmax(logits, dim=1).item()) == 1
 
 
+def test_quality_context_score_downweights_degraded_channel() -> None:
+    actor = MaskedActor(
+        obs_dim=12,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        context_encoder_enabled=True,
+        context_feature_dim=5,
+        quality_context_action_score=True,
+        trainable_action_prior=False,
+    )
+    for parameter in actor.parameters():
+        parameter.data.zero_()
+    actor.quality_context_scale_raw.data.fill_(1.0)
+    obs = torch.zeros((1, 12), dtype=torch.float32)
+    obs[0, -5:-2] = torch.tensor([0.1, 0.9, 0.2])
+    masks = torch.eye(3, dtype=torch.float32)
+
+    logits = actor.logits(obs, masks)
+
+    assert int(torch.argmax(logits, dim=1).item()) == 1
+
+
 def test_awbc_loss_prefers_high_advantage_greedy_action() -> None:
     good_dist = torch.distributions.Categorical(logits=torch.tensor([[3.0, -1.0], [3.0, -1.0]]))
     bad_dist = torch.distributions.Categorical(logits=torch.tensor([[-1.0, 3.0], [-1.0, 3.0]]))

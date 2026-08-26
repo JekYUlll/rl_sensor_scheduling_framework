@@ -3538,3 +3538,21 @@ tar -czf "$OUT…`
   forecast-value pretraining and auxiliary loss, and behavior-valid checkpoint
   selection. AWBC, bandit priors, residual actions, aligned quality scoring,
   subtype labels, and extra reward terms remain disabled.
+
+## 2026-08-27 - Reject V171 and add task-conditioned channel utility
+
+- V171 does not convert V170's learnable headroom into policy performance. It
+  records `0/5` wins over static on both endpoints, with mean margins
+  `-0.026309/-0.092166`; only `2/5` seeds pass the behavior gate. Higher-quality
+  channels receive more duty on average, but this health preference is not
+  conditioned strongly enough on the current forecast task.
+- Added an optional task-conditioned channel-utility term to the masked actor.
+  Online alert features produce six nonnegative channel utilities, each utility
+  is modulated by its corresponding online quality value, and every arbitrary
+  candidate subset receives the mean utility of its selected channels. The
+  term is learned jointly with the existing PPO actor and is disabled by
+  default.
+- V172 is a bounded seed1701 pilot on the frozen V170 scene. It changes only
+  this actor representation. Reward, forecast-value supervision, runtime
+  information, action geometry, feasibility masking, and checkpoint rules are
+  unchanged; replication requires both static margins and valid behavior.

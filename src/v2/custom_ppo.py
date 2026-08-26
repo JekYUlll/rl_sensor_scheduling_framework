@@ -170,6 +170,7 @@ class CustomPPOConfig:
     context_fusion_mode: str = "concat"
     context_layer_norm: bool = False
     aligned_quality_action_score: bool = False
+    quality_context_action_score: bool = False
     temporal_encoder_enabled: bool = False
     temporal_history_steps: int = 0
     temporal_state_dim: int = 0
@@ -249,6 +250,7 @@ class MaskedActor:
         context_fusion_mode: str = "concat",
         context_layer_norm: bool = False,
         aligned_quality_action_score: bool = False,
+        quality_context_action_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -280,13 +282,35 @@ class MaskedActor:
                 )
                 main_obs_dim = int(obs_dim) - int(self.context_feature_dim)
                 self.aligned_quality_action_score = bool(aligned_quality_action_score)
-                if self.aligned_quality_action_score and self.context_feature_dim < int(n_sensors):
+                self.quality_context_action_score = bool(quality_context_action_score)
+                if (
+                    self.aligned_quality_action_score or self.quality_context_action_score
+                ) and self.context_feature_dim < int(n_sensors):
                     raise ValueError(
-                        "aligned quality action scoring requires one leading context feature per sensor"
+                        "quality action scoring requires one leading context feature per sensor"
+                    )
+                if self.quality_context_action_score and self.context_feature_dim <= int(n_sensors):
+                    raise ValueError(
+                        "quality-context action scoring requires context features after channel quality"
                     )
                 self.quality_action_scale_raw = (
                     nn.Parameter(torch.tensor(1.0, dtype=torch.float32))
                     if self.aligned_quality_action_score
+                    else None
+                )
+                self.quality_context_encoder = (
+                    nn.Sequential(
+                        nn.Linear(self.context_feature_dim - int(n_sensors), int(context_hidden_dim)),
+                        nn.GELU(),
+                        nn.Linear(int(context_hidden_dim), int(n_sensors)),
+                        nn.Softplus(),
+                    )
+                    if self.quality_context_action_score
+                    else None
+                )
+                self.quality_context_scale_raw = (
+                    nn.Parameter(torch.tensor(1.0, dtype=torch.float32))
+                    if self.quality_context_action_score
                     else None
                 )
                 self.temporal_history_steps = (
@@ -552,6 +576,18 @@ class MaskedActor:
                     selected_quality = quality @ masks.transpose(0, 1) / selected_count.reshape(1, -1)
                     scale = torch.nn.functional.softplus(self.quality_action_scale_raw)
                     logits = logits + scale * selected_quality
+                if self.quality_context_encoder is not None:
+                    _, context_obs = self._split_obs(obs)
+                    quality = context_obs[:, : int(n_sensors)].clamp(0.0, 1.0)
+                    alert_context = context_obs[:, int(n_sensors) :]
+                    channel_utility = quality * self.quality_context_encoder(alert_context)
+                    masks = candidate_masks.float()
+                    selected_count = masks.sum(dim=1).clamp_min(1.0)
+                    candidate_utility = (
+                        channel_utility @ masks.transpose(0, 1) / selected_count.reshape(1, -1)
+                    )
+                    scale = torch.nn.functional.softplus(self.quality_context_scale_raw)
+                    logits = logits + scale * candidate_utility
                 if self.action_prior is not None:
                     logits = logits + self.action_prior.reshape(1, -1)
                 if self.forecast_value_head_enabled:
@@ -656,6 +692,7 @@ class ActorCritic:
         context_fusion_mode: str = "concat",
         context_layer_norm: bool = False,
         aligned_quality_action_score: bool = False,
+        quality_context_action_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -688,6 +725,7 @@ class ActorCritic:
                     context_fusion_mode=str(context_fusion_mode),
                     context_layer_norm=bool(context_layer_norm),
                     aligned_quality_action_score=bool(aligned_quality_action_score),
+                    quality_context_action_score=bool(quality_context_action_score),
                     temporal_encoder_enabled=bool(temporal_encoder_enabled),
                     temporal_history_steps=int(temporal_history_steps),
                     temporal_state_dim=int(temporal_state_dim),
@@ -809,6 +847,7 @@ class CustomPPO:
             context_fusion_mode=str(cfg.context_fusion_mode),
             context_layer_norm=bool(cfg.context_layer_norm),
             aligned_quality_action_score=bool(cfg.aligned_quality_action_score),
+            quality_context_action_score=bool(cfg.quality_context_action_score),
             temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
             temporal_history_steps=int(self.env_cfg.lookback),
             temporal_state_dim=len(self.env_cfg.state_columns),

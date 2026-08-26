@@ -150,6 +150,10 @@ QUALITY_SCORE_ARGS=(--no-aligned-quality-action-score)
 if [[ "$ALIGNED_QUALITY_ACTION_SCORE" == "1" ]]; then
   QUALITY_SCORE_ARGS=(--aligned-quality-action-score)
 fi
+QUALITY_CONTEXT_SCORE_ARGS=(--no-quality-context-action-score)
+if [[ "${QUALITY_CONTEXT_ACTION_SCORE:-0}" == "1" ]]; then
+  QUALITY_CONTEXT_SCORE_ARGS=(--quality-context-action-score)
+fi
 
 if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
@@ -359,6 +363,7 @@ for seed in "${SEEDS[@]}"; do
     --context-fusion-mode "$CONTEXT_FUSION_MODE" \
     --context-layer-norm \
     "${QUALITY_SCORE_ARGS[@]}" \
+    "${QUALITY_CONTEXT_SCORE_ARGS[@]}" \
     "${TEMPORAL_ARGS[@]}" \
     --temporal-hidden-dim "$TEMPORAL_HIDDEN_DIM" \
     --include-alert-context-features \
