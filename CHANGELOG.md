@@ -3453,3 +3453,21 @@ tar -czf "$OUT…`
   is a bounded retest because previous oracle-action labels were generated
   before CRN correction. Runtime inputs, reward, action space, and feasibility
   rules are unchanged; replication again requires both endpoints and behavior.
+
+## 2026-08-27 - Reject corrected oracle-guided AWBC
+
+- V167 completes the bounded seed1601 retest under common random numbers. It
+  loses to the validation-selected static schedule by `0.034277` ordinary loss
+  and `0.090708` macro loss. It also loses to the best conventional dynamic
+  schedule by `0.012748` and to the eight-step receding diagnostic by
+  `0.023669/0.067354` on the two endpoints.
+- The rollout has zero warm-up aborts and nonzero switching, but one channel is
+  always off (`0/1/5` always-on/always-off/intermediate-duty channels). Its
+  selected-minus-unselected quality gap is only `+0.088604`, below the rejected
+  aligned-score pilot despite the added supervision.
+- The corrected teacher labels therefore do not rescue the existing AWBC
+  pathway. V167 is not replicated, and bandit- or teacher-dependent residual
+  modules remain excluded from the primary method. The next clean direction
+  must model the interaction between channel condition and forecast-task
+  context, or make quality transitions causally predictable from online
+  diagnostics, while preserving arbitrary feasible subsets.
