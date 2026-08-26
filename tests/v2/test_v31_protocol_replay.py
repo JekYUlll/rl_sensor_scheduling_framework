@@ -3,6 +3,8 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+import numpy as np
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -131,6 +133,7 @@ def test_channel_quality_generation_is_deterministic_and_bounded() -> None:
         max_duration=16,
         min_gap=4,
         degraded_quality=0.2,
+        transition_steps=0,
         report_noise_std=0.0,
     )
     first = module.add_channel_quality_dynamics(frame, **kwargs)
@@ -140,6 +143,29 @@ def test_channel_quality_generation_is_deterministic_and_bounded() -> None:
     assert first["agent_context_quality_a"].between(0.2, 1.0).all()
     assert (first["agent_context_quality_a"] < 1.0).any()
     assert not first["agent_context_quality_a"].equals(first["agent_context_quality_b"])
+
+
+def test_channel_quality_transition_is_gradual() -> None:
+    module = _load_script("20_build_public_weather_truth.py")
+    import pandas as pd
+
+    frame = pd.DataFrame({"x": range(240)})
+    out = module.add_channel_quality_dynamics(
+        frame,
+        sensor_ids=("a",),
+        seed=29,
+        coverage=0.2,
+        min_duration=24,
+        max_duration=24,
+        min_gap=8,
+        degraded_quality=0.2,
+        transition_steps=6,
+        report_noise_std=0.0,
+    )
+    quality = out["agent_context_quality_a"].to_numpy()
+
+    assert np.any((quality > 0.2) & (quality < 1.0))
+    assert np.max(np.abs(np.diff(quality))) < 0.8
 
 
 def test_receding_diagnostic_propagates_frozen_sensor_quality_config() -> None:

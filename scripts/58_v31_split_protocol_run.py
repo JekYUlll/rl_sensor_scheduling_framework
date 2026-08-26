@@ -170,6 +170,8 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(int(args.channel_quality_min_gap_steps)),
         "--channel-quality-degraded-value",
         str(float(args.channel_quality_degraded_value)),
+        "--channel-quality-transition-steps",
+        str(int(args.channel_quality_transition_steps)),
         "--channel-quality-report-noise-std",
         str(float(args.channel_quality_report_noise_std)),
         "--out",
@@ -653,6 +655,7 @@ def main() -> None:
     parser.add_argument("--channel-quality-max-duration-steps", type=int, default=48)
     parser.add_argument("--channel-quality-min-gap-steps", type=int, default=12)
     parser.add_argument("--channel-quality-degraded-value", type=float, default=0.2)
+    parser.add_argument("--channel-quality-transition-steps", type=int, default=0)
     parser.add_argument("--channel-quality-report-noise-std", type=float, default=0.02)
     parser.add_argument("--exclude-subtype-latents-from-state", action="store_true")
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
@@ -1099,6 +1102,7 @@ def main() -> None:
             "channel_quality_sensor_ids": [str(x) for x in (args.channel_quality_sensor_ids or ())],
             "channel_quality_degraded_coverage": float(args.channel_quality_degraded_coverage),
             "channel_quality_degraded_value": float(args.channel_quality_degraded_value),
+            "channel_quality_transition_steps": int(args.channel_quality_transition_steps),
         },
         "agent_context_columns": [str(x) for x in (args.agent_context_columns or ())],
         "sensor_quality_columns": [str(x) for x in (args.sensor_quality_columns or ())],
@@ -1388,6 +1392,8 @@ def main() -> None:
         str(int(args.channel_quality_min_gap_steps)),
         "--channel-quality-degraded-value",
         str(float(args.channel_quality_degraded_value)),
+        "--channel-quality-transition-steps",
+        str(int(args.channel_quality_transition_steps)),
         "--channel-quality-report-noise-std",
         str(float(args.channel_quality_report_noise_std)),
         "--sensor-quality-max-noise-multiplier",

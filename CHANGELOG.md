@@ -3471,3 +3471,20 @@ tar -czf "$OUT…`
   must model the interaction between channel condition and forecast-task
   context, or make quality transitions causally predictable from online
   diagnostics, while preserving arbitrary feasible subsets.
+
+## 2026-08-27 - Launch gradual channel-quality gate
+
+- The quality generator previously changed each channel directly between full
+  and degraded quality. This made degradation onset invisible to an online
+  scheduler before the first affected observation, while the receding
+  diagnostic could inspect the future quality path.
+- Added a default-off transition interval that linearly decreases and restores
+  channel quality around a degraded plateau. It models a progressive
+  self-diagnostic change without exposing future labels or changing the policy
+  input contract. The option is recorded in truth metadata and propagated
+  through the split protocol and training manifest.
+- V168 evaluates five fresh seeds with an eight-step transition, 24--64-step
+  quality episodes, and a 16-step minimum gap. All weather, event, cost,
+  arbitrary-subset, reward, and common-random-number settings remain fixed.
+  Policy training is blocked until receding headroom and online learnability
+  are recomputed. The implementation passes the 137-test suite.

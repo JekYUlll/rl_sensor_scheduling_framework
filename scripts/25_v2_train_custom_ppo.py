@@ -471,6 +471,7 @@ def main() -> None:
     parser.add_argument("--channel-quality-max-duration-steps", type=int, default=48)
     parser.add_argument("--channel-quality-min-gap-steps", type=int, default=12)
     parser.add_argument("--channel-quality-degraded-value", type=float, default=0.2)
+    parser.add_argument("--channel-quality-transition-steps", type=int, default=0)
     parser.add_argument("--channel-quality-report-noise-std", type=float, default=0.02)
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
     parser.add_argument("--out-dir", "--output-dir", dest="out_dir", default="reports/v2_custom_ppo_probe/budget1p70_seed41")
@@ -2315,6 +2316,7 @@ def main() -> None:
             "truth_generation_enabled": bool(args.channel_quality_enabled),
             "degraded_coverage": float(args.channel_quality_degraded_coverage),
             "degraded_value": float(args.channel_quality_degraded_value),
+            "transition_steps": int(args.channel_quality_transition_steps),
         },
         "agent_alert_context": {
             "include_event_flag_in_state": bool(args.include_event_flag_in_state),

@@ -34,6 +34,7 @@ def add_channel_quality_dynamics(
     max_duration: int,
     min_gap: int,
     degraded_quality: float,
+    transition_steps: int,
     report_noise_std: float,
 ):
     """Add slow self-diagnostic quality signals independently of event labels."""
@@ -44,6 +45,7 @@ def add_channel_quality_dynamics(
     min_len = max(1, int(min_duration))
     max_len = max(min_len, int(max_duration))
     gap = max(0, int(min_gap))
+    transition = max(0, int(transition_steps))
     for sensor_idx, sensor_id in enumerate(sensor_ids):
         rng = np.random.default_rng(int(seed) + 70001 + 1009 * sensor_idx)
         quality = np.ones(steps, dtype=float)
@@ -59,6 +61,12 @@ def add_channel_quality_dynamics(
             if np.any(quality[left:right] < 1.0):
                 continue
             quality[start:end] = low
+            ramp = min(transition, max(0, (end - start) // 2))
+            if ramp > 0:
+                down = np.linspace(1.0, low, ramp + 2, dtype=float)[1:-1]
+                up = np.linspace(low, 1.0, ramp + 2, dtype=float)[1:-1]
+                quality[start : start + ramp] = down
+                quality[end - ramp : end] = up
             occupied += end - start
         if float(report_noise_std) > 0.0:
             quality = quality + rng.normal(0.0, float(report_noise_std), size=steps)
@@ -125,6 +133,7 @@ def main() -> None:
     parser.add_argument("--channel-quality-max-duration-steps", type=int, default=48)
     parser.add_argument("--channel-quality-min-gap-steps", type=int, default=12)
     parser.add_argument("--channel-quality-degraded-value", type=float, default=0.2)
+    parser.add_argument("--channel-quality-transition-steps", type=int, default=0)
     parser.add_argument("--channel-quality-report-noise-std", type=float, default=0.02)
     parser.add_argument("--out", default="data/generated/public_weather_truth.csv")
     parser.add_argument("--report-dir", default="reports/datasets/public_weather_truth")
@@ -201,6 +210,7 @@ def main() -> None:
             max_duration=int(args.channel_quality_max_duration_steps),
             min_gap=int(args.channel_quality_min_gap_steps),
             degraded_quality=float(args.channel_quality_degraded_value),
+            transition_steps=int(args.channel_quality_transition_steps),
             report_noise_std=float(args.channel_quality_report_noise_std),
         )
         meta["channel_quality"] = {
@@ -211,6 +221,7 @@ def main() -> None:
             "max_duration_steps": int(args.channel_quality_max_duration_steps),
             "min_gap_steps": int(args.channel_quality_min_gap_steps),
             "degraded_value": float(args.channel_quality_degraded_value),
+            "transition_steps": int(args.channel_quality_transition_steps),
             "report_noise_std": float(args.channel_quality_report_noise_std),
         }
 
