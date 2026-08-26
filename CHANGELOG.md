@@ -3314,3 +3314,17 @@ tar -czf "$OUT…`
   only the 20 alert features. A bounded representation wave now tests a
   26-feature quality-plus-alert context tail with three existing supervision
   forms; no new reward or baseline-dependent module is introduced.
+## 2026-08-26 - Select the quality-context representation for behavior audit
+
+- V155, which places six quality signals beside the 20 alert features in the
+  dedicated context encoder, is the only bounded seed1601 variant to improve
+  both endpoints over static (`+0.008424/+0.055835`) and ordinary loss over the
+  best conventional dynamic (`+0.002307`).
+- The independent forecast-value head and hard-classification variants are
+  rejected because their ordinary margins remain negative. V155 itself is not
+  accepted because the prediction-only selector chose a checkpoint with three
+  always-off channels.
+- The V155 validation ledger contains one behavior-valid checkpoint at update15.
+  V158 repeats the identical deterministic training with the previously frozen
+  behavior-valid checkpoint constraint; this tests selection transfer without
+  adding a loss, guard, or action prior.
