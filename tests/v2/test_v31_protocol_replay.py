@@ -99,3 +99,20 @@ def test_flexible_behavior_gate_preserves_frozen_six_channel_rule() -> None:
     assert not module.flexible_six_channel_behavior_valid(
         {**valid, "warmup_abort_count": 1}
     )
+
+
+def test_multiscene_collector_uses_same_behavior_gate() -> None:
+    module = _load_script("102_v32_collect_multiscene_loo.py")
+    import pandas as pd
+
+    valid = pd.Series({
+        "always_on_sensor_count": 0,
+        "always_off_sensor_count": 1,
+        "switches_per_step": 0.01,
+        "warmup_abort_count": 0,
+    })
+    invalid = valid.copy()
+    invalid["always_off_sensor_count"] = 2
+
+    assert module.behavior_valid(valid)
+    assert not module.behavior_valid(invalid)

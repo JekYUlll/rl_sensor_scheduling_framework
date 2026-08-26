@@ -8,8 +8,9 @@ read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1501 1502 1503 1504 1505}"
 read -r -a GPU_LIST <<< "${GPU_IDS:-0 1 2 3 4}"
 SCENE_PREFIX="${SCENE_PREFIX_OVERRIDE:-v138_generic_physical_statefix_gate_dev}"
 RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v139_generic_physical_pdppo_dev}"
+LOG_DIR="${LOG_DIR_OVERRIDE:-logs/v139_generic_physical_pdppo}"
 SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml
-mkdir -p logs/v139_generic_physical_pdppo
+mkdir -p "$LOG_DIR"
 pids=()
 
 for i in "${!SEEDS[@]}"; do
@@ -63,7 +64,7 @@ for i in "${!SEEDS[@]}"; do
     export CHECKPOINT_REQUIRE_VALID_BEHAVIOR="${CHECKPOINT_REQUIRE_VALID_BEHAVIOR_OVERRIDE:-0}"
     export EVALUATION_POLICY_MODE=deterministic
     bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
-  ) >"logs/v139_generic_physical_pdppo/seed${seed}.log" 2>&1 &
+  ) >"${LOG_DIR}/seed${seed}.log" 2>&1 &
   pids+=("$!")
 done
 

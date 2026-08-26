@@ -3232,3 +3232,17 @@ tar -czf "$OUT…`
   selects checkpoints lexicographically by the number of validation scenes
   failing the predeclared behavior gate and then by the existing two-endpoint
   static-ratio score.
+
+### 2026-08-26 | V150 rejects behavior-aware selection as a transfer repair
+
+- Behavior-aware validation selected update 15, which passed the frozen gate
+  on all four training-scene validation sets with score `1.035765`.
+- On held-out scene1505, the selected policy lost to static by
+  `-0.017231/-0.062708` on ordinary/macro loss. It retained a
+  `+0.016197` ordinary margin over the best conventional dynamic schedule.
+- Held-out execution had one always-on and three always-off channels, two
+  mid-duty channels, `0.004632` switches per step, and zero aborts. Sparse
+  validation behavior therefore does not transfer reliably across scenes.
+- No threshold or held-out-specific tuning is authorized. V151 runs all five
+  leave-one-scene-out folds under the identical behavior-aware protocol to
+  measure whether multi-scene transfer is reproducible before fresh evaluation.
