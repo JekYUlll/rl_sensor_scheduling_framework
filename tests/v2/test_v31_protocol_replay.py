@@ -140,3 +140,27 @@ def test_channel_quality_generation_is_deterministic_and_bounded() -> None:
     assert first["agent_context_quality_a"].between(0.2, 1.0).all()
     assert (first["agent_context_quality_a"] < 1.0).any()
     assert not first["agent_context_quality_a"].equals(first["agent_context_quality_b"])
+
+
+def test_receding_diagnostic_propagates_frozen_sensor_quality_config() -> None:
+    module = _load_script("99_v32_receding_upper.py")
+    command = ["python", "diagnostic.py"]
+    metadata = {
+        "sensor_quality": {
+            "columns": ["quality_a", "quality_b"],
+            "max_noise_multiplier": 6.0,
+            "availability_floor": 0.2,
+        }
+    }
+
+    module.append_sensor_quality_args(command, metadata)
+
+    assert command[-7:] == [
+        "--sensor-quality-columns",
+        "quality_a",
+        "quality_b",
+        "--sensor-quality-max-noise-multiplier",
+        "6.0",
+        "--sensor-quality-availability-floor",
+        "0.2",
+    ]

@@ -10,6 +10,20 @@ import sys
 from pathlib import Path
 
 
+def append_sensor_quality_args(command: list[str], metadata: dict[str, object]) -> None:
+    quality = dict(metadata.get("sensor_quality") or {})
+    quality_columns = list(quality.get("columns") or [])
+    if not quality_columns:
+        return
+    command.extend(["--sensor-quality-columns", *map(str, quality_columns)])
+    command.extend([
+        "--sensor-quality-max-noise-multiplier",
+        str(quality.get("max_noise_multiplier", 1.0)),
+        "--sensor-quality-availability-floor",
+        str(quality.get("availability_floor", 1.0)),
+    ])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", required=True, type=Path)
@@ -66,6 +80,7 @@ def main() -> None:
     ]
     if metadata.get("state_columns"):
         command.extend(["--state-columns", *map(str, metadata["state_columns"])])
+    append_sensor_quality_args(command, metadata)
     subprocess.run(command, cwd=root, check=True)
 
 

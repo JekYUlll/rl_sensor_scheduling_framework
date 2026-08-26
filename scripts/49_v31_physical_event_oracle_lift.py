@@ -88,23 +88,10 @@ def evaluate_candidate_masks(
                 truth,
                 sensors,
                 constraints,
-                WarmupEnvConfig(
-                    state_columns=cfg.state_columns,
-                    reward_target_columns=cfg.reward_target_columns,
-                    lookback=cfg.lookback,
+                replace(
+                    cfg,
                     episode_len=int(steps),
                     seed=int(cfg.seed) + int(offset) + 51_000,
-                    base_freq_s=cfg.base_freq_s,
-                    event_column=cfg.event_column,
-                    normalize_agent_state=cfg.normalize_agent_state,
-                    lambda_warmup_abort=cfg.lambda_warmup_abort,
-                    lambda_switch=cfg.lambda_switch,
-                    energy_account_enabled=cfg.energy_account_enabled,
-                    energy_capacity=cfg.energy_capacity,
-                    initial_energy=cfg.initial_energy,
-                    harvest_per_step=cfg.harvest_per_step,
-                    reserve_energy=cfg.reserve_energy,
-                    lambda_energy_deficit=cfg.lambda_energy_deficit,
                 ),
                 oracle=oracle,
             )
@@ -321,23 +308,10 @@ def _cyclic_schedule_rows(
                 truth,
                 sensors,
                 constraints,
-                WarmupEnvConfig(
-                    state_columns=cfg.state_columns,
-                    reward_target_columns=cfg.reward_target_columns,
-                    lookback=cfg.lookback,
+                replace(
+                    cfg,
                     episode_len=int(steps),
                     seed=int(cfg.seed) + int(offset) + 81_000,
-                    base_freq_s=cfg.base_freq_s,
-                    event_column=cfg.event_column,
-                    normalize_agent_state=cfg.normalize_agent_state,
-                    lambda_warmup_abort=cfg.lambda_warmup_abort,
-                    lambda_switch=cfg.lambda_switch,
-                    energy_account_enabled=cfg.energy_account_enabled,
-                    energy_capacity=cfg.energy_capacity,
-                    initial_energy=cfg.initial_energy,
-                    harvest_per_step=cfg.harvest_per_step,
-                    reserve_energy=cfg.reserve_energy,
-                    lambda_energy_deficit=cfg.lambda_energy_deficit,
                 ),
                 oracle=oracle,
             )
@@ -799,23 +773,10 @@ def _subtype_schedule_rows(
                 truth,
                 sensors,
                 constraints,
-                WarmupEnvConfig(
-                    state_columns=cfg.state_columns,
-                    reward_target_columns=cfg.reward_target_columns,
-                    lookback=cfg.lookback,
+                replace(
+                    cfg,
                     episode_len=int(steps),
                     seed=int(cfg.seed) + int(offset) + 91_000,
-                    base_freq_s=cfg.base_freq_s,
-                    event_column=cfg.event_column,
-                    normalize_agent_state=cfg.normalize_agent_state,
-                    lambda_warmup_abort=cfg.lambda_warmup_abort,
-                    lambda_switch=cfg.lambda_switch,
-                    energy_account_enabled=cfg.energy_account_enabled,
-                    energy_capacity=cfg.energy_capacity,
-                    initial_energy=cfg.initial_energy,
-                    harvest_per_step=cfg.harvest_per_step,
-                    reserve_energy=cfg.reserve_energy,
-                    lambda_energy_deficit=cfg.lambda_energy_deficit,
                 ),
                 oracle=oracle,
             )
@@ -1070,23 +1031,10 @@ def _schedule_rows(
                 truth,
                 sensors,
                 constraints,
-                WarmupEnvConfig(
-                    state_columns=cfg.state_columns,
-                    reward_target_columns=cfg.reward_target_columns,
-                    lookback=cfg.lookback,
+                replace(
+                    cfg,
                     episode_len=int(steps),
                     seed=int(cfg.seed) + int(offset) + 71_000,
-                    base_freq_s=cfg.base_freq_s,
-                    event_column=cfg.event_column,
-                    normalize_agent_state=cfg.normalize_agent_state,
-                    lambda_warmup_abort=cfg.lambda_warmup_abort,
-                    lambda_switch=cfg.lambda_switch,
-                    energy_account_enabled=cfg.energy_account_enabled,
-                    energy_capacity=cfg.energy_capacity,
-                    initial_energy=cfg.initial_energy,
-                    harvest_per_step=cfg.harvest_per_step,
-                    reserve_energy=cfg.reserve_energy,
-                    lambda_energy_deficit=cfg.lambda_energy_deficit,
                 ),
                 oracle=oracle,
             )
@@ -1339,6 +1287,9 @@ def main() -> None:
     parser.add_argument("--eval-rollouts", type=int, default=4)
     parser.add_argument("--eval-event-fraction", type=float, default=0.67)
     parser.add_argument("--env-min-dwell-steps", type=int, default=1)
+    parser.add_argument("--sensor-quality-columns", nargs="*", default=[])
+    parser.add_argument("--sensor-quality-max-noise-multiplier", type=float, default=1.0)
+    parser.add_argument("--sensor-quality-availability-floor", type=float, default=1.0)
     parser.add_argument(
         "--eval-start-selection",
         choices=["event_fraction", "event_rich", "event_transport_rich"],
@@ -1475,6 +1426,9 @@ def main() -> None:
         reserve_energy=float(args.reserve_energy),
         lambda_energy_deficit=float(args.lambda_energy_deficit),
         min_dwell_steps=int(max(1, int(args.env_min_dwell_steps))),
+        sensor_quality_columns=tuple(str(col) for col in args.sensor_quality_columns),
+        sensor_quality_max_noise_multiplier=float(args.sensor_quality_max_noise_multiplier),
+        sensor_quality_availability_floor=float(args.sensor_quality_availability_floor),
     )
     table = evaluate_candidate_masks(
         truth=truth,

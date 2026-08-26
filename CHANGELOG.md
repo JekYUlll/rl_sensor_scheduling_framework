@@ -3261,3 +3261,15 @@ tar -czf "$OUT…`
 - The next scene must expose dynamic value through physically available online
   signals. Sensor self-diagnostic quality and condition-dependent reliability
   will be screened before any further PPO training.
+## 2026-08-26 - Preserve sensor-quality configuration in receding diagnostics
+
+- Stopped the first V152 receding-oracle wave after auditing its command line:
+  the generic diagnostic environment had silently fallen back to unit sensor
+  quality even though the frozen runs contained online quality signals.
+- Replaced four partial `WarmupEnvConfig` reconstructions with dataclass copies,
+  so every environment field is preserved while only the rollout seed and
+  length change.
+- Propagated frozen quality columns, noise scaling, and availability scaling
+  from run metadata into the receding diagnostic. The complete 133-test suite
+  passes. The invalid receding outputs were incomplete and are excluded; the
+  completed V152 scene and one-step baseline artifacts remain valid.
