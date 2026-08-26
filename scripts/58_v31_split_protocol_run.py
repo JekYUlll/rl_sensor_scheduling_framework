@@ -160,6 +160,18 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(float(args.event_subtype_context_noise_std)),
         "--event-subtype-context-latent-strength",
         str(float(args.event_subtype_context_latent_strength)),
+        "--channel-quality-degraded-coverage",
+        str(float(args.channel_quality_degraded_coverage)),
+        "--channel-quality-min-duration-steps",
+        str(int(args.channel_quality_min_duration_steps)),
+        "--channel-quality-max-duration-steps",
+        str(int(args.channel_quality_max_duration_steps)),
+        "--channel-quality-min-gap-steps",
+        str(int(args.channel_quality_min_gap_steps)),
+        "--channel-quality-degraded-value",
+        str(float(args.channel_quality_degraded_value)),
+        "--channel-quality-report-noise-std",
+        str(float(args.channel_quality_report_noise_std)),
         "--out",
         str(truth_path),
         "--report-dir",
@@ -167,6 +179,10 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
     ]
     if bool(args.event_subtypes_enabled):
         cmd.append("--event-subtypes-enabled")
+    if bool(args.channel_quality_enabled):
+        cmd.append("--channel-quality-enabled")
+        if args.channel_quality_sensor_ids:
+            cmd.extend(["--channel-quality-sensor-ids", *[str(x) for x in args.channel_quality_sensor_ids]])
     subprocess.run(cmd, check=True)
     return truth_path
 
@@ -630,6 +646,14 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
+    parser.add_argument("--channel-quality-enabled", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--channel-quality-sensor-ids", nargs="*", default=None)
+    parser.add_argument("--channel-quality-degraded-coverage", type=float, default=0.0)
+    parser.add_argument("--channel-quality-min-duration-steps", type=int, default=12)
+    parser.add_argument("--channel-quality-max-duration-steps", type=int, default=48)
+    parser.add_argument("--channel-quality-min-gap-steps", type=int, default=12)
+    parser.add_argument("--channel-quality-degraded-value", type=float, default=0.2)
+    parser.add_argument("--channel-quality-report-noise-std", type=float, default=0.02)
     parser.add_argument("--exclude-subtype-latents-from-state", action="store_true")
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
@@ -867,6 +891,9 @@ def main() -> None:
     parser.add_argument("--include-observable-regime-belief", action="store_true")
     parser.add_argument("--regime-belief-lookback", type=int, default=6)
     parser.add_argument("--agent-context-columns", nargs="*", default=None)
+    parser.add_argument("--sensor-quality-columns", nargs="*", default=None)
+    parser.add_argument("--sensor-quality-max-noise-multiplier", type=float, default=1.0)
+    parser.add_argument("--sensor-quality-availability-floor", type=float, default=1.0)
     parser.add_argument("--include-event-flag-in-state", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--include-alert-context-features", action="store_true")
     parser.add_argument("--alert-context-columns", nargs="*", default=None)
@@ -1066,8 +1093,13 @@ def main() -> None:
             "event_subtype_context_lead_steps": int(args.event_subtype_context_lead_steps),
             "event_subtype_context_noise_std": float(args.event_subtype_context_noise_std),
             "event_subtype_context_latent_strength": float(args.event_subtype_context_latent_strength),
+            "channel_quality_enabled": bool(args.channel_quality_enabled),
+            "channel_quality_sensor_ids": [str(x) for x in (args.channel_quality_sensor_ids or ())],
+            "channel_quality_degraded_coverage": float(args.channel_quality_degraded_coverage),
+            "channel_quality_degraded_value": float(args.channel_quality_degraded_value),
         },
         "agent_context_columns": [str(x) for x in (args.agent_context_columns or ())],
+        "sensor_quality_columns": [str(x) for x in (args.sensor_quality_columns or ())],
         "primary_eval_duty_guard": bool(args.primary_eval_duty_guard),
         "oracle_pretrain": {"range": list(bounds["oracle_pretrain"])},
         "rl_train": {
@@ -1344,6 +1376,22 @@ def main() -> None:
         str(float(args.event_subtype_context_noise_std)),
         "--event-subtype-context-latent-strength",
         str(float(args.event_subtype_context_latent_strength)),
+        "--channel-quality-degraded-coverage",
+        str(float(args.channel_quality_degraded_coverage)),
+        "--channel-quality-min-duration-steps",
+        str(int(args.channel_quality_min_duration_steps)),
+        "--channel-quality-max-duration-steps",
+        str(int(args.channel_quality_max_duration_steps)),
+        "--channel-quality-min-gap-steps",
+        str(int(args.channel_quality_min_gap_steps)),
+        "--channel-quality-degraded-value",
+        str(float(args.channel_quality_degraded_value)),
+        "--channel-quality-report-noise-std",
+        str(float(args.channel_quality_report_noise_std)),
+        "--sensor-quality-max-noise-multiplier",
+        str(float(args.sensor_quality_max_noise_multiplier)),
+        "--sensor-quality-availability-floor",
+        str(float(args.sensor_quality_availability_floor)),
         "--oracle-type",
         str(args.oracle_type),
         "--oracle-rollout-steps",
@@ -1699,6 +1747,18 @@ def main() -> None:
         "--agent-context-columns",
         None if args.agent_context_columns is None else [str(x) for x in args.agent_context_columns],
     )
+    append_option(
+        cmd,
+        "--channel-quality-sensor-ids",
+        None if args.channel_quality_sensor_ids is None else [str(x) for x in args.channel_quality_sensor_ids],
+    )
+    append_option(
+        cmd,
+        "--sensor-quality-columns",
+        None if args.sensor_quality_columns is None else [str(x) for x in args.sensor_quality_columns],
+    )
+    if bool(args.channel_quality_enabled):
+        cmd.append("--channel-quality-enabled")
     append_option(
         cmd,
         "--alert-context-columns",

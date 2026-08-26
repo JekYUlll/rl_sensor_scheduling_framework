@@ -72,6 +72,9 @@ class WarmupEnvConfig:
     uncertainty_initial_variance: float = 1.0
     uncertainty_max_variance: float = 25.0
     measurement_update_mode: str = "direct"
+    sensor_quality_columns: tuple[str, ...] = ()
+    sensor_quality_max_noise_multiplier: float = 1.0
+    sensor_quality_availability_floor: float = 1.0
 
 
 class WarmupSchedulingEnv:
@@ -98,6 +101,11 @@ class WarmupSchedulingEnv:
         ]
         if missing_alert_context:
             raise ValueError(f"truth_df is missing alert context columns: {missing_alert_context}")
+        if cfg.sensor_quality_columns and len(cfg.sensor_quality_columns) != len(sensor_specs):
+            raise ValueError("sensor_quality_columns must contain one column per sensor")
+        missing_quality = [col for col in cfg.sensor_quality_columns if col not in truth_df.columns]
+        if missing_quality:
+            raise ValueError(f"truth_df is missing sensor quality columns: {missing_quality}")
         self.truth_df = truth_df.reset_index(drop=True)
         self.sensor_specs = list(sensor_specs)
         self.sensor_ids = tuple(spec.sensor_id for spec in self.sensor_specs)
@@ -127,6 +135,12 @@ class WarmupSchedulingEnv:
             self.truth_df[list(self.alert_context_columns)].to_numpy(dtype=float)
             if bool(cfg.include_alert_context_features)
             else np.zeros((len(self.truth_df), 0), dtype=float)
+        )
+        self.sensor_quality_columns = tuple(str(col) for col in cfg.sensor_quality_columns)
+        self.sensor_quality_values = (
+            self.truth_df[list(self.sensor_quality_columns)].to_numpy(dtype=float)
+            if self.sensor_quality_columns
+            else np.ones((len(self.truth_df), len(self.sensor_specs)), dtype=float)
         )
         # scores, binary flags, calm/particle/flux/thermal one-hot, max confidence,
         # elapsed alert age, rolling trends, previous specialist one-hot, dwell remainder.
@@ -758,8 +772,8 @@ class WarmupSchedulingEnv:
             dropped += 1
         return mask, dropped
 
-    @staticmethod
     def _observation_noise_std(
+        self,
         spec: SensorSpecV2,
         variable: str,
         *,
@@ -769,16 +783,30 @@ class WarmupSchedulingEnv:
         base = float(spec.noise_std.get(variable, 0.0))
         if not is_event:
             if variable in spec.calm_noise_std:
-                return max(0.0, float(spec.calm_noise_std[variable]))
+                base_noise = max(0.0, float(spec.calm_noise_std[variable]))
+                return base_noise * self._sensor_quality_noise_multiplier(spec)
             multiplier = float(spec.calm_noise_multiplier.get(variable, 1.0))
-            return max(0.0, base * multiplier)
+            base_noise = max(0.0, base * multiplier)
+            return base_noise * self._sensor_quality_noise_multiplier(spec)
         subtype_noise = spec.event_subtype_noise_std.get(int(event_subtype_id), {})
         if variable in subtype_noise:
-            return max(0.0, float(subtype_noise[variable]))
+            base_noise = max(0.0, float(subtype_noise[variable]))
+            return base_noise * self._sensor_quality_noise_multiplier(spec)
         if variable in spec.event_noise_std:
-            return max(0.0, float(spec.event_noise_std[variable]))
+            base_noise = max(0.0, float(spec.event_noise_std[variable]))
+            return base_noise * self._sensor_quality_noise_multiplier(spec)
         multiplier = float(spec.event_noise_multiplier.get(variable, 1.0))
-        return max(0.0, base * multiplier)
+        base_noise = max(0.0, base * multiplier)
+        return base_noise * self._sensor_quality_noise_multiplier(spec)
+
+    def _sensor_quality(self, spec: SensorSpecV2) -> float:
+        sensor_idx = self.sensor_ids.index(str(spec.sensor_id))
+        value = self.sensor_quality_values[int(self.current_idx), int(sensor_idx)]
+        return float(np.clip(np.nan_to_num(value, nan=0.0), 0.0, 1.0))
+
+    def _sensor_quality_noise_multiplier(self, spec: SensorSpecV2) -> float:
+        maximum = max(1.0, float(self.cfg.sensor_quality_max_noise_multiplier))
+        return float(1.0 + (1.0 - self._sensor_quality(spec)) * (maximum - 1.0))
 
     def _variable_available(
         self,
@@ -797,6 +825,9 @@ class WarmupSchedulingEnv:
         else:
             probability = float(spec.calm_observation_probability.get(variable, 1.0))
         probability = float(np.clip(probability, 0.0, 1.0))
+        floor = float(np.clip(self.cfg.sensor_quality_availability_floor, 0.0, 1.0))
+        quality_factor = floor + (1.0 - floor) * self._sensor_quality(spec)
+        probability *= quality_factor
         return bool(self.rng.random() <= probability)
 
     def _draw_common_observation_randomness(
@@ -959,6 +990,20 @@ class WarmupSchedulingEnv:
             if self.agent_context_values.shape[1] > 0
             else []
         )
+        quality_tail = (
+            np.clip(
+                np.nan_to_num(
+                    self.sensor_quality_values[int(self.current_idx)],
+                    nan=0.0,
+                    posinf=1.0,
+                    neginf=0.0,
+                ),
+                0.0,
+                1.0,
+            ).tolist()
+            if self.sensor_quality_columns
+            else []
+        )
         event_tail = [float(self.event_flags[self.current_idx])] if bool(self.cfg.include_event_flag_in_state) else []
         alert_context_tail = (
             self._alert_context_features().tolist()
@@ -973,6 +1018,7 @@ class WarmupSchedulingEnv:
                 *cycle_tail,
                 *regime_tail,
                 *context_tail,
+                *quality_tail,
                 *event_tail,
                 *([self._soc_ratio()] if self._energy_enabled() else []),
                 *alert_context_tail,

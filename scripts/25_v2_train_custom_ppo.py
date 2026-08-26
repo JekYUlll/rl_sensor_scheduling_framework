@@ -464,6 +464,14 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
+    parser.add_argument("--channel-quality-enabled", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--channel-quality-sensor-ids", nargs="*", default=None)
+    parser.add_argument("--channel-quality-degraded-coverage", type=float, default=0.0)
+    parser.add_argument("--channel-quality-min-duration-steps", type=int, default=12)
+    parser.add_argument("--channel-quality-max-duration-steps", type=int, default=48)
+    parser.add_argument("--channel-quality-min-gap-steps", type=int, default=12)
+    parser.add_argument("--channel-quality-degraded-value", type=float, default=0.2)
+    parser.add_argument("--channel-quality-report-noise-std", type=float, default=0.02)
     parser.add_argument("--sensor-cfg", default="configs/sensors/windblown_sensors_balanced.yaml")
     parser.add_argument("--out-dir", "--output-dir", dest="out_dir", default="reports/v2_custom_ppo_probe/budget1p70_seed41")
     parser.add_argument("--checkpoint-path", default=None)
@@ -765,6 +773,9 @@ def main() -> None:
     parser.add_argument("--include-observable-regime-belief", action="store_true")
     parser.add_argument("--regime-belief-lookback", type=int, default=6)
     parser.add_argument("--agent-context-columns", nargs="*", default=None)
+    parser.add_argument("--sensor-quality-columns", nargs="*", default=None)
+    parser.add_argument("--sensor-quality-max-noise-multiplier", type=float, default=1.0)
+    parser.add_argument("--sensor-quality-availability-floor", type=float, default=1.0)
     parser.add_argument("--include-event-flag-in-state", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--include-alert-context-features", action="store_true")
     parser.add_argument("--alert-context-columns", nargs="*", default=None)
@@ -1097,6 +1108,9 @@ def main() -> None:
         include_observable_regime_belief=bool(args.include_observable_regime_belief),
         regime_belief_lookback=max(1, int(args.regime_belief_lookback)),
         agent_context_columns=tuple(str(x) for x in (args.agent_context_columns or ())),
+        sensor_quality_columns=tuple(str(x) for x in (args.sensor_quality_columns or ())),
+        sensor_quality_max_noise_multiplier=float(args.sensor_quality_max_noise_multiplier),
+        sensor_quality_availability_floor=float(args.sensor_quality_availability_floor),
         include_event_flag_in_state=bool(args.include_event_flag_in_state),
         include_alert_context_features=bool(args.include_alert_context_features),
         alert_context_columns=tuple(str(x) for x in (args.alert_context_columns or WarmupEnvConfig.alert_context_columns)),
@@ -1816,6 +1830,9 @@ def main() -> None:
         include_observable_regime_belief=bool(args.include_observable_regime_belief),
         regime_belief_lookback=max(1, int(args.regime_belief_lookback)),
         agent_context_columns=tuple(str(x) for x in (args.agent_context_columns or ())),
+        sensor_quality_columns=tuple(str(x) for x in (args.sensor_quality_columns or ())),
+        sensor_quality_max_noise_multiplier=float(args.sensor_quality_max_noise_multiplier),
+        sensor_quality_availability_floor=float(args.sensor_quality_availability_floor),
         include_event_flag_in_state=bool(args.include_event_flag_in_state),
         include_alert_context_features=bool(args.include_alert_context_features),
         alert_context_columns=tuple(str(x) for x in (args.alert_context_columns or WarmupEnvConfig.alert_context_columns)),
@@ -2285,6 +2302,14 @@ def main() -> None:
             "lookback": max(1, int(args.regime_belief_lookback)),
         },
         "agent_context_columns": [str(x) for x in (args.agent_context_columns or ())],
+        "sensor_quality": {
+            "columns": [str(x) for x in (args.sensor_quality_columns or ())],
+            "max_noise_multiplier": float(args.sensor_quality_max_noise_multiplier),
+            "availability_floor": float(args.sensor_quality_availability_floor),
+            "truth_generation_enabled": bool(args.channel_quality_enabled),
+            "degraded_coverage": float(args.channel_quality_degraded_coverage),
+            "degraded_value": float(args.channel_quality_degraded_value),
+        },
         "agent_alert_context": {
             "include_event_flag_in_state": bool(args.include_event_flag_in_state),
             "include_alert_context_features": bool(args.include_alert_context_features),

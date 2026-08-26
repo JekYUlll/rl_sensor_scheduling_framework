@@ -101,6 +101,17 @@ CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
 TEMPORAL_ENCODER="${TEMPORAL_ENCODER:-0}"
 TEMPORAL_HIDDEN_DIM="${TEMPORAL_HIDDEN_DIM:-64}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
+CHANNEL_QUALITY_ENABLED="${CHANNEL_QUALITY_ENABLED:-0}"
+CHANNEL_QUALITY_DEGRADED_COVERAGE="${CHANNEL_QUALITY_DEGRADED_COVERAGE:-0.0}"
+CHANNEL_QUALITY_MIN_DURATION_STEPS="${CHANNEL_QUALITY_MIN_DURATION_STEPS:-12}"
+CHANNEL_QUALITY_MAX_DURATION_STEPS="${CHANNEL_QUALITY_MAX_DURATION_STEPS:-48}"
+CHANNEL_QUALITY_MIN_GAP_STEPS="${CHANNEL_QUALITY_MIN_GAP_STEPS:-12}"
+CHANNEL_QUALITY_DEGRADED_VALUE="${CHANNEL_QUALITY_DEGRADED_VALUE:-0.2}"
+CHANNEL_QUALITY_REPORT_NOISE_STD="${CHANNEL_QUALITY_REPORT_NOISE_STD:-0.02}"
+SENSOR_QUALITY_MAX_NOISE_MULTIPLIER="${SENSOR_QUALITY_MAX_NOISE_MULTIPLIER:-1.0}"
+SENSOR_QUALITY_AVAILABILITY_FLOOR="${SENSOR_QUALITY_AVAILABILITY_FLOOR:-1.0}"
+read -r -a CHANNEL_QUALITY_SENSOR_ARGS <<< "${CHANNEL_QUALITY_SENSOR_IDS:-met_station_core radiometer_basic shielded_thermo_hygro surface_temp_ir laser_disdrometer fc4_flux}"
+read -r -a SENSOR_QUALITY_COLUMN_ARGS <<< "${SENSOR_QUALITY_COLUMNS:-agent_context_quality_met_station_core agent_context_quality_radiometer_basic agent_context_quality_shielded_thermo_hygro agent_context_quality_surface_temp_ir agent_context_quality_laser_disdrometer agent_context_quality_fc4_flux}"
 EXCLUDE_SUBTYPE_LATENTS_FROM_STATE="${EXCLUDE_SUBTYPE_LATENTS_FROM_STATE:-0}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
@@ -110,6 +121,22 @@ POLICY_SEED="${POLICY_SEED:-}"
 TEMPORAL_ARGS=(--no-temporal-encoder)
 if [[ "$TEMPORAL_ENCODER" == "1" ]]; then
   TEMPORAL_ARGS=(--temporal-encoder)
+fi
+QUALITY_ARGS=(--no-channel-quality-enabled)
+if [[ "$CHANNEL_QUALITY_ENABLED" == "1" ]]; then
+  QUALITY_ARGS=(
+    --channel-quality-enabled
+    --channel-quality-sensor-ids "${CHANNEL_QUALITY_SENSOR_ARGS[@]}"
+    --channel-quality-degraded-coverage "$CHANNEL_QUALITY_DEGRADED_COVERAGE"
+    --channel-quality-min-duration-steps "$CHANNEL_QUALITY_MIN_DURATION_STEPS"
+    --channel-quality-max-duration-steps "$CHANNEL_QUALITY_MAX_DURATION_STEPS"
+    --channel-quality-min-gap-steps "$CHANNEL_QUALITY_MIN_GAP_STEPS"
+    --channel-quality-degraded-value "$CHANNEL_QUALITY_DEGRADED_VALUE"
+    --channel-quality-report-noise-std "$CHANNEL_QUALITY_REPORT_NOISE_STD"
+    --sensor-quality-columns "${SENSOR_QUALITY_COLUMN_ARGS[@]}"
+    --sensor-quality-max-noise-multiplier "$SENSOR_QUALITY_MAX_NOISE_MULTIPLIER"
+    --sensor-quality-availability-floor "$SENSOR_QUALITY_AVAILABILITY_FLOOR"
+  )
 fi
 
 if [[ "$#" -gt 0 ]]; then
@@ -250,6 +277,7 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-context-lead-steps "$EVENT_SUBTYPE_CONTEXT_LEAD_STEPS" \
     --event-subtype-context-noise-std "$EVENT_SUBTYPE_CONTEXT_NOISE_STD" \
     --event-subtype-context-latent-strength "$EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH" \
+    "${QUALITY_ARGS[@]}" \
     --oracle-rollout-steps 2048 \
     --oracle-type "$ORACLE_TYPE" \
     --oracle-rollouts-per-policy 4 \

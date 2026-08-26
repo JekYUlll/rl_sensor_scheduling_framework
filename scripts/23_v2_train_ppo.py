@@ -234,6 +234,18 @@ def ensure_truth(args: argparse.Namespace) -> Path:
         str(getattr(args, "event_subtype_context_noise_std", 0.08)),
         "--event-subtype-context-latent-strength",
         str(getattr(args, "event_subtype_context_latent_strength", 0.0)),
+        "--channel-quality-degraded-coverage",
+        str(getattr(args, "channel_quality_degraded_coverage", 0.0)),
+        "--channel-quality-min-duration-steps",
+        str(getattr(args, "channel_quality_min_duration_steps", 12)),
+        "--channel-quality-max-duration-steps",
+        str(getattr(args, "channel_quality_max_duration_steps", 48)),
+        "--channel-quality-min-gap-steps",
+        str(getattr(args, "channel_quality_min_gap_steps", 12)),
+        "--channel-quality-degraded-value",
+        str(getattr(args, "channel_quality_degraded_value", 0.2)),
+        "--channel-quality-report-noise-std",
+        str(getattr(args, "channel_quality_report_noise_std", 0.02)),
         "--out",
         str(truth),
         "--report-dir",
@@ -241,6 +253,11 @@ def ensure_truth(args: argparse.Namespace) -> Path:
     ]
     if bool(getattr(args, "event_subtypes_enabled", False)):
         cmd.append("--event-subtypes-enabled")
+    if bool(getattr(args, "channel_quality_enabled", False)):
+        cmd.append("--channel-quality-enabled")
+        quality_ids = tuple(str(value) for value in (getattr(args, "channel_quality_sensor_ids", None) or ()))
+        if quality_ids:
+            cmd.extend(["--channel-quality-sensor-ids", *quality_ids])
     subprocess.run(cmd, check=True)
     return truth
 

@@ -6,6 +6,8 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -15,6 +17,53 @@ from data_sources.public_weather_synthesis import (  # noqa: E402
     generate_public_weather_truth,
     validate_synthetic_against_anchor,
 )
+
+DEFAULT_QUALITY_SENSOR_IDS = (
+    "met_station_core", "radiometer_basic", "shielded_thermo_hygro",
+    "surface_temp_ir", "laser_disdrometer", "fc4_flux",
+)
+
+
+def add_channel_quality_dynamics(
+    frame,
+    *,
+    sensor_ids: tuple[str, ...],
+    seed: int,
+    coverage: float,
+    min_duration: int,
+    max_duration: int,
+    min_gap: int,
+    degraded_quality: float,
+    report_noise_std: float,
+):
+    """Add slow self-diagnostic quality signals independently of event labels."""
+    out = frame.copy()
+    steps = len(out)
+    low = float(np.clip(degraded_quality, 0.0, 1.0))
+    target = int(round(float(np.clip(coverage, 0.0, 0.95)) * steps))
+    min_len = max(1, int(min_duration))
+    max_len = max(min_len, int(max_duration))
+    gap = max(0, int(min_gap))
+    for sensor_idx, sensor_id in enumerate(sensor_ids):
+        rng = np.random.default_rng(int(seed) + 70001 + 1009 * sensor_idx)
+        quality = np.ones(steps, dtype=float)
+        occupied = 0
+        attempts = 0
+        while occupied < target and attempts < max(100, steps * 8):
+            attempts += 1
+            duration = int(rng.integers(min_len, max_len + 1))
+            start = int(rng.integers(0, max(1, steps - duration + 1)))
+            end = min(steps, start + duration)
+            left = max(0, start - gap)
+            right = min(steps, end + gap)
+            if np.any(quality[left:right] < 1.0):
+                continue
+            quality[start:end] = low
+            occupied += end - start
+        if float(report_noise_std) > 0.0:
+            quality = quality + rng.normal(0.0, float(report_noise_std), size=steps)
+        out[f"agent_context_quality_{sensor_id}"] = np.clip(quality, 0.0, 1.0)
+    return out
 
 
 def main() -> None:
@@ -69,6 +118,14 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
+    parser.add_argument("--channel-quality-enabled", action="store_true")
+    parser.add_argument("--channel-quality-sensor-ids", nargs="+", default=list(DEFAULT_QUALITY_SENSOR_IDS))
+    parser.add_argument("--channel-quality-degraded-coverage", type=float, default=0.0)
+    parser.add_argument("--channel-quality-min-duration-steps", type=int, default=12)
+    parser.add_argument("--channel-quality-max-duration-steps", type=int, default=48)
+    parser.add_argument("--channel-quality-min-gap-steps", type=int, default=12)
+    parser.add_argument("--channel-quality-degraded-value", type=float, default=0.2)
+    parser.add_argument("--channel-quality-report-noise-std", type=float, default=0.02)
     parser.add_argument("--out", default="data/generated/public_weather_truth.csv")
     parser.add_argument("--report-dir", default="reports/datasets/public_weather_truth")
     args = parser.parse_args()
@@ -134,6 +191,28 @@ def main() -> None:
         event_subtype_context_latent_strength=float(args.event_subtype_context_latent_strength),
     )
     df, meta = generate_public_weather_truth(cfg)
+    if bool(args.channel_quality_enabled):
+        df = add_channel_quality_dynamics(
+            df,
+            sensor_ids=tuple(str(value) for value in args.channel_quality_sensor_ids),
+            seed=int(args.seed),
+            coverage=float(args.channel_quality_degraded_coverage),
+            min_duration=int(args.channel_quality_min_duration_steps),
+            max_duration=int(args.channel_quality_max_duration_steps),
+            min_gap=int(args.channel_quality_min_gap_steps),
+            degraded_quality=float(args.channel_quality_degraded_value),
+            report_noise_std=float(args.channel_quality_report_noise_std),
+        )
+        meta["channel_quality"] = {
+            "enabled": True,
+            "sensor_ids": [str(value) for value in args.channel_quality_sensor_ids],
+            "degraded_coverage": float(args.channel_quality_degraded_coverage),
+            "min_duration_steps": int(args.channel_quality_min_duration_steps),
+            "max_duration_steps": int(args.channel_quality_max_duration_steps),
+            "min_gap_steps": int(args.channel_quality_min_gap_steps),
+            "degraded_value": float(args.channel_quality_degraded_value),
+            "report_noise_std": float(args.channel_quality_report_noise_std),
+        }
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)

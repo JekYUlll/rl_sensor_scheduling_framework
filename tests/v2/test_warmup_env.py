@@ -197,6 +197,34 @@ def test_warmup_env_rollout_returns_state_and_info() -> None:
             break
 
 
+def test_sensor_quality_is_online_and_degrades_measurements() -> None:
+    truth = _truth(24).copy()
+    quality_columns = tuple(f"quality_{sensor.sensor_id}" for sensor in _sensors())
+    for column in quality_columns:
+        truth[column] = 1.0
+    truth.loc[:, quality_columns[0]] = 0.2
+    cfg = WarmupEnvConfig(
+        state_columns=STATE_COLUMNS,
+        lookback=2,
+        episode_len=2,
+        seed=3,
+        include_event_flag_in_state=False,
+        sensor_quality_columns=quality_columns,
+        sensor_quality_max_noise_multiplier=6.0,
+        sensor_quality_availability_floor=0.2,
+    )
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=2.5, startup_peak_budget=3.1),
+        cfg,
+    )
+    state, _ = env.reset()
+
+    assert np.allclose(state[-3:], [0.2, 1.0, 1.0])
+    assert env._sensor_quality_noise_multiplier(_sensors()[0]) == pytest.approx(5.0)
+
+
 def test_warmup_env_uses_external_normalization_statistics() -> None:
     mean = tuple(0.0 for _ in STATE_COLUMNS)
     std = tuple(1.0 for _ in STATE_COLUMNS)

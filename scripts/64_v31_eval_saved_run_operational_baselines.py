@@ -82,6 +82,7 @@ def env_kwargs_from_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
     shaping = dict(metadata.get("reward_shaping", {}))
     regime_belief = dict(metadata.get("observable_regime_belief", {}))
     alert_context = dict(metadata.get("agent_alert_context", {}))
+    sensor_quality = dict(metadata.get("sensor_quality", {}))
     return {
         "lambda_warmup_abort": float(shaping.get("lambda_warmup_abort", 0.08)),
         "lambda_switch": float(shaping.get("lambda_switch", 0.002)),
@@ -126,6 +127,9 @@ def env_kwargs_from_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
         "include_observable_regime_belief": bool(regime_belief.get("enabled", False)),
         "regime_belief_lookback": int(regime_belief.get("lookback", 6)),
         "agent_context_columns": tuple(str(x) for x in metadata.get("agent_context_columns", ())),
+        "sensor_quality_columns": tuple(str(x) for x in sensor_quality.get("columns", ())),
+        "sensor_quality_max_noise_multiplier": float(sensor_quality.get("max_noise_multiplier", 1.0)),
+        "sensor_quality_availability_floor": float(sensor_quality.get("availability_floor", 1.0)),
         "include_event_flag_in_state": bool(alert_context.get("include_event_flag_in_state", True)),
         "include_alert_context_features": bool(alert_context.get("include_alert_context_features", False)),
         "alert_context_columns": tuple(
