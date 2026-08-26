@@ -3556,3 +3556,19 @@ tar -czf "$OUT…`
   this actor representation. Reward, forecast-value supervision, runtime
   information, action geometry, feasibility masking, and checkpoint rules are
   unchanged; replication requires both static margins and valid behavior.
+
+## 2026-08-27 - Reject V172 and densify forecast-value supervision
+
+- V172 improves seed1701 over V171 but remains below static by
+  `0.007992/0.051692` on ordinary/macro loss and leaves one channel always off.
+  It is not replicated. The best validation checkpoint is also above static,
+  so final checkpoint transfer is not the primary failure.
+- The task-conditioned utility increases the selected-minus-unselected quality
+  gap to `+0.113456`, but forecast-value auxiliary cross-entropy remains near
+  the 22-action uniform level (`2.999` versus `ln(22)=3.091`) and actor entropy
+  remains `2.999`. Only 6.25% of states receive auxiliary labels at stride 16.
+- V173 retains the V172 architecture and changes one training mechanism:
+  forecast-value label stride decreases from 16 to 4 and its existing loss
+  coefficient increases from 0.5 to 1.0. This fourfold denser supervision is a
+  bounded seed1701 test; reward, PPO objective, runtime inputs, and constraints
+  remain unchanged.
