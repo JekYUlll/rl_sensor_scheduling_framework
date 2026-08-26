@@ -675,6 +675,11 @@ def main() -> None:
     parser.add_argument("--awbc-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
     parser.add_argument(
+        "--checkpoint-require-valid-behavior",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument(
         "--checkpoint-selection-score",
         choices=[
             "oracle_loss_mean",
@@ -1400,6 +1405,11 @@ def main() -> None:
         "--awbc-event-only" if bool(args.awbc_event_only) else "--no-awbc-event-only",
         "--checkpoint-selection-interval-updates",
         str(max(0, int(args.checkpoint_selection_interval_updates))),
+        (
+            "--checkpoint-require-valid-behavior"
+            if bool(args.checkpoint_require_valid_behavior)
+            else "--no-checkpoint-require-valid-behavior"
+        ),
         "--checkpoint-selection-score",
         str(args.checkpoint_selection_score),
         "--bc-pretrain-steps",

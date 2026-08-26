@@ -1,0 +1,2 @@
+variant,selected_update,selected_timesteps,validation_scene_count,validation_selection_score,heldout_seed,pdppo_ordinary,static_ordinary,ordinary_margin_vs_static,pdppo_macro,static_macro,macro_margin_vs_static,best_conventional_dynamic,ordinary_margin_vs_dynamic,always_on,always_off,mid_duty,switches_per_step,warmup_abort_count,behavior_gate_pass
+V149,40,40960,4,1.0218418350694056,1505,0.2371246888780863,0.2368098161985269,-0.0003148726795594,0.886426034363354,0.8986152579342542,0.0121892235709002,aoi,0.0331141928359607,1,2,2,0.010493559,0,false

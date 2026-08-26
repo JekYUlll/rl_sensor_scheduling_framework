@@ -3216,3 +3216,19 @@ tar -czf "$OUT…`
   `0.026849` switches per step, and zero warm-up aborts. Interleaving is retained;
   V149 adds checkpoint selection aggregated over the four training scenes'
   calibration/validation partitions instead of freezing the final update.
+
+### 2026-08-26 | V149 isolates behavior-aware validation as the missing gate
+
+- Four-scene validation selected update 40 (`40,960` steps), minimizing the
+  maximum of the mean ordinary and macro static ratios at `1.021842`.
+- On held-out scene1505, ordinary/macro margins against validation-selected
+  static were `-0.000315/+0.012189`; PD-PPO beat the best conventional dynamic
+  schedule by `+0.033114` ordinary loss.
+- The selected policy had one always-on channel, two always-off channels, only
+  two mid-duty channels, `0.010494` switches per step, and zero warm-up aborts.
+  It therefore failed the frozen six-channel behavior gate even though its
+  predictive performance nearly passed.
+- V150 retains V149 training, reward, online inputs, and feasibility rules. It
+  selects checkpoints lexicographically by the number of validation scenes
+  failing the predeclared behavior gate and then by the existing two-endpoint
+  static-ratio score.

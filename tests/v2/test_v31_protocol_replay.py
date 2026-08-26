@@ -75,3 +75,27 @@ def test_control_source_files_follow_reward_normalization_mode() -> None:
     assert "reward_staticnorm_normalizers.json" not in unnormalized
     assert "reward_staticnorm_candidates.csv" in staticnorm
     assert "reward_staticnorm_normalizers.json" in staticnorm
+
+
+def test_flexible_behavior_gate_preserves_frozen_six_channel_rule() -> None:
+    module = _load_script("25_v2_train_custom_ppo.py")
+    valid = {
+        "always_on_sensor_count": 0,
+        "always_off_sensor_count": 1,
+        "switches_per_step": 0.01,
+        "warmup_abort_count": 0,
+    }
+
+    assert module.flexible_six_channel_behavior_valid(valid)
+    assert not module.flexible_six_channel_behavior_valid(
+        {**valid, "always_on_sensor_count": 1}
+    )
+    assert not module.flexible_six_channel_behavior_valid(
+        {**valid, "always_off_sensor_count": 2}
+    )
+    assert not module.flexible_six_channel_behavior_valid(
+        {**valid, "switches_per_step": 0.0}
+    )
+    assert not module.flexible_six_channel_behavior_valid(
+        {**valid, "warmup_abort_count": 1}
+    )

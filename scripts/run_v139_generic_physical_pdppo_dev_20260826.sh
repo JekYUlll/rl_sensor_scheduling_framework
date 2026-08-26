@@ -60,6 +60,7 @@ for i in "${!SEEDS[@]}"; do
     export TRAINING_CONTROL_SOURCE_RUN_DIRS="${TRAINING_CONTROL_SOURCE_RUN_DIRS_OVERRIDE:-}"
     export CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES_OVERRIDE:-5}"
     export CHECKPOINT_SELECTION_SCORE=max_static_ratio
+    export CHECKPOINT_REQUIRE_VALID_BEHAVIOR="${CHECKPOINT_REQUIRE_VALID_BEHAVIOR_OVERRIDE:-0}"
     export EVALUATION_POLICY_MODE=deterministic
     bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
   ) >"logs/v139_generic_physical_pdppo/seed${seed}.log" 2>&1 &

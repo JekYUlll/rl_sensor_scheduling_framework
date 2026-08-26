@@ -325,6 +325,16 @@ def finite_median(values: pd.Series | np.ndarray | list[float]) -> float:
     return float(np.median(arr)) if arr.size else float("nan")
 
 
+def flexible_six_channel_behavior_valid(metrics: dict[str, object]) -> bool:
+    """Apply the frozen deployment-behavior gate for the six-channel setting."""
+    return bool(
+        int(metrics.get("always_on_sensor_count", -1)) == 0
+        and int(metrics.get("always_off_sensor_count", -1)) <= 1
+        and float(metrics.get("switches_per_step", 0.0)) > 0.0
+        and int(metrics.get("warmup_abort_count", -1)) == 0
+    )
+
+
 def add_staticnorm_macro(table: pd.DataFrame, normalizers: dict[str, float]) -> pd.DataFrame:
     if table.empty or not normalizers:
         return table
@@ -545,6 +555,15 @@ def main() -> None:
     parser.add_argument("--awbc-label-stride", type=int, default=4)
     parser.add_argument("--awbc-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
+    parser.add_argument(
+        "--checkpoint-require-valid-behavior",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help=(
+            "Select checkpoints lexicographically by validation behavior failures "
+            "and then by the configured prediction score."
+        ),
+    )
     parser.add_argument(
         "--checkpoint-selection-score",
         choices=[
@@ -1473,6 +1492,7 @@ def main() -> None:
     checkpoint_selection_rows: list[dict[str, float | int]] = []
     best_checkpoint_state = None
     best_checkpoint_score = float("inf")
+    best_checkpoint_behavior_failures = sys.maxsize
     best_checkpoint_update = 0
     checkpoint_interval = max(0, int(args.checkpoint_selection_interval_updates))
     checkpoint_starts = tuple(int(x) for x in (args.static_selection_start_indices or ()))
@@ -1584,6 +1604,7 @@ def main() -> None:
         _metrics: dict[str, float | int],
     ) -> None:
         nonlocal best_checkpoint_state, best_checkpoint_score, best_checkpoint_update
+        nonlocal best_checkpoint_behavior_failures
         if checkpoint_interval <= 0 or not checkpoint_starts:
             return
         final_update = int(timesteps) >= int(args.total_timesteps)
@@ -1617,6 +1638,7 @@ def main() -> None:
                     / float(spec["static_ordinary"]),
                     "macro_ratio": float(metrics[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN])
                     / float(spec["static_macro"]),
+                    "behavior_valid": flexible_six_channel_behavior_valid(metrics),
                 }
             )
         selection_metrics = {
@@ -1632,6 +1654,9 @@ def main() -> None:
             score = max(ordinary_ratio, macro_ratio)
         else:
             score = float(selection_metrics[checkpoint_score_name])
+        behavior_failures = int(
+            sum(not bool(row["behavior_valid"]) for row in scene_metrics)
+        )
         checkpoint_selection_rows.append(
             {
                 "update": int(update_idx),
@@ -1651,9 +1676,22 @@ def main() -> None:
                 "validation_scene_count": int(len(scene_metrics)),
                 "ordinary_static_ratio_mean": ordinary_ratio,
                 "macro_static_ratio_mean": macro_ratio,
+                "behavior_failure_count": behavior_failures,
+                "behavior_valid_scene_count": int(len(scene_metrics) - behavior_failures),
             }
         )
-        if np.isfinite(score) and score < best_checkpoint_score:
+        candidate_rank = (
+            behavior_failures if bool(args.checkpoint_require_valid_behavior) else 0,
+            score,
+        )
+        best_rank = (
+            best_checkpoint_behavior_failures
+            if bool(args.checkpoint_require_valid_behavior)
+            else 0,
+            best_checkpoint_score,
+        )
+        if np.isfinite(score) and candidate_rank < best_rank:
+            best_checkpoint_behavior_failures = behavior_failures
             best_checkpoint_score = score
             best_checkpoint_update = int(update_idx)
             best_checkpoint_state = copy.deepcopy(current_trainer.model.state_dict())
@@ -2277,8 +2315,14 @@ def main() -> None:
             "start_indices": [int(x) for x in checkpoint_starts],
             "steps": int(args.static_selection_steps),
             "score": str(args.checkpoint_selection_score),
+            "require_valid_behavior": bool(args.checkpoint_require_valid_behavior),
             "selected_update": int(best_checkpoint_update),
             "selected_score": None if not np.isfinite(best_checkpoint_score) else float(best_checkpoint_score),
+            "selected_behavior_failure_count": (
+                None
+                if best_checkpoint_behavior_failures == sys.maxsize
+                else int(best_checkpoint_behavior_failures)
+            ),
         },
         "awbc_teacher": {
             "mode": str(args.awbc_teacher_mode),
