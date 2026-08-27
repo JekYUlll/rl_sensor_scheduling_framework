@@ -3808,3 +3808,22 @@ tar -czf "$OUT…`
   tuning on V170 is stopped. Subsequent scene candidates must first pass a
   closed-loop online context-and-quality policy gate on both endpoints and
   six-channel behavior before any PPO training.
+
+## 2026-08-27 - Reject the V170 online gate and decouple events from sensor availability
+
+- V192 evaluates a quality-aware context policy that combines validation-only
+  regime costs, supplied warning scores, and reported online channel quality.
+  Penalties `0.25/1.0/4.0` all record `0/5` wins over static on both endpoints;
+  mean ordinary margins are `-0.014371/-0.021158/-0.023166` and mean macro
+  margins are `-0.058579/-0.084665/-0.086860`. V170 is rejected as a deployable
+  scene despite its privileged receding headroom.
+- The audit identifies a physical confound in event generation. Particle-event
+  assignment required Parsivel availability of at least `0.8`, so the simulated
+  physical event subtype depended on whether an observation device happened to
+  be available. Final evaluation then contained only `0--71` particle steps per
+  seed, versus hundreds of flux and thermal steps.
+- V193 removes this dependency by setting the particle-assignment availability
+  threshold to zero and otherwise retains V170's costs, quality process,
+  warning process, action geometry, and event parameters. Fresh seeds
+  `1901--1905` must pass balanced subtype coverage, privileged receding
+  headroom, and the closed-loop online context/quality gate before PPO training.
