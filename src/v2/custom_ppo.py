@@ -117,6 +117,7 @@ class CustomPPOConfig:
     forecast_value_aux_stride: int = 64
     forecast_value_aux_lookahead_steps: int = 0
     forecast_value_aux_loss: str = "mse"
+    forecast_value_ranking_coef: float = 0.0
     forecast_value_aux_temperature: float = 1.0
     forecast_value_head_enabled: bool = False
     forecast_value_head_scale: float = 1.0
@@ -1314,8 +1315,26 @@ class CustomPPO:
                         )
                     )
                     valid_logits = torch.where(mb_masks, actor_logits, mb_teacher_cost_targets)
-                    squared_error = (valid_logits - mb_teacher_cost_targets).square()
-                    bc_loss = squared_error[mb_masks].mean()
+                    if str(self.cfg.forecast_value_aux_loss).strip().lower() == "smooth_l1":
+                        regression_loss = nn.functional.smooth_l1_loss(
+                            valid_logits[mb_masks],
+                            mb_teacher_cost_targets[mb_masks],
+                        )
+                    else:
+                        squared_error = (valid_logits - mb_teacher_cost_targets).square()
+                        regression_loss = squared_error[mb_masks].mean()
+                    best_actions = torch.argmax(
+                        mb_teacher_cost_targets.masked_fill(~mb_masks, -1.0e9),
+                        dim=1,
+                    )
+                    ranking_loss = nn.functional.cross_entropy(
+                        actor_logits.masked_fill(~mb_masks, -1.0e9),
+                        best_actions,
+                    )
+                    bc_loss = (
+                        regression_loss
+                        + float(self.cfg.forecast_value_ranking_coef) * ranking_loss
+                    )
                 else:
                     bc_loss = -dist.log_prob(mb_teacher).mean()
                 subtype_aux_loss, subtype_aux_acc = self._subtype_aux_loss(
@@ -1712,6 +1731,25 @@ class CustomPPO:
                             mb_masks,
                             forecast_rows,
                             temperature=float(self.cfg.forecast_value_aux_temperature),
+                        )
+                    elif str(self.cfg.forecast_value_aux_loss).strip().lower() == "smooth_l1":
+                        regression_loss = nn.functional.smooth_l1_loss(
+                            actor_logits[valid_entries],
+                            mb_forecast_value_targets[valid_entries],
+                        )
+                        best_actions = torch.argmax(
+                            mb_forecast_value_targets.masked_fill(~mb_masks, -1.0e9),
+                            dim=1,
+                        )
+                        ranking_loss = nn.functional.cross_entropy(
+                            actor_logits[forecast_rows].masked_fill(
+                                ~mb_masks[forecast_rows], -1.0e9
+                            ),
+                            best_actions[forecast_rows],
+                        )
+                        forecast_value_aux_loss = (
+                            regression_loss
+                            + float(self.cfg.forecast_value_ranking_coef) * ranking_loss
                         )
                     else:
                         squared_error = (actor_logits - mb_forecast_value_targets).square()
