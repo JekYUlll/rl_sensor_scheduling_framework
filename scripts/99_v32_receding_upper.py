@@ -53,6 +53,12 @@ def main() -> None:
     parser.add_argument("--output-subdir", default="receding_oracle_l8_scene_gate")
     parser.add_argument("--device", default="cuda")
     parser.add_argument(
+        "--receding-oracle-lookahead-steps",
+        type=int,
+        default=None,
+        help="Override the recorded forecast horizon for an offline receding diagnostic.",
+    )
+    parser.add_argument(
         "--partition",
         choices=("rl_train", "validation", "final_test"),
         default="final_test",
@@ -105,7 +111,12 @@ def main() -> None:
         "--env-min-dwell-steps", str(metadata["reward_shaping"]["min_dwell_steps"]),
         "--schedule-diagnostics",
         "--schedule-family", "receding_oracle",
-        "--receding-oracle-lookahead-steps", str(metadata["horizon"]),
+        "--receding-oracle-lookahead-steps",
+        str(
+            metadata["horizon"]
+            if args.receding_oracle_lookahead_steps is None
+            else args.receding_oracle_lookahead_steps
+        ),
         "--seed", str(manifest["seed"]),
     ]
     if metadata.get("state_columns"):

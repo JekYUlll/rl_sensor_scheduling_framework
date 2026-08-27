@@ -1,5 +1,26 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V215 Closes the Full Online-State Sufficiency Check
+
+- V215 first corrected the diagnostic trace path so that receding traces retain
+  every legal online scheduler feature, including the complete 20-value alert
+  context. The repaired training, validation, and final traces each contain
+  `533` online-state values; earlier `514`-value traces are not used.
+- Training-partition probes do not show a reliable advantage from the complete
+  state over alert context alone. The best complete-state ExtraTrees probe has
+  mean training gain `+0.003123` versus static in only `3/5` seeds, below the
+  alert-only probe's `+0.004640` in `3/5` seeds.
+- The final closed-loop trace-distilled replay is negative against the
+  validation-selected static schedule: ordinary static-minus-policy margin is
+  positive in `1/5` seeds with mean `-0.003199`; macro margin is positive in
+  `2/5` seeds with mean `-0.005198`. It has zero aborts but still leaves an
+  average `2.6` channels always off.
+- This diagnostic neither trains nor modifies PD-PPO. It closes feature
+  stacking and context-rule expansion on V213: the existing legal online state
+  does not recover the eight-step receding advantage. The next bounded step is
+  an offline `0/2/4/8`-step lookahead sweep to quantify the required warning
+  lead before modifying the synthetic precursor process.
+
 ## 2026-08-28 - V212 Closes the Coverage-Balanced Cost Geometry Screen
 
 - V212 applies one physical effective-load recalibration before any result is
