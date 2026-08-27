@@ -427,6 +427,18 @@ def _assign_event_subtypes(
             chosen = int(best[np.argmin(tie_rank[best])])
             subtype_id = chosen + 1
             assigned[chosen] += 1
+        elif str(assignment) == "stratified_duration":
+            # Event runs are indivisible, but their durations differ. Balance
+            # subtype exposure by occupied time instead of by run count so a
+            # long run cannot dominate one subtype's evaluation contribution.
+            run_duration = float(end - start)
+            elapsed_duration = float(np.sum(assigned)) + run_duration
+            deficit = probs * elapsed_duration - assigned
+            deficit = np.where(available_types, deficit, -np.inf)
+            best = np.flatnonzero(np.isclose(deficit, np.max(deficit)))
+            chosen = int(best[np.argmin(tie_rank[best])])
+            subtype_id = chosen + 1
+            assigned[chosen] += run_duration
         elif str(assignment) == "random":
             eligible_probs = np.where(available_types, probs, 0.0)
             eligible_probs = eligible_probs / float(np.sum(eligible_probs))

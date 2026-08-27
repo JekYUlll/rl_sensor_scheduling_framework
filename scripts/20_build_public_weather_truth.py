@@ -153,7 +153,11 @@ def main() -> None:
     parser.add_argument("--event-microstructure-velocity-scale", type=float, default=0.0)
     parser.add_argument("--event-particle-microstructure-correlation", type=float, default=1.0)
     parser.add_argument("--event-subtypes-enabled", action="store_true")
-    parser.add_argument("--event-subtype-assignment", choices=["random", "stratified"], default="random")
+    parser.add_argument(
+        "--event-subtype-assignment",
+        choices=["random", "stratified", "stratified_duration"],
+        default="random",
+    )
     parser.add_argument("--event-subtype-particle-min-parsivel-availability", type=float, default=0.0)
     parser.add_argument("--event-subtype-particle-prob", type=float, default=0.34)
     parser.add_argument("--event-subtype-flux-prob", type=float, default=0.33)

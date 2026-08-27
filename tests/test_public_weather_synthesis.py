@@ -46,6 +46,23 @@ def test_stratified_event_subtypes_control_run_counts() -> None:
     assert np.bincount(run_labels, minlength=4)[1:].tolist() == [6, 3, 3]
 
 
+def test_duration_stratified_event_subtypes_control_occupied_time() -> None:
+    run_lengths = [1, 5, 1, 5, 1, 5, 1, 5, 1]
+    active = np.concatenate(
+        [np.concatenate([np.ones(length, dtype=bool), np.zeros(1, dtype=bool)]) for length in run_lengths]
+    )
+    subtype = _assign_event_subtypes(
+        active,
+        rng=np.random.default_rng(7),
+        particle_prob=1.0 / 3.0,
+        flux_prob=1.0 / 3.0,
+        thermal_prob=1.0 / 3.0,
+        assignment="stratified_duration",
+    )
+    occupied = np.bincount(subtype[active], minlength=4)[1:]
+    assert int(np.max(occupied) - np.min(occupied)) <= 5
+
+
 def test_particle_subtype_respects_run_level_sensor_availability() -> None:
     active = np.tile(np.asarray([True, True, False]), 12)
     eligible = np.tile(np.asarray([False, False, True]), 12)
