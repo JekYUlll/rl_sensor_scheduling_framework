@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V205 Long-Horizon PPO Fails Cross-Seed Confirmation
+
+- The V205 configuration was frozen after seed 1901 and evaluated unchanged on
+  seeds `1902--1905`. Across all five development seeds it wins both static
+  endpoints only `2/5` times, with mean static-minus-PPO margins
+  `-0.033139` ordinary and `-0.065044` macro.
+- Seeds 1902 and 1903 fail substantially (`-0.081126/-0.186885` and
+  `-0.077927/-0.157607` ordinary/macro margins); seed 1904 also fails both
+  endpoints. Seed 1905 passes narrowly (`+0.000388/+0.016973`). The apparent
+  V205 seed-1901 success is therefore not reproducible and cannot support a
+  main result.
+- Runtime feasibility remains robust across all seeds: zero aborts and zero
+  always-on/off channels. One seed has only five intermediate-duty channels,
+  so the full intended six-channel behavior gate also fails in aggregate.
+- Longer training is closed as a standalone remedy. V206 will retain the
+  frozen configuration but use existing calibration/validation-only checkpoint
+  selection with the `max_static_ratio` dual-endpoint score and valid-behavior
+  requirement. This tests standard validation model selection, not a new
+  reward, heuristic, or final-partition adaptation.
+
 ## 2026-08-28 - V205 Passes the Long-Horizon PPO Gate
 
 - V205 restores V199's clean online quality/context actor and changes only
