@@ -45,7 +45,12 @@ def load_geometry(run_dir: Path) -> tuple[list[str], np.ndarray, np.ndarray]:
     return sensor_ids, masks, action_features
 
 
-def trace_context(run_dir: Path, table: pd.DataFrame, sensor_ids: list[str]) -> np.ndarray:
+def trace_context(
+    run_dir: Path,
+    table: pd.DataFrame,
+    sensor_ids: list[str],
+    feature_set: str,
+) -> np.ndarray:
     metadata = json.loads((run_dir / "v2_ppo_metadata.json").read_text(encoding="utf-8"))
     quality_columns = [str(value) for value in dict(metadata.get("sensor_quality") or {}).get("columns") or []]
     if len(quality_columns) != len(sensor_ids):
@@ -54,17 +59,29 @@ def trace_context(run_dir: Path, table: pd.DataFrame, sensor_ids: list[str]) -> 
     indices = table["truth_step_idx"].to_numpy(dtype=int)
     if np.any(indices < 0) or np.any(indices >= len(truth)):
         raise ValueError("trace truth_step_idx is outside truth table")
-    quality = truth.iloc[indices][quality_columns].to_numpy(dtype=np.float32)
     alerts = table[indexed_columns(table, "alert_feature_")].to_numpy(dtype=np.float32)
-    return np.nan_to_num(np.concatenate([quality, alerts], axis=1), nan=0.0, posinf=1.0, neginf=-1.0)
+    if feature_set == "alert_context":
+        context = alerts
+    elif feature_set == "quality_alert_context":
+        quality = truth.iloc[indices][quality_columns].to_numpy(dtype=np.float32)
+        context = np.concatenate([quality, alerts], axis=1)
+    else:
+        raise ValueError(f"unsupported feature set: {feature_set}")
+    return np.nan_to_num(context, nan=0.0, posinf=1.0, neginf=-1.0)
 
 
-def standardized_costs(table: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
+def training_costs(table: pd.DataFrame, target_mode: str) -> tuple[np.ndarray, np.ndarray]:
     raw = table[indexed_columns(table, "candidate_cost_")].to_numpy(dtype=np.float32)
     if not np.all(np.isfinite(raw)):
         raise ValueError("candidate costs must be finite")
-    mean = raw.mean(axis=1, keepdims=True)
-    scale = raw.std(axis=1, keepdims=True)
+    if target_mode == "row_standardized":
+        mean = raw.mean(axis=1, keepdims=True)
+        scale = raw.std(axis=1, keepdims=True)
+    elif target_mode == "global_standardized":
+        mean = np.asarray([[raw.mean()]], dtype=np.float32)
+        scale = np.asarray([[raw.std()]], dtype=np.float32)
+    else:
+        raise ValueError(f"unsupported target mode: {target_mode}")
     return raw, (raw - mean) / np.maximum(scale, 1e-6)
 
 
@@ -177,6 +194,16 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--ranking-weight", type=float, default=0.25)
+    parser.add_argument(
+        "--feature-set",
+        choices=("alert_context", "quality_alert_context"),
+        default="quality_alert_context",
+    )
+    parser.add_argument(
+        "--target-mode",
+        choices=("row_standardized", "global_standardized"),
+        default="row_standardized",
+    )
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     args = parser.parse_args()
     device = torch.device(args.device)
@@ -187,10 +214,10 @@ def main() -> None:
         sensor_ids, masks, action_features = load_geometry(run_dir)
         train_table = pd.read_csv(run_dir / "receding_oracle_l8_validation_trace" / "receding_oracle_trace.csv")
         test_table = pd.read_csv(run_dir / "receding_oracle_l8_final_trace" / "receding_oracle_trace.csv")
-        train_context = trace_context(run_dir, train_table, sensor_ids)
-        test_context = trace_context(run_dir, test_table, sensor_ids)
-        train_raw, train_targets = standardized_costs(train_table)
-        test_raw, _ = standardized_costs(test_table)
+        train_context = trace_context(run_dir, train_table, sensor_ids, args.feature_set)
+        test_context = trace_context(run_dir, test_table, sensor_ids, args.feature_set)
+        train_raw, train_targets = training_costs(train_table, args.target_mode)
+        test_raw = test_table[indexed_columns(test_table, "candidate_cost_")].to_numpy(dtype=np.float32)
         model, history = train_model(
             context=train_context,
             targets=train_targets,
@@ -213,6 +240,9 @@ def main() -> None:
         histories[str(seed)] = history
     output = pd.DataFrame(result_rows).sort_values("seed")
     summary = pd.DataFrame([{
+        "feature_set": args.feature_set,
+        "target_mode": args.target_mode,
+        "ranking_weight": args.ranking_weight,
         "seeds": len(output),
         "mean_top1_accuracy": output["top1_action_accuracy"].mean(),
         "mean_top3_accuracy": output["top3_action_accuracy"].mean(),
