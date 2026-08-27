@@ -4314,5 +4314,9 @@ tar -czf "$OUT…`
   all five development scenes: mean static-minus-PPO ordinary-loss margin
   `-0.170605` and macro static-normalized margin `-0.481659`.  This closes the
   minimal-training variant; it is not evidence that the nowcast scene has no
-  dynamic value.  The paired all-action receding diagnostic remains in progress
-  to separate scene headroom from policy learnability.
+  dynamic value.
+- The paired all-action eight-step receding diagnostic confirms dynamic
+  headroom in all five scenes: its executed policy beats validation-selected
+  static by mean ordinary-loss margin `+0.028369` and uses `17` feasible
+  actions in every trace. V221 therefore tests partition-normalized nowcasts
+  with 50,000 PPO steps; it changes neither reward nor feasibility geometry.
