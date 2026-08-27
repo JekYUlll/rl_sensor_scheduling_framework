@@ -1,5 +1,26 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-27 - V194/V195 Clean Context-Aware PPO Diagnostics Rejected
+
+- V194 trained a full 40,960-step forecast-reward masked PPO on the frozen
+  V193 seed-1901 scene with the online 20-feature alert context encoded in a
+  dedicated branch. It used no bandit prior, residual action, imitation of the
+  context policy, or counterfactual bandit label. The learned policy was
+  feasible but lost to validation-selected static: ordinary/macro losses were
+  `0.285028/0.798889` versus `0.237045/0.712537`.
+- A feature-parity audit showed that the six online channel-quality values were
+  already present in the shared observation but were outside V194's dedicated
+  context branch. V195 expanded that branch from 20 to 26 trailing online
+  context features, with all other training choices unchanged.
+- V195 removed the residual behavior defect (`0` always-on, `0` always-off,
+  and `6` intermediate-duty channels), but not the forecast failure. Its
+  ordinary/macro losses were `0.286925/0.758300`, again worse than the frozen
+  static reference.
+- These two configurations are rejected without seed expansion. The next
+  bounded diagnostic changes only the ordinary PPO entropy coefficient on the
+  same frozen scene; it does not add a heuristic-dependent module or alter the
+  forecast-loss objective.
+
 ## 2026-08-27 - V193 Removes Sensor-Dependent Event Generation
 
 - Corrected the generic physical generator so that particle-event assignment is
