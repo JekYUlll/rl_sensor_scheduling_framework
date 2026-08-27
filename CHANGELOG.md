@@ -51,6 +51,20 @@
   online within-subtype channel-quality variation. It is rejected without
   tuning its weight or expanding seeds.
 
+## 2026-08-27 - V198 Validation Checkpoint Selection Does Not Recover PPO
+
+- V198 retained V195's clean feature-parity context policy and selected among
+  every fifth update using only the independent validation partition and the
+  existing behavior gate. No final-partition quantity entered selection.
+- The selected update-10 checkpoint was already worse than the validation
+  static schedule (ordinary ratio `1.1253`), and final replay remained worse:
+  ordinary/macro losses `0.254751/0.769658` versus `0.237045/0.712537`.
+- Its final behavior was invalid for the intended six-channel setting (`1`
+  always-on, `3` always-off, and switching `0.0039` per step).
+- Checkpoint selection therefore does not expose a hidden viable CA-PD-PPO
+  policy. Plain context concatenation, entropy tuning, subtype-action
+  supervision, and validation checkpoint selection are closed on V193.
+
 ## 2026-08-27 - V193 Removes Sensor-Dependent Event Generation
 
 - Corrected the generic physical generator so that particle-event assignment is
