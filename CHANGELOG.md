@@ -1,5 +1,21 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V216 Establishes the Receding Lead-Time Threshold
+
+- On the frozen V213 final partitions, the exact all-action receding diagnostic
+  has mean validation-static-minus-receding margins of `-0.005028`, `+0.001811`,
+  `+0.018678`, and `+0.032106` for privileged lookaheads `0`, `2`, `4`, and `8`
+  respectively. The corresponding ordinary-loss win counts are `1/5`, `3/5`,
+  `5/5`, and `5/5`.
+- Dynamic value therefore begins reliably at four future scheduling intervals.
+  This is an offline information bound, not a deployable policy result: each
+  receding policy sees future target-dependent loss unavailable at execution.
+- The existing synthetic warning tail was configured with a nominal 12-step
+  lead, yet thresholded final-window alerts identify only `29.6%` of subtype
+  onsets at least four steps early (median observed lead `2` steps). V217 tests
+  whether the simpler four-step receding target is learnable before changing
+  warning generation or the primary PD-PPO method.
+
 ## 2026-08-28 - V215 Closes the Full Online-State Sufficiency Check
 
 - V215 first corrected the diagnostic trace path so that receding traces retain

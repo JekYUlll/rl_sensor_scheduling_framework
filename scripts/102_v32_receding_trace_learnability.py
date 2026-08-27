@@ -136,15 +136,24 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dirs", nargs="+", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--trace-prefix",
+        default="receding_oracle_l8",
+        help="Prefix of the partition-specific receding trace directories.",
+    )
     args = parser.parse_args()
     rows: list[dict[str, object]] = []
     for run in args.run_dirs:
         seed = int(run.name.split("seed", 1)[1].split("_", 1)[0])
-        validation = pd.read_csv(run / "receding_oracle_l8_validation_trace" / "receding_oracle_trace.csv")
-        test = pd.read_csv(run / "receding_oracle_l8_final_trace" / "receding_oracle_trace.csv")
+        validation = pd.read_csv(
+            run / f"{args.trace_prefix}_validation_trace" / "receding_oracle_trace.csv"
+        )
+        test = pd.read_csv(
+            run / f"{args.trace_prefix}_final_trace" / "receding_oracle_trace.csv"
+        )
         cost_columns = feature_columns(test, "candidate_cost_")
         training_tables = {"validation_only": validation}
-        rl_train_path = run / "receding_oracle_l8_rl_train_trace" / "receding_oracle_trace.csv"
+        rl_train_path = run / f"{args.trace_prefix}_rl_train_trace" / "receding_oracle_trace.csv"
         if rl_train_path.exists():
             rl_train = pd.read_csv(rl_train_path)
             training_tables["rl_train_only"] = rl_train
