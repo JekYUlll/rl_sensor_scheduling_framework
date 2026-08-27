@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V210 Closes the Selected-Action Q-Head Diagnostic
+
+- V210 replays the frozen V208 checkpoint over the same `2,304` final-window
+  states as V209 and records the on-policy action-value head for every
+  currently feasible mask. The diagnostic remains offline-only: privileged
+  eight-step candidate costs are used solely to rank the frozen predictions.
+- The Q head improves local-best identification over the categorical actor,
+  but not enough to support an actor-side scale sweep. Its top mask matches
+  the privileged local best in `17.14%` of states and assigns the local best a
+  mean rank of `8.16` among feasible masks, compared with the actor's
+  `1.04%` and `9.68`, respectively. The median Q rank is `6.00`.
+- The Q and actor orderings are not aligned: the Q top mask never equals the
+  actor's deterministic selected mask in this audit. Q top-match rates remain
+  low in calm/particle/flux/thermal states (`16.45%/12.26%/15.37%/27.52%`).
+  A larger Q-logit scale would therefore amplify a still inaccurate ordering,
+  not establish a clean repair.
+- Together with V208's failed closed-loop result, this closes the
+  selected-action return-head route. Rewards observed only for executed masks
+  do not provide sufficient candidate coverage for reliable arbitrary-subset
+  ordering in this scene. No further Q-head scaling or replication is run;
+  any next primary design must address the information structure without
+  importing oracle candidate labels or heuristic-dependent priors.
+
 ## 2026-08-28 - V209 Confirms V208 Candidate-Ranking Failure
 
 - V209 performs a zero-update, frozen-policy replay of V208 on its six final
