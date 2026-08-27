@@ -9,6 +9,7 @@ read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1501 1502 1503 1504 1505}"
 PREFIX="${RUN_PREFIX_OVERRIDE:-v137_generic_physical_scene_gate_dev}"
 CONTEXT_OUT="${CONTEXT_OUT_OVERRIDE:-reports/aggregate/v137_generic_physical_context_gate_20260826}"
 SENSOR_CFG="${SENSOR_CFG_OVERRIDE:-configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml}"
+BUDGET_LABEL="${BUDGET_LABEL_OVERRIDE:-b1p75}"
 
 run_parallel() {
   local worker="$1" index seed
@@ -35,7 +36,7 @@ scene_env() {
   export ORACLE_SUBTYPE_TEACHER_REPEAT=0 ORACLE_INFERENCE_DEVICE=cpu
   export BUDGET="${BUDGET_OVERRIDE:-1.75}"
   export STARTUP_BUDGET="${STARTUP_BUDGET_OVERRIDE:-2.15}"
-  export BUDGET_LABEL="${BUDGET_LABEL_OVERRIDE:-b1p75}"
+  export BUDGET_LABEL
   export TARGET_WEIGHTS='1 1 1 1 1 1 1 1 1'
   export CHANNEL_QUALITY_ENABLED="${CHANNEL_QUALITY_ENABLED_OVERRIDE:-0}"
   export CHANNEL_QUALITY_MODE="${CHANNEL_QUALITY_MODE_OVERRIDE:-independent}"
@@ -69,7 +70,7 @@ run_context() {
     export CUDA_VISIBLE_DEVICES="$gpu"
     env OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 "$PY" \
       scripts/81_v31_framework_baseline_supplements.py \
-      --run-glob "reports/${PREFIX}_seed${seed}_b1p75_20260822" \
+      --run-glob "reports/${PREFIX}_seed${seed}_${BUDGET_LABEL}_20260822" \
       --seeds "$seed" --out-root "$CONTEXT_OUT" --router-eval-dir . \
       --replay-dir __none__ --oracle-device cuda \
       --policies context_bandit forecast_greedy \
@@ -83,7 +84,7 @@ run_receding() {
   (
     export CUDA_VISIBLE_DEVICES="$gpu"
     "$PY" scripts/99_v32_receding_upper.py \
-      --run-dir "reports/${PREFIX}_seed${seed}_b1p75_20260822" --device cuda
+      --run-dir "reports/${PREFIX}_seed${seed}_${BUDGET_LABEL}_20260822" --device cuda
   ) >"logs/v137_receding_seed${seed}.log" 2>&1
 }
 
