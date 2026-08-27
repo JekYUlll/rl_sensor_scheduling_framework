@@ -119,11 +119,11 @@ class MaskCostRegressor(nn.Module):
         predicted_cost = self.cost_head(features).squeeze(-1)
         if quality is not None and self.quality_scale_raw is not None:
             quality_scales = nn.functional.softplus(self.quality_scale_raw)
-            selected_quality = torch.einsum(
+            selected_degradation = torch.einsum(
                 "bs,as,s->ba",
-                quality,
+                1.0 - quality,
                 masks,
                 quality_scales,
             ) / selected_count.reshape(1, -1)
-            predicted_cost = predicted_cost - selected_quality
+            predicted_cost = predicted_cost + selected_degradation
         return predicted_cost
