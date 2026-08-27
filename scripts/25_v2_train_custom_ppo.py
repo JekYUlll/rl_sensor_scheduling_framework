@@ -22,8 +22,14 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from v2.custom_ppo import CustomPPO, CustomPPOConfig, evaluate_custom_ppo  # noqa: E402
-from v2.env import WarmupEnvConfig  # noqa: E402
+from v2.custom_ppo import (  # noqa: E402
+    CustomPPO,
+    CustomPPOConfig,
+    evaluate_custom_ppo,
+    feasible_candidate_mask,
+    oracle_greedy_candidate_costs,
+)
+from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
 from v2.oracle import LinearFrozenForecastOracle  # noqa: E402
 from v2.power_projector import PowerConstraintsV2  # noqa: E402
 from v2.policies import MinDwellPolicyWrapper, StaticMaskPolicy  # noqa: E402
@@ -109,6 +115,115 @@ def finite_mean(values: list[float] | np.ndarray) -> float:
     arr = np.asarray(values, dtype=float).reshape(-1)
     arr = arr[np.isfinite(arr)]
     return float(np.mean(arr)) if arr.size else float("nan")
+
+
+def write_policy_candidate_alignment_audit(
+    *,
+    trainer: CustomPPO,
+    truth: pd.DataFrame,
+    sensors: list[object],
+    constraints: PowerConstraintsV2,
+    cfg: WarmupEnvConfig,
+    oracle: object,
+    start_indices: tuple[int, ...],
+    steps: int,
+    output_path: Path,
+) -> None:
+    """Audit privileged candidate ranks along an already frozen policy rollout.
+
+    Candidate costs are written only for offline diagnosis. They are never fed
+    into action selection, reward construction, or model updates.
+    """
+    import torch
+
+    rows: list[dict[str, float | int]] = []
+    candidate_masks = np.asarray(trainer.candidate_masks_np, dtype=bool)
+    subtype_ids = (
+        truth["event_subtype_id"].to_numpy(dtype=int)
+        if "event_subtype_id" in truth.columns
+        else np.zeros(len(truth), dtype=int)
+    )
+    for rollout_idx, start_idx in enumerate(start_indices):
+        env = WarmupSchedulingEnv(
+            truth,
+            sensors,
+            constraints,
+            replace(cfg, seed=int(cfg.seed) + int(rollout_idx)),
+            oracle=oracle,
+        )
+        env.reset(start_idx=int(start_idx))
+        for rollout_step in range(int(steps)):
+            truth_step_idx = int(env.current_idx)
+            action_mask = feasible_candidate_mask(env, candidate_masks)
+            state = env._state().astype(np.float32)
+            event_context = float(env.online_event_context())
+            candidate_costs = oracle_greedy_candidate_costs(
+                env,
+                candidate_masks,
+                lookahead_steps=max(1, int(oracle.cfg.horizon)),
+            )
+            selected_mask = trainer.predict_mask(
+                state,
+                action_mask,
+                deterministic=True,
+                event_context=event_context,
+            )
+            selected_matches = np.flatnonzero(
+                np.all(candidate_masks == np.asarray(selected_mask, dtype=bool), axis=1)
+            )
+            if selected_matches.size != 1:
+                raise RuntimeError("Policy action is not an exact candidate mask")
+            selected_action_idx = int(selected_matches[0])
+            valid = np.asarray(action_mask, dtype=bool) & np.isfinite(candidate_costs)
+            if not np.any(valid):
+                raise RuntimeError("No finite feasible candidate cost during policy audit")
+            best_action_idx = int(np.argmin(np.where(valid, candidate_costs, np.inf)))
+            selected_cost = float(candidate_costs[selected_action_idx])
+            best_cost = float(candidate_costs[best_action_idx])
+            if not np.isfinite(selected_cost):
+                raise RuntimeError("Selected policy action has no finite candidate cost")
+            with torch.no_grad():
+                obs_t = torch.as_tensor(state.reshape(1, -1), dtype=torch.float32, device=trainer.device)
+                mask_t = torch.as_tensor(action_mask.reshape(1, -1), dtype=torch.bool, device=trainer.device)
+                event_t = torch.as_tensor([event_context], dtype=torch.float32, device=trainer.device)
+                probs = trainer.model.dist(obs_t, trainer.candidate_masks_t, mask_t, event_t).probs
+                probs_np = probs.detach().cpu().numpy().reshape(-1)
+            rows.append(
+                {
+                    "rollout_idx": int(rollout_idx),
+                    "rollout_step": int(rollout_step),
+                    "truth_step_idx": int(truth_step_idx),
+                    "event_subtype_id": int(subtype_ids[min(truth_step_idx, len(subtype_ids) - 1)]),
+                    "feasible_action_count": int(np.sum(valid)),
+                    "selected_action_idx": selected_action_idx,
+                    "best_action_idx": best_action_idx,
+                    "selected_candidate_cost": selected_cost,
+                    "best_candidate_cost": best_cost,
+                    "candidate_cost_regret": float(selected_cost - best_cost),
+                    "selected_action_rank": int(1 + np.sum(candidate_costs[valid] < selected_cost)),
+                    "selected_action_probability": float(probs_np[selected_action_idx]),
+                    "max_action_probability": float(np.max(probs_np[valid])),
+                    "policy_entropy": float(-np.sum(probs_np[valid] * np.log(np.clip(probs_np[valid], 1.0e-12, 1.0)))),
+                }
+            )
+            _, _, done, _ = env.step_mask(selected_mask)
+            if done:
+                break
+    audit = pd.DataFrame(rows)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    audit.to_csv(output_path, index=False)
+    summary = {
+        "rows": int(len(audit)),
+        "mean_candidate_cost_regret": finite_mean(audit["candidate_cost_regret"]),
+        "median_candidate_cost_regret": float(audit["candidate_cost_regret"].median()),
+        "best_action_match_rate": float(np.mean(audit["selected_action_idx"] == audit["best_action_idx"])),
+        "mean_selected_action_rank": finite_mean(audit["selected_action_rank"]),
+        "mean_selected_action_probability": finite_mean(audit["selected_action_probability"]),
+        "mean_policy_entropy": finite_mean(audit["policy_entropy"]),
+    }
+    output_path.with_suffix(".summary.json").write_text(
+        json.dumps(summary, indent=2), encoding="utf-8"
+    )
 
 
 def sha256_file(path: str | Path) -> str:
@@ -478,6 +593,14 @@ def main() -> None:
     parser.add_argument("--checkpoint-path", default=None)
     parser.add_argument("--policy-init-source", default=None)
     parser.add_argument("--policy-checkpoint-source", default=None)
+    parser.add_argument(
+        "--policy-alignment-audit-output",
+        default=None,
+        help=(
+            "Optional privileged offline candidate-cost audit for the frozen policy rollout. "
+            "It does not affect policy training, action selection, or rewards."
+        ),
+    )
     parser.add_argument(
         "--evaluation-policy-mode",
         choices=["deterministic", "stochastic"],
@@ -1858,6 +1981,18 @@ def main() -> None:
         oracle_loss_reward_default_normalizer=float(reward_loss_default_normalizer),
         **energy_kwargs(args),
     )
+    if args.policy_alignment_audit_output:
+        write_policy_candidate_alignment_audit(
+            trainer=trainer,
+            truth=truth,
+            sensors=sensors,
+            constraints=constraints,
+            cfg=eval_cfg,
+            oracle=oracle,
+            start_indices=eval_start_indices,
+            steps=int(args.eval_steps),
+            output_path=Path(args.policy_alignment_audit_output),
+        )
     baseline_eval_cfg = (
         eval_cfg
         if bool(args.primary_eval_duty_guard)
