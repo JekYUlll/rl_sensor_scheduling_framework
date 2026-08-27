@@ -158,7 +158,7 @@ def predict(
 def evaluate(
     *,
     seed: int,
-    train_raw_costs: np.ndarray,
+    static_selection_raw_costs: np.ndarray,
     test_raw_costs: np.ndarray,
     predictions: np.ndarray,
     masks: np.ndarray,
@@ -166,7 +166,7 @@ def evaluate(
     predicted_action = np.argmin(predictions, axis=1)
     oracle_action = np.argmin(test_raw_costs, axis=1)
     rows = np.arange(len(test_raw_costs))
-    validation_static_action = int(np.argmin(train_raw_costs.mean(axis=0)))
+    validation_static_action = int(np.argmin(static_selection_raw_costs.mean(axis=0)))
     predicted_cost = test_raw_costs[rows, predicted_action]
     oracle_cost = test_raw_costs[rows, oracle_action]
     static_cost = test_raw_costs[:, validation_static_action]
@@ -218,6 +218,7 @@ def main() -> None:
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--training-partition", choices=("rl_train", "validation"), default="validation")
     parser.add_argument("--evaluation-partition", choices=("validation", "final_test"), default="final_test")
+    parser.add_argument("--static-selection-partition", choices=("rl_train", "validation"), default="validation")
     args = parser.parse_args()
     device = torch.device(args.device)
     result_rows: list[dict[str, float | int]] = []
@@ -233,10 +234,16 @@ def main() -> None:
         }
         train_table = pd.read_csv(run_dir / partition_dirs[args.training_partition] / "receding_oracle_trace.csv")
         test_table = pd.read_csv(run_dir / partition_dirs[args.evaluation_partition] / "receding_oracle_trace.csv")
+        static_selection_table = pd.read_csv(
+            run_dir / partition_dirs[args.static_selection_partition] / "receding_oracle_trace.csv"
+        )
         train_context = trace_context(run_dir, train_table, sensor_ids, args.feature_set)
         test_context = trace_context(run_dir, test_table, sensor_ids, args.feature_set)
         train_raw, train_targets = training_costs(train_table, args.target_mode)
         test_raw = test_table[indexed_columns(test_table, "candidate_cost_")].to_numpy(dtype=np.float32)
+        static_selection_raw = static_selection_table[
+            indexed_columns(static_selection_table, "candidate_cost_")
+        ].to_numpy(dtype=np.float32)
         model, history = train_model(
             context=train_context,
             targets=train_targets,
@@ -252,13 +259,14 @@ def main() -> None:
         predictions = predict(model, test_context, masks, action_features, device, args.batch_size)
         metrics, prediction_trace = evaluate(
             seed=seed,
-            train_raw_costs=train_raw,
+            static_selection_raw_costs=static_selection_raw,
             test_raw_costs=test_raw,
             predictions=predictions,
             masks=masks,
         )
         metrics["training_partition"] = args.training_partition
         metrics["evaluation_partition"] = args.evaluation_partition
+        metrics["static_selection_partition"] = args.static_selection_partition
         result_rows.append(metrics)
         prediction_table = test_table[["rollout_idx", "rollout_step", "truth_step_idx"]].copy()
         prediction_table.insert(0, "seed", seed)
@@ -279,6 +287,7 @@ def main() -> None:
         "ranking_weight": args.ranking_weight,
         "training_partition": args.training_partition,
         "evaluation_partition": args.evaluation_partition,
+        "static_selection_partition": args.static_selection_partition,
         "seeds": len(output),
         "mean_top1_accuracy": output["top1_action_accuracy"].mean(),
         "mean_top3_accuracy": output["top3_action_accuracy"].mean(),
