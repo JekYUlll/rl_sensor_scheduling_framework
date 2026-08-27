@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V207 Rejects Additive Quality-Context Pooling
+
+- V207 tests one candidate-geometry correction on frozen V193 seed 1901. The
+  quality-context actor now sums, rather than averages, the learned online
+  utilities of sensors included in each feasible mask. This preserves the
+  22-mask arbitrary-subset action space and changes no physical cost,
+  forecast-loss reward, feasibility rule, online feature, or heuristic input.
+- The hypothesis does not pass the single-seed gate. PD-PPO ordinary loss is
+  `0.257584` versus validation-selected static `0.237045`
+  (static-minus-PPO `-0.020539`), and macro loss is `0.713316` versus
+  `0.712537` (margin `-0.000780`). It is therefore not expanded to more seeds.
+- Runtime behavior is valid: zero warm-up aborts, zero always-on/off channels,
+  six intermediate-duty channels, and switching `0.061514` per step. The
+  failure is predictive rather than a collapse to a non-deployable allocation.
+- The configurable pooling implementation and its unit test remain because
+  sum pooling is a valid action-set primitive and the default `mean` preserves
+  prior behavior. V207 closes the claim that mean pooling alone caused the
+  candidate-value failure.
+
 ## 2026-08-28 - V206 Validation Checkpoint Selection Does Not Generalize
 
 - V206 retains the frozen V205 architecture, physical six-channel V193 scene,
