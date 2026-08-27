@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V209 Confirms V208 Candidate-Ranking Failure
+
+- V209 performs a zero-update, frozen-policy replay of V208 on its six final
+  windows. Before each of `2,304` policy actions, all currently feasible masks
+  are evaluated over the same privileged eight-step diagnostic horizon. The
+  resulting costs remain offline-only and never enter training or execution.
+- V208 selects the local best candidate in only `1.04%` of states. Its mean
+  selected rank is `9.68` among the feasible masks, with mean local regret
+  `0.036870`; its mean selected-action probability is `0.07349` and entropy is
+  `3.05362`. The return-head policy therefore does not learn useful conditional
+  candidate ordering.
+- Mean selected ranks are `9.33` in calm, `10.92` in particle, `8.22` in flux,
+  and `10.84` in thermal states. The ranking failure is broad and is not
+  confined to one event subtype. V210 now replays the same checkpoint with a
+  Q-head rank audit to distinguish an unlearned Q representation from a failure
+  to transfer Q scores into categorical PPO logits.
+
 ## 2026-08-28 - V208 Rejects On-Policy Action-Value Augmentation
 
 - V208 adds an action-conditioned return head to the clean V199 actor. The
