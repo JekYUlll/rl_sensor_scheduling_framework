@@ -188,6 +188,21 @@ def write_policy_candidate_alignment_audit(
                 event_t = torch.as_tensor([event_context], dtype=torch.float32, device=trainer.device)
                 probs = trainer.model.dist(obs_t, trainer.candidate_masks_t, mask_t, event_t).probs
                 probs_np = probs.detach().cpu().numpy().reshape(-1)
+                q_values_np = None
+                if trainer.model.actor.onpolicy_action_value_head is not None:
+                    q_values_np = trainer.model.actor.onpolicy_action_values(
+                        obs_t, trainer.candidate_masks_t
+                    ).detach().cpu().numpy().reshape(-1)
+            q_oracle_best_rank = float("nan")
+            q_top_action_idx = -1
+            selected_q_value = float("nan")
+            best_q_value = float("nan")
+            if q_values_np is not None:
+                masked_q = np.where(valid, q_values_np, -np.inf)
+                q_top_action_idx = int(np.argmax(masked_q))
+                selected_q_value = float(q_values_np[selected_action_idx])
+                best_q_value = float(q_values_np[best_action_idx])
+                q_oracle_best_rank = float(1 + np.sum(q_values_np[valid] > best_q_value))
             rows.append(
                 {
                     "rollout_idx": int(rollout_idx),
@@ -204,6 +219,10 @@ def write_policy_candidate_alignment_audit(
                     "selected_action_probability": float(probs_np[selected_action_idx]),
                     "max_action_probability": float(np.max(probs_np[valid])),
                     "policy_entropy": float(-np.sum(probs_np[valid] * np.log(np.clip(probs_np[valid], 1.0e-12, 1.0)))),
+                    "q_top_action_idx": q_top_action_idx,
+                    "q_oracle_best_rank": q_oracle_best_rank,
+                    "selected_q_value": selected_q_value,
+                    "oracle_best_q_value": best_q_value,
                 }
             )
             _, _, done, _ = env.step_mask(selected_mask)
@@ -220,6 +239,11 @@ def write_policy_candidate_alignment_audit(
         "mean_selected_action_rank": finite_mean(audit["selected_action_rank"]),
         "mean_selected_action_probability": finite_mean(audit["selected_action_probability"]),
         "mean_policy_entropy": finite_mean(audit["policy_entropy"]),
+        "q_head_enabled": bool("q_oracle_best_rank" in audit and audit["q_oracle_best_rank"].notna().any()),
+        "mean_q_oracle_best_rank": finite_mean(audit["q_oracle_best_rank"]),
+        "q_top_matches_oracle_best_rate": float(
+            np.mean(audit["q_top_action_idx"] == audit["best_action_idx"])
+        ) if "q_top_action_idx" in audit and np.any(audit["q_top_action_idx"] >= 0) else float("nan"),
     }
     output_path.with_suffix(".summary.json").write_text(
         json.dumps(summary, indent=2), encoding="utf-8"
