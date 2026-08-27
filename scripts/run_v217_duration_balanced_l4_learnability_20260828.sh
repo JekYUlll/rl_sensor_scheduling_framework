@@ -41,4 +41,5 @@ done
 "$PYTHON" scripts/102_v32_receding_trace_learnability.py \
   --run-dirs "${run_dirs[@]}" \
   --trace-prefix receding_oracle_l4 \
+  --final-trace-subdir receding_oracle_l4_lookahead_sweep \
   --output-dir "$OUT_ROOT/learnability"

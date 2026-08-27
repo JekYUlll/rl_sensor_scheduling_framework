@@ -141,6 +141,11 @@ def main() -> None:
         default="receding_oracle_l8",
         help="Prefix of the partition-specific receding trace directories.",
     )
+    parser.add_argument(
+        "--final-trace-subdir",
+        default=None,
+        help="Optional explicit final-test trace directory name.",
+    )
     args = parser.parse_args()
     rows: list[dict[str, object]] = []
     for run in args.run_dirs:
@@ -148,9 +153,8 @@ def main() -> None:
         validation = pd.read_csv(
             run / f"{args.trace_prefix}_validation_trace" / "receding_oracle_trace.csv"
         )
-        test = pd.read_csv(
-            run / f"{args.trace_prefix}_final_trace" / "receding_oracle_trace.csv"
-        )
+        final_trace_subdir = args.final_trace_subdir or f"{args.trace_prefix}_final_trace"
+        test = pd.read_csv(run / final_trace_subdir / "receding_oracle_trace.csv")
         cost_columns = feature_columns(test, "candidate_cost_")
         training_tables = {"validation_only": validation}
         rl_train_path = run / f"{args.trace_prefix}_rl_train_trace" / "receding_oracle_trace.csv"
