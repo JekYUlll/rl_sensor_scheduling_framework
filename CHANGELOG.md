@@ -4299,3 +4299,20 @@ tar -czf "$OUT…`
   It also reaches `1/5` joint wins and worsens mean ordinary/macro margins to
   `-0.006862/-0.023686`. Alert-bin rule expansion is closed; no additional
   heuristic thresholds or cost/budget sweeps follow from this result.
+
+## 2026-08-28 - V219 rejects minimal PPO training with label-free nowcasts
+
+- V219 adds only three noisy, four-step meteorological nowcasts (wind, relative
+  humidity, and air temperature) to the policy state.  Synthetic event alerts,
+  labels, and the inert zero-coverage channel-quality tail are excluded.  The
+  context encoder receives exactly these three trailing state dimensions.
+- Two initially launched configurations were stopped and excluded before
+  aggregation because the generic runner overrode the intended context width.
+  The accepted run records `context_feature_dim=3` in every seed metadata file
+  and has no quality or alert context columns in its execution command.
+- The bounded `1,024`-step PPO screen loses to validation-selected static in
+  all five development scenes: mean static-minus-PPO ordinary-loss margin
+  `-0.170605` and macro static-normalized margin `-0.481659`.  This closes the
+  minimal-training variant; it is not evidence that the nowcast scene has no
+  dynamic value.  The paired all-action receding diagnostic remains in progress
+  to separate scene headroom from policy learnability.
