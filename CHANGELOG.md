@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V212 Closes the Coverage-Balanced Cost Geometry Screen
+
+- V212 applies one physical effective-load recalibration before any result is
+  inspected: the multi-variable GMX500 core channel receives its bundled
+  acquisition/interface cost, yielding an arbitrary-subset surface of six
+  singles and eleven feasible pairs (`18` masks total). No cardinality rule,
+  sampling-frequency action, or PPO change is introduced.
+- The geometry improves alert-only online margins on average
+  (`+0.007626/+0.035088` ordinary/macro) and reduces persistent core-channel
+  use, but it passes both endpoints in only `2/5` development scenes. The
+  quality-aware rule is behaviorally broader but passes only `1/5` scenes;
+  its best mean margins are `-0.016160/-0.022491`.
+- The exact eight-step receding diagnostic is positive in `3/5` scenes with
+  mean static-minus-receding ordinary margin `+0.030065`, but it loses in
+  seeds `2202` and `2205`. Thus the cost geometry does not provide robust
+  dynamic opportunity independently of the learner, and V212 is rejected
+  before PPO training.
+- This closes fixed effective-cost rebalancing as a standalone remedy. The next
+  analysis must inspect failed-scene event coverage and validation-selected
+  masks before changing either the target process or the physical observation
+  relationship; another budget or penalty scan is not justified.
+
 ## 2026-08-28 - V211 Rejects the First Condition-Dependent Reliability Scene
 
 - V211 introduces a development-only, condition-dependent channel-quality
