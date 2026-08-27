@@ -3712,3 +3712,28 @@ tar -czf "$OUT…`
   on-policy auxiliary updates. V186 changes only these matched loss terms
   (`smooth_l1`, ranking coefficient `0.1`) and is the final bounded test of the
   on-policy mask-value-head route.
+
+## 2026-08-27 - Reject quality-coupled ranking and restore the validated alert-only head
+
+- V186 improves the seed1701 static-normalized macro loss from V185's
+  `1.122544` to `1.089740`, but remains worse than the validation-selected
+  static schedule (`0.972963`). Its ordinary forecast loss is `0.308100`
+  versus static `0.281203`, and one of six channels remains always off. V186
+  therefore fails both prediction endpoints and the behavior gate and is not
+  replicated.
+- Every V186 validation checkpoint remains worse than static. The selected
+  update20 score is `1.100183`, only marginally below the update0 score
+  `1.101160`; checkpoint selection is not the failure source. Smooth-L1 plus
+  ranking raises pretraining top-action accuracy to `0.196`, but policy entropy
+  remains close to the 22-action maximum.
+- The audit found a structural mismatch: the passing V178/V180 offline
+  regressor used alert context only, whereas the embedded V185/V186 head was
+  forced to consume six quality values with a monotonic degradation term.
+  V181--V184 had already shown that this quality coupling harms prediction
+  transfer. Added an opt-in `forecast-value-head-ignore-quality` path that
+  removes quality only from the auxiliary mask-cost head while leaving the
+  complete actor observation unchanged.
+- V187 changes only this integration mismatch relative to V186. It is a bounded
+  seed1701 pilot and may be replicated only if both forecast endpoints beat the
+  validation-selected static schedule and all six channels have nondegenerate
+  duty.

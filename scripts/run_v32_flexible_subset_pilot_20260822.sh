@@ -47,6 +47,7 @@ FORECAST_VALUE_HEAD="${FORECAST_VALUE_HEAD:-0}"
 FORECAST_VALUE_HEAD_SCALE="${FORECAST_VALUE_HEAD_SCALE:-1.0}"
 FORECAST_VALUE_HEAD_HIDDEN_DIM="${FORECAST_VALUE_HEAD_HIDDEN_DIM:-128}"
 FORECAST_VALUE_HEAD_MODE="${FORECAST_VALUE_HEAD_MODE:-factorized}"
+FORECAST_VALUE_HEAD_IGNORE_QUALITY="${FORECAST_VALUE_HEAD_IGNORE_QUALITY:-0}"
 ENT_COEF="${ENT_COEF:-0.02}"
 CHANNEL_MARGINAL_ENTROPY_COEF="${CHANNEL_MARGINAL_ENTROPY_COEF:-0}"
 POLICY_INIT_SOURCE="${POLICY_INIT_SOURCE:-}"
@@ -205,6 +206,9 @@ for seed in "${SEEDS[@]}"; do
   control_args+=(--forecast-value-head-scale "$FORECAST_VALUE_HEAD_SCALE")
   control_args+=(--forecast-value-head-hidden-dim "$FORECAST_VALUE_HEAD_HIDDEN_DIM")
   control_args+=(--forecast-value-head-mode "$FORECAST_VALUE_HEAD_MODE")
+  if [[ "$FORECAST_VALUE_HEAD_IGNORE_QUALITY" == "1" ]]; then
+    control_args+=(--forecast-value-head-ignore-quality)
+  fi
   if [[ -n "$EVALUATION_TEMPERATURE_CANDIDATES" ]]; then
     read -r -a evaluation_temperature_args <<< "$EVALUATION_TEMPERATURE_CANDIDATES"
     control_args+=(--evaluation-temperature-candidates "${evaluation_temperature_args[@]}")

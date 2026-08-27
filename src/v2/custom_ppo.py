@@ -123,6 +123,7 @@ class CustomPPOConfig:
     forecast_value_head_scale: float = 1.0
     forecast_value_head_hidden_dim: int = 128
     forecast_value_head_mode: str = "factorized"
+    forecast_value_head_ignore_quality: bool = False
     subtype_aux_coef: float = 0.0
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
@@ -261,6 +262,7 @@ class MaskedActor:
         forecast_value_head_scale: float = 1.0,
         forecast_value_head_hidden_dim: int = 128,
         forecast_value_head_mode: str = "factorized",
+        forecast_value_head_ignore_quality: bool = False,
         candidate_cost_features: np.ndarray | None = None,
     ) -> Any:
         torch, nn = _torch_modules()
@@ -276,6 +278,9 @@ class MaskedActor:
                 self.forecast_value_head_enabled = bool(forecast_value_head_enabled)
                 self.forecast_value_head_scale = float(forecast_value_head_scale)
                 self.forecast_value_head_mode = str(forecast_value_head_mode)
+                self.forecast_value_head_ignore_quality = bool(
+                    forecast_value_head_ignore_quality
+                )
                 if self.forecast_value_head_mode not in {"factorized", "independent", "mask_structured"}:
                     raise ValueError(
                         "forecast_value_head_mode must be factorized, independent, or mask_structured"
@@ -481,11 +486,19 @@ class MaskedActor:
                         self.forecast_action_bias = None
                         self.forecast_mask_cost_regressor = MaskCostRegressor(
                             MaskCostRegressorConfig(
-                                context_dim=self.context_feature_dim,
+                                context_dim=(
+                                    self.context_feature_dim - int(n_sensors)
+                                    if self.forecast_value_head_ignore_quality
+                                    else self.context_feature_dim
+                                ),
                                 sensor_count=int(n_sensors),
                                 context_hidden_dim=forecast_hidden,
                                 action_hidden_dim=forecast_hidden,
-                                quality_feature_count=int(n_sensors),
+                                quality_feature_count=(
+                                    0
+                                    if self.forecast_value_head_ignore_quality
+                                    else int(n_sensors)
+                                ),
                             )
                         )
                         self.register_buffer(
@@ -662,8 +675,13 @@ class MaskedActor:
                     _, context_obs = self._split_obs(obs)
                     if context_obs is None:
                         raise RuntimeError("mask-structured forecast-value head requires context")
+                    forecast_context = (
+                        context_obs[:, int(candidate_masks.shape[1]) :]
+                        if self.forecast_value_head_ignore_quality
+                        else context_obs
+                    )
                     logits = -self.forecast_mask_cost_regressor(
-                        context_obs,
+                        forecast_context,
                         candidate_masks,
                         self.forecast_candidate_cost_features,
                     )
@@ -759,6 +777,7 @@ class ActorCritic:
         forecast_value_head_scale: float = 1.0,
         forecast_value_head_hidden_dim: int = 128,
         forecast_value_head_mode: str = "factorized",
+        forecast_value_head_ignore_quality: bool = False,
         candidate_cost_features: np.ndarray | None = None,
     ) -> Any:
         _, nn = _torch_modules()
@@ -793,6 +812,9 @@ class ActorCritic:
                     forecast_value_head_scale=float(forecast_value_head_scale),
                     forecast_value_head_hidden_dim=int(forecast_value_head_hidden_dim),
                     forecast_value_head_mode=str(forecast_value_head_mode),
+                    forecast_value_head_ignore_quality=bool(
+                        forecast_value_head_ignore_quality
+                    ),
                     candidate_cost_features=candidate_cost_features,
                 )
                 self.critic = EventAwareCritic(int(obs_dim), int(hidden_dim), event_aware=bool(event_aware_critic))
@@ -930,6 +952,9 @@ class CustomPPO:
             forecast_value_head_scale=float(cfg.forecast_value_head_scale),
             forecast_value_head_hidden_dim=int(cfg.forecast_value_head_hidden_dim),
             forecast_value_head_mode=str(cfg.forecast_value_head_mode),
+            forecast_value_head_ignore_quality=bool(
+                cfg.forecast_value_head_ignore_quality
+            ),
             candidate_cost_features=candidate_cost_features,
         ).to(self.device)
         self.candidate_masks_t = torch_tensor(self.candidate_masks_np.astype(np.float32), device=self.device)

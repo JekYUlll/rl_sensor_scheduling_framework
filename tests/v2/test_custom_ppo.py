@@ -236,6 +236,38 @@ def test_mask_structured_forecast_head_uses_context_and_cost_features() -> None:
     )
 
 
+def test_mask_structured_forecast_head_can_ignore_quality_prefix() -> None:
+    actor = MaskedActor(
+        obs_dim=12,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        n_actions=3,
+        context_encoder_enabled=True,
+        context_feature_dim=5,
+        forecast_value_head_enabled=True,
+        forecast_value_head_mode="mask_structured",
+        forecast_value_head_ignore_quality=True,
+        candidate_cost_features=np.asarray(
+            [[0.4, 0.5], [0.6, 0.7], [0.9, 1.0]],
+            dtype=np.float32,
+        ),
+    )
+    candidate_masks = torch.tensor(
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]],
+        dtype=torch.float32,
+    )
+    feasible = torch.ones((2, 3), dtype=torch.bool)
+    obs = torch.zeros((2, 12), dtype=torch.float32)
+    obs[:, -5:] = torch.tensor(
+        [[0.1, 0.2, 0.3, 0.4, 0.7], [0.9, 0.8, 0.7, 0.4, 0.7]]
+    )
+
+    logits = actor.forecast_value_logits(obs, candidate_masks, feasible)
+
+    assert torch.allclose(logits[0], logits[1])
+
+
 def test_nonlinear_action_embedding_encodes_subset_interactions() -> None:
     actor = MaskedActor(
         obs_dim=5,

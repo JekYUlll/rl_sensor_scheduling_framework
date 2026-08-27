@@ -740,6 +740,7 @@ def main() -> None:
         choices=("factorized", "independent", "mask_structured"),
         default="factorized",
     )
+    parser.add_argument("--forecast-value-head-ignore-quality", action="store_true")
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1628,6 +1629,8 @@ def main() -> None:
         "--soc-aux-coef",
         str(float(args.soc_aux_coef)),
     ]
+    if bool(args.forecast_value_head_ignore_quality):
+        cmd.append("--forecast-value-head-ignore-quality")
     cmd.append("--forecast-value-head" if bool(args.forecast_value_head) else "--no-forecast-value-head")
     if args.policy_seed is not None:
         cmd.extend(["--policy-seed", str(int(args.policy_seed))])
