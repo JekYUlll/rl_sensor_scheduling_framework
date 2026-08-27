@@ -808,7 +808,7 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
             ("relative_humidity", "agent_context_nowcast_relative_humidity", cfg.nowcast_humidity_noise_std),
             ("air_temperature_c", "agent_context_nowcast_air_temperature_c", cfg.nowcast_temperature_noise_std),
         ):
-            values = synth_cols[source].to_numpy(dtype=float)
+            values = np.asarray(synth_cols[source], dtype=float)
             forecast = np.empty_like(values)
             forecast[:-nowcast_lead] = values[nowcast_lead:]
             forecast[-nowcast_lead:] = values[-1]
