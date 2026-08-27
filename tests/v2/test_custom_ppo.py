@@ -200,6 +200,42 @@ def test_forecast_value_head_is_masked_and_gradient_isolated_from_policy_logits(
     assert any(parameter.grad is not None for parameter in forecast_parameters)
 
 
+def test_mask_structured_forecast_head_uses_context_and_cost_features() -> None:
+    actor = MaskedActor(
+        obs_dim=12,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        n_actions=3,
+        context_encoder_enabled=True,
+        context_feature_dim=5,
+        forecast_value_head_enabled=True,
+        forecast_value_head_mode="mask_structured",
+        candidate_cost_features=np.asarray(
+            [[0.4, 0.5], [0.6, 0.7], [0.9, 1.0]],
+            dtype=np.float32,
+        ),
+    )
+    obs = torch.zeros((2, 12), dtype=torch.float32)
+    obs[:, -5:] = torch.tensor([0.8, 0.7, 0.9, 0.2, 0.6])
+    candidate_masks = torch.tensor(
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]],
+        dtype=torch.float32,
+    )
+    feasible = torch.tensor([[True, False, True], [True, True, False]])
+
+    logits = actor.forecast_value_logits(obs, candidate_masks, feasible)
+
+    assert logits.shape == (2, 3)
+    assert torch.all(logits[~feasible] < -1.0e8)
+    logits[feasible].sum().backward()
+    assert any(
+        parameter.grad is not None
+        for name, parameter in actor.named_parameters()
+        if name.startswith("forecast_mask_cost_regressor")
+    )
+
+
 def test_nonlinear_action_embedding_encodes_subset_interactions() -> None:
     actor = MaskedActor(
         obs_dim=5,

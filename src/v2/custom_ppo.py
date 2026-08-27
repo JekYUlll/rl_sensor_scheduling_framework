@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv
+from v2.mask_cost_regressor import MaskCostRegressor, MaskCostRegressorConfig
 from v2.oracle import LinearFrozenForecastOracle
 from v2.policies import MinDwellPolicyWrapper
 from v2.power_projector import PowerConstraintsV2
@@ -259,6 +260,7 @@ class MaskedActor:
         forecast_value_head_scale: float = 1.0,
         forecast_value_head_hidden_dim: int = 128,
         forecast_value_head_mode: str = "factorized",
+        candidate_cost_features: np.ndarray | None = None,
     ) -> Any:
         torch, nn = _torch_modules()
 
@@ -273,8 +275,10 @@ class MaskedActor:
                 self.forecast_value_head_enabled = bool(forecast_value_head_enabled)
                 self.forecast_value_head_scale = float(forecast_value_head_scale)
                 self.forecast_value_head_mode = str(forecast_value_head_mode)
-                if self.forecast_value_head_mode not in {"factorized", "independent"}:
-                    raise ValueError("forecast_value_head_mode must be factorized or independent")
+                if self.forecast_value_head_mode not in {"factorized", "independent", "mask_structured"}:
+                    raise ValueError(
+                        "forecast_value_head_mode must be factorized, independent, or mask_structured"
+                    )
                 self.context_feature_dim = (
                     max(0, min(int(context_feature_dim), int(obs_dim) - 1))
                     if bool(context_encoder_enabled)
@@ -456,6 +460,37 @@ class MaskedActor:
                         )
                         self.forecast_action_embedding = None
                         self.forecast_action_bias = None
+                        self.forecast_mask_cost_regressor = None
+                        self.register_buffer(
+                            "forecast_candidate_cost_features",
+                            torch.empty((0, 2), dtype=torch.float32),
+                        )
+                    elif self.forecast_value_head_mode == "mask_structured":
+                        if self.context_feature_dim <= int(n_sensors):
+                            raise ValueError(
+                                "mask-structured forecast head requires quality plus alert context features"
+                            )
+                        features = np.asarray(candidate_cost_features, dtype=np.float32)
+                        if features.shape != (self.n_actions, 2):
+                            raise ValueError(
+                                "mask-structured forecast head requires [n_actions, 2] cost features"
+                            )
+                        self.forecast_state_encoder = None
+                        self.forecast_action_embedding = None
+                        self.forecast_action_bias = None
+                        self.forecast_mask_cost_regressor = MaskCostRegressor(
+                            MaskCostRegressorConfig(
+                                context_dim=self.context_feature_dim,
+                                sensor_count=int(n_sensors),
+                                context_hidden_dim=forecast_hidden,
+                                action_hidden_dim=forecast_hidden,
+                                quality_feature_count=int(n_sensors),
+                            )
+                        )
+                        self.register_buffer(
+                            "forecast_candidate_cost_features",
+                            torch.as_tensor(features, dtype=torch.float32),
+                        )
                     else:
                         self.forecast_state_encoder = nn.Sequential(
                             nn.Linear(int(obs_dim), forecast_hidden),
@@ -469,10 +504,20 @@ class MaskedActor:
                             nonlinear=True,
                         )
                         self.forecast_action_bias = nn.Linear(int(embed_dim), 1)
+                        self.forecast_mask_cost_regressor = None
+                        self.register_buffer(
+                            "forecast_candidate_cost_features",
+                            torch.empty((0, 2), dtype=torch.float32),
+                        )
                 else:
                     self.forecast_state_encoder = None
                     self.forecast_action_embedding = None
                     self.forecast_action_bias = None
+                    self.forecast_mask_cost_regressor = None
+                    self.register_buffer(
+                        "forecast_candidate_cost_features",
+                        torch.empty((0, 2), dtype=torch.float32),
+                    )
                 prior_len = int(n_actions or 0)
                 if candidate_prior_logits is not None:
                     prior = torch.as_tensor(np.asarray(candidate_prior_logits, dtype=np.float32).reshape(-1))
@@ -610,18 +655,30 @@ class MaskedActor:
                 candidate_masks: Any,
                 action_mask: Any | None = None,
             ) -> Any:
-                if self.forecast_state_encoder is None:
-                    raise RuntimeError("forecast-value head is not enabled")
-                state = self.forecast_state_encoder(obs)
-                if self.forecast_value_head_mode == "independent":
-                    logits = state
-                else:
-                    action_emb = self.forecast_action_embedding(candidate_masks)
-                    logits = state @ action_emb.transpose(0, 1) / max(
-                        float(action_emb.shape[-1]) ** 0.5,
-                        1.0,
+                if self.forecast_value_head_mode == "mask_structured":
+                    if self.forecast_mask_cost_regressor is None:
+                        raise RuntimeError("mask-structured forecast-value head is not enabled")
+                    _, context_obs = self._split_obs(obs)
+                    if context_obs is None:
+                        raise RuntimeError("mask-structured forecast-value head requires context")
+                    logits = -self.forecast_mask_cost_regressor(
+                        context_obs,
+                        candidate_masks,
+                        self.forecast_candidate_cost_features,
                     )
-                    logits = logits + self.forecast_action_bias(action_emb).reshape(1, -1)
+                elif self.forecast_state_encoder is None:
+                    raise RuntimeError("forecast-value head is not enabled")
+                else:
+                    state = self.forecast_state_encoder(obs)
+                    if self.forecast_value_head_mode == "independent":
+                        logits = state
+                    else:
+                        action_emb = self.forecast_action_embedding(candidate_masks)
+                        logits = state @ action_emb.transpose(0, 1) / max(
+                            float(action_emb.shape[-1]) ** 0.5,
+                            1.0,
+                        )
+                        logits = logits + self.forecast_action_bias(action_emb).reshape(1, -1)
                 if action_mask is not None:
                     valid = action_mask.bool()
                     if valid.ndim == 1:
@@ -701,6 +758,7 @@ class ActorCritic:
         forecast_value_head_scale: float = 1.0,
         forecast_value_head_hidden_dim: int = 128,
         forecast_value_head_mode: str = "factorized",
+        candidate_cost_features: np.ndarray | None = None,
     ) -> Any:
         _, nn = _torch_modules()
 
@@ -734,6 +792,7 @@ class ActorCritic:
                     forecast_value_head_scale=float(forecast_value_head_scale),
                     forecast_value_head_hidden_dim=int(forecast_value_head_hidden_dim),
                     forecast_value_head_mode=str(forecast_value_head_mode),
+                    candidate_cost_features=candidate_cost_features,
                 )
                 self.critic = EventAwareCritic(int(obs_dim), int(hidden_dim), event_aware=bool(event_aware_critic))
                 self.soc_aux_horizon = max(0, int(soc_aux_horizon))
@@ -823,6 +882,20 @@ class CustomPPO:
             raise ValueError("context_encoder_enabled requires alert/context features in the environment state")
         if self.context_feature_dim > 0:
             self.cfg = replace(self.cfg, context_feature_dim=int(self.context_feature_dim))
+        steady_budget = max(float(self.constraints.per_step_budget or 1.0), 1.0e-9)
+        peak_budget = max(float(self.constraints.startup_peak_budget or steady_budget), 1.0e-9)
+        candidate_cost_features = np.asarray(
+            [
+                [
+                    sum(float(self.sensor_specs[idx].power_cost) for idx in np.flatnonzero(mask))
+                    / steady_budget,
+                    sum(float(self.sensor_specs[idx].startup_peak_power) for idx in np.flatnonzero(mask))
+                    / peak_budget,
+                ]
+                for mask in self.candidate_masks_np
+            ],
+            dtype=np.float32,
+        )
         self.model = ActorCritic(
             obs_dim=self.obs_dim,
             n_sensors=len(self.sensor_specs),
@@ -856,6 +929,7 @@ class CustomPPO:
             forecast_value_head_scale=float(cfg.forecast_value_head_scale),
             forecast_value_head_hidden_dim=int(cfg.forecast_value_head_hidden_dim),
             forecast_value_head_mode=str(cfg.forecast_value_head_mode),
+            candidate_cost_features=candidate_cost_features,
         ).to(self.device)
         self.candidate_masks_t = torch_tensor(self.candidate_masks_np.astype(np.float32), device=self.device)
         self.candidate_prior_logits_t = (

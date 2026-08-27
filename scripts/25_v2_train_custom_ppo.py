@@ -603,7 +603,7 @@ def main() -> None:
     parser.add_argument("--forecast-value-head-hidden-dim", type=int, default=128)
     parser.add_argument(
         "--forecast-value-head-mode",
-        choices=("factorized", "independent"),
+        choices=("factorized", "independent", "mask_structured"),
         default="factorized",
     )
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
