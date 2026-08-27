@@ -811,6 +811,7 @@ def main() -> None:
     parser.add_argument("--context-layer-norm", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--aligned-quality-action-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--quality-context-action-score", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--quality-context-pooling", choices=["mean", "sum"], default="mean")
     parser.add_argument("--candidate-interaction-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
@@ -1254,6 +1255,8 @@ def main() -> None:
             "context_hidden_dim": int(args.context_hidden_dim),
             "context_fusion_mode": str(args.context_fusion_mode),
             "context_layer_norm": bool(args.context_layer_norm),
+            "quality_context_action_score": bool(args.quality_context_action_score),
+            "quality_context_pooling": str(args.quality_context_pooling),
             "candidate_interaction_score": bool(args.candidate_interaction_score),
             "soc_aux_horizon": int(args.soc_aux_horizon),
             "soc_aux_coef": float(args.soc_aux_coef),
@@ -1698,6 +1701,7 @@ def main() -> None:
         if bool(args.quality_context_action_score)
         else "--no-quality-context-action-score"
     )
+    cmd.extend(["--quality-context-pooling", str(args.quality_context_pooling)])
     cmd.append(
         "--candidate-interaction-score"
         if bool(args.candidate_interaction_score)
