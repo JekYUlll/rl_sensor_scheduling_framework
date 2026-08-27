@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-27 - V203 Rejects Nonlinear Candidate Interaction as a Standalone Fix
+
+- V203 retains V199's online quality/context action score, frozen V193
+  seed-1901 scene, forecast-loss reward, 22 feasible-mask action geometry,
+  and standard PPO configuration. It adds only a nonlinear state--candidate
+  interaction head inside the masked actor; it receives no candidate cost,
+  oracle label, heuristic output, or action prior.
+- The variant preserves the required operational behavior: zero warm-up
+  aborts, zero always-on channels, zero always-off channels, and six
+  intermediate-duty channels. Its switching rate is `0.0465` per step.
+- It nevertheless fails both static endpoints. Ordinary/macro losses are
+  `0.254322/0.753630`, versus validation-selected static
+  `0.237045/0.712537`. This is worse than V199 on both endpoints, so the
+  nonlinear scorer is rejected without seed expansion.
+- The next bounded step is a frozen policy-alignment audit of V203. It will
+  determine whether the added interaction changes conditional feasible-mask
+  ranking at all before any further standard-PPO training adjustment is made.
+
 ## 2026-08-27 - V202 Localizes the Candidate-Value Credit Gap
 
 - V202 reloads V200's checkpoint with `total_timesteps=0` and regenerates the
