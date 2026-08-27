@@ -167,8 +167,6 @@ if [[ "${#AGENT_CONTEXT_COLUMN_ARGS[@]}" -gt 0 ]]; then
 fi
 if [[ "$INCLUDE_ALERT_CONTEXT_FEATURES" == "1" ]]; then
   CONTEXT_INPUT_ARGS+=(--include-alert-context-features)
-else
-  CONTEXT_INPUT_ARGS+=(--no-include-alert-context-features)
 fi
 QUALITY_SCORE_ARGS=(--no-aligned-quality-action-score)
 if [[ "$ALIGNED_QUALITY_ACTION_SCORE" == "1" ]]; then
