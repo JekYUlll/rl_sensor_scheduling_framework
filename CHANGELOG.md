@@ -3651,3 +3651,45 @@ tar -czf "$OUT…`
   training result. Policy-training receding traces must reproduce the mapping
   on validation and final partitions before the shared mask model can be
   connected to PPO.
+
+## 2026-08-27 - Establish legal partition transfer for mask-cost supervision
+
+- V179 generated 2,048 receding-action states on each seed's policy-training
+  partition. These traces enable action-cost fitting without using validation
+  or final targets as training labels.
+- The first V180 aggregation incorrectly selected its static reference on the
+  regressor-training partition. That comparison is invalid because the frozen
+  protocol selects the static reference on validation. The audit now accepts
+  an explicit static-selection partition; corrected evidence uses validation.
+- With the V178 structure fitted only on policy-training data, corrected V180
+  obtains positive final gain over validation-selected static in `5/5` seeds,
+  with mean `+0.006541` and `21.2%` receding-headroom recovery. Validation is
+  weaker at `3/5`, and only `3/5` scenes use all six channels, so this exact
+  configuration is not selected for PPO.
+- V181 varies only ranking weight, target scaling, and the already audited
+  online quality input on validation. Ranking weight `0.1` is the strongest
+  alert-only result (`4/5`, mean `+0.000558`), while direct quality fusion
+  passes behavior `5/5` but loses prediction on average. Higher ranking weight,
+  global scaling, and no ranking loss do not improve the joint gate.
+- V182--V184 separate online warning context from a monotonic sensor-quality
+  degradation term. The best validation result reaches prediction `4/5` and
+  behavior `4/5`; the sole behavior failure is one channel at duty `0.00195`
+  in seed1702, while the sole prediction loss is `-0.000671` in seed1704.
+  Per-channel quality scales do not remove this trade-off. Offline quality
+  tuning is closed.
+
+## 2026-08-27 - Connect shared mask-cost supervision to complete PD-PPO
+
+- Added a `mask_structured` forecast-value head to the existing PD-PPO actor.
+  It predicts standardized action value from online quality/warning context,
+  candidate sensor masks, and normalized steady/startup costs with parameters
+  shared across subsets. Forecast-head logits remain detached when added to
+  policy logits, preserving the PPO objective and gradient boundary.
+- Existing factorized and independent heads remain unchanged. Focused gradient,
+  feasibility-mask, arbitrary-action-order, and monotonic-quality tests pass;
+  the full suite passes 142 tests.
+- A 128-state, one-update remote dry run completed the full split-protocol
+  training, checkpoint, rollout, and metrics chain with zero constraint
+  violations or warm-up aborts. V185 is the bounded seed1701 full pilot; it is
+  eligible for replication only if it beats static on both endpoints and passes
+  the six-channel behavior gate.
