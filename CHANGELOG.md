@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V219--V220 Establish a Meteorological Nowcast Input Path
+
+- V219 audits a label-free four-step proxy built solely from noisy forecasts of
+  wind speed, relative humidity, and air temperature. Across the frozen V213
+  final partitions it attains mean four-class macro-F1 `0.4808` and event
+  recall `0.6481`; no policy, event label, target value, or candidate loss is
+  consumed by the proxy.
+- V220 provides the corresponding perfect-forecast information bound. The same
+  three meteorological quantities attain mean macro-F1 `0.5898` and event
+  recall `0.7726`. Thus the quantities contain useful anticipatory information;
+  the V219 reduction is attributable to forecast error rather than an absent
+  physical relationship.
+- The next scene implementation will expose a fixed-error exogenous weather
+  nowcast through the scheduler context interface and remove event-label-derived
+  alert context from the primary online input. It must pass the existing online
+  and receding gates before any PD-PPO training.
+
 ## 2026-08-28 - V217--V218 Close the Short-Horizon Distillation Route
 
 - V217 reuses V216's frozen l4 final traces and generates only training and
