@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V205 Passes the Long-Horizon PPO Gate
+
+- V205 restores V199's clean online quality/context actor and changes only
+  standard PPO duration from `40,960` to `163,840` steps on frozen V193
+  seed 1901. It retains the forecast-loss reward, 22 feasible masks, physical
+  six-channel costs, and all deployment rules.
+- The longer run passes both static endpoints: ordinary forecast loss is
+  `0.235582` versus validation-selected static `0.237045`, and macro
+  static-normalized loss is `0.693146` versus `0.712537`. It also improves on
+  random (`0.237214`) and round-robin (`0.242842`) in ordinary loss. AoI
+  (`0.220819`) and full-open (`0.199993`) remain stronger references on this
+  single seed; the latter is infeasible under the power budget.
+- Deployment behavior passes: zero warm-up aborts, zero always-on/off
+  channels, six intermediate-duty channels, and switching `0.0683` per step.
+  The policy uses all six physical channels under the fixed per-step costs.
+- This is the first V193 PPO configuration to pass the dual static and
+  behavior gate. Its architecture and hyperparameters are now frozen for
+  confirmation on fresh development seeds `1902--1905`; no further tuning is
+  permitted before that aggregate is inspected.
+
 ## 2026-08-27 - V203 Rejects Nonlinear Candidate Interaction as a Standalone Fix
 
 - V203 retains V199's online quality/context action score, frozen V193
