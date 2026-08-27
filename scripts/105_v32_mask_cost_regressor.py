@@ -161,7 +161,8 @@ def evaluate(
     train_raw_costs: np.ndarray,
     test_raw_costs: np.ndarray,
     predictions: np.ndarray,
-) -> dict[str, float | int]:
+    masks: np.ndarray,
+) -> tuple[dict[str, float | int], np.ndarray]:
     predicted_action = np.argmin(predictions, axis=1)
     oracle_action = np.argmin(test_raw_costs, axis=1)
     rows = np.arange(len(test_raw_costs))
@@ -172,7 +173,8 @@ def evaluate(
     top3 = np.argsort(predictions, axis=1)[:, :3]
     oracle_gain = float(np.mean(static_cost - oracle_cost))
     model_gain = float(np.mean(static_cost - predicted_cost))
-    return {
+    predicted_duty = masks[predicted_action].mean(axis=0)
+    metrics = {
         "seed": seed,
         "test_rows": len(test_raw_costs),
         "top1_action_accuracy": float(np.mean(predicted_action == oracle_action)),
@@ -183,7 +185,16 @@ def evaluate(
         "fraction_of_receding_gain_recovered": model_gain / oracle_gain if oracle_gain > 0.0 else float("nan"),
         "validation_static_action_idx": validation_static_action,
         "predicted_action_coverage": int(np.unique(predicted_action).size),
+        "predicted_always_off_sensor_count": int(np.sum(predicted_duty <= 0.01)),
+        "predicted_always_on_sensor_count": int(np.sum(predicted_duty >= 0.99)),
+        "predicted_mid_duty_sensor_count": int(np.sum((predicted_duty > 0.01) & (predicted_duty < 0.99))),
+        "predicted_min_sensor_duty": float(np.min(predicted_duty)),
+        "predicted_max_sensor_duty": float(np.max(predicted_duty)),
     }
+    trace = np.column_stack(
+        [predicted_action, oracle_action, np.full(len(predicted_action), validation_static_action), predicted_cost, oracle_cost, static_cost]
+    )
+    return metrics, trace
 
 
 def main() -> None:
@@ -205,15 +216,23 @@ def main() -> None:
         default="row_standardized",
     )
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--training-partition", choices=("rl_train", "validation"), default="validation")
+    parser.add_argument("--evaluation-partition", choices=("validation", "final_test"), default="final_test")
     args = parser.parse_args()
     device = torch.device(args.device)
     result_rows: list[dict[str, float | int]] = []
     histories: dict[str, list[dict[str, float]]] = {}
+    prediction_tables: list[pd.DataFrame] = []
     for run_dir in args.run_dirs:
         seed = int(run_dir.name.split("seed", 1)[1].split("_", 1)[0])
         sensor_ids, masks, action_features = load_geometry(run_dir)
-        train_table = pd.read_csv(run_dir / "receding_oracle_l8_validation_trace" / "receding_oracle_trace.csv")
-        test_table = pd.read_csv(run_dir / "receding_oracle_l8_final_trace" / "receding_oracle_trace.csv")
+        partition_dirs = {
+            "rl_train": "receding_oracle_l8_rl_train_trace",
+            "validation": "receding_oracle_l8_validation_trace",
+            "final_test": "receding_oracle_l8_final_trace",
+        }
+        train_table = pd.read_csv(run_dir / partition_dirs[args.training_partition] / "receding_oracle_trace.csv")
+        test_table = pd.read_csv(run_dir / partition_dirs[args.evaluation_partition] / "receding_oracle_trace.csv")
         train_context = trace_context(run_dir, train_table, sensor_ids, args.feature_set)
         test_context = trace_context(run_dir, test_table, sensor_ids, args.feature_set)
         train_raw, train_targets = training_costs(train_table, args.target_mode)
@@ -231,18 +250,35 @@ def main() -> None:
             device=device,
         )
         predictions = predict(model, test_context, masks, action_features, device, args.batch_size)
-        result_rows.append(evaluate(
+        metrics, prediction_trace = evaluate(
             seed=seed,
             train_raw_costs=train_raw,
             test_raw_costs=test_raw,
             predictions=predictions,
-        ))
+            masks=masks,
+        )
+        metrics["training_partition"] = args.training_partition
+        metrics["evaluation_partition"] = args.evaluation_partition
+        result_rows.append(metrics)
+        prediction_table = test_table[["rollout_idx", "rollout_step", "truth_step_idx"]].copy()
+        prediction_table.insert(0, "seed", seed)
+        prediction_table[[
+            "predicted_action_idx",
+            "oracle_action_idx",
+            "training_selected_static_action_idx",
+            "predicted_action_cost",
+            "oracle_action_cost",
+            "training_selected_static_action_cost",
+        ]] = prediction_trace
+        prediction_tables.append(prediction_table)
         histories[str(seed)] = history
     output = pd.DataFrame(result_rows).sort_values("seed")
     summary = pd.DataFrame([{
         "feature_set": args.feature_set,
         "target_mode": args.target_mode,
         "ranking_weight": args.ranking_weight,
+        "training_partition": args.training_partition,
+        "evaluation_partition": args.evaluation_partition,
         "seeds": len(output),
         "mean_top1_accuracy": output["top1_action_accuracy"].mean(),
         "mean_top3_accuracy": output["top3_action_accuracy"].mean(),
@@ -251,9 +287,11 @@ def main() -> None:
         "mean_fraction_recovered": output["fraction_of_receding_gain_recovered"].mean(),
         "positive_gain_seeds": int((output["mean_gain_vs_validation_static_action"] > 0.0).sum()),
         "mean_predicted_action_coverage": output["predicted_action_coverage"].mean(),
+        "behavior_pass_seeds": int(((output["predicted_always_off_sensor_count"] == 0) & (output["predicted_always_on_sensor_count"] == 0)).sum()),
     }])
     args.output_dir.mkdir(parents=True, exist_ok=True)
     output.to_csv(args.output_dir / "seed_metrics.csv", index=False)
+    pd.concat(prediction_tables, ignore_index=True).to_csv(args.output_dir / "predicted_action_trace.csv", index=False)
     summary.to_csv(args.output_dir / "summary.csv", index=False)
     (args.output_dir / "training_history.json").write_text(json.dumps(histories, indent=2), encoding="utf-8")
     (args.output_dir / "summary.md").write_text(
