@@ -4208,3 +4208,20 @@ tar -czf "$OUT…`
   warning process, action geometry, and event parameters. Fresh seeds
   `1901--1905` must pass balanced subtype coverage, privileged receding
   headroom, and the closed-loop online context/quality gate before PPO training.
+
+## 2026-08-28 - Close duration-balanced scene and alert-only mapping variants
+
+- V213 replaces run-count subtype stratification with duration-balanced
+  allocation while keeping complete event runs indivisible, exogenous, and
+  physically interpreted. The all-action eight-step receding diagnostic beats
+  validation-selected static in all five fresh development scenes, with mean
+  ordinary-loss margin `+0.032106`.
+- The deployable context-alert policy remains below static in four scenes:
+  `1/5` joint wins and mean ordinary/macro margins `-0.002672/-0.009736`.
+  It has zero warm-up aborts but averages `0.8` always-on and `2.8` always-off
+  channels. The scene is not authorized for PD-PPO training.
+- V214 is a zero-training, validation-replay diagnostic using the same online
+  warnings but separate low/high alert actions at fixed thresholds `0.50/0.75`.
+  It also reaches `1/5` joint wins and worsens mean ordinary/macro margins to
+  `-0.006862/-0.023686`. Alert-bin rule expansion is closed; no additional
+  heuristic thresholds or cost/budget sweeps follow from this result.
