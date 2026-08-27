@@ -273,6 +273,10 @@ def main() -> None:
         metrics["training_partition"] = args.training_partition
         metrics["evaluation_partition"] = args.evaluation_partition
         metrics["static_selection_partition"] = args.static_selection_partition
+        if model.quality_scale_raw is not None:
+            quality_scales = torch.nn.functional.softplus(model.quality_scale_raw.detach()).cpu().numpy()
+            for sensor_idx, value in enumerate(quality_scales):
+                metrics[f"learned_quality_scale_{sensor_idx}"] = float(value)
         result_rows.append(metrics)
         prediction_table = test_table[["rollout_idx", "rollout_step", "truth_step_idx"]].copy()
         prediction_table.insert(0, "seed", seed)

@@ -61,7 +61,7 @@ class MaskCostRegressor(nn.Module):
             nn.Linear(cfg.action_hidden_dim, 1),
         )
         self.quality_scale_raw = (
-            nn.Parameter(torch.tensor(-2.0))
+            nn.Parameter(torch.full((cfg.sensor_count,), -2.0))
             if cfg.quality_feature_count > 0
             else None
         )
@@ -118,6 +118,12 @@ class MaskCostRegressor(nn.Module):
         )
         predicted_cost = self.cost_head(features).squeeze(-1)
         if quality is not None and self.quality_scale_raw is not None:
-            selected_quality = torch.einsum("bs,as->ba", quality, masks) / selected_count.reshape(1, -1)
-            predicted_cost = predicted_cost - nn.functional.softplus(self.quality_scale_raw) * selected_quality
+            quality_scales = nn.functional.softplus(self.quality_scale_raw)
+            selected_quality = torch.einsum(
+                "bs,as,s->ba",
+                quality,
+                masks,
+                quality_scales,
+            ) / selected_count.reshape(1, -1)
+            predicted_cost = predicted_cost - selected_quality
         return predicted_cost

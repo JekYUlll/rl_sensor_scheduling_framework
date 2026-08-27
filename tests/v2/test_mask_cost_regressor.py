@@ -44,3 +44,5 @@ def test_monotonic_quality_adjustment_lowers_selected_sensor_cost() -> None:
     masks = torch.tensor([[1, 0]], dtype=torch.float32)
     costs = torch.tensor([[0.5, 0.6]], dtype=torch.float32)
     assert model(high_quality, masks, costs).item() < model(low_quality, masks, costs).item()
+    assert model.quality_scale_raw is not None
+    assert model.quality_scale_raw.shape == (2,)
