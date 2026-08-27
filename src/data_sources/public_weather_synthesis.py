@@ -968,6 +968,13 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
             ),
         }
     )
+    for column in (
+        "agent_context_nowcast_wind_speed_ms",
+        "agent_context_nowcast_relative_humidity",
+        "agent_context_nowcast_air_temperature_c",
+    ):
+        if column in synth_cols:
+            df[column] = np.asarray(synth_cols[column], dtype=float)
     event_threshold = float(cfg.wind_threshold_ms)
     df["event_flag"] = df["blowing_snow_active"].astype(bool)
     df["storm_flag"] = df["event_flag"].astype(bool)
