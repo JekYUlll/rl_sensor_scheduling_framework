@@ -174,6 +174,7 @@ class CustomPPOConfig:
     context_layer_norm: bool = False
     aligned_quality_action_score: bool = False
     quality_context_action_score: bool = False
+    candidate_interaction_score: bool = False
     temporal_encoder_enabled: bool = False
     temporal_history_steps: int = 0
     temporal_state_dim: int = 0
@@ -254,6 +255,7 @@ class MaskedActor:
         context_layer_norm: bool = False,
         aligned_quality_action_score: bool = False,
         quality_context_action_score: bool = False,
+        candidate_interaction_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -321,6 +323,15 @@ class MaskedActor:
                 self.quality_context_scale_raw = (
                     nn.Parameter(torch.tensor(1.0, dtype=torch.float32))
                     if self.quality_context_action_score
+                    else None
+                )
+                self.candidate_interaction_head = (
+                    nn.Sequential(
+                        nn.Linear(2 * int(embed_dim), int(hidden_dim)),
+                        nn.GELU(),
+                        nn.Linear(int(hidden_dim), 1),
+                    )
+                    if bool(candidate_interaction_score)
                     else None
                 )
                 self.temporal_history_steps = (
@@ -627,6 +638,13 @@ class MaskedActor:
                 action_emb = self._action_embeddings(candidate_masks)
                 logits = context @ action_emb.transpose(0, 1) / max(float(action_emb.shape[-1]) ** 0.5, 1.0)
                 logits = logits + self.action_bias(action_emb).reshape(1, -1)
+                if self.candidate_interaction_head is not None:
+                    state_actions = context.unsqueeze(1).expand(-1, action_emb.shape[0], -1)
+                    candidate_actions = action_emb.unsqueeze(0).expand(context.shape[0], -1, -1)
+                    interaction = self.candidate_interaction_head(
+                        torch_concat([state_actions, candidate_actions], dim=2)
+                    ).squeeze(-1)
+                    logits = logits + interaction
                 if self.quality_action_scale_raw is not None:
                     _, context_obs = self._split_obs(obs)
                     quality = context_obs[:, : int(n_sensors)]
@@ -769,6 +787,7 @@ class ActorCritic:
         context_layer_norm: bool = False,
         aligned_quality_action_score: bool = False,
         quality_context_action_score: bool = False,
+        candidate_interaction_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -804,6 +823,7 @@ class ActorCritic:
                     context_layer_norm=bool(context_layer_norm),
                     aligned_quality_action_score=bool(aligned_quality_action_score),
                     quality_context_action_score=bool(quality_context_action_score),
+                    candidate_interaction_score=bool(candidate_interaction_score),
                     temporal_encoder_enabled=bool(temporal_encoder_enabled),
                     temporal_history_steps=int(temporal_history_steps),
                     temporal_state_dim=int(temporal_state_dim),
@@ -944,6 +964,7 @@ class CustomPPO:
             context_layer_norm=bool(cfg.context_layer_norm),
             aligned_quality_action_score=bool(cfg.aligned_quality_action_score),
             quality_context_action_score=bool(cfg.quality_context_action_score),
+            candidate_interaction_score=bool(cfg.candidate_interaction_score),
             temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
             temporal_history_steps=int(self.env_cfg.lookback),
             temporal_state_dim=len(self.env_cfg.state_columns),

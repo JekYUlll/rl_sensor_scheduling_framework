@@ -102,6 +102,7 @@ SUBTYPE_LOSS_WEIGHTING="${SUBTYPE_LOSS_WEIGHTING:-1}"
 CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-10}"
 CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
 ALIGNED_QUALITY_ACTION_SCORE="${ALIGNED_QUALITY_ACTION_SCORE:-0}"
+CANDIDATE_INTERACTION_SCORE="${CANDIDATE_INTERACTION_SCORE:-0}"
 TEMPORAL_ENCODER="${TEMPORAL_ENCODER:-0}"
 TEMPORAL_HIDDEN_DIM="${TEMPORAL_HIDDEN_DIM:-64}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
@@ -156,6 +157,10 @@ fi
 QUALITY_CONTEXT_SCORE_ARGS=(--no-quality-context-action-score)
 if [[ "${QUALITY_CONTEXT_ACTION_SCORE:-0}" == "1" ]]; then
   QUALITY_CONTEXT_SCORE_ARGS=(--quality-context-action-score)
+fi
+CANDIDATE_INTERACTION_SCORE_ARGS=(--no-candidate-interaction-score)
+if [[ "$CANDIDATE_INTERACTION_SCORE" == "1" ]]; then
+  CANDIDATE_INTERACTION_SCORE_ARGS=(--candidate-interaction-score)
 fi
 
 if [[ "$#" -gt 0 ]]; then
@@ -374,6 +379,7 @@ for seed in "${SEEDS[@]}"; do
     --context-layer-norm \
     "${QUALITY_SCORE_ARGS[@]}" \
     "${QUALITY_CONTEXT_SCORE_ARGS[@]}" \
+    "${CANDIDATE_INTERACTION_SCORE_ARGS[@]}" \
     "${TEMPORAL_ARGS[@]}" \
     --temporal-hidden-dim "$TEMPORAL_HIDDEN_DIM" \
     --include-alert-context-features \

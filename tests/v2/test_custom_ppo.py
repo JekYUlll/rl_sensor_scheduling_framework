@@ -641,6 +641,26 @@ def test_quality_context_score_downweights_degraded_channel() -> None:
     assert int(torch.argmax(logits, dim=1).item()) == 1
 
 
+def test_candidate_interaction_score_is_trainable_and_respects_action_mask() -> None:
+    actor = MaskedActor(
+        obs_dim=5,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        candidate_interaction_score=True,
+    )
+    masks = torch.tensor([[1, 0, 0], [0, 1, 1]], dtype=torch.float32)
+    obs = torch.randn((2, 5), dtype=torch.float32)
+    feasible = torch.tensor([[True, False], [True, True]])
+    logits = actor.logits(obs, masks, feasible)
+
+    assert logits.shape == (2, 2)
+    assert float(logits[0, 1]) < -1.0e8
+    logits[1].sum().backward()
+    assert actor.candidate_interaction_head is not None
+    assert any(parameter.grad is not None for parameter in actor.candidate_interaction_head.parameters())
+
+
 def test_awbc_loss_prefers_high_advantage_greedy_action() -> None:
     good_dist = torch.distributions.Categorical(logits=torch.tensor([[3.0, -1.0], [3.0, -1.0]]))
     bad_dist = torch.distributions.Categorical(logits=torch.tensor([[-1.0, 3.0], [-1.0, 3.0]]))
