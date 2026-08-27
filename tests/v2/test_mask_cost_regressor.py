@@ -32,3 +32,15 @@ def test_mask_cost_regressor_shares_parameters_across_action_order() -> None:
     order = np.asarray([2, 0, 1])
     reordered = model(context, masks[order], costs[order])
     assert torch.allclose(original[:, order], reordered, atol=1e-6)
+
+
+def test_monotonic_quality_adjustment_lowers_selected_sensor_cost() -> None:
+    torch.manual_seed(7)
+    model = MaskCostRegressor(
+        MaskCostRegressorConfig(context_dim=4, sensor_count=2, quality_feature_count=2)
+    )
+    low_quality = torch.tensor([[0.1, 0.8, 0.0, 0.0]], dtype=torch.float32)
+    high_quality = torch.tensor([[0.9, 0.8, 0.0, 0.0]], dtype=torch.float32)
+    masks = torch.tensor([[1, 0]], dtype=torch.float32)
+    costs = torch.tensor([[0.5, 0.6]], dtype=torch.float32)
+    assert model(high_quality, masks, costs).item() < model(low_quality, masks, costs).item()

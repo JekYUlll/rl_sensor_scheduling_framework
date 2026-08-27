@@ -12,6 +12,7 @@ from torch import nn
 class MaskCostRegressorConfig:
     context_dim: int
     sensor_count: int
+    quality_feature_count: int = 0
     context_hidden_dim: int = 96
     sensor_embedding_dim: int = 32
     action_hidden_dim: int = 96
@@ -24,10 +25,15 @@ class MaskCostRegressor(nn.Module):
         super().__init__()
         if cfg.context_dim <= 0 or cfg.sensor_count <= 0:
             raise ValueError("context_dim and sensor_count must be positive")
+        if cfg.quality_feature_count < 0 or cfg.quality_feature_count >= cfg.context_dim:
+            raise ValueError("quality_feature_count must leave at least one context feature")
+        if cfg.quality_feature_count not in {0, cfg.sensor_count}:
+            raise ValueError("quality features must be absent or one per sensor")
         self.cfg = cfg
+        encoded_context_dim = cfg.context_dim - cfg.quality_feature_count
         self.context_encoder = nn.Sequential(
-            nn.LayerNorm(cfg.context_dim),
-            nn.Linear(cfg.context_dim, cfg.context_hidden_dim),
+            nn.LayerNorm(encoded_context_dim),
+            nn.Linear(encoded_context_dim, cfg.context_hidden_dim),
             nn.GELU(),
             nn.Linear(cfg.context_hidden_dim, cfg.context_hidden_dim),
             nn.GELU(),
@@ -54,6 +60,11 @@ class MaskCostRegressor(nn.Module):
             nn.GELU(),
             nn.Linear(cfg.action_hidden_dim, 1),
         )
+        self.quality_scale_raw = (
+            nn.Parameter(torch.tensor(-2.0))
+            if cfg.quality_feature_count > 0
+            else None
+        )
 
     def forward(
         self,
@@ -73,7 +84,13 @@ class MaskCostRegressor(nn.Module):
         masks = candidate_masks.to(dtype=context.dtype)
         batch_size = context.shape[0]
         action_count = masks.shape[0]
-        encoded = self.context_encoder(context)
+        if self.cfg.quality_feature_count > 0:
+            quality = context[:, : self.cfg.quality_feature_count].clamp(0.0, 1.0)
+            encoded_context = context[:, self.cfg.quality_feature_count :]
+        else:
+            quality = None
+            encoded_context = context
+        encoded = self.context_encoder(encoded_context)
         conditional_sensor = self.context_to_sensor(encoded).reshape(
             batch_size,
             self.cfg.sensor_count,
@@ -99,4 +116,8 @@ class MaskCostRegressor(nn.Module):
             ],
             dim=-1,
         )
-        return self.cost_head(features).squeeze(-1)
+        predicted_cost = self.cost_head(features).squeeze(-1)
+        if quality is not None and self.quality_scale_raw is not None:
+            selected_quality = torch.einsum("bs,as->ba", quality, masks) / selected_count.reshape(1, -1)
+            predicted_cost = predicted_cost - nn.functional.softplus(self.quality_scale_raw) * selected_quality
+        return predicted_cost

@@ -96,6 +96,7 @@ def train_model(
     batch_size: int,
     learning_rate: float,
     ranking_weight: float,
+    monotonic_quality_adjustment: bool,
     device: torch.device,
 ) -> tuple[MaskCostRegressor, list[dict[str, float]]]:
     random.seed(seed)
@@ -105,6 +106,7 @@ def train_model(
         MaskCostRegressorConfig(
             context_dim=context.shape[1],
             sensor_count=masks.shape[1],
+            quality_feature_count=masks.shape[1] if monotonic_quality_adjustment else 0,
         )
     ).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-4)
@@ -219,6 +221,7 @@ def main() -> None:
     parser.add_argument("--training-partition", choices=("rl_train", "validation"), default="validation")
     parser.add_argument("--evaluation-partition", choices=("validation", "final_test"), default="final_test")
     parser.add_argument("--static-selection-partition", choices=("rl_train", "validation"), default="validation")
+    parser.add_argument("--monotonic-quality-adjustment", action=argparse.BooleanOptionalAction, default=False)
     args = parser.parse_args()
     device = torch.device(args.device)
     result_rows: list[dict[str, float | int]] = []
@@ -239,6 +242,8 @@ def main() -> None:
         )
         train_context = trace_context(run_dir, train_table, sensor_ids, args.feature_set)
         test_context = trace_context(run_dir, test_table, sensor_ids, args.feature_set)
+        if args.monotonic_quality_adjustment and args.feature_set != "quality_alert_context":
+            raise ValueError("monotonic quality adjustment requires quality_alert_context")
         train_raw, train_targets = training_costs(train_table, args.target_mode)
         test_raw = test_table[indexed_columns(test_table, "candidate_cost_")].to_numpy(dtype=np.float32)
         static_selection_raw = static_selection_table[
@@ -254,6 +259,7 @@ def main() -> None:
             batch_size=max(1, args.batch_size),
             learning_rate=args.learning_rate,
             ranking_weight=args.ranking_weight,
+            monotonic_quality_adjustment=args.monotonic_quality_adjustment,
             device=device,
         )
         predictions = predict(model, test_context, masks, action_features, device, args.batch_size)
@@ -288,6 +294,7 @@ def main() -> None:
         "training_partition": args.training_partition,
         "evaluation_partition": args.evaluation_partition,
         "static_selection_partition": args.static_selection_partition,
+        "monotonic_quality_adjustment": args.monotonic_quality_adjustment,
         "seeds": len(output),
         "mean_top1_accuracy": output["top1_action_accuracy"].mean(),
         "mean_top3_accuracy": output["top3_action_accuracy"].mean(),
