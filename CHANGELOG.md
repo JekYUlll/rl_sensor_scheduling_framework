@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-27 - V202 Localizes the Candidate-Value Credit Gap
+
+- V202 reloads V200's checkpoint with `total_timesteps=0` and regenerates the
+  same frozen V193 final replay. The policy reproduces V200 exactly:
+  ordinary/macro losses `0.266148/0.741188`, static `0.237045/0.712537`, zero
+  aborts, and six intermediate-duty channels.
+- Before every executed PPO action, V202 computes all feasible eight-step
+  candidate costs on the policy's own state trajectory. These costs are
+  privileged offline diagnostics only and are not supplied to the actor,
+  reward, action mask, or checkpoint.
+- The frozen policy selects the locally best feasible candidate in only `6.73%`
+  of 2,304 states. Its mean candidate rank is `10.28/22`, mean local regret is
+  `0.035654`, and mean policy entropy is `2.7119`. This directly attributes
+  the V200 failure to learned candidate-value/temporal-credit mismatch, not to
+  missing dynamic headroom or an invalid six-channel rollout.
+- The next clean architecture variant will strengthen the state-conditioned
+  candidate scorer inside the masked actor. It will retain the forecast-loss
+  reward, online observations, and feasibility mask, and will not use oracle
+  candidate costs, bandit outputs, or counterfactual labels during training.
+
 ## 2026-08-27 - V201 Confirms Dynamic Headroom in the Frozen V193 Final Windows
 
 - V201 is a diagnostic-only exact eight-step candidate replay on V200's six
