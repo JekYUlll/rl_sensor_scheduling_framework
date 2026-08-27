@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V211 Rejects the First Condition-Dependent Reliability Scene
+
+- V211 introduces a development-only, condition-dependent channel-quality
+  generator over the physical six-channel, 22-mask geometry. It preserves
+  exogenous event generation and derives noisy online quality diagnostics from
+  continuous wind, humidity, particle, flux, and thermal exposure. No PPO
+  training is authorized or run in this screen.
+- The privileged eight-step receding diagnostic confirms substantial dynamic
+  opportunity in all five fresh development scenes: validation-static minus
+  receding ordinary loss is positive in `5/5` seeds with mean `+0.027530`.
+  This is an upper diagnostic only, not a deployable comparison.
+- The initial alert-only context rule is not a valid reliability gate because
+  it omits the new diagnostics. The corrected quality-aware online rule was
+  therefore evaluated at three prespecified quality penalties (`0.25`, `1.0`,
+  and `4.0`). It records `0/5` joint ordinary/macro wins at every penalty; the
+  least-negative mean margins are `-0.014917/-0.048673` at penalty `0.25`.
+- The quality-aware policy also concentrates on a few pairs in several seeds,
+  despite zero aborts. V211 is rejected before PPO training: its dynamic
+  opportunity is not recoverable by the specified online context-and-quality
+  gate. The next scene design must examine why validation regime maps collapse
+  to robust pairs before changing reliability magnitudes again.
+
 ## 2026-08-28 - V210 Closes the Selected-Action Q-Head Diagnostic
 
 - V210 replays the frozen V208 checkpoint over the same `2,304` final-window
