@@ -3693,3 +3693,22 @@ tar -czf "$OUT…`
   violations or warm-up aborts. V185 is the bounded seed1701 full pilot; it is
   eligible for replication only if it beats static on both endpoints and passes
   the six-channel behavior gate.
+
+## 2026-08-27 - Reject MSE-only mask-value integration and align ranking loss
+
+- V185 improves the seed1701 pretraining fit from the old fixed-logit result:
+  MSE falls from `0.906` to `0.8515`, top-action accuracy rises from `0.110` to
+  `0.168`, and all 22 actions occur in the teacher batch. Actor entropy also
+  falls from about `3.01` to `2.82` during PPO, confirming that the detached
+  head changes policy preferences.
+- Better fit does not transfer to prediction. V185 final ordinary loss is
+  `0.313432` versus static `0.281203`; static-normalized macro is `1.122544`
+  versus `0.972963`. One channel remains always off. Validation checkpoint
+  scores are above static at update0 and every PPO checkpoint, so selection is
+  not the failure source. V185 is rejected and not replicated.
+- The passing offline regressor used Smooth-L1 cost fitting plus a best-action
+  ranking term, whereas V185 used MSE alone. Added default-off
+  `forecast_value_ranking_coef` and Smooth-L1 support to both pretraining and
+  on-policy auxiliary updates. V186 changes only these matched loss terms
+  (`smooth_l1`, ranking coefficient `0.1`) and is the final bounded test of the
+  on-policy mask-value-head route.
