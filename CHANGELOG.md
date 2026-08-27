@@ -3612,3 +3612,20 @@ tar -czf "$OUT…`
   entropy coefficient from 0.02 to 0.002. This tests whether persistent
   near-uniform exploration prevents the learned ranking from controlling the
   deterministic policy; all evidence and replication gates remain unchanged.
+
+## 2026-08-27 - Close entropy tuning and retain V170 as the scene candidate
+
+- V176 loses to static by `0.027007/0.162898`; lowering the entropy coefficient
+  does not reduce actor entropy, which remains `3.004`. Exploration weighting
+  is therefore not the source of the near-uniform action distribution.
+- Across V171--V176, V174 is closest to static but does not pass the macro or
+  six-channel behavior requirement. None of these policy variants is eligible
+  for replication or paper evidence. V170 remains the strongest calibrated
+  scene candidate because it passes horizon headroom, online-information, and
+  dynamic-behavior gates without constraining the action space to three choices.
+- The remaining bottleneck is mask-level forecast-cost fitting. The 4096-state,
+  20-epoch warm start ends at MSE `0.906` and top-action accuracy `0.110` on
+  seed1701. Further work should redesign or separately validate the
+  action-conditioned cost regressor and its sampling distribution before more
+  PPO waves; ordinary entropy, teacher weighting, and scene severity tuning are
+  closed.
