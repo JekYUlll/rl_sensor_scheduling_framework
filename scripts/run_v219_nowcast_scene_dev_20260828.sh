@@ -19,7 +19,7 @@ export CHANNEL_QUALITY_MODE_OVERRIDE=independent
 export AGENT_CONTEXT_COLUMNS="agent_context_nowcast_wind_speed_ms agent_context_nowcast_relative_humidity agent_context_nowcast_air_temperature_c"
 # The actor splits context from the trailing state dimensions.  This development
 # configuration supplies exactly the three label-free meteorological nowcasts.
-export CONTEXT_FEATURE_DIM=3
+export CONTEXT_FEATURE_DIM_OVERRIDE=3
 export INCLUDE_ALERT_CONTEXT_FEATURES=0
 export NOWCAST_LEAD_STEPS=4
 export NOWCAST_WIND_NOISE_STD=1.0
