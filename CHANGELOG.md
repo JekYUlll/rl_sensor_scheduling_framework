@@ -3771,3 +3771,20 @@ tar -czf "$OUT…`
   training wave is allowed only if a validation-qualified variant materially
   improves teacher-action accuracy and the dual static ratios without behavior
   failure.
+
+## 2026-08-27 - Reject stronger cost ranking and isolate hard teacher classification
+
+- V189 increases teacher-action accuracy monotonically with training strength:
+  `0.163/0.285` for ranking `0.25` at `20/80` epochs and `0.197/0.316` for
+  ranking `1.0`. None beats static on either endpoint. The strongest fit has
+  ordinary loss `0.343697` and macro `1.162808`; its six-channel behavior is
+  valid, but the weaker fits leave one channel always off.
+- Higher ranking accuracy does not improve forecast performance because the
+  same logits are simultaneously calibrated to continuous standardized costs
+  and classified by best action. Cost-regression/ranking strength tuning is
+  closed.
+- V190 isolates the existing hard teacher-action cross-entropy warm start at
+  `80/200` epochs with no PPO updates or cost-regression loss. This is the final
+  bounded teacher-fit diagnostic. Full PPO training is allowed only if the
+  pretraining policy passes both static endpoints and six-channel behavior on
+  validation-qualified evaluation.
