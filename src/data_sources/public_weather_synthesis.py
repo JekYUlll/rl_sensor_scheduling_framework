@@ -93,6 +93,10 @@ class PublicWeatherSynthesisConfig:
     event_subtype_context_lead_steps: int = 0
     event_subtype_context_noise_std: float = 0.08
     event_subtype_context_latent_strength: float = 0.0
+    nowcast_lead_steps: int = 0
+    nowcast_wind_noise_std: float = 1.0
+    nowcast_humidity_noise_std: float = 3.0
+    nowcast_temperature_noise_std: float = 0.7
 
 
 def load_antaws_station(antaws_root: str | Path, station: str) -> pd.DataFrame:
@@ -796,6 +800,19 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
                 synth_cols["air_temperature_c"]
                 - float(cfg.event_subtype_thermal_air_temp_drop_c) * thermal_smooth
             )
+
+    nowcast_lead = max(0, int(cfg.nowcast_lead_steps))
+    if nowcast_lead > 0:
+        for source, column, noise_std in (
+            ("wind_speed_ms", "agent_context_nowcast_wind_speed_ms", cfg.nowcast_wind_noise_std),
+            ("relative_humidity", "agent_context_nowcast_relative_humidity", cfg.nowcast_humidity_noise_std),
+            ("air_temperature_c", "agent_context_nowcast_air_temperature_c", cfg.nowcast_temperature_noise_std),
+        ):
+            values = synth_cols[source].to_numpy(dtype=float)
+            forecast = np.empty_like(values)
+            forecast[:-nowcast_lead] = values[nowcast_lead:]
+            forecast[-nowcast_lead:] = values[-1]
+            synth_cols[column] = forecast + rng.normal(0.0, max(0.0, float(noise_std)), size=len(values))
     direction_rad = np.arctan2(synth_cols["wind_dir_sin"], synth_cols["wind_dir_cos"])
     wind_direction = (np.rad2deg(direction_rad) + 360.0) % 360.0
     start = pd.Timestamp(source["timestamp"].iloc[0])
@@ -1013,6 +1030,10 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         "event_subtype_context_lead_steps": int(context_lead_steps),
         "event_subtype_context_noise_std": float(context_noise_std),
         "event_subtype_context_latent_strength": float(context_latent_strength),
+        "nowcast_lead_steps": int(nowcast_lead),
+        "nowcast_wind_noise_std": float(cfg.nowcast_wind_noise_std),
+        "nowcast_humidity_noise_std": float(cfg.nowcast_humidity_noise_std),
+        "nowcast_temperature_noise_std": float(cfg.nowcast_temperature_noise_std),
     }
     return df, meta
 

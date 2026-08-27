@@ -185,6 +185,10 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
+    parser.add_argument("--nowcast-lead-steps", type=int, default=0)
+    parser.add_argument("--nowcast-wind-noise-std", type=float, default=1.0)
+    parser.add_argument("--nowcast-humidity-noise-std", type=float, default=3.0)
+    parser.add_argument("--nowcast-temperature-noise-std", type=float, default=0.7)
     parser.add_argument("--channel-quality-enabled", action="store_true")
     parser.add_argument(
         "--channel-quality-mode",
@@ -262,6 +266,10 @@ def main() -> None:
         event_subtype_context_lead_steps=int(args.event_subtype_context_lead_steps),
         event_subtype_context_noise_std=float(args.event_subtype_context_noise_std),
         event_subtype_context_latent_strength=float(args.event_subtype_context_latent_strength),
+        nowcast_lead_steps=int(args.nowcast_lead_steps),
+        nowcast_wind_noise_std=float(args.nowcast_wind_noise_std),
+        nowcast_humidity_noise_std=float(args.nowcast_humidity_noise_std),
+        nowcast_temperature_noise_std=float(args.nowcast_temperature_noise_std),
     )
     df, meta = generate_public_weather_truth(cfg)
     if bool(args.channel_quality_enabled):

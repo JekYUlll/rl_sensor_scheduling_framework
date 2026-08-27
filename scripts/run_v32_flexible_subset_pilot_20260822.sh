@@ -70,6 +70,12 @@ EVENT_SUBTYPE_TARGET_LAG_STEPS="${EVENT_SUBTYPE_TARGET_LAG_STEPS:-4}"
 EVENT_SUBTYPE_CONTEXT_LEAD_STEPS="${EVENT_SUBTYPE_CONTEXT_LEAD_STEPS:-8}"
 EVENT_SUBTYPE_CONTEXT_NOISE_STD="${EVENT_SUBTYPE_CONTEXT_NOISE_STD:-0.05}"
 EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH="${EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH:-0.0}"
+NOWCAST_LEAD_STEPS="${NOWCAST_LEAD_STEPS:-0}"
+NOWCAST_WIND_NOISE_STD="${NOWCAST_WIND_NOISE_STD:-1.0}"
+NOWCAST_HUMIDITY_NOISE_STD="${NOWCAST_HUMIDITY_NOISE_STD:-3.0}"
+NOWCAST_TEMPERATURE_NOISE_STD="${NOWCAST_TEMPERATURE_NOISE_STD:-0.7}"
+read -r -a AGENT_CONTEXT_COLUMN_ARGS <<< "${AGENT_CONTEXT_COLUMNS:-}"
+INCLUDE_ALERT_CONTEXT_FEATURES="${INCLUDE_ALERT_CONTEXT_FEATURES:-1}"
 PARTICLE_HUMIDITY_BOOST="${PARTICLE_HUMIDITY_BOOST:-1.0}"
 FLUX_WIND_BOOST="${FLUX_WIND_BOOST:-1.0}"
 THERMAL_AIR_TEMP_DROP="${THERMAL_AIR_TEMP_DROP:-1.0}"
@@ -154,6 +160,15 @@ fi
 CRN_ARGS=(--no-common-random-numbers)
 if [[ "$COMMON_RANDOM_NUMBERS" == "1" ]]; then
   CRN_ARGS=(--common-random-numbers)
+fi
+CONTEXT_INPUT_ARGS=()
+if [[ "${#AGENT_CONTEXT_COLUMN_ARGS[@]}" -gt 0 ]]; then
+  CONTEXT_INPUT_ARGS+=(--agent-context-columns "${AGENT_CONTEXT_COLUMN_ARGS[@]}")
+fi
+if [[ "$INCLUDE_ALERT_CONTEXT_FEATURES" == "1" ]]; then
+  CONTEXT_INPUT_ARGS+=(--include-alert-context-features)
+else
+  CONTEXT_INPUT_ARGS+=(--no-include-alert-context-features)
 fi
 QUALITY_SCORE_ARGS=(--no-aligned-quality-action-score)
 if [[ "$ALIGNED_QUALITY_ACTION_SCORE" == "1" ]]; then
@@ -312,6 +327,11 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-context-lead-steps "$EVENT_SUBTYPE_CONTEXT_LEAD_STEPS" \
     --event-subtype-context-noise-std "$EVENT_SUBTYPE_CONTEXT_NOISE_STD" \
     --event-subtype-context-latent-strength "$EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH" \
+    --nowcast-lead-steps "$NOWCAST_LEAD_STEPS" \
+    --nowcast-wind-noise-std "$NOWCAST_WIND_NOISE_STD" \
+    --nowcast-humidity-noise-std "$NOWCAST_HUMIDITY_NOISE_STD" \
+    --nowcast-temperature-noise-std "$NOWCAST_TEMPERATURE_NOISE_STD" \
+    "${CONTEXT_INPUT_ARGS[@]}" \
     "${QUALITY_ARGS[@]}" \
     --oracle-rollout-steps 2048 \
     --oracle-type "$ORACLE_TYPE" \
@@ -390,7 +410,6 @@ for seed in "${SEEDS[@]}"; do
     "${CANDIDATE_INTERACTION_SCORE_ARGS[@]}" \
     "${TEMPORAL_ARGS[@]}" \
     --temporal-hidden-dim "$TEMPORAL_HIDDEN_DIM" \
-    --include-alert-context-features \
     --no-include-event-flag-in-state \
     --soc-aux-horizon 0 \
     --soc-aux-coef 0.0 \

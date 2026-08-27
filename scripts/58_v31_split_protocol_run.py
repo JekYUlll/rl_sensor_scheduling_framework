@@ -160,6 +160,14 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(float(args.event_subtype_context_noise_std)),
         "--event-subtype-context-latent-strength",
         str(float(args.event_subtype_context_latent_strength)),
+        "--nowcast-lead-steps",
+        str(int(args.nowcast_lead_steps)),
+        "--nowcast-wind-noise-std",
+        str(float(args.nowcast_wind_noise_std)),
+        "--nowcast-humidity-noise-std",
+        str(float(args.nowcast_humidity_noise_std)),
+        "--nowcast-temperature-noise-std",
+        str(float(args.nowcast_temperature_noise_std)),
         "--channel-quality-degraded-coverage",
         str(float(args.channel_quality_degraded_coverage)),
         "--channel-quality-mode",
@@ -654,6 +662,10 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-lead-steps", type=int, default=0)
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
+    parser.add_argument("--nowcast-lead-steps", type=int, default=0)
+    parser.add_argument("--nowcast-wind-noise-std", type=float, default=1.0)
+    parser.add_argument("--nowcast-humidity-noise-std", type=float, default=3.0)
+    parser.add_argument("--nowcast-temperature-noise-std", type=float, default=0.7)
     parser.add_argument("--channel-quality-enabled", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument(
         "--channel-quality-mode",
