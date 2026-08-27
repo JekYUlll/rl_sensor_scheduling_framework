@@ -3629,3 +3629,25 @@ tar -czf "$OUT…`
   action-conditioned cost regressor and its sampling distribution before more
   PPO waves; ordinary entropy, teacher weighting, and scene severity tuning are
   closed.
+
+## 2026-08-27 - Validate a shared mask-level cost model before PPO integration
+
+- Added an offline action-conditioned forecast-cost regressor whose parameters
+  are shared across sensor channels and candidate subsets. The model consumes
+  online context, the proposed sensor mask, and normalized steady/startup cost;
+  it does not assign an independent output parameter to each of the 22 actions.
+- V177 used channel quality plus alert context. It improved mean top-action
+  accuracy to `0.1381` and predicted 21 actions on average, but beat the
+  validation-selected static action in only `3/5` scenes and recovered `7.5%`
+  of receding headroom. It failed the frozen offline gate.
+- V178 bounded four representation/target combinations. Alert context alone
+  with per-state standardized costs and ranking weight `0.25` passed `5/5`,
+  with mean static gain `+0.005547`, top-1/top-3 action accuracy
+  `0.1565/0.3453`, and `17.8%` mean receding-gain recovery. Removing ranking
+  loss reduced top-1 accuracy; global scaling reduced robustness to `4/5`;
+  forcing channel quality into this teacher head again reduced transfer to
+  `3/5`.
+- V178 is a validation-to-final development diagnostic, not a legal policy
+  training result. Policy-training receding traces must reproduce the mapping
+  on validation and final partitions before the shared mask model can be
+  connected to PPO.
