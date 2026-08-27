@@ -678,6 +678,7 @@ def main() -> None:
     parser.add_argument("--total-timesteps", type=int, default=100000)
     parser.add_argument("--policy-init-source", default=None)
     parser.add_argument("--policy-checkpoint-source", default=None)
+    parser.add_argument("--policy-alignment-audit-output", default=None)
     parser.add_argument(
         "--evaluation-policy-mode",
         choices=["deterministic", "stochastic"],
@@ -1183,6 +1184,7 @@ def main() -> None:
             "channel_marginal_entropy_coef": float(args.channel_marginal_entropy_coef),
             "policy_init_source": str(args.policy_init_source or ""),
             "policy_checkpoint_source": str(args.policy_checkpoint_source or ""),
+            "policy_alignment_audit_output": str(args.policy_alignment_audit_output or ""),
             "evaluation_policy_mode": str(args.evaluation_policy_mode),
             "evaluation_sampling_seed": args.evaluation_sampling_seed,
             "evaluation_sampling_temperature": float(args.evaluation_sampling_temperature),
@@ -1809,6 +1811,8 @@ def main() -> None:
         cmd.extend(["--policy-init-source", str(args.policy_init_source)])
     if args.policy_checkpoint_source:
         cmd.extend(["--policy-checkpoint-source", str(args.policy_checkpoint_source)])
+    if args.policy_alignment_audit_output:
+        cmd.extend(["--policy-alignment-audit-output", str(args.policy_alignment_audit_output)])
     append_option(
         cmd,
         "--training-control-source-run-dirs",
