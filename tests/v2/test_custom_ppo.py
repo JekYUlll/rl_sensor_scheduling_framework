@@ -641,6 +641,30 @@ def test_quality_context_score_downweights_degraded_channel() -> None:
     assert int(torch.argmax(logits, dim=1).item()) == 1
 
 
+def test_quality_context_sum_pooling_preserves_additive_channel_value() -> None:
+    actor = MaskedActor(
+        obs_dim=12,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        context_encoder_enabled=True,
+        context_feature_dim=5,
+        quality_context_action_score=True,
+        quality_context_pooling="sum",
+        trainable_action_prior=False,
+    )
+    for parameter in actor.parameters():
+        parameter.data.zero_()
+    actor.quality_context_scale_raw.data.fill_(1.0)
+    obs = torch.zeros((1, 12), dtype=torch.float32)
+    obs[0, -5:-2] = torch.tensor([1.0, 1.0, 1.0])
+    masks = torch.tensor([[1, 0, 0], [1, 1, 0]], dtype=torch.float32)
+
+    logits = actor.logits(obs, masks)
+
+    assert int(torch.argmax(logits, dim=1).item()) == 1
+
+
 def test_candidate_interaction_score_is_trainable_and_respects_action_mask() -> None:
     actor = MaskedActor(
         obs_dim=5,

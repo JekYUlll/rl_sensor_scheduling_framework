@@ -174,6 +174,7 @@ class CustomPPOConfig:
     context_layer_norm: bool = False
     aligned_quality_action_score: bool = False
     quality_context_action_score: bool = False
+    quality_context_pooling: str = "mean"
     candidate_interaction_score: bool = False
     temporal_encoder_enabled: bool = False
     temporal_history_steps: int = 0
@@ -255,6 +256,7 @@ class MaskedActor:
         context_layer_norm: bool = False,
         aligned_quality_action_score: bool = False,
         quality_context_action_score: bool = False,
+        quality_context_pooling: str = "mean",
         candidate_interaction_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
@@ -295,6 +297,9 @@ class MaskedActor:
                 main_obs_dim = int(obs_dim) - int(self.context_feature_dim)
                 self.aligned_quality_action_score = bool(aligned_quality_action_score)
                 self.quality_context_action_score = bool(quality_context_action_score)
+                self.quality_context_pooling = str(quality_context_pooling)
+                if self.quality_context_pooling not in {"mean", "sum"}:
+                    raise ValueError("quality_context_pooling must be mean or sum")
                 if (
                     self.aligned_quality_action_score or self.quality_context_action_score
                 ) and self.context_feature_dim < int(n_sensors):
@@ -659,10 +664,10 @@ class MaskedActor:
                     alert_context = context_obs[:, int(n_sensors) :]
                     channel_utility = quality * self.quality_context_encoder(alert_context)
                     masks = candidate_masks.float()
-                    selected_count = masks.sum(dim=1).clamp_min(1.0)
-                    candidate_utility = (
-                        channel_utility @ masks.transpose(0, 1) / selected_count.reshape(1, -1)
-                    )
+                    candidate_utility = channel_utility @ masks.transpose(0, 1)
+                    if self.quality_context_pooling == "mean":
+                        selected_count = masks.sum(dim=1).clamp_min(1.0)
+                        candidate_utility = candidate_utility / selected_count.reshape(1, -1)
                     scale = torch.nn.functional.softplus(self.quality_context_scale_raw)
                     logits = logits + scale * candidate_utility
                 if self.action_prior is not None:
@@ -787,6 +792,7 @@ class ActorCritic:
         context_layer_norm: bool = False,
         aligned_quality_action_score: bool = False,
         quality_context_action_score: bool = False,
+        quality_context_pooling: str = "mean",
         candidate_interaction_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
@@ -823,6 +829,7 @@ class ActorCritic:
                     context_layer_norm=bool(context_layer_norm),
                     aligned_quality_action_score=bool(aligned_quality_action_score),
                     quality_context_action_score=bool(quality_context_action_score),
+                    quality_context_pooling=str(quality_context_pooling),
                     candidate_interaction_score=bool(candidate_interaction_score),
                     temporal_encoder_enabled=bool(temporal_encoder_enabled),
                     temporal_history_steps=int(temporal_history_steps),
@@ -964,6 +971,7 @@ class CustomPPO:
             context_layer_norm=bool(cfg.context_layer_norm),
             aligned_quality_action_score=bool(cfg.aligned_quality_action_score),
             quality_context_action_score=bool(cfg.quality_context_action_score),
+            quality_context_pooling=str(cfg.quality_context_pooling),
             candidate_interaction_score=bool(cfg.candidate_interaction_score),
             temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
             temporal_history_steps=int(self.env_cfg.lookback),
