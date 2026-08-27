@@ -59,6 +59,8 @@ class WarmupEnvConfig:
     include_observable_regime_belief: bool = False
     regime_belief_lookback: int = 6
     agent_context_columns: tuple[str, ...] = ()
+    agent_context_normalization_mean: tuple[float, ...] | None = None
+    agent_context_normalization_std: tuple[float, ...] | None = None
     include_event_flag_in_state: bool = True
     include_alert_context_features: bool = False
     alert_context_columns: tuple[str, ...] = (
@@ -130,6 +132,34 @@ class WarmupSchedulingEnv:
             if self.agent_context_columns
             else np.zeros((len(self.truth_df), 0), dtype=float)
         )
+        context_mean = np.zeros(len(self.agent_context_columns), dtype=float)
+        context_std = np.ones(len(self.agent_context_columns), dtype=float)
+        if (
+            cfg.agent_context_normalization_mean is not None
+            or cfg.agent_context_normalization_std is not None
+        ):
+            if (
+                cfg.agent_context_normalization_mean is None
+                or cfg.agent_context_normalization_std is None
+            ):
+                raise ValueError(
+                    "agent context normalization mean and standard deviation must be configured together"
+                )
+            context_mean = np.asarray(cfg.agent_context_normalization_mean, dtype=float).reshape(-1)
+            context_std = np.asarray(cfg.agent_context_normalization_std, dtype=float).reshape(-1)
+            if (
+                context_mean.shape[0] != len(self.agent_context_columns)
+                or context_std.shape[0] != len(self.agent_context_columns)
+            ):
+                raise ValueError(
+                    "agent context normalization statistics must contain one value per context column"
+                )
+            if np.any(~np.isfinite(context_mean)) or np.any(~np.isfinite(context_std)) or np.any(context_std <= 0.0):
+                raise ValueError(
+                    "agent context normalization statistics must be finite and standard deviations positive"
+                )
+        self.agent_context_mean = context_mean
+        self.agent_context_std = np.maximum(context_std, 1.0e-6)
         self.alert_context_columns = tuple(str(col) for col in cfg.alert_context_columns)
         self.alert_context_values = (
             self.truth_df[list(self.alert_context_columns)].to_numpy(dtype=float)
@@ -982,7 +1012,8 @@ class WarmupSchedulingEnv:
         )
         context_tail = (
             np.nan_to_num(
-                self.agent_context_values[int(self.current_idx)],
+                (self.agent_context_values[int(self.current_idx)] - self.agent_context_mean)
+                / self.agent_context_std,
                 nan=0.0,
                 posinf=0.0,
                 neginf=0.0,

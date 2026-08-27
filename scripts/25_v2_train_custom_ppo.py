@@ -1236,6 +1236,15 @@ def main() -> None:
         float(value)
         for value in np.clip(np.nanvar(process_differences, axis=0), 1e-6, 1.0)
     )
+    context_columns = tuple(str(x) for x in (args.agent_context_columns or ()))
+    agent_context_normalization_mean = None
+    agent_context_normalization_std = None
+    if context_columns:
+        context_values = truth.iloc[normalization_start:normalization_end][list(context_columns)].to_numpy(dtype=float)
+        agent_context_normalization_mean = tuple(float(x) for x in np.mean(context_values, axis=0))
+        agent_context_normalization_std = tuple(
+            float(x) for x in np.maximum(np.std(context_values, axis=0), 1.0e-6)
+        )
     train_cfg = WarmupEnvConfig(
         state_columns=helpers.STATE_COLUMNS,
         reward_target_columns=helpers.REWARD_TARGET_COLUMNS,
@@ -1269,7 +1278,9 @@ def main() -> None:
         agent_cycle_dwell_steps=max(1, int(args.agent_cycle_dwell_steps)),
         include_observable_regime_belief=bool(args.include_observable_regime_belief),
         regime_belief_lookback=max(1, int(args.regime_belief_lookback)),
-        agent_context_columns=tuple(str(x) for x in (args.agent_context_columns or ())),
+        agent_context_columns=context_columns,
+        agent_context_normalization_mean=agent_context_normalization_mean,
+        agent_context_normalization_std=agent_context_normalization_std,
         sensor_quality_columns=tuple(str(x) for x in (args.sensor_quality_columns or ())),
         sensor_quality_max_noise_multiplier=float(args.sensor_quality_max_noise_multiplier),
         sensor_quality_availability_floor=float(args.sensor_quality_availability_floor),
@@ -2002,7 +2013,9 @@ def main() -> None:
         agent_cycle_dwell_steps=max(1, int(args.agent_cycle_dwell_steps)),
         include_observable_regime_belief=bool(args.include_observable_regime_belief),
         regime_belief_lookback=max(1, int(args.regime_belief_lookback)),
-        agent_context_columns=tuple(str(x) for x in (args.agent_context_columns or ())),
+        agent_context_columns=context_columns,
+        agent_context_normalization_mean=agent_context_normalization_mean,
+        agent_context_normalization_std=agent_context_normalization_std,
         sensor_quality_columns=tuple(str(x) for x in (args.sensor_quality_columns or ())),
         sensor_quality_max_noise_multiplier=float(args.sensor_quality_max_noise_multiplier),
         sensor_quality_availability_floor=float(args.sensor_quality_availability_floor),
@@ -2488,6 +2501,17 @@ def main() -> None:
             "lookback": max(1, int(args.regime_belief_lookback)),
         },
         "agent_context_columns": [str(x) for x in (args.agent_context_columns or ())],
+        "agent_context_normalization": {
+            "columns": list(context_columns),
+            "mean": None
+            if agent_context_normalization_mean is None
+            else [float(value) for value in agent_context_normalization_mean],
+            "std": None
+            if agent_context_normalization_std is None
+            else [float(value) for value in agent_context_normalization_std],
+            "start_idx": int(normalization_start),
+            "end_idx": int(normalization_end),
+        },
         "sensor_quality": {
             "columns": [str(x) for x in (args.sensor_quality_columns or ())],
             "max_noise_multiplier": float(args.sensor_quality_max_noise_multiplier),

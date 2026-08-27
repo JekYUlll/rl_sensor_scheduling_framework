@@ -248,6 +248,30 @@ def test_warmup_env_uses_external_normalization_statistics() -> None:
     assert np.allclose(env.state_std, np.ones(len(STATE_COLUMNS)))
 
 
+def test_warmup_env_normalizes_agent_context_tail() -> None:
+    truth = _truth(24).copy()
+    truth["agent_context_nowcast"] = np.arange(24, dtype=float)
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            lookback=1,
+            episode_len=2,
+            seed=1,
+            agent_context_columns=("agent_context_nowcast",),
+            agent_context_normalization_mean=(10.0,),
+            agent_context_normalization_std=(2.0,),
+            include_event_flag_in_state=False,
+        ),
+    )
+
+    state, _ = env.reset(start_idx=14)
+
+    assert state[-1] == pytest.approx(2.0)
+
+
 def test_uncertainty_reward_decreases_when_target_is_observed() -> None:
     cfg = WarmupEnvConfig(
         state_columns=STATE_COLUMNS,
