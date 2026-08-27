@@ -1,5 +1,34 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V206 Validation Checkpoint Selection Does Not Generalize
+
+- V206 retains the frozen V205 architecture, physical six-channel V193 scene,
+  22-mask action surface, forecast-loss reward, and `163,840` PPO-step budget.
+  Its only change is standard model selection on the disjoint
+  calibration/validation partition: every 10 updates, the behavior-valid
+  checkpoint minimizing the worse of the ordinary/static and macro/static loss
+  ratios is retained. Final windows are not consulted for checkpoint choice.
+- On the frozen five-seed development set (`1901--1905`), V206 beats the
+  validation-selected static schedule on both endpoints only `1/5` times
+  (seed 1905). Mean static-minus-PPO margins are `-0.018041` for ordinary
+  forecast loss and `-0.038951` for macro loss. Per-seed ordinary/macro margins
+  are `-0.004085/-0.003153`, `-0.038683/-0.104069`,
+  `-0.036786/-0.083576`, `-0.015415/-0.038473`, and
+  `+0.004764/+0.034518`.
+- The selected update varies across seeds (`40`, `140`, `80`, `80`, `90`), so
+  the failure is not caused by always replaying the terminal checkpoint.
+  All selected validation checkpoints satisfy the predeclared behavior check.
+- Runtime feasibility remains good: all five rollouts have zero warm-up aborts
+  and zero always-on channels; four have all six channels at intermediate duty,
+  while seed 1901 leaves one channel always off. Mean switching is `0.050007`
+  per step. Thus validation-only selection can preserve feasibility but does
+  not repair cross-seed forecast-value ranking against the strong static mask.
+- V206 is closed. It must not be expanded to more seeds or used as positive
+  evidence. The next method decision will target the candidate-score geometry,
+  whose current mean pooling can discard the additive value of jointly selected
+  physical channels, while retaining the same online observations, forecast
+  reward, and hard feasibility mask.
+
 ## 2026-08-28 - V205 Long-Horizon PPO Fails Cross-Seed Confirmation
 
 - The V205 configuration was frozen after seed 1901 and evaluated unchanged on
