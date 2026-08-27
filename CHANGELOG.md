@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-27 - V200 Low-Entropy Candidate-Aligned PPO Does Not Pass
+
+- V200 combines V199's candidate-aligned online quality/context actor with the
+  single standard-PPO entropy setting already tested in V196
+  (`ent_coef=0.005`). The V193 seed-1901 truth, frozen forecaster,
+  validation-selected static reference, reward, and feasibility rules remain
+  unchanged; no heuristic output, execution-time event label, or
+  counterfactual cost enters the policy.
+- The configuration preserves the intended operational behavior: all six
+  physical channels have intermediate duty, no channel is always on or off,
+  switching is `0.0554` per step, and warm-up aborts are zero.
+- It nevertheless degrades both forecast endpoints to ordinary/macro losses
+  `0.266148/0.741188`, above static `0.237045/0.712537`. Lower entropy does
+  not combine constructively with the candidate-aligned actor, so V200 fails
+  without seed expansion.
+- Entropy tuning is now closed for the candidate-aligned architecture. The
+  next investigation must diagnose why the learned long-horizon forecast
+  policy does not select the value-aligned masks supported by the same online
+  observations, rather than adding another scalar hyperparameter variant.
+
 ## 2026-08-27 - V194/V195 Clean Context-Aware PPO Diagnostics Rejected
 
 - V194 trained a full 40,960-step forecast-reward masked PPO on the frozen
