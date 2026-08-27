@@ -9,6 +9,7 @@ cd "$(dirname "$0")/.."
 PY="${PY:-/home/zhangzhuyu/.conda/envs/darts/bin/python}"
 DEVICE="${DEVICE:-cuda}"
 RUN_PREFIX="${RUN_PREFIX:-v194_v193_ca_pdppo_dev}"
+CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-20}"
 
 if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
@@ -56,7 +57,7 @@ for seed in "${SEEDS[@]}"; do
   SENSOR_QUALITY_MAX_NOISE_MULTIPLIER=7.0 \
   SENSOR_QUALITY_AVAILABILITY_FLOOR=0.05 \
   EXCLUDE_SUBTYPE_LATENTS_FROM_STATE=1 \
-  CONTEXT_FEATURE_DIM=20 \
+  CONTEXT_FEATURE_DIM="$CONTEXT_FEATURE_DIM" \
   CONTEXT_FUSION_MODE=gated_add \
   TRAINABLE_ACTION_PRIOR=0 \
   NONLINEAR_ACTION_EMBEDDING=1 \
