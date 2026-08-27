@@ -36,6 +36,21 @@
   quality/context state supports a strong explicit policy, while three clean
   forecast-reward PPO variants do not convert it into a better schedule.
 
+## 2026-08-27 - V197 Training-Only Subtype Action Supervision Does Not Pass
+
+- V197 adds only the framework's existing training-partition subtype-action
+  cross-entropy auxiliary (`0.05`) to V195's feature-parity configuration.
+  The final policy still sees only online alert, quality, and scheduler state;
+  no simulator label is supplied during execution.
+- The auxiliary reduced policy entropy to about `2.0` and improved ordinary
+  loss to `0.247557`, but it remained above static `0.237045`; macro loss was
+  `0.743873` versus `0.712537`.
+- The more decisive subtype routing also made the behavior less acceptable:
+  two channels were always off and switching fell to `0.0152` per step.
+- This auxiliary encourages a subtype-static action target and does not encode
+  online within-subtype channel-quality variation. It is rejected without
+  tuning its weight or expanding seeds.
+
 ## 2026-08-27 - V193 Removes Sensor-Dependent Event Generation
 
 - Corrected the generic physical generator so that particle-event assignment is
