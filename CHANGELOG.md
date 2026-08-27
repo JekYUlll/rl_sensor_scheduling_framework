@@ -3737,3 +3737,23 @@ tar -czf "$OUT…`
   seed1701 pilot and may be replicated only if both forecast endpoints beat the
   validation-selected static schedule and all six channels have nondegenerate
   duty.
+
+## 2026-08-27 - Close the detached mask-head route and sharpen direct policy ranking
+
+- V187 fails more strongly than V186: seed1701 ordinary loss is `0.357604`
+  and static-normalized macro loss is `1.270302`, versus static
+  `0.281203/0.972963`. It leaves one channel effectively always off. The best
+  validation checkpoint also remains above static, so the alert-only detached
+  head is rejected without replication.
+- The discrepancy between offline replay and V187 establishes that single-step
+  action-cost transfer is insufficient under the closed-loop observation
+  distribution. Quality coupling was a real integration mismatch, but removing
+  it does not solve the policy problem. The detached mask-cost-head route is
+  therefore closed.
+- V174 remains the closest complete closed-loop policy: it narrowly beats
+  static on ordinary loss (`+0.000061`) and misses the macro endpoint by
+  `0.018495`, but its direct policy-logit MSE fit has only `0.110` top-action
+  accuracy. V188 retains V174's actor, quality utility, PPO reward, scene,
+  partitions, and 20-epoch warm start, changing only the direct auxiliary loss
+  to Smooth-L1 plus a `0.1` best-action ranking term. Replication uses the same
+  dual-endpoint and six-channel behavior gate.
