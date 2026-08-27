@@ -3599,3 +3599,16 @@ tar -czf "$OUT…`
   value logits guide the actor while PPO retains its own logits and reward.
   This single-seed test preserves arbitrary-subset generalization and changes
   no runtime information or feasibility rule.
+
+## 2026-08-27 - Reject detached factorized guidance and reduce excess entropy
+
+- V175 passes the six-channel behavior gate but sharply degrades prediction,
+  losing to static by `0.079192/0.305252`. The detached factorized value logits
+  overemphasize channel quality (`+0.157967` selected-quality gap) without
+  preserving forecast-task ranking. The separate-head route is rejected.
+- V174 remains the best policy structure, but its actor entropy is `2.999`,
+  close to the 22-action maximum despite standardized-cost supervision. V176
+  returns to direct V174 MSE supervision and changes only the ordinary PPO
+  entropy coefficient from 0.02 to 0.002. This tests whether persistent
+  near-uniform exploration prevents the learned ranking from controlling the
+  deterministic policy; all evidence and replication gates remain unchanged.
