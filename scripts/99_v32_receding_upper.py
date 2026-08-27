@@ -47,6 +47,21 @@ def append_alert_context_args(command: list[str], metadata: dict[str, object]) -
     )
 
 
+def append_agent_context_args(command: list[str], metadata: dict[str, object]) -> None:
+    columns = list(metadata.get("agent_context_columns") or [])
+    if not columns:
+        return
+    command.extend(["--agent-context-columns", *map(str, columns)])
+    normalization = dict(metadata.get("agent_context_normalization") or {})
+    mean = list(normalization.get("mean") or [])
+    std = list(normalization.get("std") or [])
+    if mean or std:
+        if len(mean) != len(columns) or len(std) != len(columns):
+            raise ValueError("agent-context normalization metadata is incomplete")
+        command.extend(["--agent-context-normalization-mean", *map(str, mean)])
+        command.extend(["--agent-context-normalization-std", *map(str, std)])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", required=True, type=Path)
@@ -121,6 +136,7 @@ def main() -> None:
     ]
     if metadata.get("state_columns"):
         command.extend(["--state-columns", *map(str, metadata["state_columns"])])
+    append_agent_context_args(command, metadata)
     append_sensor_quality_args(command, metadata)
     append_alert_context_args(command, metadata)
     shaping = dict(metadata.get("reward_shaping") or {})
