@@ -21,6 +21,21 @@
   same frozen scene; it does not add a heuristic-dependent module or alter the
   forecast-loss objective.
 
+## 2026-08-27 - V196 Lower-Entropy PPO Improves but Does Not Pass
+
+- V196 repeats V195 on the identical frozen V193 seed-1901 scene with only
+  the standard PPO entropy coefficient reduced from `0.02` to `0.005`.
+- Lower entropy improved ordinary loss from `0.286925` to `0.254028`, but it
+  still did not reach the validation-selected static reference (`0.237045`).
+  Macro loss was `0.749825` versus `0.712537` for static.
+- The rollout remained feasible with zero warm-up aborts, but one channel was
+  always off. V196 therefore fails both the prediction and six-channel
+  behavioral gates.
+- Standard entropy tuning is closed for this frozen scene. The evidence now
+  isolates a reward/temporal credit-assignment bottleneck: the same online
+  quality/context state supports a strong explicit policy, while three clean
+  forecast-reward PPO variants do not convert it into a better schedule.
+
 ## 2026-08-27 - V193 Removes Sensor-Dependent Event Generation
 
 - Corrected the generic physical generator so that particle-event assignment is
