@@ -8,7 +8,7 @@ PHASE="${1:-all}"
 read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-1501 1502 1503 1504 1505}"
 PREFIX="${RUN_PREFIX_OVERRIDE:-v137_generic_physical_scene_gate_dev}"
 CONTEXT_OUT="${CONTEXT_OUT_OVERRIDE:-reports/aggregate/v137_generic_physical_context_gate_20260826}"
-SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml
+SENSOR_CFG="${SENSOR_CFG_OVERRIDE:-configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml}"
 
 run_parallel() {
   local worker="$1" index seed
@@ -33,7 +33,9 @@ scene_env() {
   export EVENT_SUBTYPE_CONTEXT_LATENT_STRENGTH=1.0
   export ORACLE_EPOCHS=10 ORACLE_FULL_OPEN_REPEAT=3 ORACLE_CANDIDATE_MASK_REPEAT=2
   export ORACLE_SUBTYPE_TEACHER_REPEAT=0 ORACLE_INFERENCE_DEVICE=cpu
-  export BUDGET=1.75 STARTUP_BUDGET=2.15 BUDGET_LABEL=b1p75
+  export BUDGET="${BUDGET_OVERRIDE:-1.75}"
+  export STARTUP_BUDGET="${STARTUP_BUDGET_OVERRIDE:-2.15}"
+  export BUDGET_LABEL="${BUDGET_LABEL_OVERRIDE:-b1p75}"
   export TARGET_WEIGHTS='1 1 1 1 1 1 1 1 1'
   export CHANNEL_QUALITY_ENABLED="${CHANNEL_QUALITY_ENABLED_OVERRIDE:-0}"
   export CHANNEL_QUALITY_MODE="${CHANNEL_QUALITY_MODE_OVERRIDE:-independent}"
