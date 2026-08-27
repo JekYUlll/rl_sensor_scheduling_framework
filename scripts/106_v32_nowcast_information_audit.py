@@ -37,12 +37,15 @@ def final_frame(run: Path, *, lead_steps: int, noise: np.ndarray) -> pd.DataFram
     steps = int(manifest["final_test"]["eval_steps"])
     truth = pd.read_csv(run / "truth_v31_split.csv", usecols=[*FEATURES, "event_subtype_id"])
     rows: list[pd.DataFrame] = []
+    offset = 0
     for start in starts:
         idx = np.arange(int(start), int(start) + steps, dtype=int)
         valid = idx + int(lead_steps) < len(truth)
         frame = truth.iloc[idx[valid]].copy().reset_index(drop=True)
         future = truth.iloc[(idx[valid] + int(lead_steps))][list(FEATURES)].to_numpy(dtype=float)
-        frame.loc[:, list(FEATURES)] = future + noise
+        count = len(frame)
+        frame.loc[:, list(FEATURES)] = future + noise[offset : offset + count]
+        offset += count
         rows.append(frame)
     return pd.concat(rows, ignore_index=True)
 
