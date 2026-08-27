@@ -12,6 +12,7 @@ RUN_PREFIX="${RUN_PREFIX:-v194_v193_ca_pdppo_dev}"
 CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-20}"
 SUBTYPE_AUX_COEF="${SUBTYPE_AUX_COEF:-0.3}"
 SUBTYPE_ACTION_CE_COEF="${SUBTYPE_ACTION_CE_COEF:-0}"
+TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-40960}"
 
 if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
@@ -23,7 +24,7 @@ for seed in "${SEEDS[@]}"; do
   CONTROL_SOURCE_RUN_DIR="reports/v193_event_sensor_independent_scene_dev_seed${seed}_b1p75_20260822" \
   RUN_PREFIX="$RUN_PREFIX" \
   DEVICE="$DEVICE" \
-  TOTAL_TIMESTEPS=40960 \
+  TOTAL_TIMESTEPS="$TOTAL_TIMESTEPS" \
   TRUTH_STEPS=36000 \
   LOOKBACK=20 \
   SENSOR_CFG=configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml \
