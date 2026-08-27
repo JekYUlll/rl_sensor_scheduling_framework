@@ -36,7 +36,6 @@ for lookahead in "${LOOKAHEADS[@]}"; do
 done
 
 "$PYTHON" - "$OUT_ROOT" "${SEEDS[@]}" <<'PY'
-import json
 import sys
 from pathlib import Path
 
@@ -47,13 +46,19 @@ seeds = [int(seed) for seed in sys.argv[2:]]
 rows = []
 for lookahead in (0, 2, 4, 8):
     for seed in seeds:
-        path = Path(
+        trace_path = Path(
             f"reports/v213_duration_balanced_scene_dev_seed{seed}_b1p85_20260822/"
-            f"receding_oracle_l{lookahead}_lookahead_sweep/oracle_lift_summary.json"
+            f"receding_oracle_l{lookahead}_lookahead_sweep/receding_oracle_trace.csv"
         )
-        payload = json.loads(path.read_text())
-        static = float(payload["validation_selected_static"]["oracle_loss_mean"])
-        receding = float(payload["receding_oracle"]["oracle_loss_mean"])
+        run_dir = trace_path.parents[1]
+        static_metrics = pd.read_csv(run_dir / "v2_custom_ppo_metrics.csv")
+        static = float(
+            static_metrics.loc[
+                static_metrics["policy"].eq("validation_selected_static"),
+                "oracle_loss_mean",
+            ].iloc[0]
+        )
+        receding = float(pd.read_csv(trace_path)["executed_oracle_loss"].mean())
         rows.append({
             "lookahead_steps": lookahead,
             "seed": seed,
