@@ -835,6 +835,8 @@ def main() -> None:
     parser.add_argument("--aligned-quality-action-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--quality-context-action-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--quality-context-pooling", choices=["mean", "sum"], default="mean")
+    parser.add_argument("--onpolicy-action-value-coef", type=float, default=0.0)
+    parser.add_argument("--onpolicy-action-value-scale", type=float, default=1.0)
     parser.add_argument("--candidate-interaction-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
@@ -1626,6 +1628,8 @@ def main() -> None:
             aligned_quality_action_score=bool(args.aligned_quality_action_score),
             quality_context_action_score=bool(args.quality_context_action_score),
             quality_context_pooling=str(args.quality_context_pooling),
+            onpolicy_action_value_coef=max(0.0, float(args.onpolicy_action_value_coef)),
+            onpolicy_action_value_scale=float(args.onpolicy_action_value_scale),
             candidate_interaction_score=bool(args.candidate_interaction_score),
             temporal_encoder_enabled=bool(args.temporal_encoder),
             temporal_history_steps=int(args.lookback),
@@ -2734,6 +2738,8 @@ def as_serializable_config(
         "aligned_quality_action_score": int(bool(cfg.aligned_quality_action_score)),
         "quality_context_action_score": int(bool(cfg.quality_context_action_score)),
         "quality_context_pooling": str(cfg.quality_context_pooling),
+        "onpolicy_action_value_coef": float(cfg.onpolicy_action_value_coef),
+        "onpolicy_action_value_scale": float(cfg.onpolicy_action_value_scale),
         "candidate_interaction_score": int(bool(cfg.candidate_interaction_score)),
         "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
         "temporal_history_steps": int(cfg.temporal_history_steps),

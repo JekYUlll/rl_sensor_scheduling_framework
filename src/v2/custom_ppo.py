@@ -175,6 +175,8 @@ class CustomPPOConfig:
     aligned_quality_action_score: bool = False
     quality_context_action_score: bool = False
     quality_context_pooling: str = "mean"
+    onpolicy_action_value_coef: float = 0.0
+    onpolicy_action_value_scale: float = 1.0
     candidate_interaction_score: bool = False
     temporal_encoder_enabled: bool = False
     temporal_history_steps: int = 0
@@ -257,6 +259,8 @@ class MaskedActor:
         aligned_quality_action_score: bool = False,
         quality_context_action_score: bool = False,
         quality_context_pooling: str = "mean",
+        onpolicy_action_value_enabled: bool = False,
+        onpolicy_action_value_scale: float = 1.0,
         candidate_interaction_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
@@ -300,6 +304,8 @@ class MaskedActor:
                 self.quality_context_pooling = str(quality_context_pooling)
                 if self.quality_context_pooling not in {"mean", "sum"}:
                     raise ValueError("quality_context_pooling must be mean or sum")
+                self.onpolicy_action_value_enabled = bool(onpolicy_action_value_enabled)
+                self.onpolicy_action_value_scale = float(onpolicy_action_value_scale)
                 if (
                     self.aligned_quality_action_score or self.quality_context_action_score
                 ) and self.context_feature_dim < int(n_sensors):
@@ -337,6 +343,15 @@ class MaskedActor:
                         nn.Linear(int(hidden_dim), 1),
                     )
                     if bool(candidate_interaction_score)
+                    else None
+                )
+                self.onpolicy_action_value_head = (
+                    nn.Sequential(
+                        nn.Linear(2 * int(embed_dim), int(hidden_dim)),
+                        nn.GELU(),
+                        nn.Linear(int(hidden_dim), 1),
+                    )
+                    if self.onpolicy_action_value_enabled
                     else None
                 )
                 self.temporal_history_steps = (
@@ -679,12 +694,27 @@ class MaskedActor:
                         action_mask,
                     )
                     logits = logits + self.forecast_value_head_scale * forecast_logits.detach()
+                if self.onpolicy_action_value_head is not None:
+                    logits = logits + self.onpolicy_action_value_scale * self.onpolicy_action_values(
+                        obs, candidate_masks, context=context
+                    ).detach()
                 if action_mask is not None:
                     valid = action_mask.bool()
                     if valid.ndim == 1:
                         valid = valid.reshape(1, -1).expand_as(logits)
                     logits = logits.masked_fill(~valid, -1.0e9)
                 return logits
+
+            def onpolicy_action_values(self, obs: Any, candidate_masks: Any, *, context: Any | None = None) -> Any:
+                if self.onpolicy_action_value_head is None:
+                    raise RuntimeError("on-policy action-value head is not enabled")
+                state = self.encode_context(obs) if context is None else context
+                action_emb = self._action_embeddings(candidate_masks)
+                state_actions = state.unsqueeze(1).expand(-1, action_emb.shape[0], -1)
+                candidate_actions = action_emb.unsqueeze(0).expand(state.shape[0], -1, -1)
+                return self.onpolicy_action_value_head(
+                    torch_concat([state_actions, candidate_actions], dim=2)
+                ).squeeze(-1)
 
             def forecast_value_logits(
                 self,
@@ -793,6 +823,8 @@ class ActorCritic:
         aligned_quality_action_score: bool = False,
         quality_context_action_score: bool = False,
         quality_context_pooling: str = "mean",
+        onpolicy_action_value_enabled: bool = False,
+        onpolicy_action_value_scale: float = 1.0,
         candidate_interaction_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
@@ -830,6 +862,8 @@ class ActorCritic:
                     aligned_quality_action_score=bool(aligned_quality_action_score),
                     quality_context_action_score=bool(quality_context_action_score),
                     quality_context_pooling=str(quality_context_pooling),
+                    onpolicy_action_value_enabled=bool(onpolicy_action_value_enabled),
+                    onpolicy_action_value_scale=float(onpolicy_action_value_scale),
                     candidate_interaction_score=bool(candidate_interaction_score),
                     temporal_encoder_enabled=bool(temporal_encoder_enabled),
                     temporal_history_steps=int(temporal_history_steps),
@@ -972,6 +1006,8 @@ class CustomPPO:
             aligned_quality_action_score=bool(cfg.aligned_quality_action_score),
             quality_context_action_score=bool(cfg.quality_context_action_score),
             quality_context_pooling=str(cfg.quality_context_pooling),
+            onpolicy_action_value_enabled=float(cfg.onpolicy_action_value_coef) > 0.0,
+            onpolicy_action_value_scale=float(cfg.onpolicy_action_value_scale),
             candidate_interaction_score=bool(cfg.candidate_interaction_score),
             temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
             temporal_history_steps=int(self.env_cfg.lookback),
@@ -1736,6 +1772,13 @@ class CustomPPO:
                 )
                 policy_loss = -torch.min(ratio * mb_advantages, clipped_ratio * mb_advantages).mean()
                 value_loss = nn.functional.mse_loss(values, mb_returns)
+                onpolicy_action_value_loss = torch.zeros((), device=self.device)
+                if float(self.cfg.onpolicy_action_value_coef) > 0.0:
+                    action_values = self.model.actor.onpolicy_action_values(
+                        mb_obs, self.candidate_masks_t
+                    )
+                    selected_values = action_values.gather(1, mb_actions.reshape(-1, 1)).reshape(-1)
+                    onpolicy_action_value_loss = nn.functional.mse_loss(selected_values, mb_returns)
                 awbc_loss = advantage_weighted_bc_loss(dist, mb_greedy, mb_advantages, mb_awbc_valid)
                 prior_kl_loss = prior_kl_regularizer(
                     dist,
@@ -1811,6 +1854,7 @@ class CustomPPO:
                 loss = (
                     policy_loss
                     + float(self.cfg.vf_coef) * value_loss
+                    + float(self.cfg.onpolicy_action_value_coef) * onpolicy_action_value_loss
                     - float(self.cfg.ent_coef) * entropy
                     - float(self.cfg.channel_marginal_entropy_coef) * channel_marginal_entropy
                     + float(self._current_awbc_coef()) * awbc_loss
@@ -1830,6 +1874,7 @@ class CustomPPO:
                         "loss": float(loss.detach().cpu().item()),
                         "policy_loss": float(policy_loss.detach().cpu().item()),
                         "value_loss": float(value_loss.detach().cpu().item()),
+                        "onpolicy_action_value_loss": float(onpolicy_action_value_loss.detach().cpu().item()),
                         "entropy": float(entropy.detach().cpu().item()),
                         "channel_marginal_entropy": float(
                             channel_marginal_entropy.detach().cpu().item()
@@ -1850,6 +1895,7 @@ class CustomPPO:
             "loss": _mean_metric(loss_rows, "loss"),
             "policy_loss": _mean_metric(loss_rows, "policy_loss"),
             "value_loss": _mean_metric(loss_rows, "value_loss"),
+            "onpolicy_action_value_loss": _mean_metric(loss_rows, "onpolicy_action_value_loss"),
             "entropy": _mean_metric(loss_rows, "entropy"),
             "channel_marginal_entropy": _mean_metric(
                 loss_rows, "channel_marginal_entropy"
