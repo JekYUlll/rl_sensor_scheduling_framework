@@ -336,6 +336,77 @@ class ContextAlertBanditPolicy:
         return np.where(mask, 1.0, -1.0)
 
 
+class QualityAwareContextPolicy(ContextAlertBanditPolicy):
+    """Select a feasible subset from online warnings and reported channel quality."""
+
+    def __init__(
+        self,
+        *,
+        action_score_table: pd.DataFrame,
+        quality_penalty: float,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self.quality_penalty = float(quality_penalty)
+        self.quality_columns = [
+            f"agent_context_quality_{sensor.sensor_id}" for sensor in self.sensors
+        ]
+        indexed = action_score_table.set_index("action_idx")
+        self.regime_scores: dict[str, np.ndarray] = {}
+        score_columns = {
+            "calm": "oracle_loss_non_event",
+            "particle": "oracle_loss_subtype_particle",
+            "flux": "oracle_loss_subtype_flux",
+            "thermal": "oracle_loss_subtype_thermal",
+        }
+        for label, column in score_columns.items():
+            scores = np.full(len(self.candidate_masks), np.inf, dtype=float)
+            for action_idx in range(len(self.candidate_masks)):
+                if action_idx not in indexed.index:
+                    continue
+                value = finite_float(indexed.loc[action_idx].get(column, float("nan")))
+                if not np.isfinite(value):
+                    value = finite_float(
+                        indexed.loc[action_idx].get("oracle_loss_mean", float("nan"))
+                    )
+                scores[action_idx] = value
+            finite = scores[np.isfinite(scores) & (scores > 0.0)]
+            if finite.size == 0:
+                raise ValueError(f"No finite validation scores for {label}")
+            self.regime_scores[label] = scores / float(np.min(finite))
+
+    def act_mask(self, env: Any) -> np.ndarray:
+        row = env.truth_df.iloc[int(env.current_idx)]
+        label = "calm"
+        best_value = -float("inf")
+        for candidate_label, column in self.alert_columns.items():
+            value = finite_float(row.get(column, 0.0))
+            if value > best_value:
+                best_value = value
+                label = candidate_label
+        if not np.isfinite(best_value) or best_value < self.threshold:
+            label = "calm"
+        quality = np.asarray(
+            [
+                np.clip(finite_float(row.get(column, 1.0)), 0.0, 1.0)
+                for column in self.quality_columns
+            ],
+            dtype=float,
+        )
+        scores = self.regime_scores[label].copy()
+        for action_idx, mask in enumerate(self.candidate_masks):
+            projection = env.projector.project_mask(mask, env.runtimes)
+            if not bool(projection.feasible) or not np.array_equal(
+                projection.selected_mask.astype(bool), mask
+            ):
+                scores[action_idx] = float("inf")
+                continue
+            selected = np.flatnonzero(mask)
+            degradation = float(np.mean(1.0 - quality[selected])) if selected.size else 1.0
+            scores[action_idx] += self.quality_penalty * degradation
+        return np.asarray(self.candidate_masks[int(np.argmin(scores))], dtype=bool).copy()
+
+
 class IntensityBinnedContextPolicy(ContextAlertBanditPolicy):
     """Online context policy with calibration-selected low/high intensity actions."""
 
@@ -645,6 +716,7 @@ def evaluate_run(
     policies: tuple[str, ...],
     context_thresholds: tuple[float, ...],
     context_high_threshold: float,
+    quality_penalties: tuple[float, ...],
     greedy_max_steps: int,
     context_action_source: str,
 ) -> pd.DataFrame:
@@ -824,6 +896,20 @@ def evaluate_run(
                     "high_threshold": float(context_high_threshold) if intensity_binned else float("nan"),
                     "action_source": str(context_action_source),
                 }
+            )
+    if "quality_context_bandit" in policies:
+        for penalty in quality_penalties:
+            name = f"quality_context_bandit_t0p5_p{str(penalty).replace('.', 'p')}"
+            policy_objects.append(
+                QualityAwareContextPolicy(
+                    sensors=sensors,
+                    candidate_masks=candidate_masks,
+                    action_indices=action_indices,
+                    threshold=0.5,
+                    name=name,
+                    action_score_table=context_action_table,
+                    quality_penalty=float(penalty),
+                )
             )
     if "forecast_greedy" in policies:
         policy_objects.append(ForecastGreedyOneStepPolicy(candidate_masks, name="forecast_greedy_one_step"))
@@ -1028,11 +1114,18 @@ def main() -> None:
     parser.add_argument(
         "--policies",
         nargs="+",
-        choices=["context_bandit", "forecast_greedy", "event_label", "trace_distilled"],
+        choices=[
+            "context_bandit",
+            "quality_context_bandit",
+            "forecast_greedy",
+            "event_label",
+            "trace_distilled",
+        ],
         default=["context_bandit", "forecast_greedy", "event_label"],
     )
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
     parser.add_argument("--context-high-threshold", type=float, default=0.75)
+    parser.add_argument("--quality-penalties", nargs="+", type=float, default=[0.25, 1.0, 4.0])
     parser.add_argument(
         "--context-action-source",
         choices=[
@@ -1088,6 +1181,7 @@ def main() -> None:
                 policies=tuple(str(x) for x in args.policies),
                 context_thresholds=tuple(float(x) for x in args.context_thresholds),
                 context_high_threshold=float(args.context_high_threshold),
+                quality_penalties=tuple(float(x) for x in args.quality_penalties),
                 greedy_max_steps=int(args.greedy_max_steps),
                 context_action_source=str(args.context_action_source),
             )

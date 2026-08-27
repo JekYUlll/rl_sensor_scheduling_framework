@@ -3788,3 +3788,23 @@ tar -czf "$OUT…`
   bounded teacher-fit diagnostic. Full PPO training is allowed only if the
   pretraining policy passes both static endpoints and six-channel behavior on
   validation-qualified evaluation.
+
+## 2026-08-27 - Reject hard teacher fitting and invalidate the V170 deployability gate
+
+- V190 hard teacher cross-entropy reaches recorded training accuracy
+  `0.317/0.460` at `80/200` epochs and both policies use all six channels.
+  Neither transfers: the 80-epoch policy has ordinary/macro loss
+  `0.306487/1.086553`, and the 200-epoch policy has
+  `0.324520/1.159181`, versus static `0.281203/0.972963`. No full PPO run is
+  launched. Teacher-fit strength tuning is closed.
+- The V170 gate had relied on a privileged receding oracle and one-step models
+  evaluated on its visited states. V191 adds the missing closed-loop test: a
+  validation-mapped context policy using only supplied noisy warning scores.
+  It beats static in only `2/5` scenes on ordinary loss and `1/5` on macro,
+  with mean margins `-0.008293/-0.032554`. Several scenes retain always-on or
+  always-off channels.
+- V170 therefore has privileged dynamic headroom but does not establish that
+  the headroom is reachable by a deployable online policy. PPO architecture
+  tuning on V170 is stopped. Subsequent scene candidates must first pass a
+  closed-loop online context-and-quality policy gate on both endpoints and
+  six-channel behavior before any PPO training.

@@ -142,3 +142,45 @@ def test_intensity_coordinate_selector_can_separate_levels() -> None:
     selected, ledger = MODULE.coordinate_select_intensity_actions(table, evaluate, pool_size=2, passes=2)
     assert selected == target
     assert not ledger.empty
+
+
+def test_quality_context_policy_avoids_reported_degraded_channel() -> None:
+    sensors = [SimpleNamespace(sensor_id="a"), SimpleNamespace(sensor_id="b")]
+    masks = np.asarray([[1, 0], [0, 1]], dtype=bool)
+    table = pd.DataFrame({
+        "action_idx": [0, 1],
+        "oracle_loss_mean": [1.0, 1.05],
+        "oracle_loss_non_event": [1.0, 1.05],
+        "oracle_loss_subtype_particle": [1.0, 1.05],
+        "oracle_loss_subtype_flux": [1.0, 1.05],
+        "oracle_loss_subtype_thermal": [1.0, 1.05],
+    })
+    policy = MODULE.QualityAwareContextPolicy(
+        sensors=sensors,
+        candidate_masks=masks,
+        action_indices={"calm": 0},
+        threshold=0.5,
+        name="test",
+        action_score_table=table,
+        quality_penalty=1.0,
+    )
+
+    class Projector:
+        @staticmethod
+        def project_mask(mask: np.ndarray, runtimes: object) -> SimpleNamespace:
+            return SimpleNamespace(feasible=True, selected_mask=np.asarray(mask, dtype=bool))
+
+    env = SimpleNamespace(
+        current_idx=0,
+        runtimes=None,
+        projector=Projector(),
+        truth_df=pd.DataFrame({
+            "agent_context_particle_alert": [0.0],
+            "agent_context_flux_alert": [0.0],
+            "agent_context_thermal_alert": [0.0],
+            "agent_context_quality_a": [0.0],
+            "agent_context_quality_b": [1.0],
+        }),
+    )
+
+    assert np.array_equal(policy.act_mask(env), masks[1])
