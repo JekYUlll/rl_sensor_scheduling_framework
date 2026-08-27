@@ -65,6 +65,22 @@
   policy. Plain context concatenation, entropy tuning, subtype-action
   supervision, and validation checkpoint selection are closed on V193.
 
+## 2026-08-27 - V199 Candidate-Aligned Context Actor Restores Dynamic Behavior
+
+- V199 enables a learned candidate-aligned actor term: online alert context is
+  mapped to per-channel utilities, modulated by the corresponding online
+  quality values, and pooled over each feasible mask before masked PPO action
+  selection. It uses no baseline output, event label at execution, or
+  counterfactual candidate cost.
+- On frozen seed 1901, V199 improves the macro endpoint to `0.708799` versus
+  `0.712537` for the validation-selected static schedule while retaining all
+  six channels at intermediate duty, zero always-on/off channels, and zero
+  warm-up aborts.
+- Ordinary loss remains `0.247760` versus static `0.237045`; therefore V199
+  is a partial pass, not a scene or policy confirmation. A single matched
+  low-entropy combination is warranted because V196 improved ordinary loss
+  under the same frozen scene.
+
 ## 2026-08-27 - V193 Removes Sensor-Dependent Event Generation
 
 - Corrected the generic physical generator so that particle-event assignment is
