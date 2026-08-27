@@ -24,6 +24,29 @@ def append_sensor_quality_args(command: list[str], metadata: dict[str, object]) 
     ])
 
 
+def append_alert_context_args(command: list[str], metadata: dict[str, object]) -> None:
+    alert = dict(metadata.get("agent_alert_context") or {})
+    columns = list(alert.get("columns") or [])
+    if columns:
+        command.extend(["--alert-context-columns", *map(str, columns)])
+    command.extend([
+        "--alert-context-threshold",
+        str(alert.get("threshold", 0.5)),
+        "--alert-context-trend-lookback",
+        str(alert.get("trend_lookback", 6)),
+    ])
+    command.append(
+        "--include-alert-context-features"
+        if bool(alert.get("include_alert_context_features", False))
+        else "--no-include-alert-context-features"
+    )
+    command.append(
+        "--include-event-flag-in-state"
+        if bool(alert.get("include_event_flag_in_state", False))
+        else "--no-include-event-flag-in-state"
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", required=True, type=Path)
@@ -88,6 +111,7 @@ def main() -> None:
     if metadata.get("state_columns"):
         command.extend(["--state-columns", *map(str, metadata["state_columns"])])
     append_sensor_quality_args(command, metadata)
+    append_alert_context_args(command, metadata)
     shaping = dict(metadata.get("reward_shaping") or {})
     command.append(
         "--common-random-numbers"

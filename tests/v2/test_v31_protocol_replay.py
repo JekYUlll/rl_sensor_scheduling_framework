@@ -103,6 +103,31 @@ def test_score_policy_replay_preserves_all_online_state_configuration() -> None:
     assert replay_cfg.alert_context_trend_lookback == 9
 
 
+def test_receding_command_preserves_alert_context_contract() -> None:
+    module = _load_script("99_v32_receding_upper.py")
+    command: list[str] = []
+    module.append_alert_context_args(
+        command,
+        {
+            "agent_alert_context": {
+                "columns": ["particle_alert", "flux_alert", "thermal_alert"],
+                "threshold": 0.6,
+                "trend_lookback": 9,
+                "include_alert_context_features": True,
+                "include_event_flag_in_state": False,
+            }
+        },
+    )
+
+    assert command == [
+        "--alert-context-columns", "particle_alert", "flux_alert", "thermal_alert",
+        "--alert-context-threshold", "0.6",
+        "--alert-context-trend-lookback", "9",
+        "--include-alert-context-features",
+        "--no-include-event-flag-in-state",
+    ]
+
+
 def test_flexible_behavior_gate_preserves_frozen_six_channel_rule() -> None:
     module = _load_script("25_v2_train_custom_ppo.py")
     valid = {

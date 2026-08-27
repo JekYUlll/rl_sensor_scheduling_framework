@@ -1291,6 +1291,11 @@ def main() -> None:
     parser.add_argument("--sensor-quality-columns", nargs="*", default=[])
     parser.add_argument("--sensor-quality-max-noise-multiplier", type=float, default=1.0)
     parser.add_argument("--sensor-quality-availability-floor", type=float, default=1.0)
+    parser.add_argument("--include-event-flag-in-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--include-alert-context-features", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--alert-context-columns", nargs="*", default=[])
+    parser.add_argument("--alert-context-threshold", type=float, default=0.5)
+    parser.add_argument("--alert-context-trend-lookback", type=int, default=6)
     parser.add_argument(
         "--eval-start-selection",
         choices=["event_fraction", "event_rich", "event_transport_rich"],
@@ -1431,6 +1436,11 @@ def main() -> None:
         sensor_quality_columns=tuple(str(col) for col in args.sensor_quality_columns),
         sensor_quality_max_noise_multiplier=float(args.sensor_quality_max_noise_multiplier),
         sensor_quality_availability_floor=float(args.sensor_quality_availability_floor),
+        include_event_flag_in_state=bool(args.include_event_flag_in_state),
+        include_alert_context_features=bool(args.include_alert_context_features),
+        alert_context_columns=tuple(str(col) for col in args.alert_context_columns),
+        alert_context_threshold=float(args.alert_context_threshold),
+        alert_context_trend_lookback=int(args.alert_context_trend_lookback),
     )
     table = evaluate_candidate_masks(
         truth=truth,
