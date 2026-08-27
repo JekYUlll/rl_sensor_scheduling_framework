@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V208 Rejects On-Policy Action-Value Augmentation
+
+- V208 adds an action-conditioned return head to the clean V199 actor. The
+  head is trained only on the PPO rollout's executed `(state, feasible mask,
+  discounted forecast return)` tuples and contributes detached scores to masked
+  logits. It does not enumerate counterfactual candidate costs, use oracle
+  action labels, or receive heuristic output.
+- On frozen V193 seed 1901, the result fails both static endpoints: ordinary
+  loss is `0.249197` versus `0.237045` (static-minus-PPO `-0.012152`) and
+  macro loss is `0.735298` versus `0.712537` (margin `-0.022762`).
+- Runtime feasibility has zero aborts and no always-on channel, but one channel
+  is always off, only four are intermediate-duty, and switching drops to
+  `0.013605` per step. The single-seed variant is closed without expansion.
+- This rules out a lightweight selected-action return critic as a sufficient
+  repair for sparse policy-induced action coverage. The primary path must not
+  add further actor-side value heads without a new evidence-based design.
+
 ## 2026-08-28 - V207 Rejects Additive Quality-Context Pooling
 
 - V207 tests one candidate-geometry correction on frozen V193 seed 1901. The
