@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V217--V218 Close the Short-Horizon Distillation Route
+
+- V217 reuses V216's frozen l4 final traces and generates only training and
+  validation l4 traces. Complete-state ExtraTrees prediction of l4 receding
+  actions reaches positive held-out action-value gain in `4/5` scenes with mean
+  `+0.003486`, modestly better than the corresponding l8 probe.
+- V218 is the required closed-loop check. The ExtraTrees policy is fitted only
+  to policy-training l4 costs and replayed once under the normal final
+  environment transitions. It loses ordinary loss to validation-selected static
+  in all five scenes (mean static-minus-policy `-0.020707`) and macro loss in
+  four scenes (mean `-0.040001`).
+- Runtime feasibility remains intact (zero aborts), but the policy averages
+  `2.4` always-off channels and only `2.8` intermediate-duty channels. Thus
+  better open-loop action prediction is not sufficient under policy-induced
+  observation and dwell-state shift.
+- V213 is closed. No CA-PD-PPO, feature-parity PPO, alert-rule extension, or
+  additional trace-distillation variant is authorized on this scene. The next
+  scene family must expose a physically interpretable, exogenous forecast or
+  nowcast precursor, not a stronger event-label-derived alert.
+
 ## 2026-08-28 - V216 Establishes the Receding Lead-Time Threshold
 
 - On the frozen V213 final partitions, the exact all-action receding diagnostic
