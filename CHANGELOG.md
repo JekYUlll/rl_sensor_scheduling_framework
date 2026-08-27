@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-27 - V193 Removes Sensor-Dependent Event Generation
+
+- Corrected the generic physical generator so that particle-event assignment is
+  independent of Parsivel availability. Environmental events must not be caused
+  by a channel's reporting state.
+- On fresh seeds 1901--1905, the original warning-context policy improved on
+  validation-selected static schedules in only `2/5` joint comparisons. Its
+  mean ordinary/macro margins were `+0.007617/+0.021805`.
+- Adding online channel-quality observations to the same replay-calibrated
+  context policy produced `4/5` joint static wins at the prespecified mild
+  quality penalty. The corresponding mean margins were
+  `+0.008367/+0.034202`, with zero always-on channels and five intermediate
+  channels on average.
+- This passes the scene's bounded online-value gate. The 1,024-step scene-gate
+  PPO is not interpreted as a learned-policy result; V194 reuses each frozen
+  V193 truth, forecaster, and static selection for a full 40,960-step clean
+  context-aware masked PPO diagnostic.
+
 ## 2026-08-26 - V137 Invalidated; V138 Repairs State Inputs
 
 - Removed simulator-only subtype latent variables from the generic physical
