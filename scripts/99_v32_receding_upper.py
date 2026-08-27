@@ -41,6 +41,13 @@ def main() -> None:
     metadata = json.loads((run / "v2_ppo_metadata.json").read_text())
     manifest = json.loads((run / "split_protocol_manifest.json").read_text())
     geometry = json.loads((run / "action_geometry.json").read_text())
+    local_truth_path = run / "truth_v31_split.csv"
+    metadata_truth_path = Path(str(metadata.get("truth_csv") or ""))
+    truth_path = local_truth_path if local_truth_path.is_file() else metadata_truth_path
+    if not truth_path.is_file():
+        raise FileNotFoundError(
+            "Expected a local truth_v31_split.csv or a valid truth_csv path in run metadata"
+        )
     if args.partition == "rl_train":
         start_indices = manifest["rl_train"]["candidate_prior_starts"]
         eval_steps = manifest["rl_train"]["candidate_prior_steps"]
@@ -53,7 +60,7 @@ def main() -> None:
     command = [
         sys.executable,
         str(root / "scripts/49_v31_physical_event_oracle_lift.py"),
-        "--truth-csv", str(run / "truth_v31_split.csv"),
+        "--truth-csv", str(truth_path),
         "--out-dir", str(run / args.output_subdir),
         "--sensor-cfg", str(geometry["sensor_cfg"]),
         "--budget", str(geometry["budget"]),
