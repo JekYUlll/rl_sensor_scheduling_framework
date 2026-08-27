@@ -36,11 +36,66 @@ def add_channel_quality_dynamics(
     degraded_quality: float,
     transition_steps: int,
     report_noise_std: float,
+    mode: str = "independent",
 ):
-    """Add slow self-diagnostic quality signals independently of event labels."""
+    """Add bounded online channel-quality signals to the generated truth frame.
+
+    ``independent`` retains the original slow, sensor-specific outage process.
+    ``condition_dependent`` models exposure-dependent degradation from continuous
+    weather and transport drivers. It never changes the physical event process;
+    it only produces noisy diagnostics that determine measurement reliability.
+    """
     out = frame.copy()
     steps = len(out)
     low = float(np.clip(degraded_quality, 0.0, 1.0))
+    if mode not in {"independent", "condition_dependent"}:
+        raise ValueError("channel quality mode must be independent or condition_dependent")
+    if mode == "condition_dependent":
+        required = {
+            "wind_speed_ms",
+            "relative_humidity",
+            "event_subtype_particle_latent",
+            "event_subtype_flux_latent",
+            "event_subtype_thermal_latent",
+        }
+        missing = sorted(required.difference(out.columns))
+        if missing:
+            raise ValueError(f"condition-dependent quality requires columns: {missing}")
+
+        def positive_unit(column: str) -> np.ndarray:
+            values = np.maximum(out[column].to_numpy(dtype=float), 0.0)
+            scale = max(float(np.quantile(values, 0.95)), 1.0e-6)
+            return np.clip(values / scale, 0.0, 1.0)
+
+        particle = positive_unit("event_subtype_particle_latent")
+        flux = positive_unit("event_subtype_flux_latent")
+        thermal = positive_unit("event_subtype_thermal_latent")
+        wind = positive_unit("wind_speed_ms")
+        humidity = np.clip(
+            (out["relative_humidity"].to_numpy(dtype=float) - 60.0) / 30.0,
+            0.0,
+            1.0,
+        )
+        # Each profile represents environmental exposure of the installed
+        # instrument, not a subtype-to-sensor assignment. The continuous
+        # drivers remain exogenous to observation availability and events.
+        exposure_profiles = {
+            "met_station_core": 0.12 * wind + 0.08 * humidity,
+            "radiometer_basic": 0.14 * humidity + 0.10 * thermal,
+            "shielded_thermo_hygro": 0.10 * wind + 0.16 * humidity,
+            "surface_temp_ir": 0.55 * particle + 0.20 * flux + 0.08 * humidity,
+            "laser_disdrometer": 0.12 * particle + 0.60 * flux + 0.08 * wind,
+            "fc4_flux": 0.58 * particle + 0.12 * flux + 0.10 * wind,
+        }
+        for sensor_idx, sensor_id in enumerate(sensor_ids):
+            rng = np.random.default_rng(int(seed) + 70001 + 1009 * sensor_idx)
+            exposure = exposure_profiles.get(str(sensor_id), 0.15 * wind + 0.10 * humidity)
+            quality = 1.0 - (1.0 - low) * np.clip(exposure, 0.0, 1.0)
+            if float(report_noise_std) > 0.0:
+                quality = quality + rng.normal(0.0, float(report_noise_std), size=steps)
+            out[f"agent_context_quality_{sensor_id}"] = np.clip(quality, low, 1.0)
+        return out
+
     target = int(round(float(np.clip(coverage, 0.0, 0.95)) * steps))
     min_len = max(1, int(min_duration))
     max_len = max(min_len, int(max_duration))
@@ -127,6 +182,11 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
     parser.add_argument("--channel-quality-enabled", action="store_true")
+    parser.add_argument(
+        "--channel-quality-mode",
+        choices=["independent", "condition_dependent"],
+        default="independent",
+    )
     parser.add_argument("--channel-quality-sensor-ids", nargs="+", default=list(DEFAULT_QUALITY_SENSOR_IDS))
     parser.add_argument("--channel-quality-degraded-coverage", type=float, default=0.0)
     parser.add_argument("--channel-quality-min-duration-steps", type=int, default=12)
@@ -212,9 +272,11 @@ def main() -> None:
             degraded_quality=float(args.channel_quality_degraded_value),
             transition_steps=int(args.channel_quality_transition_steps),
             report_noise_std=float(args.channel_quality_report_noise_std),
+            mode=str(args.channel_quality_mode),
         )
         meta["channel_quality"] = {
             "enabled": True,
+            "mode": str(args.channel_quality_mode),
             "sensor_ids": [str(value) for value in args.channel_quality_sensor_ids],
             "degraded_coverage": float(args.channel_quality_degraded_coverage),
             "min_duration_steps": int(args.channel_quality_min_duration_steps),

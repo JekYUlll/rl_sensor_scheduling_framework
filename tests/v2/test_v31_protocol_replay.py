@@ -168,6 +168,37 @@ def test_channel_quality_transition_is_gradual() -> None:
     assert np.max(np.abs(np.diff(quality))) < 0.8
 
 
+def test_condition_dependent_quality_is_bounded_and_exogenous_to_availability() -> None:
+    module = _load_script("20_build_public_weather_truth.py")
+    import pandas as pd
+
+    frame = pd.DataFrame({
+        "wind_speed_ms": [8.0, 10.0, 15.0, 19.0, 21.0],
+        "relative_humidity": [60.0, 65.0, 70.0, 78.0, 86.0],
+        "event_subtype_particle_latent": [0.0, 0.2, 1.0, 0.0, 0.0],
+        "event_subtype_flux_latent": [0.0, 0.0, 0.1, 1.0, 0.0],
+        "event_subtype_thermal_latent": [0.0, 0.0, 0.0, 0.0, 1.0],
+    })
+    out = module.add_channel_quality_dynamics(
+        frame,
+        sensor_ids=("surface_temp_ir", "laser_disdrometer", "fc4_flux"),
+        seed=31,
+        coverage=0.0,
+        min_duration=1,
+        max_duration=1,
+        min_gap=0,
+        degraded_quality=0.35,
+        transition_steps=0,
+        report_noise_std=0.0,
+        mode="condition_dependent",
+    )
+
+    for column in out.filter(like="agent_context_quality_"):
+        assert out[column].between(0.35, 1.0).all()
+    assert out.loc[2, "agent_context_quality_fc4_flux"] < out.loc[2, "agent_context_quality_laser_disdrometer"]
+    assert out.loc[3, "agent_context_quality_laser_disdrometer"] < out.loc[3, "agent_context_quality_fc4_flux"]
+
+
 def test_receding_diagnostic_propagates_frozen_sensor_quality_config() -> None:
     module = _load_script("99_v32_receding_upper.py")
     command = ["python", "diagnostic.py"]

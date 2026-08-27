@@ -162,6 +162,8 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(float(args.event_subtype_context_latent_strength)),
         "--channel-quality-degraded-coverage",
         str(float(args.channel_quality_degraded_coverage)),
+        "--channel-quality-mode",
+        str(args.channel_quality_mode),
         "--channel-quality-min-duration-steps",
         str(int(args.channel_quality_min_duration_steps)),
         "--channel-quality-max-duration-steps",
@@ -649,6 +651,11 @@ def main() -> None:
     parser.add_argument("--event-subtype-context-noise-std", type=float, default=0.08)
     parser.add_argument("--event-subtype-context-latent-strength", type=float, default=0.0)
     parser.add_argument("--channel-quality-enabled", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument(
+        "--channel-quality-mode",
+        choices=["independent", "condition_dependent"],
+        default="independent",
+    )
     parser.add_argument("--channel-quality-sensor-ids", nargs="*", default=None)
     parser.add_argument("--channel-quality-degraded-coverage", type=float, default=0.0)
     parser.add_argument("--channel-quality-min-duration-steps", type=int, default=12)
@@ -1107,6 +1114,7 @@ def main() -> None:
             "event_subtype_context_noise_std": float(args.event_subtype_context_noise_std),
             "event_subtype_context_latent_strength": float(args.event_subtype_context_latent_strength),
             "channel_quality_enabled": bool(args.channel_quality_enabled),
+            "channel_quality_mode": str(args.channel_quality_mode),
             "channel_quality_sensor_ids": [str(x) for x in (args.channel_quality_sensor_ids or ())],
             "channel_quality_degraded_coverage": float(args.channel_quality_degraded_coverage),
             "channel_quality_degraded_value": float(args.channel_quality_degraded_value),
