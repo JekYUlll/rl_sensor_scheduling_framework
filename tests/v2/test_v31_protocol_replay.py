@@ -79,6 +79,30 @@ def test_control_source_files_follow_reward_normalization_mode() -> None:
     assert "reward_staticnorm_normalizers.json" in staticnorm
 
 
+def test_score_policy_replay_preserves_all_online_state_configuration() -> None:
+    module = _load_script("23_v2_train_ppo.py")
+    cfg = module.WarmupEnvConfig(
+        state_columns=("x",),
+        reward_target_columns=("x",),
+        lookback=4,
+        episode_len=8,
+        seed=7,
+        sensor_quality_columns=("quality_a", "quality_b"),
+        include_alert_context_features=True,
+        alert_context_columns=("particle_alert", "flux_alert", "thermal_alert"),
+        alert_context_threshold=0.6,
+        alert_context_trend_lookback=9,
+    )
+    replay_cfg = module.rollout_config_with_seed(cfg, offset=3)
+
+    assert replay_cfg.seed == 10
+    assert replay_cfg.sensor_quality_columns == cfg.sensor_quality_columns
+    assert replay_cfg.include_alert_context_features is True
+    assert replay_cfg.alert_context_columns == cfg.alert_context_columns
+    assert replay_cfg.alert_context_threshold == 0.6
+    assert replay_cfg.alert_context_trend_lookback == 9
+
+
 def test_flexible_behavior_gate_preserves_frozen_six_channel_rule() -> None:
     module = _load_script("25_v2_train_custom_ppo.py")
     valid = {

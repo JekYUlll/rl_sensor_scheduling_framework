@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 for _thread_env in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
@@ -694,55 +695,23 @@ def evaluate_score_policy_over_starts(
 ) -> tuple[object, dict[str, float | str | int]]:
     rollouts = []
     for offset, start_idx in enumerate(start_indices):
+        # Keep every online-state feature from the frozen configuration. Manual
+        # reconstruction previously omitted sensor-quality and alert tails.
         env = WarmupSchedulingEnv(
             truth,
             sensors,
             constraints,
-            WarmupEnvConfig(
-                state_columns=cfg.state_columns,
-                reward_target_columns=cfg.reward_target_columns,
-                lookback=cfg.lookback,
-                episode_len=cfg.episode_len,
-                seed=int(cfg.seed) + int(offset),
-                base_freq_s=cfg.base_freq_s,
-                event_column=cfg.event_column,
-                normalize_agent_state=cfg.normalize_agent_state,
-                normalization_mean=cfg.normalization_mean,
-                normalization_std=cfg.normalization_std,
-                lambda_warmup_abort=cfg.lambda_warmup_abort,
-                lambda_switch=cfg.lambda_switch,
-                event_reward_multiplier=cfg.event_reward_multiplier,
-                energy_account_enabled=cfg.energy_account_enabled,
-                energy_capacity=cfg.energy_capacity,
-                initial_energy=cfg.initial_energy,
-                harvest_per_step=cfg.harvest_per_step,
-                reserve_energy=cfg.reserve_energy,
-                lambda_energy_deficit=cfg.lambda_energy_deficit,
-                soc_soft_penalty_buffer=cfg.soc_soft_penalty_buffer,
-                lambda_soc_soft_penalty=cfg.lambda_soc_soft_penalty,
-                lambda_duty_balance=cfg.lambda_duty_balance,
-                duty_balance_low=cfg.duty_balance_low,
-                duty_balance_high=cfg.duty_balance_high,
-                duty_balance_grace_steps=cfg.duty_balance_grace_steps,
-                duty_score_feedback=cfg.duty_score_feedback,
-                duty_score_target=cfg.duty_score_target,
-                duty_hard_guard=cfg.duty_hard_guard,
-                duty_hard_low=cfg.duty_hard_low,
-                duty_hard_high=cfg.duty_hard_high,
-                duty_hard_score=cfg.duty_hard_score,
-                min_dwell_steps=cfg.min_dwell_steps,
-                include_agent_cycle_phase=cfg.include_agent_cycle_phase,
-                agent_cycle_period_steps=cfg.agent_cycle_period_steps,
-                agent_cycle_dwell_steps=cfg.agent_cycle_dwell_steps,
-                include_observable_regime_belief=cfg.include_observable_regime_belief,
-                regime_belief_lookback=cfg.regime_belief_lookback,
-                agent_context_columns=cfg.agent_context_columns,
-            ),
+            rollout_config_with_seed(cfg, offset=int(offset)),
             oracle=oracle,
         )
         rollouts.append(run_policy_rollout(env, policy, steps=int(steps), start_idx=int(start_idx)))
     result = rollouts[0] if len(rollouts) == 1 else concat_rollout_results(rollouts, policy_name=policy.name)
     return result, rollout_metrics(result)
+
+
+def rollout_config_with_seed(cfg: WarmupEnvConfig, *, offset: int) -> WarmupEnvConfig:
+    """Preserve a frozen environment contract while varying rollout RNG seeds."""
+    return replace(cfg, seed=int(cfg.seed) + int(offset))
 
 
 def main() -> None:
