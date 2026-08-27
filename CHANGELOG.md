@@ -18,6 +18,22 @@
   determine whether the added interaction changes conditional feasible-mask
   ranking at all before any further standard-PPO training adjustment is made.
 
+## 2026-08-28 - V204 Closes the Nonlinear-Scorer Diagnostic
+
+- V204 reloads V203 with zero policy updates and replays the same six frozen
+  final windows. It exactly reproduces V203's ordinary/macro loss
+  `0.254322/0.753630` and its valid six-channel behavior.
+- The interaction head does not improve conditional candidate selection. Its
+  best-candidate match rate is `5.25%`, mean selected rank is `10.87/22`, and
+  mean eight-step candidate regret is `0.033574`. V202's base V200 policy had
+  `6.73%`, `10.28/22`, and `0.035654`, respectively; the small regret change
+  is not a ranking improvement because V203 visits a different policy
+  trajectory.
+- The nonlinear interaction scorer is closed. The next single-factor test
+  returns to V199's best clean quality/context representation and increases
+  only standard PPO training duration from `40,960` to `163,840` steps. It
+  retains the forecast-loss reward, online features, and hard feasibility mask.
+
 ## 2026-08-27 - V202 Localizes the Candidate-Value Credit Gap
 
 - V202 reloads V200's checkpoint with `total_timesteps=0` and regenerates the
