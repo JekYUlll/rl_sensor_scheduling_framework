@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-27 - V201 Confirms Dynamic Headroom in the Frozen V193 Final Windows
+
+- V201 is a diagnostic-only exact eight-step candidate replay on V200's six
+  final evaluation windows. It uses the frozen V193 truth, evaluator, 22-mask
+  geometry, and operational dwell rules; it does not train, select, or alter a
+  policy.
+- The validation-selected static action is action `5`. Across all 2,304
+  replayed states, the privileged receding choice improves its local eight-step
+  forecast cost by `0.020488` on average and is better in `95.57%` of states.
+  The receding diagnostic uses all `22` feasible masks.
+- The static-minus-receding headroom is positive in calm, particle, flux, and
+  thermal states (`0.016720`, `0.025318`, `0.020812`, and `0.024288`,
+  respectively). This verifies that V200's failure is not caused by a
+  static-only scene after the physical six-channel correction.
+- Exact candidate costs remain privileged offline diagnostics. The next audit
+  will calculate the same rankings along the PPO policy's own trajectory to
+  locate the residual action-value or temporal-credit mismatch without using
+  those costs as runtime input or training labels.
+
 ## 2026-08-27 - V200 Low-Entropy Candidate-Aligned PPO Does Not Pass
 
 - V200 combines V199's candidate-aligned online quality/context actor with the
