@@ -719,6 +719,7 @@ def evaluate_run(
     quality_penalties: tuple[float, ...],
     greedy_max_steps: int,
     context_action_source: str,
+    trace_training_subdir: str,
 ) -> pd.DataFrame:
     helpers = load_module(ROOT / "scripts" / "23_v2_train_ppo.py", "_framework_baseline_helpers")
     ops = load_module(ROOT / "scripts" / "64_v31_eval_saved_run_operational_baselines.py", "_framework_baseline_ops")
@@ -914,7 +915,7 @@ def evaluate_run(
     if "forecast_greedy" in policies:
         policy_objects.append(ForecastGreedyOneStepPolicy(candidate_masks, name="forecast_greedy_one_step"))
     if "trace_distilled" in policies:
-        trace_path = run_dir / "receding_oracle_l8_rl_train_trace" / "receding_oracle_trace.csv"
+        trace_path = run_dir / str(trace_training_subdir) / "receding_oracle_trace.csv"
         if not trace_path.exists():
             raise FileNotFoundError(f"Missing policy-training receding trace: {trace_path}")
         policy_objects.append(TraceDistilledForecastValuePolicy(
@@ -1112,6 +1113,11 @@ def main() -> None:
     parser.add_argument("--replay-dir", default="replay_gate_explicit_static_noguard")
     parser.add_argument("--oracle-device", default="cpu")
     parser.add_argument(
+        "--trace-training-subdir",
+        default="receding_oracle_l8_rl_train_trace",
+        help="Policy-training trace directory used by the trace-distilled diagnostic.",
+    )
+    parser.add_argument(
         "--policies",
         nargs="+",
         choices=[
@@ -1184,6 +1190,7 @@ def main() -> None:
                 quality_penalties=tuple(float(x) for x in args.quality_penalties),
                 greedy_max_steps=int(args.greedy_max_steps),
                 context_action_source=str(args.context_action_source),
+                trace_training_subdir=str(args.trace_training_subdir),
             )
         all_rows.append(table)
         print(f"framework_baseline_done seed={seed} rows={len(table)}", flush=True)
