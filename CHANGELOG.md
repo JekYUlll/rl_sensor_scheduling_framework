@@ -4375,3 +4375,21 @@ tar -czf "$OUT…`
   cost calibration and label-free meteorological precursor yield enough online
   action-value separation for a policy to surpass a validation-selected static
   schedule without importing a heuristic action or privileged test label.
+
+## 2026-08-28 - V224 closes direct actor forecast-value warm start
+
+- V224 corrects V223's separated-head limitation without changing the online
+  state, candidate masks, feasibility rules, or forecast-loss reward. The same
+  frozen-forecaster l4 targets now directly pretrain and regularize the
+  categorical PPO actor logits on fresh seeds `2431--2433`; the configuration
+  contains no bandit action, alert/event label, or test-time privileged input.
+- The direct warm start improves conventional-dynamic comparisons: it beats
+  round-robin and random on both endpoints in `3/3` seeds and AoI in `2/3`.
+  However it remains below validation-selected static in every seed. Ordinary
+  and macro margins are `-0.041550/-0.127899`, `-0.008765/-0.016285`, and
+  `-0.023904/-0.091003`, with means `-0.024740/-0.078396` and `0/3` wins.
+- All runs have zero warm-up aborts and zero always-on channels; one seed has
+  one always-off channel. Direct forecast-value warm start is therefore closed
+  as the final teacher-style escalation. The next screen changes no learner
+  component and instead tests whether the operational forecast lead aligns with
+  the l8 dynamic-value horizon established by the receding diagnostic.
