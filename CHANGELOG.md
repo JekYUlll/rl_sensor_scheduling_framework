@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V230 closes actor-value initialization on physical groups
+
+- V230 keeps V229's physical action surface and legal l8 weather forecast, but
+  initializes and regularizes the actor with frozen-forecaster candidate values
+  produced solely on policy-training starts. It is the direct, method-consistent
+  test of the credit-assignment explanation; no rule action or execution-time
+  privileged signal is added.
+- The configuration does not pass. Mean validation-static-minus-PPO
+  ordinary/macro margins are `-0.027334/-0.083835`, with `1/5` and `0/5` wins.
+  Best-conventional-dynamic means are `-0.005215/-0.034238`, with `2/5` and
+  `1/5` wins. Four runs retain all five groups at intermediate duty; no run has
+  an always-on group.
+- The actor-value route is closed for this scene. Before changing either the
+  generator or the method, the next step is an online-nowcast policy audit to
+  determine whether the available forecast inputs themselves support a
+  non-RL context decision under the same feasibility and dwell rules.
+
 ## 2026-08-28 - V229 closes the nowcast-only physical-group screen
 
 - V229 restores only the legal noisy eight-step wind, humidity, and
