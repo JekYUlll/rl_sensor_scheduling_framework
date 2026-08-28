@@ -36,6 +36,10 @@ export NOWCAST_WIND_NOISE_STD=1.4
 export NOWCAST_HUMIDITY_NOISE_STD=4.2
 export NOWCAST_TEMPERATURE_NOISE_STD=1.0
 
+# The generic scene runner consumes the override name, while the two local
+# post-scene phases use a concrete path.
+CONTEXT_OUT="$CONTEXT_OUT_OVERRIDE"
+
 phase="${1:-all}"
 case "$phase" in
   scene) exec bash scripts/run_v137_generic_physical_scene_gate_20260826.sh scene ;;
