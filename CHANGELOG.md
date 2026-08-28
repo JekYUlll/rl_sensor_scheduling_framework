@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V229 closes the nowcast-only physical-group screen
+
+- V229 restores only the legal noisy eight-step wind, humidity, and
+  temperature forecast to the V227 physical-group state. It keeps the same
+  clean masked PPO objective and forbids labels, heuristic actions, priors,
+  imitation, and forecast-value targets.
+- The resulting policy remains behaviorally broad (five intermediate-duty
+  groups in four runs; no always-on group) but does not clear prediction gates.
+  Mean validation-static-minus-PPO ordinary/macro margins are
+  `-0.031111/-0.061114`, with `1/5` and `2/5` respective wins. Against the
+  best conventional dynamic reference, means are `-0.011688/-0.034604` with
+  `3/5` and `2/5` wins.
+- This isolates the remaining gap to action-value credit assignment: legal
+  forecasts are present but scalar forecast reward alone does not reliably
+  train their mapping to candidate masks. The next bounded configuration uses
+  the existing training-partition frozen-forecaster l8 actor-value targets;
+  no execution-time privileged signal is added.
+
 ## 2026-08-28 - V228 closes the no-forecast-input policy screen
 
 - V228 trains the unassisted, no-teacher masked PPO configuration for 50,176
