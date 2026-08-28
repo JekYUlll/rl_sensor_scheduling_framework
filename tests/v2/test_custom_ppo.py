@@ -1073,6 +1073,45 @@ def test_ppo_actor_inputs_use_online_alert_in_rollout_and_teacher_batch() -> Non
     assert not np.allclose(expected_online, exact_labels)
 
 
+def test_forecast_value_pretraining_collects_costs_without_oracle_awbc_teacher() -> None:
+    truth = _truth(32)
+    trainer = CustomPPO(
+        truth_df=truth,
+        sensor_specs=_sensors(),
+        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        env_cfg=WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=STATE_COLUMNS,
+            lookback=4,
+            episode_len=4,
+            seed=3,
+        ),
+        oracle=_oracle(truth),
+        candidate_masks=np.asarray(
+            [[True, False, False], [False, False, True]], dtype=bool
+        ),
+        cfg=CustomPPOConfig(
+            total_timesteps=4,
+            n_steps=4,
+            batch_size=4,
+            n_epochs=1,
+            embed_dim=8,
+            hidden_dim=16,
+            device="cpu",
+            seed=5,
+            train_start_min=20,
+            train_start_max=20,
+            bc_pretrain_target_mode="forecast_value_regression",
+            awbc_teacher_mode="subtype_static_auto",
+        ),
+    )
+
+    batch = trainer.collect_teacher_batch(4)
+    valid = batch["action_masks"]
+
+    assert np.all(np.isfinite(batch["teacher_costs"][valid]))
+
+
 def test_awbc_coefficient_can_decay_to_zero_without_changing_default() -> None:
     constant = CustomPPO.__new__(CustomPPO)
     constant.cfg = CustomPPOConfig(awbc_coef=0.2)

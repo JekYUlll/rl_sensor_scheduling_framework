@@ -1291,10 +1291,10 @@ class CustomPPO:
                 if bool(self.cfg.use_action_mask)
                 else np.ones(self.candidate_masks_np.shape[0], dtype=bool)
             )
-            if (
-                str(self.cfg.bc_pretrain_target_mode) in {"soft_forecast_value", "forecast_value_regression"}
-                and str(self.cfg.awbc_teacher_mode) == "oracle_greedy"
-            ):
+            if str(self.cfg.bc_pretrain_target_mode) in {
+                "soft_forecast_value",
+                "forecast_value_regression",
+            }:
                 teacher_costs = oracle_greedy_candidate_costs(
                     env,
                     self.candidate_masks_np,
