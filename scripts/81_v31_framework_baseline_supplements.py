@@ -344,10 +344,12 @@ class QualityAwareContextPolicy(ContextAlertBanditPolicy):
         *,
         action_score_table: pd.DataFrame,
         quality_penalty: float,
+        use_alert_context: bool = True,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self.quality_penalty = float(quality_penalty)
+        self.use_alert_context = bool(use_alert_context)
         self.quality_columns = [
             f"agent_context_quality_{sensor.sensor_id}" for sensor in self.sensors
         ]
@@ -378,14 +380,15 @@ class QualityAwareContextPolicy(ContextAlertBanditPolicy):
     def act_mask(self, env: Any) -> np.ndarray:
         row = env.truth_df.iloc[int(env.current_idx)]
         label = "calm"
-        best_value = -float("inf")
-        for candidate_label, column in self.alert_columns.items():
-            value = finite_float(row.get(column, 0.0))
-            if value > best_value:
-                best_value = value
-                label = candidate_label
-        if not np.isfinite(best_value) or best_value < self.threshold:
-            label = "calm"
+        if self.use_alert_context:
+            best_value = -float("inf")
+            for candidate_label, column in self.alert_columns.items():
+                value = finite_float(row.get(column, 0.0))
+                if value > best_value:
+                    best_value = value
+                    label = candidate_label
+            if not np.isfinite(best_value) or best_value < self.threshold:
+                label = "calm"
         quality = np.asarray(
             [
                 np.clip(finite_float(row.get(column, 1.0)), 0.0, 1.0)
@@ -923,6 +926,21 @@ def evaluate_run(
             trace=pd.read_csv(trace_path),
             seed=int(metadata["seed"]),
         ))
+    if "quality_only" in policies:
+        for penalty in quality_penalties:
+            name = f"quality_only_calibrated_p{str(penalty).replace('.', 'p')}"
+            policy_objects.append(
+                QualityAwareContextPolicy(
+                    sensors=sensors,
+                    candidate_masks=candidate_masks,
+                    action_indices=action_indices,
+                    threshold=0.5,
+                    name=name,
+                    action_score_table=context_action_table,
+                    quality_penalty=float(penalty),
+                    use_alert_context=False,
+                )
+            )
     if "event_label" in policies:
         if "event_subtype_id" not in truth.columns:
             raise ValueError("event-label reference requires event_subtype_id for offline replay")
@@ -1123,6 +1141,7 @@ def main() -> None:
         choices=[
             "context_bandit",
             "quality_context_bandit",
+            "quality_only",
             "forecast_greedy",
             "event_label",
             "trace_distilled",

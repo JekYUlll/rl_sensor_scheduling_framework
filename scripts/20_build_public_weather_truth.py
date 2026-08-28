@@ -76,9 +76,11 @@ def add_channel_quality_dynamics(
             0.0,
             1.0,
         )
-        # Each profile represents environmental exposure of the installed
-        # instrument, not a subtype-to-sensor assignment. The continuous
-        # drivers remain exogenous to observation availability and events.
+        # Each profile represents environmental exposure of an installed
+        # instrument, not a subtype-to-sensor assignment.  The historical
+        # logical IDs remain for backwards-compatible archive regeneration;
+        # physical-group profiles use only weather variables available to the
+        # installed sensing system.
         exposure_profiles = {
             "met_station_core": 0.12 * wind + 0.08 * humidity,
             "radiometer_basic": 0.14 * humidity + 0.10 * thermal,
@@ -86,6 +88,16 @@ def add_channel_quality_dynamics(
             "surface_temp_ir": 0.55 * particle + 0.20 * flux + 0.08 * humidity,
             "laser_disdrometer": 0.12 * particle + 0.60 * flux + 0.08 * wind,
             "fc4_flux": 0.58 * particle + 0.12 * flux + 0.10 * wind,
+            # Delivered physical instrument groups.  Optical and exposed
+            # radiometric measurements are more susceptible to wind-driven
+            # deposition and humidity than the enclosed weather package or the
+            # mechanical flux sensor.  These are fixed simulator assumptions,
+            # not policy-controlled sampling-frequency adjustments.
+            "gmx500_weather_station": 0.10 * wind + 0.15 * humidity,
+            "lps10_pyranometer": 0.25 * wind + 0.35 * humidity,
+            "si111_surface_ir": 0.15 * wind + 0.40 * humidity,
+            "parsivel2_disdrometer": 0.65 * wind + 0.20 * humidity,
+            "flowcapt_fc4": 0.15 * wind + 0.12 * humidity,
         }
         for sensor_idx, sensor_id in enumerate(sensor_ids):
             rng = np.random.default_rng(int(seed) + 70001 + 1009 * sensor_idx)
