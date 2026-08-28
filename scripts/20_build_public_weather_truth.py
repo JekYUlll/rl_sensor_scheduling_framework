@@ -42,15 +42,21 @@ def add_channel_quality_dynamics(
 
     ``independent`` retains the original slow, sensor-specific outage process.
     ``condition_dependent`` models exposure-dependent degradation from continuous
-    weather and transport drivers. It never changes the physical event process;
-    it only produces noisy diagnostics that determine measurement reliability.
+    weather and transport drivers. ``condition_dependent_crossover`` is the
+    physical-group variant: each installed instrument has a different
+    weather-dependent reliability mechanism, so no group is assumed to be
+    uniformly most useful. Neither mode changes the event process; both produce
+    noisy diagnostics that determine measurement reliability.
     """
     out = frame.copy()
     steps = len(out)
     low = float(np.clip(degraded_quality, 0.0, 1.0))
-    if mode not in {"independent", "condition_dependent"}:
-        raise ValueError("channel quality mode must be independent or condition_dependent")
-    if mode == "condition_dependent":
+    if mode not in {"independent", "condition_dependent", "condition_dependent_crossover"}:
+        raise ValueError(
+            "channel quality mode must be independent, condition_dependent, or "
+            "condition_dependent_crossover"
+        )
+    if mode in {"condition_dependent", "condition_dependent_crossover"}:
         required = {
             "wind_speed_ms",
             "relative_humidity",
@@ -58,6 +64,8 @@ def add_channel_quality_dynamics(
             "event_subtype_flux_latent",
             "event_subtype_thermal_latent",
         }
+        if mode == "condition_dependent_crossover":
+            required.update({"air_temperature_c", "solar_radiation_wm2"})
         missing = sorted(required.difference(out.columns))
         if missing:
             raise ValueError(f"condition-dependent quality requires columns: {missing}")
@@ -67,38 +75,57 @@ def add_channel_quality_dynamics(
             scale = max(float(np.quantile(values, 0.95)), 1.0e-6)
             return np.clip(values / scale, 0.0, 1.0)
 
-        particle = positive_unit("event_subtype_particle_latent")
-        flux = positive_unit("event_subtype_flux_latent")
-        thermal = positive_unit("event_subtype_thermal_latent")
         wind = positive_unit("wind_speed_ms")
         humidity = np.clip(
             (out["relative_humidity"].to_numpy(dtype=float) - 60.0) / 30.0,
             0.0,
             1.0,
         )
-        # Each profile represents environmental exposure of an installed
-        # instrument, not a subtype-to-sensor assignment.  The historical
-        # logical IDs remain for backwards-compatible archive regeneration;
-        # physical-group profiles use only weather variables available to the
-        # installed sensing system.
-        exposure_profiles = {
-            "met_station_core": 0.12 * wind + 0.08 * humidity,
-            "radiometer_basic": 0.14 * humidity + 0.10 * thermal,
-            "shielded_thermo_hygro": 0.10 * wind + 0.16 * humidity,
-            "surface_temp_ir": 0.55 * particle + 0.20 * flux + 0.08 * humidity,
-            "laser_disdrometer": 0.12 * particle + 0.60 * flux + 0.08 * wind,
-            "fc4_flux": 0.58 * particle + 0.12 * flux + 0.10 * wind,
-            # Delivered physical instrument groups.  Optical and exposed
-            # radiometric measurements are more susceptible to wind-driven
-            # deposition and humidity than the enclosed weather package or the
-            # mechanical flux sensor.  These are fixed simulator assumptions,
-            # not policy-controlled sampling-frequency adjustments.
-            "gmx500_weather_station": 0.10 * wind + 0.15 * humidity,
-            "lps10_pyranometer": 0.25 * wind + 0.35 * humidity,
-            "si111_surface_ir": 0.15 * wind + 0.40 * humidity,
-            "parsivel2_disdrometer": 0.65 * wind + 0.20 * humidity,
-            "flowcapt_fc4": 0.15 * wind + 0.12 * humidity,
-        }
+        if mode == "condition_dependent_crossover":
+            temperature = out["air_temperature_c"].to_numpy(dtype=float)
+            radiation = positive_unit("solar_radiation_wm2")
+            cold = np.clip((-temperature - 5.0) / 20.0, 0.0, 1.0)
+            icing = humidity * cold
+            severe_wind = np.clip((wind - 0.55) / 0.45, 0.0, 1.0)
+            moderate_wind = np.clip(1.0 - np.abs(wind - 0.52) / 0.35, 0.0, 1.0)
+            low_transport_signal = 1.0 - np.clip(
+                0.25 * wind + 0.75 * severe_wind, 0.0, 1.0
+            )
+            # Fixed physical reliability assumptions. GMX and SI-111 are
+            # susceptible to icing or wet exposure; the pyranometer has lower
+            # useful signal under diffuse humid conditions; Parsivel is most
+            # reliable in moderate transport and suffers optical deposition in
+            # severe wind; FlowCapt's signal-to-noise improves with transport.
+            # All drivers are ordinary meteorological variables, not labels.
+            exposure_profiles = {
+                "gmx500_weather_station": 0.70 * icing + 0.15 * severe_wind,
+                "lps10_pyranometer": 0.60 * (1.0 - radiation) + 0.25 * humidity,
+                "si111_surface_ir": 0.65 * icing + 0.15 * severe_wind,
+                "parsivel2_disdrometer": (
+                    0.65 * severe_wind + 0.20 * humidity + 0.10 * (1.0 - moderate_wind)
+                ),
+                "flowcapt_fc4": 0.75 * low_transport_signal + 0.10 * icing,
+            }
+        else:
+            particle = positive_unit("event_subtype_particle_latent")
+            flux = positive_unit("event_subtype_flux_latent")
+            thermal = positive_unit("event_subtype_thermal_latent")
+            # Each profile represents environmental exposure of an installed
+            # instrument, not a subtype-to-sensor assignment. The historical
+            # logical IDs remain for backwards-compatible archive regeneration.
+            exposure_profiles = {
+                "met_station_core": 0.12 * wind + 0.08 * humidity,
+                "radiometer_basic": 0.14 * humidity + 0.10 * thermal,
+                "shielded_thermo_hygro": 0.10 * wind + 0.16 * humidity,
+                "surface_temp_ir": 0.55 * particle + 0.20 * flux + 0.08 * humidity,
+                "laser_disdrometer": 0.12 * particle + 0.60 * flux + 0.08 * wind,
+                "fc4_flux": 0.58 * particle + 0.12 * flux + 0.10 * wind,
+                "gmx500_weather_station": 0.10 * wind + 0.15 * humidity,
+                "lps10_pyranometer": 0.25 * wind + 0.35 * humidity,
+                "si111_surface_ir": 0.15 * wind + 0.40 * humidity,
+                "parsivel2_disdrometer": 0.65 * wind + 0.20 * humidity,
+                "flowcapt_fc4": 0.15 * wind + 0.12 * humidity,
+            }
         for sensor_idx, sensor_id in enumerate(sensor_ids):
             rng = np.random.default_rng(int(seed) + 70001 + 1009 * sensor_idx)
             exposure = exposure_profiles.get(str(sensor_id), 0.15 * wind + 0.10 * humidity)
@@ -204,7 +231,7 @@ def main() -> None:
     parser.add_argument("--channel-quality-enabled", action="store_true")
     parser.add_argument(
         "--channel-quality-mode",
-        choices=["independent", "condition_dependent"],
+        choices=["independent", "condition_dependent", "condition_dependent_crossover"],
         default="independent",
     )
     parser.add_argument("--channel-quality-sensor-ids", nargs="+", default=list(DEFAULT_QUALITY_SENSOR_IDS))

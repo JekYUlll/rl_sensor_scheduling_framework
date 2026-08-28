@@ -53,3 +53,44 @@ def test_condition_dependent_quality_has_distinct_physical_group_profiles() -> N
     assert parsivel[1] < parsivel[0]
     assert parsivel[1] < flowcapt[1]
     assert np.all((0.25 <= parsivel) & (parsivel <= 1.0))
+
+
+def test_crossover_quality_uses_weather_only_physical_profiles() -> None:
+    builder = _quality_builder()
+    frame = pd.DataFrame({
+        "wind_speed_ms": [2.0, 11.0, 18.0],
+        "relative_humidity": [45.0, 82.0, 94.0],
+        "air_temperature_c": [-4.0, -14.0, -24.0],
+        "solar_radiation_wm2": [0.0, 160.0, 15.0],
+        "event_subtype_particle_latent": [0.0, 0.0, 0.0],
+        "event_subtype_flux_latent": [0.0, 0.0, 0.0],
+        "event_subtype_thermal_latent": [0.0, 0.0, 0.0],
+    })
+    sensors = (
+        "gmx500_weather_station",
+        "lps10_pyranometer",
+        "si111_surface_ir",
+        "parsivel2_disdrometer",
+        "flowcapt_fc4",
+    )
+    out = builder(
+        frame,
+        sensor_ids=sensors,
+        seed=11,
+        coverage=0.0,
+        min_duration=1,
+        max_duration=1,
+        min_gap=0,
+        degraded_quality=0.10,
+        transition_steps=0,
+        report_noise_std=0.0,
+        mode="condition_dependent_crossover",
+    )
+    parsivel = out["agent_context_quality_parsivel2_disdrometer"].to_numpy()
+    flowcapt = out["agent_context_quality_flowcapt_fc4"].to_numpy()
+    pyranometer = out["agent_context_quality_lps10_pyranometer"].to_numpy()
+    assert parsivel[1] > parsivel[2]
+    assert flowcapt[2] > flowcapt[0]
+    assert pyranometer[1] > pyranometer[0]
+    assert np.all((0.10 <= out.filter(like="agent_context_quality_").to_numpy()) &
+                  (out.filter(like="agent_context_quality_").to_numpy() <= 1.0))
