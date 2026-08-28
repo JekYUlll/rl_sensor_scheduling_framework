@@ -4349,3 +4349,29 @@ tar -czf "$OUT…`
   `4/5`. The normalized weather context is therefore informative enough to
   support a forecast-action-value training auxiliary; the prior PPO failure is
   not treated as a scene rejection.
+
+## 2026-08-28 - V223 closes forecast-value pretraining as a primary path
+
+- The first V223 launch was invalid before PPO training: forecast-value
+  pretraining generated all-NaN teacher costs whenever the AWBC teacher was not
+  `oracle_greedy`. The defect was fixed in `55849da` so that forecast-value
+  targets are collected independently of the AWBC teacher; the full test suite
+  passed before rerunning the same three development seeds.
+- The corrected configuration keeps the label-free normalized three-nowcast
+  state, forecast-loss reward, and 17-mask feasibility geometry. It adds only a
+  frozen-forecaster factorized action-value head, 4,096 forecast-value
+  pretraining samples, and an on-policy auxiliary target every 32 steps. It
+  does not add alerts, event labels, heuristic actions, or a bandit-dependent
+  prior.
+- The rerun is behaviorally valid but does not clear static. Against the
+  validation-selected static reference, ordinary and macro margins are
+  `-0.041380/-0.086823`, `-0.025783/-0.065766`, and
+  `-0.025656/-0.067967` for seeds `2421--2423`: `0/3` wins on both endpoints
+  and mean margins `-0.030940/-0.073519`. It improves over round-robin in
+  `2/3` and random in `2/3` ordinary-loss comparisons, but that does not meet
+  the static gate.
+- This closes forecast-value pretraining as a clean primary-method escalation.
+  The remaining design question is scene-side: whether the physically grounded
+  cost calibration and label-free meteorological precursor yield enough online
+  action-value separation for a policy to surpass a validation-selected static
+  schedule without importing a heuristic action or privileged test label.
