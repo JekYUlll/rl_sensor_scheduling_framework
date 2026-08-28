@@ -30,7 +30,7 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--seeds", nargs="+", type=int, required=True)
     parser.add_argument("--quality-policy", required=True)
-    parser.add_argument("--receding-subdir", default="receding_oracle_l8")
+    parser.add_argument("--receding-subdir", default="receding_oracle_l8_scene_gate")
     args = parser.parse_args()
 
     rows: list[dict[str, object]] = []
