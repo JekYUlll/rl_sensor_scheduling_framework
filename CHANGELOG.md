@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V231 closes online-state learnability for the physical-group nowcast scene
+
+- V231 is a read-only learnability audit of the completed V229 physical-group
+  runs. It fits diagnostic classifiers and candidate-cost regressors on
+  chronological policy-training and validation receding traces, then evaluates
+  them only on held-out final traces. It does not retrain PD-PPO, alter the
+  simulator, or introduce event labels, heuristic actions, or privileged inputs
+  into the deployed state.
+- The strongest legal probe uses the alert-context tail with an ExtraTrees
+  candidate-cost regressor fitted on policy-training plus validation traces. It
+  improves over the validation-selected static action in all five held-out
+  scenes, but recovers only `17.90%` of the paired eight-step receding gain on
+  average (`+0.003090` gain versus `+0.017293` receding gain). Its mean top-1
+  action agreement is `31.96%`.
+- Adding the complete carried-state observation does not improve this result:
+  the strongest complete-state probe recovers `13.02%` of receding gain. The
+  physical-group scene therefore has real but weak legal predictive signal for
+  dynamic action selection. Further PPO losses, teachers, or actor priors are
+  not justified on this scene; the next design step is to strengthen the
+  physically interpretable condition-to-measurement-value relation while
+  retaining fixed effective costs and unrestricted feasible subsets.
+
 ## 2026-08-28 - V230 closes actor-value initialization on physical groups
 
 - V230 keeps V229's physical action surface and legal l8 weather forecast, but
