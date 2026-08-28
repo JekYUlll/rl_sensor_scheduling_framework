@@ -4393,3 +4393,21 @@ tar -czf "$OUT…`
   as the final teacher-style escalation. The next screen changes no learner
   component and instead tests whether the operational forecast lead aligns with
   the l8 dynamic-value horizon established by the receding diagnostic.
+
+## 2026-08-28 - V225 confirms l8 scene headroom but rejects unassisted PPO
+
+- V225 changes only the legal weather-forecast lead from four to eight steps,
+  with larger forecast errors `(1.4 m/s, 4.2 %, 1.0 C)`. It retains the same
+  17-mask feasible-subset geometry, PPO configuration, and forecast-loss reward
+  without a teacher, rule action, or event label.
+- The unassisted PPO policy is below validation-selected static in all three
+  seeds on both endpoints (mean ordinary/macro margins
+  `-0.050207/-0.126608`) and also loses to all conventional dynamic references.
+  All six channels retain intermediate duty in two runs and five in the third;
+  there are no aborts or constant-on channels.
+- The paired l8 receding diagnostic nevertheless beats the matched static
+  reference by `+0.034489`, `+0.030323`, and `+0.058509` ordinary loss. The
+  problem is therefore not absence of dynamic value but a mismatch between the
+  l8 value horizon and the l4 value targets used in prior actor training. A
+  single horizon-aligned actor-value screen is authorized before altering the
+  physical scene or adding any new policy component.
