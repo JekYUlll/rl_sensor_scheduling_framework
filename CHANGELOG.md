@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V232 rejects health-only control despite physical-group dynamic headroom
+
+- V232 adds distinct, fixed weather-exposure reliability profiles for the five
+  verified physical instrument groups while preserving V227's fixed effective
+  loads, unrestricted feasible subsets, and eight-step noisy weather nowcast.
+  Health reports are online diagnostics; they do not expose event labels or
+  change the sampling interval.
+- The paired receding control retains broad dynamic opportunity: it wins against
+  validation-selected static on ordinary loss in `5/5` scenes and macro loss in
+  `4/5`, with mean margins `+0.032218/+0.072460`. Every replay uses `15`
+  actions, has zero aborts, and keeps all five instrument groups at intermediate
+  duty.
+- The calibrated health-only reference does not clear static (`0/5` ordinary,
+  `1/5` macro; mean margins `-0.003922/-0.017156`) and remains fixed-like, with
+  one always-on group in every scene. This closes health-only scene admission.
+  The next bounded gate must test a joint online weather-nowcast plus health
+  diagnostic mapping before any primary PPO training.
+
 ## 2026-08-28 - V231 closes online-state learnability for the physical-group nowcast scene
 
 - V231 is a read-only learnability audit of the completed V229 physical-group
