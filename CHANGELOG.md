@@ -4411,3 +4411,20 @@ tar -czf "$OUT…`
   l8 value horizon and the l4 value targets used in prior actor training. A
   single horizon-aligned actor-value screen is authorized before altering the
   physical scene or adding any new policy component.
+
+## 2026-08-28 - V226 closes horizon-aligned actor supervision
+
+- V226 aligns the label-free eight-step meteorological forecast, direct actor
+  value pretraining, and on-policy frozen-forecaster target at l8. It keeps the
+  same masked PPO policy, reward, and feasible-subset geometry, and introduces
+  no rule, bandit, or event-label execution input.
+- The policy beats AoI, round-robin, and random on both endpoints in `3/3`
+  seeds. It is nevertheless only `1/3` against validation-selected static:
+  mean ordinary/macro margins are `-0.012284/-0.013871`. Two seeds each retain
+  two always-off channels, while all runs have zero aborts and no always-on
+  channels.
+- Horizon alignment materially improves the dynamic-policy comparison but does
+  not satisfy the static or six-channel behavior gate. All teacher-style and
+  forecast-horizon training escalations are closed. Further work must change
+  the physical effective-cost calibration or the observable dynamic
+  measurement-value process, not stack supervision onto PPO.
