@@ -1,5 +1,21 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V228 closes the no-forecast-input policy screen
+
+- V228 trains the unassisted, no-teacher masked PPO configuration for 50,176
+  steps on five fresh physical-group scenes (`2471--2475`). It retains all five
+  groups at intermediate duty in four runs and four in the fifth, with no
+  always-on or always-off channel; this is not an action-collapse failure.
+- It nevertheless loses to validation-selected static on ordinary and macro
+  loss in every run. Ordinary/static-minus-PPO margins are `-0.052617`,
+  `-0.067621`, `-0.026967`, `-0.018801`, and `-0.016574`; it beats the best
+  conventional dynamic baseline only on seed `2474`.
+- Metadata audit shows the policy was given no agent-context columns and no
+  alert tail. Thus it saw current and historical measurements but no legal
+  forward weather estimate, whereas the V227 admission diagnostic scores
+  eight-step forecast value. V228 closes the no-forecast-input configuration;
+  it does not reject the physically grouped scene or prediction-driven method.
+
 ## 2026-08-28 - V227 admits the verified physical instrument grouping
 
 - V227 replaces the unverified sixth logical sensor with five independently
