@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V227 admits the verified physical instrument grouping
+
+- V227 replaces the unverified sixth logical sensor with five independently
+  powered physical instrument groups: GMX500, LPS10, SI-111, Parsivel2, and
+  FlowCapt FC4. Their configured values are fixed per-epoch effective loads,
+  not controllable sampling frequencies or literal watt measurements.
+- At budget `1.85` and startup budget `2.25`, the unrestricted feasible action
+  surface contains all five singleton actions and nine legal pairs (`15` masks
+  including the empty action). It therefore has no fixed three-way selection
+  rule, while preserving the physical power trade-off.
+- The exact l8 receding diagnostic clears the static gate on all fresh scene
+  seeds `2461--2465`. Validation-static-minus-receding ordinary-loss margins
+  are `+0.033381`, `+0.017326`, `+0.032904`, `+0.022065`, and `+0.019124`.
+  Every physical group has nonzero replay duty across all seeds; aggregate
+  per-seed duties range from `0.088` to `0.805`, with switching rates
+  `0.0916--0.1411` per step.
+- This admits one clean, no-teacher PD-PPO training screen on fresh policy
+  development seeds. The diagnostic's minimal 1,024-step PPO artifacts remain
+  excluded from performance evidence.
+
 ## 2026-08-28 - V219--V220 Establish a Meteorological Nowcast Input Path
 
 - V219 audits a label-free four-step proxy built solely from noisy forecasts of
