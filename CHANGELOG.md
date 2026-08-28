@@ -1,5 +1,29 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-28 - V233 closes joint weather-and-health state admission
+
+- V233 is a read-only information gate on the frozen V232 physical-group
+  scenes. It combines the legal noisy weather-nowcast tail with online
+  instrument-health diagnostics, fits action-value diagnostic models on
+  chronological policy-training and validation traces, and replays the selected
+  trace-distilled policy only on final partitions. It does not retrain PD-PPO
+  or expose event labels, heuristic actions, or future losses at execution.
+- The strongest offline complete-state model is a ridge candidate-cost regressor
+  fitted on policy-training plus validation traces. It has mean static gain
+  `+0.005214` with `4/5` positive scenes, recovering `17.81%` of the privileged
+  receding gain. The alert-only ExtraTrees probe is positive in `5/5` scenes
+  but has lower mean gain (`+0.004326`).
+- The mandatory closed-loop replay rejects admission: it beats the
+  validation-selected static schedule on ordinary and macro loss in only `2/5`
+  scenes, with mean margins `-0.001087/-0.008071`, and passes the broad-use
+  behavior gate in `0/5` scenes. It collapses to one or two always-on groups
+  and two or three always-off groups per scene, despite zero warmup aborts.
+  Thus the joint legal state does not survive policy-induced observation and
+  dwell-state shift. No new PD-PPO training is authorized on V232; the next
+  scene revision must strengthen the physically interpretable,
+  forecast-observable instrument-value relation without changing fixed
+  effective costs, sampling interval, or arbitrary feasible-subset geometry.
+
 ## 2026-08-28 - V232 rejects health-only control despite physical-group dynamic headroom
 
 - V232 adds distinct, fixed weather-exposure reliability profiles for the five
