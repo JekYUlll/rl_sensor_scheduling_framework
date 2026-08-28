@@ -11,6 +11,7 @@ export SEEDS_OVERRIDE="${SEEDS_OVERRIDE:-2481 2482 2483 2484 2485}"
 export RUN_PREFIX="${RUN_PREFIX:-v229_physical_groups_nowcast_ppo_dev}"
 export RUN_SUFFIX="${RUN_SUFFIX:-b1p85_20260822}"
 export OUT_ROOT="${OUT_ROOT:-reports/aggregate/v231_physical_groups_nowcast_learnability_20260828}"
+read -r -a SEEDS <<< "${SEEDS_OVERRIDE}"
 
 PYTHON="${PYTHON:-$HOME/.conda/envs/darts/bin/python}"
 mkdir -p "$OUT_ROOT" logs
