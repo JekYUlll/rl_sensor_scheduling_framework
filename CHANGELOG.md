@@ -4320,3 +4320,19 @@ tar -czf "$OUT…`
   static by mean ordinary-loss margin `+0.028369` and uses `17` feasible
   actions in every trace. V221 therefore tests partition-normalized nowcasts
   with 50,000 PPO steps; it changes neither reward nor feasibility geometry.
+
+## 2026-08-28 - V221 narrows but does not close the policy gap
+
+- V221 standardizes the three nowcast inputs with statistics from the declared
+  normalization partition and trains PPO for 50,000 steps on fresh development
+  seeds `2411--2415`. It retains the same forecast reward, feasible-subset
+  geometry, and label-free online state as V219.
+- PPO still loses to validation-selected static in all five scenes: mean
+  ordinary and macro static-minus-PPO margins are `-0.062611` and `-0.200999`.
+  It is materially less unstable than V219 and has zero aborts, zero always-on
+  channels, zero always-off channels, and five or six mid-duty channels in each
+  seed, but these behavioral checks do not substitute for prediction wins.
+- The matched l8 receding diagnostic again records five ordinary-loss wins,
+  mean margin `+0.024957`, and 17 actions per trace. V222 is restricted to a
+  label-free l4 trace-learnability audit before any new PPO objective or teacher
+  component is considered.
