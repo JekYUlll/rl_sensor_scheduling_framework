@@ -168,6 +168,10 @@ fi
 if [[ "$INCLUDE_ALERT_CONTEXT_FEATURES" == "1" ]]; then
   CONTEXT_INPUT_ARGS+=(--include-alert-context-features)
 fi
+CONTEXT_ENCODER_ARGS=(--no-context-encoder)
+if [[ "${#CONTEXT_INPUT_ARGS[@]}" -gt 0 ]]; then
+  CONTEXT_ENCODER_ARGS=(--context-encoder --context-feature-dim "$CONTEXT_FEATURE_DIM")
+fi
 QUALITY_SCORE_ARGS=(--no-aligned-quality-action-score)
 if [[ "$ALIGNED_QUALITY_ACTION_SCORE" == "1" ]]; then
   QUALITY_SCORE_ARGS=(--aligned-quality-action-score)
@@ -393,8 +397,7 @@ for seed in "${SEEDS[@]}"; do
     --event-start-prob 0.70 \
     --event-aware-critic \
     --no-event-gated-actor \
-    --context-encoder \
-    --context-feature-dim "$CONTEXT_FEATURE_DIM" \
+    "${CONTEXT_ENCODER_ARGS[@]}" \
     --measurement-update-mode "$MEASUREMENT_UPDATE_MODE" \
     "${CRN_ARGS[@]}" \
     --context-hidden-dim 64 \
