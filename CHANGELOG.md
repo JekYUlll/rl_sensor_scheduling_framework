@@ -4336,3 +4336,16 @@ tar -czf "$OUT…`
   mean margin `+0.024957`, and 17 actions per trace. V222 is restricted to a
   label-free l4 trace-learnability audit before any new PPO objective or teacher
   component is considered.
+
+## 2026-08-28 - V222 confirms label-free action-value learnability
+
+- V222 reconstructs normalized nowcast state in receding traces, fits only on
+  policy-training plus validation traces, and evaluates on held-out final
+  traces. Alert-feature-only rows are diagnostic-only because they are not part
+  of the deployed V221 state.
+- For the actual complete online state, ridge action-cost regression recovers
+  mean l4 gain `+0.014906` over the validation-selected static action in `4/5`
+  final scenes (`25.95%` of receding gain). ExtraTrees recovers `+0.013522` in
+  `4/5`. The normalized weather context is therefore informative enough to
+  support a forecast-action-value training auxiliary; the prior PPO failure is
+  not treated as a scene rejection.
