@@ -4601,3 +4601,19 @@ tar -czf "$OUT…`
   policy wins only `2/5` ordinary and `2/5` macro scenes, with mean margins
   `-0.006133/-0.017271`. V236 is closed without PPO; a forecastable lead
   signal must couple directly to instrument-specific value before training.
+
+## 2026-08-30 - V237/V238 close the forecast-quality route before PPO
+
+- V237 added legal future-quality features derived from noisy weather nowcasts.
+  After fixing a policy-construction bug, the online quality policy won only
+  `1/5` ordinary and `0/5` macro comparisons; the receding diagnostic passed
+  `5/5` (`+0.026383/+0.064991`). Its first artifacts also exposed an
+  independent normalization defect and are diagnostic only.
+- V238 corrected forecast-quality normalization and reran fresh seeds
+  `2901--2905`. The online policy still won only `1/5` ordinary and `1/5`
+  macro comparisons, with mean margins `-0.006143/-0.011151`. The receding
+  diagnostic passed `5/5` (`+0.043366/+0.109945`), but this is privileged
+  latent opportunity, not a deployable policy result.
+- The corrected eight-step forecast-quality correlations remained mixed:
+  `0.394/-0.189/0.537/0.375/-0.525` for GMX500/LPS10/SI-111/Parsivel 2/FC4.
+  The quality-only route is closed; no larger PPO run is justified by it.
