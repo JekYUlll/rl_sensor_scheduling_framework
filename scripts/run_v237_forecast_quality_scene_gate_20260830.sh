@@ -46,8 +46,10 @@ case "$phase" in
     read -r -a seeds <<< "$SEEDS_OVERRIDE"
     mkdir -p "$CONTEXT_OUT_OVERRIDE" logs
     pids=()
-    for seed in "${seeds[@]}"; do
+    for idx in "${!seeds[@]}"; do
+      seed="${seeds[$idx]}"
       (
+        export CUDA_VISIBLE_DEVICES="$idx"
         "$HOME/.conda/envs/darts/bin/python" scripts/81_v31_framework_baseline_supplements.py \
           --run-glob "reports/${RUN_PREFIX_OVERRIDE}_seed${seed}_${BUDGET_LABEL_OVERRIDE}_20260822" \
           --seeds "$seed" --out-root "$CONTEXT_OUT_OVERRIDE" --router-eval-dir . \
