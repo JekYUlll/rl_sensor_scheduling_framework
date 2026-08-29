@@ -43,7 +43,8 @@ def add_channel_quality_dynamics(
     ``independent`` retains the original slow, sensor-specific outage process.
     ``condition_dependent`` models exposure-dependent degradation from continuous
     weather and transport drivers. ``condition_dependent_crossover`` and
-    ``condition_dependent_crossover_strong`` are physical-group variants:
+    ``condition_dependent_crossover_strong`` and
+    ``condition_dependent_crossover_balanced`` are physical-group variants:
     physical-group variant: each installed instrument has a different
     weather-dependent reliability mechanism, so no group is assumed to be
     uniformly most useful. Neither mode changes the event process; both produce
@@ -55,14 +56,17 @@ def add_channel_quality_dynamics(
     if mode not in {
         "independent", "condition_dependent", "condition_dependent_crossover",
         "condition_dependent_crossover_strong",
+        "condition_dependent_crossover_balanced",
     }:
         raise ValueError(
             "channel quality mode must be independent, condition_dependent, "
-            "condition_dependent_crossover, or condition_dependent_crossover_strong"
+            "condition_dependent_crossover, condition_dependent_crossover_strong, "
+            "or condition_dependent_crossover_balanced"
         )
     if mode in {
         "condition_dependent", "condition_dependent_crossover",
         "condition_dependent_crossover_strong",
+        "condition_dependent_crossover_balanced",
     }:
         required = {
             "wind_speed_ms",
@@ -71,7 +75,10 @@ def add_channel_quality_dynamics(
             "event_subtype_flux_latent",
             "event_subtype_thermal_latent",
         }
-        if mode in {"condition_dependent_crossover", "condition_dependent_crossover_strong"}:
+        if mode in {
+            "condition_dependent_crossover", "condition_dependent_crossover_strong",
+            "condition_dependent_crossover_balanced",
+        }:
             required.update({"air_temperature_c", "solar_radiation_wm2"})
         missing = sorted(required.difference(out.columns))
         if missing:
@@ -104,7 +111,10 @@ def add_channel_quality_dynamics(
             # reliable in moderate transport and suffers optical deposition in
             # severe wind; FlowCapt's signal-to-noise improves with transport.
             # All drivers are ordinary meteorological variables, not labels.
-            if mode == "condition_dependent_crossover_strong":
+            if mode in {
+                "condition_dependent_crossover_strong",
+                "condition_dependent_crossover_balanced",
+            }:
                 # Development-only stress calibration: each physical group has
                 # a distinct, weather-observable exposure mechanism.
                 exposure_profiles = {
@@ -116,6 +126,17 @@ def add_channel_quality_dynamics(
                     ),
                     "flowcapt_fc4": 0.80 * low_transport_signal + 0.20 * icing,
                 }
+                if mode == "condition_dependent_crossover_balanced":
+                    # Keep the mean exposure approximately fixed while
+                    # retaining weather-driven ranking changes. This isolates
+                    # relative instrument reliability from total degradation.
+                    profile_ids = list(exposure_profiles)
+                    raw = np.vstack([exposure_profiles[sensor] for sensor in profile_ids])
+                    centered = raw - np.mean(raw, axis=0, keepdims=True)
+                    balanced = np.clip(0.45 + 0.90 * centered, 0.05, 0.95)
+                    exposure_profiles = {
+                        sensor: balanced[idx] for idx, sensor in enumerate(profile_ids)
+                    }
             else:
                 exposure_profiles = {
                 "gmx500_weather_station": 0.70 * icing + 0.15 * severe_wind,
@@ -254,6 +275,7 @@ def main() -> None:
         choices=[
             "independent", "condition_dependent", "condition_dependent_crossover",
             "condition_dependent_crossover_strong",
+            "condition_dependent_crossover_balanced",
         ],
         default="independent",
     )

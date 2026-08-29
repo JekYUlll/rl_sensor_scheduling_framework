@@ -672,6 +672,7 @@ def main() -> None:
         choices=[
             "independent", "condition_dependent", "condition_dependent_crossover",
             "condition_dependent_crossover_strong",
+            "condition_dependent_crossover_balanced",
         ],
         default="independent",
     )
