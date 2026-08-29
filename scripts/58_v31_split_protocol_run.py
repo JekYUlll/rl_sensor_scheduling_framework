@@ -669,7 +669,10 @@ def main() -> None:
     parser.add_argument("--channel-quality-enabled", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument(
         "--channel-quality-mode",
-        choices=["independent", "condition_dependent"],
+        choices=[
+            "independent", "condition_dependent", "condition_dependent_crossover",
+            "condition_dependent_crossover_strong",
+        ],
         default="independent",
     )
     parser.add_argument("--channel-quality-sensor-ids", nargs="*", default=None)
