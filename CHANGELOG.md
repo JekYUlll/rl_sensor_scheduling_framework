@@ -4580,3 +4580,16 @@ tar -czf "$OUT…`
   `-0.014230/-0.047484`). Its behavior is fixed-like, with two always-on and
   three always-off groups. V234 therefore does not establish an online
   information path and is closed without PPO training or parameter tuning.
+
+## 2026-08-30 - V235 closes strong crossover calibration before PPO
+
+- V235 strengthens only the weather-conditioned reliability profiles for the
+  five physical instrument groups. Costs, budget, arbitrary-subset action
+  geometry, evaluator, nowcast, and PPO configuration remain unchanged.
+- Exact receding remains positive in `5/5` scenes, with mean ordinary/macro
+  margins `+0.018448/+0.048317`; behavior passes `4/5`.
+- The online quality policy wins only `1/5` ordinary and `1/5` macro scenes,
+  with mean margins `-0.016178/-0.047618`. The stronger degradation lowers
+  overall observation quality without yielding a stable online action path.
+  V235 is closed without PPO; the next scene must preserve aggregate quality
+  while creating relative, weather-observable pairwise reliability crossovers.
