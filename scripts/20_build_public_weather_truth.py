@@ -42,7 +42,8 @@ def add_channel_quality_dynamics(
 
     ``independent`` retains the original slow, sensor-specific outage process.
     ``condition_dependent`` models exposure-dependent degradation from continuous
-    weather and transport drivers. ``condition_dependent_crossover`` is the
+    weather and transport drivers. ``condition_dependent_crossover`` and
+    ``condition_dependent_crossover_strong`` are physical-group variants:
     physical-group variant: each installed instrument has a different
     weather-dependent reliability mechanism, so no group is assumed to be
     uniformly most useful. Neither mode changes the event process; both produce
@@ -51,12 +52,18 @@ def add_channel_quality_dynamics(
     out = frame.copy()
     steps = len(out)
     low = float(np.clip(degraded_quality, 0.0, 1.0))
-    if mode not in {"independent", "condition_dependent", "condition_dependent_crossover"}:
+    if mode not in {
+        "independent", "condition_dependent", "condition_dependent_crossover",
+        "condition_dependent_crossover_strong",
+    }:
         raise ValueError(
-            "channel quality mode must be independent, condition_dependent, or "
-            "condition_dependent_crossover"
+            "channel quality mode must be independent, condition_dependent, "
+            "condition_dependent_crossover, or condition_dependent_crossover_strong"
         )
-    if mode in {"condition_dependent", "condition_dependent_crossover"}:
+    if mode in {
+        "condition_dependent", "condition_dependent_crossover",
+        "condition_dependent_crossover_strong",
+    }:
         required = {
             "wind_speed_ms",
             "relative_humidity",
@@ -64,7 +71,7 @@ def add_channel_quality_dynamics(
             "event_subtype_flux_latent",
             "event_subtype_thermal_latent",
         }
-        if mode == "condition_dependent_crossover":
+        if mode in {"condition_dependent_crossover", "condition_dependent_crossover_strong"}:
             required.update({"air_temperature_c", "solar_radiation_wm2"})
         missing = sorted(required.difference(out.columns))
         if missing:
@@ -97,7 +104,20 @@ def add_channel_quality_dynamics(
             # reliable in moderate transport and suffers optical deposition in
             # severe wind; FlowCapt's signal-to-noise improves with transport.
             # All drivers are ordinary meteorological variables, not labels.
-            exposure_profiles = {
+            if mode == "condition_dependent_crossover_strong":
+                # Development-only stress calibration: each physical group has
+                # a distinct, weather-observable exposure mechanism.
+                exposure_profiles = {
+                    "gmx500_weather_station": 0.80 * severe_wind + 0.20 * humidity,
+                    "lps10_pyranometer": 0.80 * (1.0 - radiation) + 0.20 * humidity,
+                    "si111_surface_ir": 0.80 * icing + 0.20 * severe_wind,
+                    "parsivel2_disdrometer": (
+                        0.80 * (1.0 - moderate_wind) + 0.20 * humidity
+                    ),
+                    "flowcapt_fc4": 0.80 * low_transport_signal + 0.20 * icing,
+                }
+            else:
+                exposure_profiles = {
                 "gmx500_weather_station": 0.70 * icing + 0.15 * severe_wind,
                 "lps10_pyranometer": 0.60 * (1.0 - radiation) + 0.25 * humidity,
                 "si111_surface_ir": 0.65 * icing + 0.15 * severe_wind,
@@ -105,7 +125,7 @@ def add_channel_quality_dynamics(
                     0.65 * severe_wind + 0.20 * humidity + 0.10 * (1.0 - moderate_wind)
                 ),
                 "flowcapt_fc4": 0.75 * low_transport_signal + 0.10 * icing,
-            }
+                }
         else:
             particle = positive_unit("event_subtype_particle_latent")
             flux = positive_unit("event_subtype_flux_latent")
@@ -231,7 +251,10 @@ def main() -> None:
     parser.add_argument("--channel-quality-enabled", action="store_true")
     parser.add_argument(
         "--channel-quality-mode",
-        choices=["independent", "condition_dependent", "condition_dependent_crossover"],
+        choices=[
+            "independent", "condition_dependent", "condition_dependent_crossover",
+            "condition_dependent_crossover_strong",
+        ],
         default="independent",
     )
     parser.add_argument("--channel-quality-sensor-ids", nargs="+", default=list(DEFAULT_QUALITY_SENSOR_IDS))
