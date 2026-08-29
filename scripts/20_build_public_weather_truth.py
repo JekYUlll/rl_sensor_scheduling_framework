@@ -88,12 +88,20 @@ def add_channel_quality_dynamics(
         if missing:
             raise ValueError(f"condition-dependent quality requires columns: {missing}")
 
-        def positive_unit(column: str) -> np.ndarray:
+        def positive_unit(column: str, *, scale: float | None = None) -> np.ndarray:
             values = np.maximum(out[column].to_numpy(dtype=float), 0.0)
-            scale = max(float(np.quantile(values, 0.95)), 1.0e-6)
-            return np.clip(values / scale, 0.0, 1.0)
+            effective_scale = (
+                float(scale)
+                if scale is not None
+                else max(float(np.quantile(values, 0.95)), 1.0e-6)
+            )
+            return np.clip(values / max(effective_scale, 1.0e-6), 0.0, 1.0)
 
-        def profiles_for(prefix: str = "") -> dict[str, np.ndarray]:
+        def profiles_for(
+            prefix: str = "",
+            *,
+            normalization_scales: dict[str, float] | None = None,
+        ) -> dict[str, np.ndarray]:
             wind_column = f"{prefix}wind_speed_ms" if prefix else "wind_speed_ms"
             humidity_column = f"{prefix}relative_humidity" if prefix else "relative_humidity"
             temperature_column = f"{prefix}air_temperature_c" if prefix else "air_temperature_c"
@@ -104,14 +112,15 @@ def add_channel_quality_dynamics(
             missing_columns = sorted(required_columns.difference(out.columns))
             if missing_columns:
                 raise ValueError(f"quality profiles require columns: {missing_columns}")
-            wind = positive_unit(wind_column)
+            scales = normalization_scales or {}
+            wind = positive_unit(wind_column, scale=scales.get("wind"))
             humidity = np.clip(
                 (out[humidity_column].to_numpy(dtype=float) - 60.0) / 30.0,
                 0.0,
                 1.0,
             )
             temperature = out[temperature_column].to_numpy(dtype=float)
-            radiation = positive_unit(radiation_column)
+            radiation = positive_unit(radiation_column, scale=scales.get("radiation"))
             cold = np.clip((-temperature - 5.0) / 20.0, 0.0, 1.0)
             icing = humidity * cold
             severe_wind = np.clip((wind - 0.55) / 0.45, 0.0, 1.0)
@@ -213,7 +222,13 @@ def add_channel_quality_dynamics(
                 quality = quality + rng.normal(0.0, float(report_noise_std), size=steps)
             out[f"agent_context_quality_{sensor_id}"] = np.clip(quality, low, 1.0)
         if forecast_quality:
-            forecast_profiles = profiles_for("agent_context_nowcast_")
+            forecast_profiles = profiles_for(
+                "agent_context_nowcast_",
+                normalization_scales={
+                    "wind": max(float(np.quantile(out["wind_speed_ms"].to_numpy(dtype=float), 0.95)), 1.0e-6),
+                    "radiation": max(float(np.quantile(out["solar_radiation_wm2"].to_numpy(dtype=float), 0.95)), 1.0e-6),
+                },
+            )
             for sensor_idx, sensor_id in enumerate(sensor_ids):
                 rng = np.random.default_rng(int(seed) + 91001 + 1009 * sensor_idx)
                 exposure = forecast_profiles.get(
