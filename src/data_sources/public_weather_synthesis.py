@@ -804,12 +804,17 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
 
     nowcast_lead = max(0, int(cfg.nowcast_lead_steps))
     if nowcast_lead > 0:
-        for source_column, column, noise_std in (
-            ("wind_speed_ms", "agent_context_nowcast_wind_speed_ms", cfg.nowcast_wind_noise_std),
-            ("relative_humidity", "agent_context_nowcast_relative_humidity", cfg.nowcast_humidity_noise_std),
-            ("air_temperature_c", "agent_context_nowcast_air_temperature_c", cfg.nowcast_temperature_noise_std),
+        for source_values, column, noise_std in (
+            # ``wind_speed`` includes the event precursor, storm-regime, and
+            # event-floor adjustments above.  The nowcast must forecast that
+            # same realized meteorological driver; using the pre-adjustment
+            # synthesis column would make downstream channel-value features
+            # systematically inconsistent with the generated scene.
+            (wind_speed, "agent_context_nowcast_wind_speed_ms", cfg.nowcast_wind_noise_std),
+            (synth_cols["relative_humidity"], "agent_context_nowcast_relative_humidity", cfg.nowcast_humidity_noise_std),
+            (synth_cols["air_temperature_c"], "agent_context_nowcast_air_temperature_c", cfg.nowcast_temperature_noise_std),
         ):
-            values = np.asarray(synth_cols[source_column], dtype=float)
+            values = np.asarray(source_values, dtype=float)
             forecast = np.empty_like(values)
             forecast[:-nowcast_lead] = values[nowcast_lead:]
             forecast[-nowcast_lead:] = values[-1]
