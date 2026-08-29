@@ -121,3 +121,35 @@ def test_strong_crossover_quality_keeps_all_profiles_weather_driven() -> None:
     assert values.shape == (3, 5)
     assert np.all((0.10 <= values) & (values <= 1.0))
     assert np.all(np.ptp(values, axis=0) > 0.0)
+
+
+def test_forecast_quality_uses_nowcast_columns_and_stays_separate() -> None:
+    builder = _quality_builder()
+    frame = pd.DataFrame({
+        "wind_speed_ms": [2.0, 18.0],
+        "relative_humidity": [45.0, 94.0],
+        "air_temperature_c": [-4.0, -24.0],
+        "solar_radiation_wm2": [0.0, 15.0],
+        "event_subtype_particle_latent": [0.0, 0.0],
+        "event_subtype_flux_latent": [0.0, 0.0],
+        "event_subtype_thermal_latent": [0.0, 0.0],
+        "agent_context_nowcast_wind_speed_ms": [18.0, 2.0],
+        "agent_context_nowcast_relative_humidity": [94.0, 45.0],
+        "agent_context_nowcast_air_temperature_c": [-24.0, -4.0],
+        "agent_context_nowcast_solar_radiation_wm2": [15.0, 0.0],
+    })
+    sensors = (
+        "gmx500_weather_station", "lps10_pyranometer", "si111_surface_ir",
+        "parsivel2_disdrometer", "flowcapt_fc4",
+    )
+    out = builder(
+        frame, sensor_ids=sensors, seed=17, coverage=0.0, min_duration=1,
+        max_duration=1, min_gap=0, degraded_quality=0.10,
+        transition_steps=0, report_noise_std=0.0,
+        mode="condition_dependent_crossover_balanced", forecast_quality=True,
+    )
+    actual = out["agent_context_quality_gmx500_weather_station"].to_numpy()
+    predicted = out["agent_context_quality_forecast_gmx500_weather_station"].to_numpy()
+    assert np.isfinite(predicted).all()
+    assert not np.allclose(actual, predicted)
+    assert all(f"agent_context_quality_forecast_{sensor}" in out for sensor in sensors)

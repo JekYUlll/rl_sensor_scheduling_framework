@@ -168,6 +168,8 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(float(args.nowcast_humidity_noise_std)),
         "--nowcast-temperature-noise-std",
         str(float(args.nowcast_temperature_noise_std)),
+        "--nowcast-solar-noise-std",
+        str(float(args.nowcast_solar_noise_std)),
         "--channel-quality-degraded-coverage",
         str(float(args.channel_quality_degraded_coverage)),
         "--channel-quality-mode",
@@ -666,6 +668,7 @@ def main() -> None:
     parser.add_argument("--nowcast-wind-noise-std", type=float, default=1.0)
     parser.add_argument("--nowcast-humidity-noise-std", type=float, default=3.0)
     parser.add_argument("--nowcast-temperature-noise-std", type=float, default=0.7)
+    parser.add_argument("--nowcast-solar-noise-std", type=float, default=35.0)
     parser.add_argument("--channel-quality-enabled", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument(
         "--channel-quality-mode",

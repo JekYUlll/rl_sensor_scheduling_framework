@@ -37,6 +37,7 @@ def add_channel_quality_dynamics(
     transition_steps: int,
     report_noise_std: float,
     mode: str = "independent",
+    forecast_quality: bool = False,
 ):
     """Add bounded online channel-quality signals to the generated truth frame.
 
@@ -71,10 +72,13 @@ def add_channel_quality_dynamics(
         required = {
             "wind_speed_ms",
             "relative_humidity",
-            "event_subtype_particle_latent",
-            "event_subtype_flux_latent",
-            "event_subtype_thermal_latent",
         }
+        if mode == "condition_dependent":
+            required.update({
+                "event_subtype_particle_latent",
+                "event_subtype_flux_latent",
+                "event_subtype_thermal_latent",
+            })
         if mode in {
             "condition_dependent_crossover", "condition_dependent_crossover_strong",
             "condition_dependent_crossover_balanced",
@@ -88,6 +92,59 @@ def add_channel_quality_dynamics(
             values = np.maximum(out[column].to_numpy(dtype=float), 0.0)
             scale = max(float(np.quantile(values, 0.95)), 1.0e-6)
             return np.clip(values / scale, 0.0, 1.0)
+
+        def profiles_for(prefix: str = "") -> dict[str, np.ndarray]:
+            wind_column = f"{prefix}wind_speed_ms" if prefix else "wind_speed_ms"
+            humidity_column = f"{prefix}relative_humidity" if prefix else "relative_humidity"
+            temperature_column = f"{prefix}air_temperature_c" if prefix else "air_temperature_c"
+            radiation_column = (
+                f"{prefix}solar_radiation_wm2" if prefix else "solar_radiation_wm2"
+            )
+            required_columns = {wind_column, humidity_column, temperature_column, radiation_column}
+            missing_columns = sorted(required_columns.difference(out.columns))
+            if missing_columns:
+                raise ValueError(f"quality profiles require columns: {missing_columns}")
+            wind = positive_unit(wind_column)
+            humidity = np.clip(
+                (out[humidity_column].to_numpy(dtype=float) - 60.0) / 30.0,
+                0.0,
+                1.0,
+            )
+            temperature = out[temperature_column].to_numpy(dtype=float)
+            radiation = positive_unit(radiation_column)
+            cold = np.clip((-temperature - 5.0) / 20.0, 0.0, 1.0)
+            icing = humidity * cold
+            severe_wind = np.clip((wind - 0.55) / 0.45, 0.0, 1.0)
+            moderate_wind = np.clip(1.0 - np.abs(wind - 0.52) / 0.35, 0.0, 1.0)
+            low_transport_signal = 1.0 - np.clip(
+                0.25 * wind + 0.75 * severe_wind, 0.0, 1.0
+            )
+            if mode == "condition_dependent_crossover":
+                return {
+                    "gmx500_weather_station": 0.70 * icing + 0.15 * severe_wind,
+                    "lps10_pyranometer": 0.60 * (1.0 - radiation) + 0.25 * humidity,
+                    "si111_surface_ir": 0.65 * icing + 0.15 * severe_wind,
+                    "parsivel2_disdrometer": (
+                        0.65 * severe_wind + 0.20 * humidity + 0.10 * (1.0 - moderate_wind)
+                    ),
+                    "flowcapt_fc4": 0.75 * low_transport_signal + 0.10 * icing,
+                }
+            exposure_profiles = {
+                "gmx500_weather_station": 0.80 * severe_wind + 0.20 * humidity,
+                "lps10_pyranometer": 0.80 * (1.0 - radiation) + 0.20 * humidity,
+                "si111_surface_ir": 0.80 * icing + 0.20 * severe_wind,
+                "parsivel2_disdrometer": 0.80 * (1.0 - moderate_wind) + 0.20 * humidity,
+                "flowcapt_fc4": 0.80 * low_transport_signal + 0.20 * icing,
+            }
+            if mode == "condition_dependent_crossover_balanced":
+                profile_ids = list(exposure_profiles)
+                raw = np.vstack([exposure_profiles[sensor] for sensor in profile_ids])
+                centered = raw - np.mean(raw, axis=0, keepdims=True)
+                balanced = np.clip(0.45 + 0.90 * centered, 0.05, 0.95)
+                exposure_profiles = {
+                    sensor: balanced[idx] for idx, sensor in enumerate(profile_ids)
+                }
+            return exposure_profiles
 
         wind = positive_unit("wind_speed_ms")
         humidity = np.clip(
@@ -117,26 +174,7 @@ def add_channel_quality_dynamics(
             }:
                 # Development-only stress calibration: each physical group has
                 # a distinct, weather-observable exposure mechanism.
-                exposure_profiles = {
-                    "gmx500_weather_station": 0.80 * severe_wind + 0.20 * humidity,
-                    "lps10_pyranometer": 0.80 * (1.0 - radiation) + 0.20 * humidity,
-                    "si111_surface_ir": 0.80 * icing + 0.20 * severe_wind,
-                    "parsivel2_disdrometer": (
-                        0.80 * (1.0 - moderate_wind) + 0.20 * humidity
-                    ),
-                    "flowcapt_fc4": 0.80 * low_transport_signal + 0.20 * icing,
-                }
-                if mode == "condition_dependent_crossover_balanced":
-                    # Keep the mean exposure approximately fixed while
-                    # retaining weather-driven ranking changes. This isolates
-                    # relative instrument reliability from total degradation.
-                    profile_ids = list(exposure_profiles)
-                    raw = np.vstack([exposure_profiles[sensor] for sensor in profile_ids])
-                    centered = raw - np.mean(raw, axis=0, keepdims=True)
-                    balanced = np.clip(0.45 + 0.90 * centered, 0.05, 0.95)
-                    exposure_profiles = {
-                        sensor: balanced[idx] for idx, sensor in enumerate(profile_ids)
-                    }
+                exposure_profiles = profiles_for()
             else:
                 exposure_profiles = {
                 "gmx500_weather_station": 0.70 * icing + 0.15 * severe_wind,
@@ -174,6 +212,28 @@ def add_channel_quality_dynamics(
             if float(report_noise_std) > 0.0:
                 quality = quality + rng.normal(0.0, float(report_noise_std), size=steps)
             out[f"agent_context_quality_{sensor_id}"] = np.clip(quality, low, 1.0)
+        if forecast_quality:
+            forecast_profiles = profiles_for("agent_context_nowcast_")
+            for sensor_idx, sensor_id in enumerate(sensor_ids):
+                rng = np.random.default_rng(int(seed) + 91001 + 1009 * sensor_idx)
+                exposure = forecast_profiles.get(
+                    str(sensor_id),
+                    0.15 * positive_unit("agent_context_nowcast_wind_speed_ms")
+                    + 0.10 * np.clip(
+                        (out["agent_context_nowcast_relative_humidity"].to_numpy(dtype=float) - 60.0)
+                        / 30.0,
+                        0.0,
+                        1.0,
+                    ),
+                )
+                predicted = 1.0 - (1.0 - low) * np.clip(exposure, 0.0, 1.0)
+                if float(report_noise_std) > 0.0:
+                    predicted = predicted + rng.normal(
+                        0.0, float(report_noise_std), size=steps
+                    )
+                out[f"agent_context_quality_forecast_{sensor_id}"] = np.clip(
+                    predicted, low, 1.0
+                )
         return out
 
     target = int(round(float(np.clip(coverage, 0.0, 0.95)) * steps))
@@ -269,6 +329,7 @@ def main() -> None:
     parser.add_argument("--nowcast-wind-noise-std", type=float, default=1.0)
     parser.add_argument("--nowcast-humidity-noise-std", type=float, default=3.0)
     parser.add_argument("--nowcast-temperature-noise-std", type=float, default=0.7)
+    parser.add_argument("--nowcast-solar-noise-std", type=float, default=35.0)
     parser.add_argument("--channel-quality-enabled", action="store_true")
     parser.add_argument(
         "--channel-quality-mode",
@@ -354,6 +415,7 @@ def main() -> None:
         nowcast_wind_noise_std=float(args.nowcast_wind_noise_std),
         nowcast_humidity_noise_std=float(args.nowcast_humidity_noise_std),
         nowcast_temperature_noise_std=float(args.nowcast_temperature_noise_std),
+        nowcast_solar_noise_std=float(args.nowcast_solar_noise_std),
     )
     df, meta = generate_public_weather_truth(cfg)
     if bool(args.channel_quality_enabled):
@@ -369,6 +431,7 @@ def main() -> None:
             transition_steps=int(args.channel_quality_transition_steps),
             report_noise_std=float(args.channel_quality_report_noise_std),
             mode=str(args.channel_quality_mode),
+            forecast_quality=bool(int(args.nowcast_lead_steps) > 0),
         )
         meta["channel_quality"] = {
             "enabled": True,
@@ -381,6 +444,7 @@ def main() -> None:
             "degraded_value": float(args.channel_quality_degraded_value),
             "transition_steps": int(args.channel_quality_transition_steps),
             "report_noise_std": float(args.channel_quality_report_noise_std),
+            "forecast_quality_enabled": bool(int(args.nowcast_lead_steps) > 0),
         }
 
     out_path = Path(args.out)

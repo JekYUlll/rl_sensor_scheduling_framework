@@ -97,6 +97,7 @@ class PublicWeatherSynthesisConfig:
     nowcast_wind_noise_std: float = 1.0
     nowcast_humidity_noise_std: float = 3.0
     nowcast_temperature_noise_std: float = 0.7
+    nowcast_solar_noise_std: float = 35.0
 
 
 def load_antaws_station(antaws_root: str | Path, station: str) -> pd.DataFrame:
@@ -823,6 +824,15 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         np.maximum(blowing_snow_active.astype(float), event_precursor),
     )
     radiation = _radiation_template(pd.Series(timestamp), storminess=storm_score)
+    if nowcast_lead > 0:
+        values = np.asarray(radiation, dtype=float)
+        forecast = np.empty_like(values)
+        forecast[:-nowcast_lead] = values[nowcast_lead:]
+        forecast[-nowcast_lead:] = values[-1]
+        synth_cols["agent_context_nowcast_solar_radiation_wm2"] = (
+            forecast
+            + rng.normal(0.0, max(0.0, float(cfg.nowcast_solar_noise_std)), size=len(values))
+        )
     surface_target = synth_cols["air_temperature_c"] - 1.1 + 0.0022 * radiation
     if bool(cfg.event_subtypes_enabled) and np.any(thermal_event):
         thermal_smooth = _lowpass(thermal_event.astype(float), alpha=0.14)
@@ -972,6 +982,7 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         "agent_context_nowcast_wind_speed_ms",
         "agent_context_nowcast_relative_humidity",
         "agent_context_nowcast_air_temperature_c",
+        "agent_context_nowcast_solar_radiation_wm2",
     ):
         if column in synth_cols:
             df[column] = np.asarray(synth_cols[column], dtype=float)
@@ -1041,6 +1052,7 @@ def generate_public_weather_truth(cfg: PublicWeatherSynthesisConfig) -> tuple[pd
         "nowcast_wind_noise_std": float(cfg.nowcast_wind_noise_std),
         "nowcast_humidity_noise_std": float(cfg.nowcast_humidity_noise_std),
         "nowcast_temperature_noise_std": float(cfg.nowcast_temperature_noise_std),
+        "nowcast_solar_noise_std": float(cfg.nowcast_solar_noise_std),
     }
     return df, meta
 

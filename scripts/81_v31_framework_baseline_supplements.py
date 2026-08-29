@@ -345,14 +345,20 @@ class QualityAwareContextPolicy(ContextAlertBanditPolicy):
         action_score_table: pd.DataFrame,
         quality_penalty: float,
         use_alert_context: bool = True,
+        quality_source: str = "current",
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self.quality_penalty = float(quality_penalty)
         self.use_alert_context = bool(use_alert_context)
-        self.quality_columns = [
-            f"agent_context_quality_{sensor.sensor_id}" for sensor in self.sensors
-        ]
+        if str(quality_source) not in {"current", "forecast"}:
+            raise ValueError("quality_source must be current or forecast")
+        quality_prefix = (
+            "agent_context_quality_forecast_"
+            if str(quality_source) == "forecast"
+            else "agent_context_quality_"
+        )
+        self.quality_columns = [quality_prefix + sensor.sensor_id for sensor in self.sensors]
         indexed = action_score_table.set_index("action_idx")
         self.regime_scores: dict[str, np.ndarray] = {}
         score_columns = {
@@ -913,6 +919,7 @@ def evaluate_run(
                     name=name,
                     action_score_table=context_action_table,
                     quality_penalty=float(penalty),
+                    quality_source=str(args.quality_source),
                 )
             )
     if "forecast_greedy" in policies:
@@ -939,6 +946,7 @@ def evaluate_run(
                     action_score_table=context_action_table,
                     quality_penalty=float(penalty),
                     use_alert_context=False,
+                    quality_source=str(args.quality_source),
                 )
             )
     if "event_label" in policies:
@@ -1151,6 +1159,7 @@ def main() -> None:
     parser.add_argument("--context-thresholds", nargs="+", type=float, default=[0.5])
     parser.add_argument("--context-high-threshold", type=float, default=0.75)
     parser.add_argument("--quality-penalties", nargs="+", type=float, default=[0.25, 1.0, 4.0])
+    parser.add_argument("--quality-source", choices=["current", "forecast"], default="current")
     parser.add_argument(
         "--context-action-source",
         choices=[
