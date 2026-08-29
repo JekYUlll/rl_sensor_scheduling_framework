@@ -920,7 +920,7 @@ def evaluate_run(
                     name=name,
                     action_score_table=context_action_table,
                     quality_penalty=float(penalty),
-                    quality_source=str(args.quality_source),
+                    quality_source=str(quality_source),
                 )
             )
     if "forecast_greedy" in policies:
@@ -947,7 +947,7 @@ def evaluate_run(
                     action_score_table=context_action_table,
                     quality_penalty=float(penalty),
                     use_alert_context=False,
-                    quality_source=str(args.quality_source),
+                    quality_source=str(quality_source),
                 )
             )
     if "event_label" in policies:
