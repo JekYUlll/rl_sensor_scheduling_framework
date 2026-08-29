@@ -4593,3 +4593,11 @@ tar -czf "$OUT…`
   overall observation quality without yielding a stable online action path.
   V235 is closed without PPO; the next scene must preserve aggregate quality
   while creating relative, weather-observable pairwise reliability crossovers.
+- V236 centers the five weather-conditioned exposure profiles around a fixed
+  per-step mean while retaining the physical groups, fixed effective loads,
+  budget, arbitrary-subset geometry, evaluator, and PPO configuration. Exact
+  receding beats validation static in `5/5` scenes, with mean ordinary/macro
+  margins `+0.026761/+0.074941`; behavior passes `4/5`. The online quality
+  policy wins only `2/5` ordinary and `2/5` macro scenes, with mean margins
+  `-0.006133/-0.017271`. V236 is closed without PPO; a forecastable lead
+  signal must couple directly to instrument-specific value before training.
