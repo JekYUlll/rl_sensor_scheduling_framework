@@ -4563,3 +4563,20 @@ tar -czf "$OUT…`
   forecast-horizon training escalations are closed. Further work must change
   the physical effective-cost calibration or the observable dynamic
   measurement-value process, not stack supervision onto PPO.
+
+## 2026-08-30 - V234 rejects the physical crossover scene before PPO
+
+- V234 introduces a development-only, weather-conditioned crossover reliability
+  model for the five independently powered physical instrument groups. The
+  action space, fixed effective costs, budget, evaluator, and training method
+  remain unchanged; no policy is trained in this screen.
+- The exact receding diagnostic confirms substantial latent dynamic opportunity:
+  it beats the validation-selected static schedule on both endpoints in `5/5`
+  scenes, with mean ordinary and macro margins of `+0.027655` and `+0.073701`.
+  All runs use all 15 feasible masks, have five intermediate-duty groups, and
+  have zero warm-up aborts.
+- The deployable quality-only context policy fails the corresponding online
+  gate (`0/5` ordinary and `1/5` macro wins; mean margins
+  `-0.014230/-0.047484`). Its behavior is fixed-like, with two always-on and
+  three always-off groups. V234 therefore does not establish an online
+  information path and is closed without PPO training or parameter tuning.
