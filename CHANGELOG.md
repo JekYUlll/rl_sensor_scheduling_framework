@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V319 improves feasible-static transfer but misses primary gate
+
+- Completed remote seeds `6811--6812` with the V318 combination and a single
+  protocol change: hard forecast-value teacher lookahead `6`, aligned with the
+  environment minimum dwell `6`.
+- Feasible-static comparisons improved to `2/2` ordinary and `2/2` macro wins,
+  with mean baseline-minus-PD-PPO margins `+0.021482` and `+0.126406`.
+  AoI, random, and round-robin were also beaten on both endpoints in `2/2`
+  seeds. The unconstrained full-open reference was not treated as a fair
+  deployment baseline.
+- The primary validation-selected-static gate remained `1/2` on both ordinary
+  and macro loss, with mean margins `-0.002655` and `+0.040490`. Seed 6811
+  had one always-off channel; warm-up aborts were zero in both seeds.
+- Decision: lookahead/dwell alignment is a promising diagnostic but is not
+  sufficient for primary confirmation and is not expanded to fresh final
+  seeds. Full evidence is stored in
+  `reports/aggregate/v319_hardpretrain_dwellaligned_decision_ppo_pdppo_dev_20260831/`.
+
 ## 2026-08-31 - V318 rejects hard pretraining plus decision-only PPO
 
 - Completed remote seeds `6811--6812` with feasible hard forecast-value
