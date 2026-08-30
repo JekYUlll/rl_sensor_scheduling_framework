@@ -1,0 +1,3 @@
+seed,custom_ppo_oracle_loss,custom_ppo_macro_staticnorm,validation_static_oracle_loss,feasible_static_oracle_loss,aoi_oracle_loss,random_oracle_loss,round_robin_oracle_loss,full_open_oracle_loss,mid_duty,always_on,always_off,switches_per_step,warmup_abort_count
+6801,0.3885278095,0.7277139261,0.3133442060,0.3661520144,0.3812624508,0.3828505809,0.3962166927,0.3563847303,6,0,0,0.0580402374,0
+6802,0.4404376912,0.8887923792,0.3826755688,0.3817744645,0.4214769774,0.4219298992,0.4250637103,0.3572326309,4,0,0,0.0217108120,0

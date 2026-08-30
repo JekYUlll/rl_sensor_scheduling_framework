@@ -5600,3 +5600,23 @@ Evidence is stored in
   `reports/v284_learner_diagnostics_pdppo_sixch_dev_seed6801_b1p75_20260822/`
   and
   `reports/v284_learner_diagnostics_pdppo_sixch_dev_seed6802_b1p75_20260822/`.
+## 2026-08-30 - V285 action-aligned dwell-block reward
+
+- Added `forecast_block_absolute`, a semi-Markov reward that assigns the
+  negative mean frozen-forecaster loss over the selected six-step dwell block
+  at each genuine decision. The block is evaluated from a restored environment
+  snapshot, so the diagnostic does not alter the actual transition.
+- Completed the matched remote development run on GPU1/GPU2 for seeds
+  `6801--6802`, with the same arbitrary six-channel geometry and no bandit
+  supervision or test labels. Feasibility and warm-up behavior remained valid:
+  zero warm-up aborts and zero always-on channels; both seeds used nontrivial
+  mid-duty schedules.
+- Predictive transfer did not improve. Custom ordinary forecast loss was
+  `0.388528` (seed6801) and `0.440438` (seed6802). It lost to the static,
+  AoI, random, and round-robin references in both seeds (except that the
+  seed6801 static result was already substantially better than custom). Macro
+  static-normalized loss was also worse than static in both seeds. Both seeds
+  lost to the full-open reference.
+- V285 is rejected as a mainline learner change. The block-aligned objective
+  is retained as a tested diagnostic, not as evidence of improvement. Compact
+  summaries are stored in the corresponding `reports/v285_*` directories.
