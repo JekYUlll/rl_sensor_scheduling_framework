@@ -5674,3 +5674,21 @@ Evidence is stored in
 - Decision: reject forecast-value regression pretraining as a mainline change;
   retain it as a negative learner-transfer diagnostic. Full summary:
   `reports/aggregate/v288_forecast_value_pretrain_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V289 soft forecast-value pretraining
+
+- Completed the remote two-seed diagnostic with training-partition soft
+  forecast-value cross-entropy initialization (`4096` samples, `20` epochs,
+  temperature `0.75`) followed by unchanged decision-time PPO. No bandit
+  action, event label, or test feedback was used.
+- Ordinary custom-PPO losses were `0.376347` and `0.398989`. It beat AoI,
+  random, and round-robin in both seeds, but beat neither validation-selected
+  static nor feasible static in either seed and lost to full-open in both.
+  Macro static-normalized wins were `2/2` against the three dynamic references
+  and `0/2` against the static and full-open references.
+- Behavior passed with zero warm-up aborts, zero always-on/always-off sensors,
+  five mid-duty sensors in each seed, and switching rates `0.083080` and
+  `0.050659` per step.
+- Decision: reject as a mainline promotion; retain as the strongest tested
+  initialization diagnostic. Summary:
+  `reports/aggregate/v289_soft_forecast_pretrain_pdppo_sixch_dev_20260830/`.
