@@ -5519,6 +5519,25 @@ Evidence is stored in
 Evidence is stored in
 `reports/aggregate/v281_decision_only_forecast_pdppo_sixch_dev_20260830/`.
 
+## 2026-08-30 - V282 corrected decision-only rerun
+
+- Re-ran the V281 decision-only ordinary-forecast control after fixing the
+  collector to use the actual environment `decision_available` boundary.
+  Seeds `6801--6802` used the same matched V279 validation assets and selected
+  updates 35 and 45.
+- Behavior and feasibility passed `2/2`: invalid actions, power,
+  startup-peak, and warm-up violations were all zero. Ordinary wins were
+  `0/2` against static and `1/2` against original dynamic; macro wins were
+  `1/2` and `1/2`.
+- Mean ordinary margins were `-0.035775` (static) and `+0.018035` (dynamic);
+  mean macro margins were `-0.059817` and `+0.010715`. Full-open
+  ordinary/macro wins were `0/2` and `0/2`. The corrected rerun did not
+  overcome the static shortcut, so this remains a bounded ablation rather than
+  a final mainline candidate.
+
+Evidence is stored in
+`reports/aggregate/v282_corrected_decision_only_forecast_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V281 decision-row implementation correction
 
 - Audited the decision-only collection path and found that its stored
