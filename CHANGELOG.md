@@ -6014,3 +6014,27 @@ Evidence is stored in
 - Decision: reject V303 as confirmation. V302's positive dynamic result is
   seed-sensitive and cannot support a larger final evaluation yet.
 - Aggregate: `reports/aggregate/v303_corrected_scene_decision_only_staticnorm_pdppo_replication_dev_20260831/`.
+
+# V304 - Corrected-scene soft forecast-value auxiliary screen (2026-08-31)
+
+### Change
+- Added the existing soft forecast-value action-ranking auxiliary to V302's
+  validation-frozen static-normalized forecast-loss configuration.
+- Kept the masked arbitrary-subset action space, decision-only PPO updates,
+  temporal/context encoders, and validation-only checkpoint selection fixed.
+- No bandit action, bandit loss, event label, or final-test information was
+  introduced.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `1/2`,
+  full-open `1/2`, AoI `1/2`, random `1/2`, and round-robin `2/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `2/2`, full-open `1/2`, AoI `1/2`, random `2/2`, and round-robin `2/2`.
+- Mean ordinary margins versus the same references were `-0.023097`,
+  `+0.001039`, `-0.012731`, `-0.000030`, `+0.017457`, and `+0.022801`.
+- Behavior passed in both seeds: zero warm-up aborts, zero always-on and
+  always-off channels, five mid-duty channels, and switching rates
+  `0.043422/0.057172`.
+- Decision: reject as a primary improvement because ordinary validation-static
+  wins remained `0/2`; do not expand to fresh confirmation.
+- Aggregate: `reports/aggregate/v304_corrected_scene_staticnorm_softvalue_pdppo_dev_20260831/`.
