@@ -8,6 +8,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 if [[ "$#" -gt 0 ]]; then SEEDS=("$@"); else SEEDS=(6801 6802); fi
+GPU_OFFSET="${GPU_OFFSET:-0}"
 
 run_one() {
   local seed="$1" gpu="$2"
@@ -31,7 +32,7 @@ run_one() {
 mkdir -p logs
 pids=()
 for i in "${!SEEDS[@]}"; do
-  run_one "${SEEDS[$i]}" "$i" &
+  run_one "${SEEDS[$i]}" "$((i + GPU_OFFSET))" &
   pids+=("$!")
 done
 for pid in "${pids[@]}"; do wait "$pid"; done
