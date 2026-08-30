@@ -1266,9 +1266,14 @@ class CustomPPO:
                 logprob_t = dist.log_prob(action_t)
                 value_t = self.model.value(obs_t, event_t)
             action = int(action_t.detach().cpu().item())
+            decision_available = (
+                int(getattr(env, "elapsed_steps", 0)) <= 0
+                or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
+            )
             forecast_value_valid = (
                 float(self.cfg.forecast_value_aux_coef) > 0.0
                 and step % max(1, int(self.cfg.forecast_value_aux_stride)) == 0
+                and decision_available
             )
             if forecast_value_valid:
                 forecast_costs = oracle_greedy_candidate_costs(
@@ -1299,10 +1304,6 @@ class CustomPPO:
                 awbc_valid = 0.0
             block_gain = 0.0
             block_cost = 0.0
-            decision_available = (
-                int(getattr(env, "elapsed_steps", 0)) <= 0
-                or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
-            )
             if str(self.env_cfg.reward_proxy_mode) in {
                 "forecast_block_gain",
                 "forecast_block_relative_gain",
