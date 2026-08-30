@@ -48,7 +48,7 @@ run_one() {
     export FORECAST_VALUE_HEAD=0 REWARD_LOSS_NORMALIZATION=none REWARD_PROXY_MODE=forecast
     export TARGET_WEIGHTS="1 1 1 1 1 1 1 1 1"
     export COMMON_RANDOM_NUMBERS=0 SEPARATE_ACTOR_CRITIC_GRAD_CLIP=1
-    "$PY" scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
+    bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
   ) >"logs/v242_full_pdppo_seed${seed}.log" 2>&1
 }
 
