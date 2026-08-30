@@ -6077,3 +6077,16 @@ Evidence is stored in
   labels but does not by itself yield static-transfer or uniformly deployable
   policy performance.
 - Aggregate: `reports/aggregate/v306_corrected_scene_softpretrain_only_pdppo_diag_20260831/`.
+
+# V306 teacher-quality audit (2026-08-31)
+
+- Replayed the frozen-TCN receding teacher with lookahead 4 on the same final
+  evaluation starts as V294, matching the short-horizon target used by the
+  pretraining diagnostic.
+- Teacher ordinary forecast losses were `0.313391` and `0.410015` for scene
+  seeds 6811 and 6812. It beat validation static, feasible static, AoI, random,
+  and round-robin on both seeds.
+- Decision: the teacher target is not the weak link. No teacher-label or
+  baseline-dependent patch was added; the unresolved issue is policy transfer,
+  return/credit assignment, or state-distribution mismatch.
+- Audit: `reports/aggregate/v306_teacher_quality_audit_20260831/`.
