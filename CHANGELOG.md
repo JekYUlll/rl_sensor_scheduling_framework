@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V260 rejects longer PPO credit horizon
+
+- Completed a two-seed development run (`5001--5002`) with the V259
+  dwell-aware executable-mask correction and 64-unit temporal encoder. The
+  only training changes were `gamma=0.997` and `GAE lambda=0.98`, extending
+  standard PPO credit over the forecast horizon.
+- The change did not recover the static shortcut: validation-selected static
+  wins were `0/2` on ordinary and macro endpoints, and best static wins were
+  also `0/2`. The best original dynamic family won `1/2` on both endpoints.
+  Mean baseline-minus-PD-PPO margins were `-0.048236/-0.037783` for best
+  static and `-0.019179/-0.002043` for best original dynamic.
+- Behavior remained unstable: seed5001 had two mid-duty, one always-on, and
+  two always-off channels; seed5002 had four mid-duty and two always-off
+  channels. Warm-up aborts were zero; switching rates were `0.012158` and
+  `0.027862` per step.
+- Decision: longer standard PPO credit does not address the remaining
+  forecast-credit failure and is closed without expansion. Evidence is stored
+  in `reports/aggregate/v260_long_credit_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V259 rejects dwell-aware feasibility repair as a performance fix
 
 - Completed a two-seed development run (`4901--4902`) after aligning PPO/DQN
