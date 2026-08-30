@@ -7,7 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 SEEDS=(6811 6812)
-POLICY_SEEDS=(6881 6882)
+POLICY_SEEDS=(${POLICY_SEEDS_OVERRIDE:-6881 6882})
 GPU_OFFSET="${GPU_OFFSET:-0}"
 
 run_one() {
