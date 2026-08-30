@@ -5656,3 +5656,21 @@ Evidence is stored in
   `0.034303` per step.
 - Decision: retain as bounded evidence, reject as a mainline promotion. Full
   summary: `reports/aggregate/v287_stronger_soft_action_value_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V288 forecast-value regression pretraining
+
+- Completed a remote two-seed diagnostic using `4096` training-partition
+  forecast-value regression samples and `20` pretraining epochs before the
+  unchanged decision-time PPO procedure. Candidate costs came from the frozen
+  forecaster; no bandit action, test label, or test feedback was used.
+- Ordinary custom-PPO losses were `0.393409` and `0.396219`. Static wins were
+  `0/2` against both validation-selected and feasible static. Dynamic wins
+  were `1/2` against AoI, `1/2` against random, and `2/2` against round-robin;
+  macro static-normalized wins were `0/2` against every comparator.
+- Behavior remained feasible: zero warm-up aborts and no always-on sensors;
+  seed6801 had five mid-duty/no always-off sensors, while seed6802 had four
+  mid-duty and two always-off sensors. Switching rates were `0.039224` and
+  `0.043422` per step.
+- Decision: reject forecast-value regression pretraining as a mainline change;
+  retain it as a negative learner-transfer diagnostic. Full summary:
+  `reports/aggregate/v288_forecast_value_pretrain_pdppo_sixch_dev_20260830/`.
