@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V259 rejects dwell-aware feasibility repair as a performance fix
+
+- Completed a two-seed development run (`4901--4902`) after aligning PPO/DQN
+  candidate masks with the environment's active minimum-dwell execution rule.
+  The forecast-loss reward, six-channel arbitrary-subset geometry, temporal
+  encoder, B=`1.75`, minimum dwell `6`, and 50,000-step budget were unchanged.
+- The repair is operationally correct and both runs had zero warm-up aborts,
+  but it did not recover predictive performance. Against the best static
+  family, ordinary wins were `0/2` and macro wins `1/2`; against the best
+  original dynamic family, both were `0/2`. Mean baseline-minus-PD-PPO margins
+  were `-0.041338` (ordinary static), `-0.004997` (macro static), `-0.045751`
+  (ordinary dynamic), and `-0.026234` (macro dynamic).
+- Behavior remained valid in seed4901 (four mid-duty channels, no permanent
+  channels), but seed4902 collapsed to two mid-duty channels, one always-on
+  channel, and three always-off channels. Switching rates were `0.028224` and
+  `0.033145` per step.
+- Decision: the action/constraint mismatch was a real bug, but correcting it is
+  not sufficient to solve the forecast-credit problem. V259 is closed without
+  expansion; no positive algorithmic claim is assigned to this correction.
+- Recomputed evidence is stored in
+  `reports/aggregate/v259_dwell_aware_temporal_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V258 structured temporal-encoder pilot
 
 - Completed a bounded two-seed pilot (`4801--4802`) replacing the flat history
