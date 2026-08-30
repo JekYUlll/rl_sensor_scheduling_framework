@@ -1329,7 +1329,11 @@ class CustomPPO:
             value_rows.append(float(value_t.detach().cpu().item()))
             event_rows.append(event_flag)
             action_mask_rows.append(action_mask_np.astype(bool))
-            decision_rows.append(float(np.sum(action_mask_np) > 1))
+            # A policy transition is available only when the environment can
+            # accept a new mask. The number of feasible candidates is not a
+            # proxy for dwell expiry: forced hold steps may still expose many
+            # feasible candidates while disallowing a new decision.
+            decision_rows.append(float(decision_available))
             awbc_valid_rows.append(float(awbc_valid))
             subtype_label_rows.append(int(subtype_label))
             subtype_valid_rows.append(float(subtype_valid))

@@ -5518,3 +5518,16 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/aggregate/v281_decision_only_forecast_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V281 decision-row implementation correction
+
+- Audited the decision-only collection path and found that its stored
+  `decision_rows` used the number of feasible candidates as a proxy for dwell
+  expiry. This incorrectly marked forced minimum-dwell steps as policy
+  decisions whenever multiple candidates were feasible.
+- Corrected the collector to use the environment's `decision_available` state,
+  which is the actual action-transition boundary. The targeted PPO and warm-up
+  environment tests pass (`66 passed`).
+- Consequently, V281's predictive metrics remain useful for diagnosis but are
+  not strict evidence for decision-only policy updates. A corrected rerun is
+  required before interpreting this branch as an ablation or mainline result.
