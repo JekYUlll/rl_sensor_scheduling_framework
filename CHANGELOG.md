@@ -5283,3 +5283,28 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/aggregate/v268_relative_block_gain_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V269 event-start-balanced absolute block-gain diagnostic
+
+- V269 increased the training event-start probability from `0.70` to `1.0`
+  and retained the absolute V267 block-gain objective. A live-command audit
+  caught that the V267 wrapper defaulted the reward mode; this run is therefore
+  not a V268 relative-gain replication.
+- Fresh remote seeds `5901--5902` completed without feasibility failures.
+  Behavior/feasibility passed `2/2`, with zero invalid actions, power or peak
+  violations, warm-up aborts, and permanent-channel failures.
+- The event-start change raised mean training-history event rates to `0.2983`
+  and `0.3083`, but the predictive gate remained negative. Static ordinary
+  wins were `0/2` and macro wins `1/2`; original-dynamic ordinary and macro
+  wins were `0/2`. Mean macro margins were `+0.004600` static,
+  `-0.056956` dynamic, and `-0.099194` full-open.
+- The added history now records rollout reward and return statistics. Reward
+  means ranged from `-0.000549` to `0.005684` (seed 5901) and `0.000402` to
+  `0.006648` (seed 5902); return standard deviations ranged from `0.1111` to
+  `0.2693` and `0.1399` to `0.3599`.
+- Decision: event-start balancing alone is rejected. It modestly changes
+  training coverage but does not restore dynamic predictive transfer; no
+  expansion is justified.
+
+Evidence is stored in
+`reports/aggregate/v269_event_aligned_pdppo_sixch_dev_20260830/`.
