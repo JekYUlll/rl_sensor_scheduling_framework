@@ -731,6 +731,7 @@ def main() -> None:
             "oracle_loss_macro_subtype_event",
             "oracle_loss_macro_subtype_event_staticnorm",
             "max_static_ratio",
+            "mean_static_ratio",
         ],
         default="oracle_loss_mean",
     )
@@ -1741,6 +1742,7 @@ def main() -> None:
     ) and checkpoint_score_name in {
         STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN,
         "max_static_ratio",
+        "mean_static_ratio",
     }:
         if not checkpoint_normalizers:
             raise ValueError(
@@ -1870,6 +1872,8 @@ def main() -> None:
         macro_ratio = finite_mean([row["macro_ratio"] for row in scene_metrics])
         if checkpoint_score_name == "max_static_ratio":
             score = max(ordinary_ratio, macro_ratio)
+        elif checkpoint_score_name == "mean_static_ratio":
+            score = float(np.mean([ordinary_ratio, macro_ratio]))
         else:
             score = float(selection_metrics[checkpoint_score_name])
         behavior_failures = int(
