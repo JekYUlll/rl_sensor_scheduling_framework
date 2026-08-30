@@ -2284,10 +2284,18 @@ def feasible_candidate_mask(env: WarmupSchedulingEnv, candidate_masks: np.ndarra
     masks = np.asarray(candidate_masks, dtype=bool).reshape(-1, len(env.sensor_ids))
     feasible = np.zeros(masks.shape[0], dtype=bool)
     for idx, mask in enumerate(masks):
-        result = env.projector.project_mask(mask, env.runtimes)
-        feasible[idx] = bool(result.feasible and np.array_equal(result.selected_mask.astype(bool), mask))
+        feasible[idx] = bool(env.is_mask_executable(mask))
     if not np.any(feasible):
-        feasible[:] = True
+        # Preserve the historical fallback only when the projector has no
+        # feasible candidate.  Under an active dwell hold, the previous
+        # executed subset must remain represented by the candidate geometry.
+        if int(getattr(env, "dwell_hold_remaining", 0)) <= 0:
+            feasible[:] = True
+        else:
+            raise ValueError(
+                "candidate_masks must contain the currently executed subset "
+                "while minimum dwell is active"
+            )
     return feasible
 
 

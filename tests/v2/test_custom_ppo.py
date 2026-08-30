@@ -423,6 +423,37 @@ def test_oracle_lookahead_snapshot_restores_uncertainty_and_constraint_state() -
     assert env.current_idx == snapshot["current_idx"]
 
 
+def test_feasible_candidate_mask_respects_active_minimum_dwell() -> None:
+    truth = _truth(64)
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=STATE_COLUMNS,
+            lookback=4,
+            episode_len=8,
+            min_dwell_steps=3,
+        ),
+        oracle=_oracle(truth),
+    )
+    env.reset()
+    candidates = np.asarray(
+        [
+            [True, False, False],
+            [False, False, True],
+        ],
+        dtype=bool,
+    )
+    env.step_mask(candidates[0])
+
+    assert env.dwell_hold_remaining == 2
+    assert np.array_equal(feasible_candidate_mask(env, candidates), np.asarray([True, False]))
+    assert env.is_mask_executable(candidates[0])
+    assert not env.is_mask_executable(candidates[1])
+
+
 def test_common_random_numbers_advance_rng_equally_for_different_masks() -> None:
     truth = _truth(64)
     constraints = PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0)

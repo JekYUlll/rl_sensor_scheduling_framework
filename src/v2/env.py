@@ -290,10 +290,29 @@ class WarmupSchedulingEnv:
         """Return action indices whose sensor subset is feasible at the current warmup state."""
         feasible: list[int] = []
         for action_idx, mask in self.action_to_sensor_mask.items():
-            indices = [int(idx) for idx in np.flatnonzero(mask)]
-            if self.projector._is_feasible(indices, self.runtimes):
+            if self.is_mask_executable(mask):
                 feasible.append(int(action_idx))
         return feasible
+
+    def is_mask_executable(self, desired_mask: np.ndarray) -> bool:
+        """Return whether a proposed subset is executable without being rewritten.
+
+        Minimum dwell is part of the action feasibility state.  Keeping this
+        check beside the projector prevents learners from receiving a log
+        probability for a proposed subset while the environment executes the
+        previous subset instead.
+        """
+        mask = np.asarray(desired_mask, dtype=bool).reshape(-1)
+        if mask.shape != (len(self.sensor_specs),):
+            raise ValueError("desired_mask must contain one entry per sensor")
+        if (
+            int(self.dwell_hold_remaining) > 0
+            and int(self.elapsed_steps) > 0
+            and not np.array_equal(mask, np.asarray(self.previous_action_mask, dtype=bool))
+        ):
+            return False
+        result = self.projector.project_mask(mask, self.runtimes)
+        return bool(result.feasible and np.array_equal(result.selected_mask.astype(bool), mask))
 
     def _step_projection(self, selected_mask: np.ndarray) -> tuple[np.ndarray, float, bool, dict[str, object]]:
         history_before_step = np.asarray(self.history, dtype=float).copy()
