@@ -25,7 +25,7 @@ run_one() {
     export CHECKPOINT_REQUIRE_VALID_BEHAVIOR=1
     export CONTROL_SOURCE_RUN_DIR="reports/v279_eventbalanced_forecast_checkpoint_pdppo_sixch_dev_seed${seed}_b1p75_20260822"
     bash scripts/run_v267_block_gain_pdppo_sixch_dev_20260830.sh "$seed"
-  ) >"logs/${LOG_PREFIX}_seed${seed}.log" 2>&1
+  ) >"logs/v284_learner_diagnostics_pdppo_sixch_seed${seed}.log" 2>&1
 }
 
 mkdir -p logs
