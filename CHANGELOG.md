@@ -5769,3 +5769,26 @@ Evidence is stored in
   selected macro comparisons but does not improve the static shortcut or the
   ordinary-loss transfer problem. Aggregate:
   `reports/aggregate/v293_forecast_quality_context_pdppo_sixch_dev_20260830/`.
+## 2026-08-30 - V294 corrected six-channel quality scene
+
+### Change
+- Corrected `scripts/20_build_public_weather_truth.py` so the balanced
+  condition-dependent quality process maps the active six physical channel
+  IDs explicitly. The previous V279/V293 runs used legacy profile names and
+  therefore fell through to a common fallback profile.
+- Added
+  `scripts/run_v294_corrected_sixchannel_quality_pdppo_dev_20260830.sh` and
+  ran fresh remote development seeds `6811--6812` without reusing old truth or
+  checkpoints.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `1/2`,
+  full-open `0/2`, AoI `1/2`, random `2/2`, round-robin `2/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `2/2`, full-open `1/2`, AoI `1/2`, random `2/2`, round-robin `2/2`.
+- Behavior: seed6811 passed with zero constant channels; seed6812 had two
+  always-off channels. Both had zero warm-up aborts.
+- Decision: the mapping correction is necessary, but this two-seed run does
+  not pass the deployment behavior or static-shortcut gate. Do not promote
+  V294 to the mainline evidence set.
+- Aggregate: `reports/aggregate/v294_corrected_sixchannel_quality_pdppo_dev_20260830/`.
