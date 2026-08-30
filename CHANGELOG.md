@@ -5034,3 +5034,26 @@ tar -czf "$OUT…`
   does not satisfy the mainline static and behavior gates. V254 is rejected
   before expansion. Evidence is stored in
   `reports/aggregate/v254_staticnorm_pdppo_sixch_dev_20260830/`.
+# 2026-08-30 - V257 dense candidate forecast-head pilot
+
+- Completed a bounded two-seed pilot (`4701--4702`) with the existing
+  mask-structured candidate forecast-value head evaluated at auxiliary stride
+  `8` instead of `64`. The six-channel physical scene, arbitrary feasible
+  subsets, masked PPO, forecast-loss reward, minimum dwell `6`, online context,
+  and 50,000-step training budget were unchanged; no bandit signal, teacher,
+  behavior cloning, or final-test event label was used.
+- Operational behavior passed in both seeds: six intermediate-duty channels,
+  zero always-on/off channels, zero warm-up aborts, and switching rates
+  `0.049718--0.059922` per step.
+- Predictive performance failed to improve. PD-PPO won ordinary loss `0/2`
+  against validation-selected static, `1/2` against feasible static, `0/2`
+  against AoI and round-robin, `1/2` against random, and `0/2` against the
+  unconstrained full-open reference. Macro wins were `0/2` against all listed
+  baselines except feasible static (`1/2`). Mean baseline-minus-PD-PPO margins
+  were `-0.107579/-0.148706` for validation-selected static and
+  `-0.012541/-0.028302` against the best original dynamic family on
+  ordinary/macro loss.
+- Decision: dense candidate-level forecast supervision preserves valid
+  switching behavior but does not repair forecast quality. V257 is rejected
+  before expansion. Evidence is stored in
+  `reports/aggregate/v257_dense_mask_forecast_head_pdppo_sixch_dev_20260830/`.
