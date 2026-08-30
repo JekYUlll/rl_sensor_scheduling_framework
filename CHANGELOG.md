@@ -5715,7 +5715,7 @@ Evidence is stored in
   not suitable for fresh confirmation.
 - Summary: `reports/aggregate/v290_factorized_action_pdppo_sixch_dev_20260830/`.
 
-## 2026-08-30 - V291 candidate-interaction policy diagnostic
+## 2026-08-30 - V291 unmatched candidate-interaction diagnostic
 
 - Completed the remote two-seed diagnostic on GPU1/GPU2 (`6801--6802`) with
   the unchanged V279 scene/evaluator, `forecast_decision` reward, exact
@@ -5724,11 +5724,12 @@ Evidence is stored in
 - The variant lost to the validation-selected static schedule in ordinary
   loss in both seeds (mean margin `-0.105433`) and also lost to feasible
   static, full-open, AoI, random, and round-robin in both seeds. Mean macro
-  margins were negative for all six comparisons.
+  margins were negative for all six comparisons. This result is not an
+  isolated candidate-interaction test because it also changed the reward
+  mode, update convention, and training length relative to V279.
 - Operationally, both seeds had zero warm-up aborts and zero always-on
   channels, but each had one always-off channel and five mid-duty channels.
   Switching rates were `0.052540` and `0.090317` per step.
-- Decision: close and reject candidate-level interaction as a mainline
-  improvement. It does not resolve the static shortcut and is retained only
-  as a negative architecture diagnostic. Aggregate:
+- Decision: retain V291 only as an unmatched diagnostic. A matched control is
+  required before accepting or rejecting candidate-level interaction. Aggregate:
   `reports/aggregate/v291_candidate_interaction_pdppo_sixch_dev_20260830/`.
