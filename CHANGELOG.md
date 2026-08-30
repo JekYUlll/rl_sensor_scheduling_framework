@@ -5829,3 +5829,24 @@ Evidence is stored in
   improve the static comparison and does not establish better temporal credit
   assignment.
 - Aggregate: `reports/aggregate/v295_corrected_scene_block_gain_pdppo_dev_20260831/`.
+
+# V296 - Corrected-scene decision-block credit screen (2026-08-31)
+
+### Change
+- Enabled the existing semi-Markov `decision_block_credit` implementation
+  with summed point forecast-loss credit.
+- Kept V294's corrected six-channel scene, arbitrary feasible subsets,
+  physical costs, partitions, 50,000-step PPO protocol, and fresh remote
+  seeds `6821--6822`.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `1/2`,
+  full-open `1/2`, AoI `2/2`, random `2/2`, round-robin `2/2`.
+- Static-normalized macro wins: validation static `0/2`, feasible static
+  `1/2`, full-open `0/2`, AoI `1/2`, random `2/2`, round-robin `2/2`.
+- Behavior: zero warm-up aborts, zero always-on/always-off channels, six and
+  five mid-duty channels, and switching rates `0.066290/0.045882`.
+- Decision: reject as a mainline improvement. Decision-block credit worsened
+  static transfer substantially (mean validation-static ordinary margin
+  `-0.072951`) and did not improve the overall evidence gate.
+- Aggregate: `reports/aggregate/v296_corrected_scene_decision_block_pdppo_dev_20260831/`.
