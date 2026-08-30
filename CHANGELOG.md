@@ -6111,3 +6111,26 @@ Evidence is stored in
   expanding pretraining and investigate return/credit or state-distribution
   alignment instead.
 - Aggregate: `reports/aggregate/v307_corrected_scene_softpretrain16k_pdppo_diag_20260831/`.
+
+# V310 - Explicit hard forecast-value pretraining diagnostic (2026-08-31)
+
+- Added and used an explicit `hard_forecast_value` target: the label is the
+  feasible candidate with minimum frozen-forecaster lookahead loss. This is
+  distinct from the legacy `hard` subtype-static AWBC mode.
+- Kept the corrected physical six-channel scene, arbitrary feasible masks,
+  evaluation protocol, and zero PPO updates fixed. Used 16,384
+  training-partition pretraining steps on scene seeds 6811/6812 with policy
+  seeds 6951/6952.
+- Action-label accuracy was `0.830/0.834`. Ordinary-loss wins were validation
+  static `0/2`, feasible static `0/2`, full-open `0/2`, AoI `1/2`, random
+  `1/2`, and round-robin `1/2`.
+- Static-normalized macro wins were `1/2` against validation static,
+  feasible static, full-open, AoI, random, and round-robin.
+- Custom behavior had zero warm-up aborts and no always-on/off channels on
+  seed6811; seed6812 had zero always-on and three always-off channels. Mid-duty
+  counts were `5` and `3`; switching was `0.016066/0.008684` per step.
+- Decision: reject as a primary improvement. Correct hard forecast-value labels
+  still do not transfer to held-out closed-loop forecast quality; stop expanding
+  this pretraining branch and target return/credit or state-distribution
+  alignment.
+- Aggregate: `reports/aggregate/v310_corrected_scene_hardforecastpretrain16k_pdppo_diag_20260831/`.
