@@ -5620,3 +5620,20 @@ Evidence is stored in
 - V285 is rejected as a mainline learner change. The block-aligned objective
   is retained as a tested diagnostic, not as evidence of improvement. Compact
   summaries are stored in the corresponding `reports/v285_*` directories.
+## 2026-08-30 - V286 soft forecast action-value auxiliary
+
+- Added a bounded forecast-derived soft action-ranking auxiliary to the
+  decision-time PPO configuration. The target uses the frozen forecaster's
+  feasible-candidate costs and is sampled only on genuine decision rows; no
+  bandit actions, event labels, or test feedback are used.
+- Completed the optimized remote run on GPU1/GPU2 for seeds `6801--6802`.
+  The auxiliary was active at coefficient `0.5`, temperature `0.75`, and
+  stride `32`; both runs completed `50,176` training timesteps.
+- Behavior remained valid in both seeds: zero warm-up aborts and zero
+  always-on/always-off sensors, with six mid-duty sensors in each run.
+- Ordinary forecast-loss results were `0.373409` (seed6801) and `0.404706`
+  (seed6802). PD-PPO beat AoI and random in seed6801, and beat round-robin in
+  both seeds; it lost to validation-selected static and full-open in both
+  seeds, and lost to static in both seeds. This is a dynamic-baseline
+  improvement but not a static-shortcut or mainline pass.
+- Summary: `reports/aggregate/v286_soft_action_value_pdppo_sixch_dev_20260830/`.
