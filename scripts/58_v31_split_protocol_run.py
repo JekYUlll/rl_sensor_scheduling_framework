@@ -747,6 +747,7 @@ def main() -> None:
             "oracle_loss_macro_subtype_event",
             "oracle_loss_macro_subtype_event_staticnorm",
             "max_static_ratio",
+            "mean_static_ratio",
         ],
         default="oracle_loss_mean",
     )
@@ -923,7 +924,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--reward-proxy-mode",
-        choices=["forecast", "forecast_decision", "forecast_gain", "forecast_block_gain", "aoi", "uncertainty", "coverage", "instant_error"],
+        choices=["forecast", "forecast_decision", "forecast_gain", "forecast_block_gain", "forecast_block_relative_gain", "aoi", "uncertainty", "coverage", "instant_error"],
         default="forecast",
     )
     parser.add_argument("--energy-account", action="store_true")
