@@ -833,6 +833,7 @@ def main() -> None:
     parser.add_argument("--event-aware-critic", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--trainable-action-prior", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--nonlinear-action-embedding", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--factorized-action-policy", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--event-gated-actor", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--context-feature-dim", type=int, default=0)
@@ -1315,6 +1316,7 @@ def main() -> None:
             "onpolicy_action_value_coef": float(args.onpolicy_action_value_coef),
             "onpolicy_action_value_scale": float(args.onpolicy_action_value_scale),
             "candidate_interaction_score": bool(args.candidate_interaction_score),
+            "factorized_action_policy": bool(args.factorized_action_policy),
             "soc_aux_horizon": int(args.soc_aux_horizon),
             "soc_aux_coef": float(args.soc_aux_coef),
             "learning_rate": float(args.learning_rate),
@@ -1714,6 +1716,11 @@ def main() -> None:
         "--nonlinear-action-embedding"
         if bool(args.nonlinear_action_embedding)
         else "--no-nonlinear-action-embedding"
+    )
+    cmd.append(
+        "--factorized-action-policy"
+        if bool(args.factorized_action_policy)
+        else "--no-factorized-action-policy"
     )
     cmd.append("--event-gated-actor" if bool(args.event_gated_actor) else "--no-event-gated-actor")
     cmd.append("--context-encoder" if bool(args.context_encoder) else "--no-context-encoder")

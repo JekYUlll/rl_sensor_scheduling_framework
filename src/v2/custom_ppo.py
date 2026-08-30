@@ -259,6 +259,7 @@ class CustomPPOConfig:
     use_action_mask: bool = True
     use_action_embedding: bool = True
     nonlinear_action_embedding: bool = False
+    factorized_action_policy: bool = False
     trainable_action_prior: bool = True
     event_aware_critic: bool = True
     event_gated_actor: bool = False
@@ -346,6 +347,7 @@ class MaskedActor:
         candidate_prior_logits: np.ndarray | None = None,
         use_action_embedding: bool = True,
         nonlinear_action_embedding: bool = False,
+        factorized_action_policy: bool = False,
         trainable_action_prior: bool = True,
         event_gated: bool = False,
         subtype_aux_classes: int = 0,
@@ -377,6 +379,7 @@ class MaskedActor:
             def __init__(self) -> None:
                 super().__init__()
                 self.use_action_embedding = bool(use_action_embedding)
+                self.factorized_action_policy = bool(factorized_action_policy)
                 self.event_gated = bool(event_gated)
                 self.n_actions = int(n_actions or 0)
                 self.subtype_aux_classes = max(0, int(subtype_aux_classes))
@@ -583,6 +586,11 @@ class MaskedActor:
                     else None
                 )
                 self.action_bias = nn.Linear(int(embed_dim), 1)
+                self.factorized_action_head = (
+                    nn.Linear(int(embed_dim), int(n_sensors))
+                    if self.factorized_action_policy
+                    else None
+                )
                 if self.forecast_value_head_enabled:
                     forecast_hidden = max(1, int(forecast_value_head_hidden_dim))
                     if self.forecast_value_head_mode == "independent":
@@ -753,17 +761,27 @@ class MaskedActor:
                 event_flag: Any | None = None,
             ) -> Any:
                 context = self.encode_context(obs, event_flag)
-                action_emb = self._action_embeddings(candidate_masks)
-                logits = context @ action_emb.transpose(0, 1) / max(float(action_emb.shape[-1]) ** 0.5, 1.0)
-                logits = logits + self.action_bias(action_emb).reshape(1, -1)
-                if self.candidate_interaction_head is not None:
+                if self.factorized_action_head is not None:
+                    channel_logits = self.factorized_action_head(context)
+                    masks = candidate_masks.float()
+                    log_active = torch.nn.functional.logsigmoid(channel_logits)
+                    log_inactive = torch.nn.functional.logsigmoid(-channel_logits)
+                    logits = (
+                        masks.unsqueeze(0) * log_active.unsqueeze(1)
+                        + (1.0 - masks.unsqueeze(0)) * log_inactive.unsqueeze(1)
+                    ).sum(dim=2)
+                else:
+                    action_emb = self._action_embeddings(candidate_masks)
+                    logits = context @ action_emb.transpose(0, 1) / max(float(action_emb.shape[-1]) ** 0.5, 1.0)
+                    logits = logits + self.action_bias(action_emb).reshape(1, -1)
+                if self.factorized_action_head is None and self.candidate_interaction_head is not None:
                     state_actions = context.unsqueeze(1).expand(-1, action_emb.shape[0], -1)
                     candidate_actions = action_emb.unsqueeze(0).expand(context.shape[0], -1, -1)
                     interaction = self.candidate_interaction_head(
                         torch_concat([state_actions, candidate_actions], dim=2)
                     ).squeeze(-1)
                     logits = logits + interaction
-                if self.quality_action_scale_raw is not None:
+                if self.factorized_action_head is None and self.quality_action_scale_raw is not None:
                     _, context_obs = self._split_obs(obs)
                     quality = context_obs[:, : int(n_sensors)]
                     masks = candidate_masks.float()
@@ -771,7 +789,7 @@ class MaskedActor:
                     selected_quality = quality @ masks.transpose(0, 1) / selected_count.reshape(1, -1)
                     scale = torch.nn.functional.softplus(self.quality_action_scale_raw)
                     logits = logits + scale * selected_quality
-                if self.quality_context_encoder is not None:
+                if self.factorized_action_head is None and self.quality_context_encoder is not None:
                     _, context_obs = self._split_obs(obs)
                     quality = context_obs[:, : int(n_sensors)].clamp(0.0, 1.0)
                     alert_context = context_obs[:, int(n_sensors) :]
@@ -783,16 +801,16 @@ class MaskedActor:
                         candidate_utility = candidate_utility / selected_count.reshape(1, -1)
                     scale = torch.nn.functional.softplus(self.quality_context_scale_raw)
                     logits = logits + scale * candidate_utility
-                if self.action_prior is not None:
+                if self.factorized_action_head is None and self.action_prior is not None:
                     logits = logits + self.action_prior.reshape(1, -1)
-                if self.forecast_value_head_enabled:
+                if self.factorized_action_head is None and self.forecast_value_head_enabled:
                     forecast_logits = self.forecast_value_logits(
                         obs,
                         candidate_masks,
                         action_mask,
                     )
                     logits = logits + self.forecast_value_head_scale * forecast_logits.detach()
-                if self.onpolicy_action_value_head is not None:
+                if self.factorized_action_head is None and self.onpolicy_action_value_head is not None:
                     # Returns have a different scale from policy logits.  Normalize the
                     # candidate values per state before using them as a detached scorer.
                     action_values = self.onpolicy_action_values(
@@ -915,6 +933,7 @@ class ActorCritic:
         candidate_prior_logits: np.ndarray | None = None,
         use_action_embedding: bool = True,
         nonlinear_action_embedding: bool = False,
+        factorized_action_policy: bool = False,
         trainable_action_prior: bool = True,
         event_aware_critic: bool = True,
         event_gated_actor: bool = False,
@@ -956,6 +975,7 @@ class ActorCritic:
                     candidate_prior_logits=candidate_prior_logits,
                     use_action_embedding=bool(use_action_embedding),
                     nonlinear_action_embedding=bool(nonlinear_action_embedding),
+                    factorized_action_policy=bool(factorized_action_policy),
                     trainable_action_prior=bool(trainable_action_prior),
                     event_gated=bool(event_gated_actor),
                     subtype_aux_classes=int(subtype_aux_classes),
@@ -1094,6 +1114,7 @@ class CustomPPO:
             candidate_prior_logits=self.candidate_prior_logits_np,
             use_action_embedding=bool(cfg.use_action_embedding),
             nonlinear_action_embedding=bool(cfg.nonlinear_action_embedding),
+            factorized_action_policy=bool(cfg.factorized_action_policy),
             trainable_action_prior=bool(cfg.trainable_action_prior),
             event_aware_critic=bool(cfg.event_aware_critic),
             event_gated_actor=bool(cfg.event_gated_actor),

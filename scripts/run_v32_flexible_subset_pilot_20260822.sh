@@ -67,6 +67,7 @@ CHECKPOINT_SELECTION_SCORE="${CHECKPOINT_SELECTION_SCORE:-oracle_loss_mean}"
 CHECKPOINT_REQUIRE_VALID_BEHAVIOR="${CHECKPOINT_REQUIRE_VALID_BEHAVIOR:-0}"
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
 NONLINEAR_ACTION_EMBEDDING="${NONLINEAR_ACTION_EMBEDDING:-0}"
+FACTORIZED_ACTION_POLICY="${FACTORIZED_ACTION_POLICY:-0}"
 EVENT_SUBTYPE_LATENT_ALPHA="${EVENT_SUBTYPE_LATENT_ALPHA:-0.22}"
 EVENT_SUBTYPE_TARGET_LAG_STEPS="${EVENT_SUBTYPE_TARGET_LAG_STEPS:-4}"
 EVENT_SUBTYPE_CONTEXT_LEAD_STEPS="${EVENT_SUBTYPE_CONTEXT_LEAD_STEPS:-8}"
@@ -275,6 +276,11 @@ for seed in "${SEEDS[@]}"; do
     control_args+=(--nonlinear-action-embedding)
   else
     control_args+=(--no-nonlinear-action-embedding)
+  fi
+  if [[ "$FACTORIZED_ACTION_POLICY" == "1" ]]; then
+    control_args+=(--factorized-action-policy)
+  else
+    control_args+=(--no-factorized-action-policy)
   fi
   if [[ "$SUBTYPE_ACTION_EVENT_ONLY" == "1" ]]; then
     control_args+=(--subtype-action-event-only)

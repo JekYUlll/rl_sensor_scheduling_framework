@@ -849,6 +849,7 @@ def main() -> None:
     parser.add_argument("--use-action-mask", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--use-action-embedding", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--nonlinear-action-embedding", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--factorized-action-policy", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--trainable-action-prior", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--event-aware-critic", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--event-gated-actor", action=argparse.BooleanOptionalAction, default=False)
@@ -1675,6 +1676,7 @@ def main() -> None:
             use_action_mask=bool(args.use_action_mask),
             use_action_embedding=bool(args.use_action_embedding),
             nonlinear_action_embedding=bool(args.nonlinear_action_embedding),
+            factorized_action_policy=bool(args.factorized_action_policy),
             trainable_action_prior=bool(args.trainable_action_prior),
             event_aware_critic=bool(args.event_aware_critic),
             event_gated_actor=bool(args.event_gated_actor),
@@ -2640,6 +2642,7 @@ def main() -> None:
             "use_action_mask": bool(args.use_action_mask),
             "use_action_embedding": bool(args.use_action_embedding),
             "nonlinear_action_embedding": bool(args.nonlinear_action_embedding),
+            "factorized_action_policy": bool(args.factorized_action_policy),
             "trainable_action_prior": bool(args.trainable_action_prior),
             "event_aware_critic": bool(args.event_aware_critic),
             "event_gated_actor": bool(args.event_gated_actor),
@@ -2804,6 +2807,7 @@ def as_serializable_config(
         "use_action_mask": int(bool(cfg.use_action_mask)),
         "use_action_embedding": int(bool(cfg.use_action_embedding)),
         "nonlinear_action_embedding": int(bool(cfg.nonlinear_action_embedding)),
+        "factorized_action_policy": int(bool(cfg.factorized_action_policy)),
         "trainable_action_prior": int(bool(cfg.trainable_action_prior)),
         "event_aware_critic": int(bool(cfg.event_aware_critic)),
         "event_gated_actor": int(bool(cfg.event_gated_actor)),

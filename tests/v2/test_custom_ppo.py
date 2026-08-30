@@ -195,6 +195,40 @@ def test_masked_actor_feasible_only() -> None:
     assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
 
 
+def test_factorized_action_policy_composes_channel_logits_and_masks_invalid_actions() -> None:
+    actor = MaskedActor(
+        obs_dim=5,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        n_actions=4,
+        factorized_action_policy=True,
+        trainable_action_prior=False,
+    )
+    obs = torch.randn((2, 5), dtype=torch.float32)
+    candidate_masks = torch.tensor(
+        [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [1.0, 1.0, 0.0],
+        ]
+    )
+    action_mask = torch.tensor([[True, False, True, False], [False, True, True, False]])
+
+    logits = actor.logits(obs, candidate_masks, action_mask)
+    probs = actor.dist(obs, candidate_masks, action_mask).probs
+
+    assert logits.shape == (2, 4)
+    assert torch.isfinite(logits).all()
+    assert torch.allclose(probs[:, [1, 3]][0], torch.zeros(2), atol=1e-7)
+    assert torch.allclose(probs[:, [0, 3]][1], torch.zeros(2), atol=1e-7)
+    assert torch.allclose(probs.sum(dim=1), torch.ones(2), atol=1e-6)
+
+    logits[0, 0].backward()
+    assert actor.factorized_action_head.weight.grad is not None
+
+
 def test_masked_actor_can_disable_state_independent_action_prior() -> None:
     actor = MaskedActor(
         obs_dim=5,
