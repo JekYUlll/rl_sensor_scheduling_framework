@@ -6235,3 +6235,15 @@ Evidence is stored in
   `reports/aggregate/v316_clean_sampler_eventprob067_h6_pdppo_diag_20260831/`.
 - Decision: reject balanced training starts as a sufficient repair and move to
   a different clean layer, such as closed-loop return/credit alignment.
+## 2026-08-31 - V317 decision-block credit diagnostic
+
+- Tested the existing semi-Markov decision-block credit path on the corrected
+  six-channel scene. Only actor credit assignment changed; the forecast-loss
+  objective, feasibility mask, evaluation windows, and PPO budget were fixed.
+- Validation-selected static wins were `0/2` for both ordinary loss and
+  static-normalized macro loss. Feasible-static wins were `1/2` on both
+  endpoints; seed6812 showed strong degradation.
+- Behavior: seed6811 had `0/0/4` always-on/always-off/mid-duty channels and
+  seed6812 had `0/1/4`; warm-up aborts were zero.
+- Decision: reject decision-block credit as a sufficient primary repair.
+- Aggregate: `reports/aggregate/v317_decision_block_credit_pdppo_dev_20260831/`.
