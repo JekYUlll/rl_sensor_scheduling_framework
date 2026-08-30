@@ -12,8 +12,8 @@ run_one() {
   local seed="$1" gpu="$2"
   (
     export CUDA_VISIBLE_DEVICES="$gpu"
-    export RUN_PREFIX="v286_soft_action_value_pdppo_sixch_dev"
-    export LOG_PREFIX="v286_soft_action_value_pdppo_sixch"
+    export RUN_PREFIX="v286_soft_action_value_pdppo_sixch_dev_opt"
+    export LOG_PREFIX="v286_soft_action_value_pdppo_sixch_opt"
     export REWARD_PROXY_MODE=forecast_decision
     export EVENT_START_PROB=1.0
     export DECISION_ONLY_POLICY_UPDATES=1
