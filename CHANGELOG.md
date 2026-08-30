@@ -4627,3 +4627,22 @@ tar -czf "$OUT…`
 - The branch condition is corrected in `1e45d75`, with a regression test that
   identical nowcast and realized weather produce identical quality profiles.
   V240 must regenerate fresh scenes before this route can be evaluated.
+
+## 2026-08-30 - V240 validates the corrected scene but not PPO learnability
+
+- V240 regenerated the balanced weather-conditioned quality scene for fresh
+  seeds `3101--3105` after the V239 source-consistency fix. The five channel
+  quality correlations with their weather drivers were `0.79--0.91`, so the
+  intended observable quality process is present and forecastable.
+- The receding oracle passed the latent-opportunity screen in `5/5` scenes,
+  with mean ordinary and macro margins `+0.037456/+0.101319` against the
+  validation-selected static schedule. This is a privileged diagnostic, not
+  deployable policy evidence.
+- The online quality-only context policy failed the screen (`0/5` ordinary,
+  `1/5` macro; mean margins `-0.012995/-0.028251`). The PPO rows also failed
+  in all five scenes, but this run used only `1,024` training steps and one
+  update; it is an under-training admission screen, not a valid conclusion
+  about PPO capacity. All PPO rows had zero warm-up aborts and no always-on or
+  always-off channels, with three to five mid-duty channels.
+- V240 therefore closes scene validation successfully and defers the policy
+  decision to a normally trained confirmation on the same corrected scene.
