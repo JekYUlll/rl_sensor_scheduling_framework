@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V258 structured temporal-encoder pilot
+
+- Completed a bounded two-seed pilot (`4801--4802`) replacing the flat history
+  MLP with the existing 64-unit GRU over 20-step values and observation masks.
+  The candidate forecast head was disabled; the physical six-channel scene,
+  arbitrary feasible subsets, forecast-loss reward, online context, minimum
+  dwell `6`, and 50,000-step PPO budget were unchanged.
+- Both seeds passed behavior: five or six intermediate-duty channels, zero
+  always-on/off channels, zero warm-up aborts, and switching rates
+  `0.048777--0.076422` per step.
+- Validation-selected and feasible static wins were `0/2` on ordinary and
+  macro endpoints. The best original dynamic family won `1/2` on both; mean
+  margins (baseline minus PD-PPO) were `-0.001874` ordinary and `-0.000785`
+  macro. Full-open was not beaten (`0/2`).
+- Decision: temporal encoding recovers some dynamic performance but does not
+  pass the static gate. V258 is rejected before expansion. Evidence is stored
+  in `reports/aggregate/v258_temporal_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V245 tests candidate-conditioned on-policy values
 
 - Added a five-seed development launcher for the existing candidate-conditioned
