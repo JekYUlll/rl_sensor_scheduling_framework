@@ -921,7 +921,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--reward-proxy-mode",
-        choices=["forecast", "forecast_decision", "forecast_gain", "forecast_block_gain", "forecast_block_relative_gain", "aoi", "coverage", "uncertainty", "instant_error"],
+        choices=["forecast", "forecast_decision", "forecast_gain", "forecast_block_gain", "forecast_block_relative_gain", "forecast_block_absolute", "aoi", "coverage", "uncertainty", "instant_error"],
         default="forecast",
         help=(
             "Training loss proxy for PPO reward. Final evaluation still reports the fixed forecast evaluator loss."

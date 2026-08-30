@@ -603,7 +603,7 @@ class WarmupSchedulingEnv:
                 else raw_loss
             )
             return raw_loss, float(shaped_loss)
-        if mode in {"forecast_block_gain", "forecast_block_relative_gain"}:
+        if mode in {"forecast_block_gain", "forecast_block_relative_gain", "forecast_block_absolute"}:
             # The trainer supplies the action-block counterfactual reward.  The
             # environment emits no duplicate absolute loss for this mode.
             return 0.0, 0.0

@@ -1298,6 +1298,7 @@ class CustomPPO:
                 greedy = action
                 awbc_valid = 0.0
             block_gain = 0.0
+            block_cost = 0.0
             decision_available = (
                 int(getattr(env, "elapsed_steps", 0)) <= 0
                 or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
@@ -1313,12 +1314,24 @@ class CustomPPO:
                     horizon=max(1, int(self.cfg.forecast_value_aux_lookahead_steps) or int(self.cfg.greedy_lookahead_steps)),
                     relative=(str(self.env_cfg.reward_proxy_mode) == "forecast_block_relative_gain"),
                 )
+            if str(self.env_cfg.reward_proxy_mode) == "forecast_block_absolute" and decision_available:
+                block_cost = forecast_block_cost(
+                    env,
+                    self.candidate_masks_np[action],
+                    horizon=max(
+                        1,
+                        int(self.cfg.forecast_value_aux_lookahead_steps)
+                        or int(self.cfg.greedy_lookahead_steps),
+                    ),
+                )
             _, reward, done, info = env.step_mask(self.candidate_masks_np[action])
             if str(self.env_cfg.reward_proxy_mode) in {
                 "forecast_block_gain",
                 "forecast_block_relative_gain",
             }:
                 reward = float(block_gain) - float(info.get("shaping_penalty", 0.0))
+            elif str(self.env_cfg.reward_proxy_mode) == "forecast_block_absolute":
+                reward = -float(block_cost) - float(info.get("shaping_penalty", 0.0))
 
             obs_rows.append(obs_np)
             action_rows.append(action)
@@ -2589,6 +2602,28 @@ def forecast_block_gain(
         scale = max(abs(float(baseline_cost)) + abs(float(selected_cost)), 1.0e-6)
         return float(np.clip(2.0 * gain / scale, -1.0, 1.0))
     return gain
+
+
+def forecast_block_cost(
+    env: WarmupSchedulingEnv,
+    selected_mask: np.ndarray,
+    *,
+    horizon: int,
+) -> float:
+    """Return the mean frozen-forecaster loss over one executable dwell block."""
+    snapshot = snapshot_env(env)
+    costs: list[float] = []
+    try:
+        for _ in range(max(1, int(horizon))):
+            _, _, done, info = env.step_mask(np.asarray(selected_mask, dtype=bool))
+            value = float(info.get("oracle_loss", float("nan")))
+            if np.isfinite(value):
+                costs.append(value)
+            if done:
+                break
+    finally:
+        restore_env(env, snapshot)
+    return float(np.mean(costs)) if costs else float("inf")
 
 
 def soft_forecast_value_targets(

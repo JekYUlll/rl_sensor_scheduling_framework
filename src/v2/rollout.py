@@ -65,6 +65,7 @@ def run_policy_rollout(
     block_reward_mode = str(reward_proxy_mode or "").strip().lower() in {
         "forecast_block_gain",
         "forecast_block_relative_gain",
+        "forecast_block_absolute",
     }
 
     for _ in range(int(steps)):
@@ -79,27 +80,24 @@ def run_policy_rollout(
             if block_reward_mode:
                 # Keep evaluation rewards identical to the custom PPO
                 # collection path. The local import avoids a module cycle.
-                from v2.custom_ppo import forecast_block_gain
+                from v2.custom_ppo import forecast_block_cost, forecast_block_gain
 
                 decision_available = (
                     int(getattr(env, "elapsed_steps", 0)) <= 0
                     or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
                 )
                 if decision_available:
-                    block_gain = forecast_block_gain(
-                        env,
-                        desired_mask,
-                        np.asarray(env.previous_action_mask, dtype=bool),
-                        horizon=max(
-                            1,
-                            int(
-                                reward_proxy_horizon
-                                if reward_proxy_horizon is not None
-                                else getattr(env.cfg, "min_dwell_steps", 1)
-                            ),
-                        ),
-                        relative=(str(reward_proxy_mode).strip().lower() == "forecast_block_relative_gain"),
-                    )
+                    horizon = max(1, int(reward_proxy_horizon if reward_proxy_horizon is not None else getattr(env.cfg, "min_dwell_steps", 1)))
+                    if str(reward_proxy_mode).strip().lower() == "forecast_block_absolute":
+                        block_gain = -forecast_block_cost(env, desired_mask, horizon=horizon)
+                    else:
+                        block_gain = forecast_block_gain(
+                            env,
+                            desired_mask,
+                            np.asarray(env.previous_action_mask, dtype=bool),
+                            horizon=horizon,
+                            relative=(str(reward_proxy_mode).strip().lower() == "forecast_block_relative_gain"),
+                        )
             _, reward, done, info = env.step_mask(desired_mask)
             if block_reward_mode:
                 reward = float(block_gain) - float(info.get("shaping_penalty", 0.0))
