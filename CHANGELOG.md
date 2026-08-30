@@ -6134,3 +6134,21 @@ Evidence is stored in
   this pretraining branch and target return/credit or state-distribution
   alignment.
 - Aggregate: `reports/aggregate/v310_corrected_scene_hardforecastpretrain16k_pdppo_diag_20260831/`.
+
+# V311 - Feasible-only hard forecast-value pretraining diagnostic (2026-08-31)
+
+- Corrected the teacher-label argmin to search only the currently feasible
+  candidate masks; fallback is used only when the feasible set is empty.
+- Re-ran 16,384 training-partition pretraining steps with zero PPO updates on
+  scene seeds 6811/6812 and policy seeds 6961/6962.
+- Ordinary-loss wins were `1/2` against validation static, feasible static,
+  full-open, AoI, random, and round-robin. Macro wins were also `1/2` for
+  every reference; mean ordinary margins were `-0.021405`, `+0.002732`,
+  `-0.011039`, `+0.001662`, `+0.019149`, and `+0.024493`, respectively.
+- Both seeds had zero warm-up aborts. Seed 6811 had no constant channels and
+  five mid-duty channels; seed 6812 had one always-on, two always-off, and
+  three mid-duty channels.
+- Decision: reject as a primary improvement. Feasible-only labels are now
+  semantically correct, but hard pretraining still does not transfer
+  reliably to held-out closed-loop performance.
+- Aggregate: `reports/aggregate/v311_corrected_scene_hardforecastpretrain16k_maskedteacher_pdppo_diag_20260831/`.
