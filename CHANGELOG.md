@@ -5500,3 +5500,21 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/aggregate/v280_eventbalanced_forecast_matched_checkpoint_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V281 decision-only ordinary-forecast credit control
+
+- Tested `forecast_decision` reward with decision-only PPO policy updates while
+  retaining the V280 scene, arbitrary feasible-subset geometry, online context,
+  and matched validation checkpoint control. Seeds `6801--6802` selected
+  updates 35 and 45.
+- Behavior and feasibility passed `2/2` with zero invalid, power,
+  startup-peak, and warm-up violations. Ordinary wins were `0/2` against
+  static and `1/2` against original dynamic; macro wins were `1/2` and `1/2`.
+- Mean ordinary margins were `-0.035775` (static) and `+0.018035` (dynamic);
+  mean macro margins were `-0.059817` and `+0.010715`. Full-open
+  ordinary/macro wins were `0/2` and `0/2`. Decision-only credit improves the
+  dynamic comparison but does not overcome the static shortcut; retain this
+  as a bounded ablation, not a final mainline pass.
+
+Evidence is stored in
+`reports/aggregate/v281_decision_only_forecast_pdppo_sixch_dev_20260830/`.
