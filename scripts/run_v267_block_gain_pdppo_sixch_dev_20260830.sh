@@ -16,7 +16,7 @@ run_one() {
     # a per-GPU experiment; otherwise use the launcher's indexed assignment.
     export CUDA_VISIBLE_DEVICES="$gpu"
     export RUN_PREFIX="${RUN_PREFIX:-v267_block_gain_pdppo_sixch_dev}"
-    export TOTAL_TIMESTEPS=50000 TRUTH_STEPS=36000 LOOKBACK=20 FORECAST_HORIZON=6
+    export TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS:-50000}" TRUTH_STEPS=36000 LOOKBACK=20 FORECAST_HORIZON=6
     export BUDGET=1.75 STARTUP_BUDGET=2.15 BUDGET_LABEL=b1p75
     export SENSOR_CFG="configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml"
     export EVENT_COVERAGE=0.55 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12 LEAD_STEPS=8
