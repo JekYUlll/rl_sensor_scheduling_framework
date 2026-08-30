@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V318 rejects hard pretraining plus decision-only PPO
+
+- Completed remote seeds `6811--6812` with feasible hard forecast-value
+  initialization (`16,384` pretraining steps) followed by `50,000` actual
+  decision-only PPO timesteps. The forecast reward, corrected six-channel
+  scene, B=`1.75`, minimum dwell `6`, static-normalized subtype objective, and
+  no-action-prior boundary were preserved; no bandit-dependent signal or
+  test-time event label was introduced.
+- The behavior gate passed in both seeds: zero warm-up aborts, zero always-on
+  channels, zero always-off channels, and five/six mid-duty channels. Switching
+  rates were `0.0192503` and `0.0396584` per step.
+- Predictive transfer remained insufficient. Against validation-selected
+  static, ordinary and macro wins were both `1/2`, with mean
+  baseline-minus-PD-PPO margins `-0.015945` and `-0.043152`. Against feasible
+  static, ordinary wins were `2/2` but macro wins only `1/2`; mean margins were
+  `+0.008192` and `+0.042764`. PD-PPO lost to the unconstrained full-open
+  reference in both seeds and endpoints.
+- Decision: reject the hard-initialization plus decision-only-PPO combination
+  as a sufficient primary repair. The behavior problem is separable from the
+  remaining closed-loop forecast-transfer problem. Full evidence is stored in
+  `reports/aggregate/v318_hardpretrain_decision_ppo_pdppo_dev_20260831/`.
+
 ## 2026-08-30 - V266 rejects soft forecast-value auxiliary
 
 - Completed remote seeds `5601--5602` with the existing frozen-forecaster
