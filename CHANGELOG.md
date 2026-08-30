@@ -5992,3 +5992,25 @@ Evidence is stored in
   promote to final evidence because ordinary static wins were `0/2` and one
   seed retained an always-off channel.
 - Aggregate: `reports/aggregate/v302_corrected_scene_decision_only_staticnorm_pdppo_dev_20260831/`.
+
+# V303 - V302 independent policy-seed replication (2026-08-31)
+
+### Change
+- Repeated V302 without changing its method or hyperparameters; only policy
+  initialization seeds changed to `6891--6892`.
+- Fixed an output-prefix issue before the accepted run so all V303 artifacts
+  are isolated from V302.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `0/2`,
+  full-open `0/2`, AoI `0/2`, random `1/2`, and round-robin `1/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `1/2`, full-open `0/2`, AoI `0/2`, random `1/2`, and round-robin `1/2`.
+- Mean ordinary margins versus those references were `-0.047333`, `-0.023196`,
+  `-0.036967`, `-0.024266`, `-0.006779`, and `-0.001435`.
+- Behavior: zero warm-up aborts and zero always-on channels, but both seeds
+  had one always-off channel and five mid-duty channels. Switching rates were
+  `0.060067/0.033000`.
+- Decision: reject V303 as confirmation. V302's positive dynamic result is
+  seed-sensitive and cannot support a larger final evaluation yet.
+- Aggregate: `reports/aggregate/v303_corrected_scene_decision_only_staticnorm_pdppo_replication_dev_20260831/`.
