@@ -1,5 +1,18 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V244 tests action-conditioned quality representation
+
+- Added a five-seed development launcher that reuses the V243 clean PPO
+  configuration while enabling the existing quality-context action score.
+  Quality forecasts are placed in the leading five context positions required
+  by the model interface; weather nowcasts remain available to its context
+  encoder.
+- V244 changes no scene, reward, feasibility rule, teacher, bandit signal, or
+  test-time label. It tests whether explicit candidate-mask quality utility
+  improves prediction-driven action selection.
+- Results will be interpreted against V243 only after all five raw metrics and
+  behavior diagnostics are present.
+
 ## 2026-08-30 - V243 removes the teacher collapse but not the static gap
 
 - V243 reran the corrected balanced quality scene on seeds `3401--3405` for
