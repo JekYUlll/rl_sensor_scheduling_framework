@@ -4646,3 +4646,22 @@ tar -czf "$OUT…`
   always-off channels, with three to five mid-duty channels.
 - V240 therefore closes scene validation successfully and defers the policy
   decision to a normally trained confirmation on the same corrected scene.
+
+## 2026-08-30 - V241 rejects the stripped PPO configuration
+
+- V241 reran the corrected balanced quality scene with fresh seeds `3201--3205`
+  and `100,000` PPO timesteps per seed. The flexible arbitrary-subset action
+  geometry and physical effective costs were unchanged.
+- The stripped configuration lost to validation static in `0/5` ordinary and
+  macro comparisons, and lost to the original dynamic baselines in `0/5`
+  ordinary and macro comparisons. Mean losses were `0.392407` for PPO,
+  `0.292391` for validation static, and `0.326913` for AoI; mean staticnorm
+  macro losses were `1.037785`, `0.754716`, and `0.832621`, respectively.
+- PPO beat random in `4/5` comparisons, but this is not the target evidence.
+  Behavior gates passed in all five runs: zero warm-up aborts, zero always-on
+  and always-off channels, and `4--5` mid-duty channels.
+- V241 is therefore a configuration rejection, not a scene rejection. The
+  corrected scene has demonstrated latent dynamic opportunity, but the
+  complete PD-PPO training scaffold (online alert context, subtype-aware
+  auxiliary supervision, and training-only action guidance) must be evaluated
+  before concluding that the method cannot learn the flexible subset task.
