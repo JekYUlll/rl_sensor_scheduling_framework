@@ -720,6 +720,8 @@ def main() -> None:
     parser.add_argument("--n-steps", type=int, default=2048)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--n-epochs", type=int, default=10)
+    parser.add_argument("--gamma", type=float, default=0.99)
+    parser.add_argument("--gae-lambda", type=float, default=0.95)
     parser.add_argument("--ent-coef", type=float, default=0.01)
     parser.add_argument("--channel-marginal-entropy-coef", type=float, default=0.0)
     parser.add_argument(
@@ -1707,6 +1709,8 @@ def main() -> None:
         else "--no-separate-actor-critic-grad-clip"
     )
     cmd.extend(["--learning-rate", str(float(args.learning_rate))])
+    cmd.extend(["--gamma", str(float(args.gamma))])
+    cmd.extend(["--gae-lambda", str(float(args.gae_lambda))])
     if bool(args.include_agent_cycle_phase):
         cmd.append("--include-agent-cycle-phase")
     if bool(args.include_observable_regime_belief):
