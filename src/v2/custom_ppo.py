@@ -695,9 +695,16 @@ class MaskedActor:
                     )
                     logits = logits + self.forecast_value_head_scale * forecast_logits.detach()
                 if self.onpolicy_action_value_head is not None:
-                    logits = logits + self.onpolicy_action_value_scale * self.onpolicy_action_values(
+                    # Returns have a different scale from policy logits.  Normalize the
+                    # candidate values per state before using them as a detached scorer.
+                    action_values = self.onpolicy_action_values(
                         obs, candidate_masks, context=context
                     ).detach()
+                    action_values = action_values - action_values.mean(dim=1, keepdim=True)
+                    action_values = action_values / action_values.std(
+                        dim=1, keepdim=True, unbiased=False
+                    ).clamp_min(1.0e-6)
+                    logits = logits + self.onpolicy_action_value_scale * action_values
                 if action_mask is not None:
                     valid = action_mask.bool()
                     if valid.ndim == 1:
