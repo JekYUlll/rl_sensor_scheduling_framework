@@ -21,11 +21,26 @@ concrete state-distribution-shift hypothesis for V311's seed divergence, but
 does not by itself prove that the exact optimizer failure is caused by this
 shift.
 
+## Reconstructed teacher-batch distribution
+
+The configured pretraining call uses `event_start_prob=1.0`, episode length
+512, and 16,384 steps, so it produces 32 deterministic training episodes.
+Reconstructing the exact start-index sampler from the V311 configuration gives
+batch event rates `0.707153` (seed 6811) and `0.665161` (seed 6812). The
+corresponding mean event-alert rates are `0.320624` and `0.292957`. Thus the
+actual teacher batches are substantially more event-heavy than the raw
+training-partition averages, and seed 6811's final windows (`0.369792` event
+rate) are far less event-heavy than the states used for pretraining. Seed
+6812's final windows (`0.704861`) are close to the event-heavy pretraining
+distribution. This is stronger evidence for a state-distribution explanation
+of the asymmetric V311 transfer, while remaining a deterministic sampler
+reconstruction rather than a logged batch trace.
+
 ## Consequence
 
 The next method-consistent diagnostic should log the actual pretraining-state
-statistics and compare them with held-out states, then test a training-only
-stratified start distribution using frozen partition boundaries. No final
+statistics and test a training-only balanced start distribution using frozen
+partition boundaries. No final
 test labels or baseline-dependent signal should enter that experiment.
 
 Command used:

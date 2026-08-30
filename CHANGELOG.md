@@ -6165,3 +6165,17 @@ Evidence is stored in
   the V311 seed divergence. This is partition-level evidence, not proof about
   the exact pretraining batches.
 - Audit: `reports/aggregate/v311_corrected_scene_hardforecastpretrain16k_maskedteacher_pdppo_diag_20260831/state_distribution_audit.md`.
+
+# V311 reconstructed teacher-batch audit (2026-08-31)
+
+- Reconstructed the exact 32 pretraining episode starts from the configured
+  sampler (`event_start_prob=1.0`, episode length 512, 16,384 steps).
+- Actual teacher-batch event rates were `0.707153` and `0.665161` for seeds
+  6811/6812, with event-alert rates `0.320624` and `0.292957`.
+- Seed6811 final evaluation has event rate `0.369792`, far below its
+  event-heavy teacher batch; seed6812 final evaluation has `0.704861`, close
+  to its teacher batch. This directly supports state-distribution shift as a
+  leading explanation for the asymmetric transfer, while remaining a sampler
+  reconstruction rather than a persisted batch trace.
+- The next experiment should use a training-only balanced start sampler and
+  compare it against the current event-heavy sampler, without test feedback.
