@@ -5466,6 +5466,7 @@ Evidence is stored in
 - Feasibility and behavior passed `2/2`, with zero invalid actions, power or startup-peak violations, and warm-up aborts.
 - Static ordinary/macro wins were `0/2` and `1/2`; original-dynamic wins were `1/2` and `1/2`; full-open wins were `0/2` and `0/2`. Mean ordinary/macro margins were `-0.021626/+0.000314` against static, `-0.001235/+0.023106` against dynamic, and `-0.038540/-0.024024` against full-open.
 - Decision: event-start balancing does not restore predictive transfer. Close this hypothesis and do not expand V278; the next work unit must audit online state-to-action identifiability or matched all-candidate supervision.
+- Protocol correction: the V278 metadata records `checkpoint_selection.enabled=false`, `selected_update=0`, and no validation score. V278 is therefore exploratory rather than a strict one-factor replication of V277; its result must not by itself close the event-coverage hypothesis.
 
 Evidence is stored in
 `reports/aggregate/v278_eventbalanced_forecast_pdppo_sixch_dev_20260830/`.
