@@ -5850,3 +5850,47 @@ Evidence is stored in
   static transfer substantially (mean validation-static ordinary margin
   `-0.072951`) and did not improve the overall evidence gate.
 - Aggregate: `reports/aggregate/v296_corrected_scene_decision_block_pdppo_dev_20260831/`.
+
+# V297 - Corrected-scene longer-training screen (2026-08-31)
+
+### Change
+- Increased ordinary PPO training from 50,000 to 100,000 timesteps while
+  keeping V294's corrected six-channel scene, point forecast-loss reward,
+  arbitrary feasible subsets, and evaluation protocol unchanged.
+- Ran fresh remote seeds `6831--6832` on GPU1/GPU2.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `1/2`,
+  full-open `0/2`, AoI `0/2`, random `0/2`, round-robin `1/2`.
+- Static-normalized macro wins: validation static `0/2`, feasible static
+  `1/2`, full-open `0/2`, AoI `1/2`, random `0/2`, round-robin `1/2`.
+- Behavior: zero warm-up aborts and zero always-on/always-off channels; both
+  seeds used all six channels at intermediate duty, with switching rates
+  `0.034303/0.049356`.
+- Decision: reject as a mainline improvement. Longer training worsened
+  validation-static ordinary transfer (mean margin `-0.108864`) and did not
+  preserve the 50k model's dynamic-baseline advantage.
+- Aggregate: `reports/aggregate/v297_corrected_scene_longer_training_pdppo_dev_20260831/`.
+
+# V298 - Corrected-scene validation-checkpoint screen (2026-08-31)
+
+### Change
+- Enabled the existing validation checkpoint selector using V294 validation
+  static candidates and `oracle_loss_mean`; no reward, action space, or online
+  information changes were made.
+- Ran fresh policy seeds `6841--6842` on the V294 truth/source runs.
+
+### Result
+- Ordinary-loss wins: validation static `1/2`, feasible static `1/2`,
+  full-open `0/2`, AoI `1/2`, random `1/2`, round-robin `1/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `1/2`, full-open `0/2`, AoI `1/2`, random `2/2`, round-robin `1/2`.
+- Mean ordinary margins versus validation static and feasible static were
+  `-0.033568` and `-0.009432`; mean macro margins were `-0.055507` and
+  `+0.030410`.
+- Behavior: zero warm-up aborts and zero always-on channels; each seed had one
+  always-off channel, with four/five mid-duty channels and switching rates
+  `0.021566/0.034882`.
+- Decision: reject as a mainline improvement. Checkpoint selection was active
+  but did not restore static transfer or the missing dynamic advantage.
+- Aggregate: `reports/aggregate/v298_corrected_scene_validation_checkpoint_pdppo_dev_20260831/`.
