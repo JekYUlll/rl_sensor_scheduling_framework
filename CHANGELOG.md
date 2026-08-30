@@ -4961,3 +4961,31 @@ tar -czf "$OUT…`
   behavior but remains insufficient for predictive learning. V253 is rejected
   before expansion. Evidence is stored in
   `reports/aggregate/v253_soft_forecast_value_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V254 static-normalized reward pilot
+
+- V254 tested validation-derived subtype forecast-loss normalization on fresh
+  seeds `4401--4402`. The six-channel physical scene, B=`1.75`, minimum dwell
+  `6`, solar target weight `3`, online context, and 50,000-step PPO schedule
+  were unchanged. No AWBC, BC pretraining, oracle teacher, or bandit signal was
+  used.
+- The normalization improved comparisons with the feasible static and simple
+  dynamic references: PD-PPO won feasible static on `1/2` ordinary and `2/2`
+  macro comparisons, and won round-robin and random on `2/2` ordinary
+  comparisons. Mean baseline-minus-PD-PPO margins were `+0.011954/+0.003684`
+  for feasible static, `+0.016317/+0.009386` for round-robin, and
+  `+0.018827/+0.002254` for random.
+- The core static shortcut was not overcome: validation-selected static wins
+  were `0/2` on both ordinary and macro endpoints, with mean margins
+  `-0.035171/-0.070360`. The unconstrained full-open reference also remained
+  stronger (`0/2` on both endpoints). The best original dynamic family had
+  `1/2` ordinary wins and `0/2` macro wins, with mean margins
+  `+0.006519/-0.009929`.
+- Behavior was not fully valid: seed4401 had six intermediate-duty channels,
+  while seed4402 had five intermediate-duty and one always-off channel;
+  always-on counts and warm-up aborts were zero. Switching rates were
+  `0.031843--0.061224` per step.
+- Interpretation: static-normalized reward is a useful partial diagnostic but
+  does not satisfy the mainline static and behavior gates. V254 is rejected
+  before expansion. Evidence is stored in
+  `reports/aggregate/v254_staticnorm_pdppo_sixch_dev_20260830/`.
