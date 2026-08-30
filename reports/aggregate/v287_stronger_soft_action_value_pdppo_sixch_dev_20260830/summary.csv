@@ -1,0 +1,3 @@
+seed,custom_ppo_loss,validation_static_loss,feasible_static_loss,aoi_loss,random_loss,round_robin_loss,full_open_loss,custom_switches_per_step,custom_warmup_abort_count,custom_always_on_count,custom_always_off_count,custom_mid_duty_count
+6801,0.364896688,0.313344206,0.366152014,0.381262451,0.382850581,0.396216693,0.356384730,0.057606021,0,0,0,6
+6802,0.388788413,0.382675569,0.381774465,0.421476977,0.421929899,0.425063710,0.357232631,0.034303083,0,0,2,4

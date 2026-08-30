@@ -5637,3 +5637,22 @@ Evidence is stored in
   seeds, and lost to static in both seeds. This is a dynamic-baseline
   improvement but not a static-shortcut or mainline pass.
 - Summary: `reports/aggregate/v286_soft_action_value_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V287 stronger soft action-value auxiliary
+
+- Completed the bounded remote sensitivity run on GPU1/GPU2 for seeds
+  `6801--6802`. The frozen scene and evaluator were unchanged; only the
+  existing forecast-derived soft action-ranking auxiliary was strengthened to
+  coefficient `1.0`, temperature `0.5`, and stride `8`. Each run collected
+  `30,720` timesteps.
+- Ordinary custom-PPO losses were `0.364897` and `0.388788`. Dynamic
+  comparisons improved: custom PPO beat AoI, random, and round-robin in both
+  seeds. It beat feasible static in one seed and validation-selected static in
+  neither; it lost to full-open in both. The static shortcut therefore remains
+  the unresolved main blocker.
+- Behavior passed the warm-up gate with zero aborts and no always-on sensors.
+  Seed6801 had six mid-duty and no always-off sensors; seed6802 had four
+  mid-duty and two always-off sensors. Switching rates were `0.057606` and
+  `0.034303` per step.
+- Decision: retain as bounded evidence, reject as a mainline promotion. Full
+  summary: `reports/aggregate/v287_stronger_soft_action_value_pdppo_sixch_dev_20260830/`.
