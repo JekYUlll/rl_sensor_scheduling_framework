@@ -6179,3 +6179,13 @@ Evidence is stored in
   reconstruction rather than a persisted batch trace.
 - The next experiment should use a training-only balanced start sampler and
   compare it against the current event-heavy sampler, without test feedback.
+
+# V311 execution-semantics correction (2026-08-31)
+
+- Rechecked the V311 manifest: the custom environment uses
+  `min_dwell_steps=6`. The earlier note that treated V311 as having no dwell
+  hold was incorrect.
+- Consequently, the four-step hard forecast-value teacher horizon does not
+  cover a full six-step executable block. The next diagnostic must align the
+  teacher horizon with the minimum dwell while separately testing the observed
+  training/evaluation state-distribution shift.

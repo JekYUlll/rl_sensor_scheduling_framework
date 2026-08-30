@@ -36,6 +36,12 @@ distribution. This is stronger evidence for a state-distribution explanation
 of the asymmetric V311 transfer, while remaining a deterministic sampler
 reconstruction rather than a logged batch trace.
 
+The V311 manifest also records `min_dwell_steps=6` for the custom environment.
+Therefore its four-step forecast-value teacher horizon does not cover a full
+minimum execution block. This is a separate action-target/closed-loop mismatch
+that must be tested before attributing all of the transfer failure to state
+distribution.
+
 ## Consequence
 
 The next method-consistent diagnostic should log the actual pretraining-state
