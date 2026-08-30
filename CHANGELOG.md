@@ -4684,3 +4684,14 @@ tar -czf "$OUT…`
   training scaffold is required, but does not pass the static-shortcut and
   no-permanent-off gates. Further work must target action-value representation
   or the physical value/cost mapping, not claim completion.
+## 2026-08-30 - V243 isolates the training-teacher effect
+
+- Added a five-seed, 100,000-timestep development launcher for the corrected
+  balanced quality scene. V243 retains the forecast-loss reward, online weather
+  and alert context, subtype auxiliary prediction, arbitrary feasible subsets,
+  and all execution constraints.
+- V243 removes AWBC, behavior-cloning pretraining, and subtype teacher actions
+  as a clean structural ablation of V242. It does not use bandit loss, labels,
+  residual actions, or test-time event information.
+- Results must be compared against V242 before any claim about action-value
+  representation or permanent channel-off behavior is made.
