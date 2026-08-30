@@ -6090,3 +6090,24 @@ Evidence is stored in
   baseline-dependent patch was added; the unresolved issue is policy transfer,
   return/credit assignment, or state-distribution mismatch.
 - Audit: `reports/aggregate/v306_teacher_quality_audit_20260831/`.
+
+# V307 - 16k soft forecast-value pretraining diagnostic (2026-08-31)
+
+- Extended the training-partition soft forecast-value pretraining from 4096 to
+  16,384 steps at temperature `0.75`, with `TOTAL_TIMESTEPS=0`; no PPO update,
+  bandit signal, or test-time event label was introduced.
+- Scene seeds were 6811 and 6812, with policy seeds 6931 and 6932. Action-label
+  accuracy was `0.831/0.827`; each custom rollout had zero warm-up aborts and
+  zero always-on/always-off channels, with six/five mid-duty channels.
+- Ordinary-loss wins were validation static `0/2`, feasible static `0/2`,
+  full-open `0/2`, AoI `0/2`, random `0/2`, and round-robin `0/2`.
+- Static-normalized macro wins were validation static `0/2`, feasible static
+  `0/2`, full-open `0/2`, AoI `0/2`, random `0/2`, and round-robin `0/2`.
+- Mean ordinary margins (baseline minus custom, positive is better for custom)
+  were `-0.082864`, `-0.058727`, `-0.072498`, `-0.059797`, `-0.042310`, and
+  `-0.036966` for the same references.
+- Decision: reject as a primary improvement. Greater teacher coverage improves
+  label fitting but does not transfer to closed-loop forecast quality; stop
+  expanding pretraining and investigate return/credit or state-distribution
+  alignment instead.
+- Aggregate: `reports/aggregate/v307_corrected_scene_softpretrain16k_pdppo_diag_20260831/`.
