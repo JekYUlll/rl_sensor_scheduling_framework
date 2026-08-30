@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V243 removes the teacher collapse but not the static gap
+
+- V243 reran the corrected balanced quality scene on seeds `3401--3405` for
+  `100,000` PPO timesteps. It retained forecast-loss reward, online weather
+  and alert context, subtype auxiliary prediction, arbitrary feasible subsets,
+  and execution constraints, while removing AWBC, behavior-cloning pretraining,
+  and subtype teacher actions.
+- All five runs passed the behavior gates: zero warm-up aborts, zero always-on
+  channels, zero always-off channels, and 4--5 mid-duty channels per rollout.
+  The mean switching rate was `0.071906`.
+- The policy did not beat validation-selected static on ordinary or macro loss
+  (`0/5` for both; mean margins `-0.071337/-0.100279`). It beat random in
+  `4/5` on both endpoints, while AoI and round-robin were each `3/5`.
+  V243 therefore confirms that the V242 permanent-off behavior was induced by
+  the training teacher, but removing that teacher alone does not solve the
+  forecast-value-to-action mapping or static-shortcut problem.
+- Aggregates are stored under
+  `reports/aggregate/v243_no_awbc_pdppo_balanced_quality_dev_20260830/`.
+
 ## 2026-08-28 - V233 closes joint weather-and-health state admission
 
 - V233 is a read-only information gate on the frozen V232 physical-group
