@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V264 rejects decision-sampled forecast reward
+
+- Completed remote seeds `5401--5402` with `forecast_decision`, which emits
+  the existing absolute forecast-loss reward only at genuine decision rows;
+  forced minimum-dwell rows emit zero forecast reward. The six-channel scene,
+  arbitrary feasible subsets, masked PPO, online context, B=`1.75`, and
+  minimum dwell `6` were unchanged.
+- The operational behavior gate passed in both seeds: zero always-on/off
+  channels, zero warm-up aborts, and five mid-duty channels. Switching rates
+  were `0.0447966` and `0.0729483` per step.
+- Predictive performance degraded. Validation-selected static ordinary wins
+  were `0/2` and macro wins `1/2`; the best original dynamic family won `0/2`
+  on both endpoints. Mean baseline-minus-PD-PPO margins were `-0.073276`
+  (static ordinary), `-0.067630` (static macro), `-0.066841` (dynamic
+  ordinary), and `-0.075141` (dynamic macro).
+- Decision: suppressing forced-row rewards is rejected as a primary fix. It
+  removes repeated signal but leaves the absolute overlapping forecast target
+  unresolved and makes learning too sparse. Evidence is stored in
+  `reports/aggregate/v264_decision_sampled_forecast_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V263 rejects terminal-only semi-Markov dwell credit
 
 - Completed a two-seed development run (`5301--5302`) using terminal-only

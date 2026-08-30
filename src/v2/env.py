@@ -318,6 +318,9 @@ class WarmupSchedulingEnv:
         history_before_step = np.asarray(self.history, dtype=float).copy()
         mask_history_before_step = np.asarray(self.mask_history, dtype=float).copy()
         carried_observation_before_step = np.asarray(self.last_observation, dtype=float).copy()
+        decision_available = (
+            int(self.elapsed_steps) <= 0 or int(self.dwell_hold_remaining) <= 0
+        )
         selected_mask = np.asarray(selected_mask, dtype=bool).reshape(-1)
         selected_mask, dwell_hold_applied = self._apply_min_dwell_guard(selected_mask)
         selected_mask, energy_guard_dropped = self._apply_energy_guard(selected_mask)
@@ -511,6 +514,7 @@ class WarmupSchedulingEnv:
             counterfactual_oracle_loss=counterfactual_oracle_loss,
             instant_error=error,
             event_subtype_id=event_subtype_id,
+            decision_available=decision_available,
         )
         base_loss = float(event_multiplier * float(reward_loss))
         shaping_penalty = (
@@ -562,6 +566,7 @@ class WarmupSchedulingEnv:
             ),
             "oracle_loss_reward": float(reward_loss),
             "reward_proxy_mode": str(self.cfg.reward_proxy_mode),
+            "decision_available": int(decision_available),
             "reward_proxy_loss": float(raw_reward_loss),
             "uncertainty_proxy_mean": float(self._target_uncertainty_loss()),
         }
@@ -577,9 +582,20 @@ class WarmupSchedulingEnv:
         counterfactual_oracle_loss: float | None,
         instant_error: float,
         event_subtype_id: int,
+        decision_available: bool,
     ) -> tuple[float, float]:
         mode = str(self.cfg.reward_proxy_mode or "forecast")
         if mode == "forecast":
+            raw_loss = float(oracle_loss if oracle_loss is not None else instant_error)
+            shaped_loss = (
+                self._reward_oracle_loss(raw_loss, event_subtype_id=event_subtype_id)
+                if oracle_loss is not None
+                else raw_loss
+            )
+            return raw_loss, float(shaped_loss)
+        if mode == "forecast_decision":
+            if not bool(decision_available):
+                return 0.0, 0.0
             raw_loss = float(oracle_loss if oracle_loss is not None else instant_error)
             shaped_loss = (
                 self._reward_oracle_loss(raw_loss, event_subtype_id=event_subtype_id)

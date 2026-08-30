@@ -295,6 +295,32 @@ def test_uncertainty_reward_decreases_when_target_is_observed() -> None:
     assert str(observed_info["reward_proxy_mode"]) == "uncertainty"
 
 
+def test_decision_sampled_forecast_reward_is_zero_during_forced_dwell() -> None:
+    cfg = WarmupEnvConfig(
+        state_columns=STATE_COLUMNS,
+        reward_target_columns=("air_temperature_c",),
+        reward_proxy_mode="forecast_decision",
+        lookback=2,
+        episode_len=3,
+        min_dwell_steps=2,
+        seed=5,
+    )
+    env = WarmupSchedulingEnv(
+        _truth(24),
+        _sensors(),
+        PowerConstraintsV2(max_active=1, per_step_budget=1.0, startup_peak_budget=1.0),
+        cfg,
+    )
+    env.reset()
+
+    _, _, _, first_info = env.step_mask(np.asarray([True, False, False]))
+    _, _, _, forced_info = env.step_mask(np.asarray([False, False, True]))
+
+    assert int(first_info["decision_available"]) == 1
+    assert int(forced_info["decision_available"]) == 0
+    assert float(forced_info["reward_proxy_loss"]) == pytest.approx(0.0)
+
+
 def _single_temperature_env(*, noise_std: float, update_mode: str) -> WarmupSchedulingEnv:
     truth = _truth(24).copy()
     truth.loc[0, "air_temperature_c"] = 10.0

@@ -922,7 +922,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--reward-proxy-mode",
-        choices=["forecast", "forecast_gain", "aoi", "uncertainty", "coverage", "instant_error"],
+        choices=["forecast", "forecast_decision", "forecast_gain", "aoi", "uncertainty", "coverage", "instant_error"],
         default="forecast",
     )
     parser.add_argument("--energy-account", action="store_true")
