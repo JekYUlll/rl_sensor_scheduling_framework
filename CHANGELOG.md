@@ -5437,3 +5437,25 @@ and selected run directories are `reports/v275_*_seed6401--6402_*`.
 
 Evidence is stored in
 `reports/aggregate/v276_staticnorm_checkpoint_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V277 mean static-normalized checkpoint selection
+
+- V277 tested only a validation-selection change: the mean of ordinary and
+  static-normalized macro ratios. Training, reward, scene, action geometry,
+  and online information were unchanged.
+- After correcting an outer-runner parser omission, fresh source assets
+  `6601--6602` were reused in an authoritative selected retry. The selected
+  stages completed with finite validation selection.
+- Feasibility passed with zero invalid actions, power violations, startup-peak
+  violations, and warm-up aborts. Behavior passed only `1/2`: seed6601 had
+  one always-on and three always-off channels with no mid-duty channels;
+  seed6602 had one always-off channel and five mid-duty channels.
+- Static ordinary and macro wins were both `0/2`, with mean margins
+  `-0.032284` and `-0.135743`. Dynamic ordinary wins were `2/2`, but dynamic
+  macro wins were `1/2` with mean macro margin `-0.046591`.
+- Decision: reject V277 and close the checkpoint-objective branch. Balancing
+  validation endpoint ratios does not produce stable predictive or behavior
+  performance; no final expansion follows from this wave.
+
+Evidence is stored in
+`reports/aggregate/v277_mean_staticnorm_checkpoint_pdppo_sixch_dev_retry2_20260830/`.
