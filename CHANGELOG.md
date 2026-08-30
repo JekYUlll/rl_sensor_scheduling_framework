@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V244 result closes the direct quality-action route
+
+- V244 completed on fresh seeds `3501--3505` with the existing forecast-loss
+  reward, hard feasible-subset action space, online context, and no AWBC/BC or
+  teacher action guidance. The five quality forecasts were placed in the
+  leading positions required by the action-conditioned quality module.
+- Behavior was valid in all five runs: zero warm-up aborts, zero always-on and
+  always-off channels, five mid-duty channels, and switching rates
+  `0.063048--0.095441`.
+- Against validation-selected static, V244 achieved `1/5` ordinary wins and
+  `0/5` macro wins, with mean baseline-minus-PPO margins `-0.051067/-0.069200`.
+  It also failed to beat AoI or round-robin consistently. The explicit quality
+  action score therefore improves neither static performance nor the central
+  action-value mapping under this scene.
+- No confirmatory expansion is authorized for this route. Aggregates are stored
+  under `reports/aggregate/v244_quality_action_context_pdppo_dev_20260830/`.
+
 ## 2026-08-30 - V244 rejects direct quality-action scoring
 
 - V244 evaluated the existing action-conditioned quality representation on fresh
