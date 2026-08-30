@@ -1,5 +1,18 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V245 tests candidate-conditioned on-policy values
+
+- Added a five-seed development launcher for the existing candidate-conditioned
+  on-policy value head. The head is trained from PPO returns and contributes to
+  candidate-mask logits; the forecast-loss reward, online context, feasible
+  subset geometry, and no-teacher configuration are unchanged.
+- V245 uses no bandit signal, residual action, counterfactual label, or final
+  execution event label. It tests whether an explicit state-action value
+  representation can recover action consequences that the shared embedding did
+  not learn.
+- Results will be compared with V243 and V244 after raw metrics and behavior
+  diagnostics are complete.
+
 ## 2026-08-30 - V244 result closes the direct quality-action route
 
 - V244 completed on fresh seeds `3501--3505` with the existing forecast-loss
