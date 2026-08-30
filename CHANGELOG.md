@@ -5389,3 +5389,28 @@ Evidence is stored in
 
 Audit evidence is stored in
 `reports/aggregate/v274_validation_checkpoint_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V275 matched validation-checkpoint selection
+
+- Generated same-seed source assets for seeds `6401--6402`, then retrained
+  selected runs with the matching `control_source_run_dir`. Validation
+  checkpoint selection was active: each run had one validation scene, finite
+  scores, zero behavior failures, and selected update `30`.
+- Feasibility and behavior passed `2/2`: zero invalid actions, power or
+  startup-peak violations, and warm-up aborts. Seeds had four and five
+  mid-duty channels, respectively, with no always-on channels; seed6401 had
+  one always-off channel.
+- Predictive transfer was positive against the original dynamic family in
+  both ordinary and macro scores (mean margins `+0.014761` and `+0.069904`).
+  Against the static shortcut, wins were only `1/2` on both endpoints and
+  mean margins were `-0.008613` ordinary and `+0.042382` macro, with the
+  macro interval crossing zero. The unconstrained full-open reference won
+  `0/2` and had negative mean margins on both endpoints.
+- Decision: retain V275 as valid checkpoint-selection evidence, but reject it
+  as a complete primary-method pass. It supports dynamic-baseline transfer
+  and operational validity, but does not establish stable superiority over
+  the static shortcut. No final 24-seed launch is authorized from this wave.
+
+Evidence is stored in
+`reports/aggregate/v275_selected_forecast_pdppo_sixch_dev_20260830/`; source
+and selected run directories are `reports/v275_*_seed6401--6402_*`.
