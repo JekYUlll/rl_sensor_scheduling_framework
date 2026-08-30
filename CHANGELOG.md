@@ -4962,6 +4962,29 @@ tar -czf "$OUT…`
   before expansion. Evidence is stored in
   `reports/aggregate/v253_soft_forecast_value_pdppo_sixch_dev_20260830/`.
 
+## 2026-08-30 - V256 candidate-level forecast-head pilot
+
+- V256 tested the existing candidate-conditioned forecast-value head on fresh
+  seeds `4601--4602`. The V249/V251 physical six-channel scene, arbitrary
+  feasible masks, online context, masked PPO, B=`1.75`, minimum dwell `6`, and
+  50,000 PPO steps were retained. The head used sparse training-partition
+  frozen-forecaster candidate costs; no bandit action, bandit margin,
+  counterfactual label, or test-time event label was used.
+- The operational gate passed in both seeds: six intermediate-duty channels,
+  zero always-on/off channels, zero warm-up aborts, and switching rates
+  `0.051238--0.067304` per step.
+- Predictive performance did not pass. Ordinary wins were `0/2` against
+  validation-selected static, feasible static, and AoI; `1/2` against
+  round-robin and random; and `0/2` against full-open. Macro wins were `0/2`
+  against validation-selected static, AoI, round-robin, random, and full-open;
+  feasible static was `1/2`. Mean baseline-minus-PD-PPO margins were
+  `-0.012231/-0.009822` for validation-selected static and
+  `-0.017144/-0.015253` against AoI on ordinary/macro loss.
+- Interpretation: sparse candidate-level forecast supervision preserves
+  healthy dynamic behavior but does not repair predictive credit assignment.
+  V256 is rejected before expansion. Evidence is stored in
+  `reports/aggregate/v256_mask_forecast_head_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V255 forecast-gain reward pilot
 
 - V255 tested the existing forecast-gain reward on fresh seeds `4501--4502`.
