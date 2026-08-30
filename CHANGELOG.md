@@ -5752,3 +5752,20 @@ Evidence is stored in
   a local seed6802 improvement but does not improve the static-normalized
   macro result or produce stable overall gains over V279. Aggregate:
   `reports/aggregate/v292_matched_candidate_interaction_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V293 forecast-quality context diagnostic
+
+- Completed the matched remote two-seed run on GPU1/GPU2 (`6801--6802`). V293
+  adds the legal four-dimensional weather nowcast and six per-channel
+  forecast-quality columns to the context encoder while preserving V279's
+  scene, evaluator, reward, action geometry, costs, and 50,000-step PPO
+  protocol. No event labels, bandit actions, or test feedback were used.
+- Ordinary wins were `0/2` against validation-selected static, feasible
+  static, full-open, and AoI; `1/2` against random and round-robin. Macro
+  wins were `1/2`, `2/2`, `0/2`, `2/2`, `2/2`, and `2/2` respectively.
+- Behavior passed: zero warm-up aborts, zero always-on/always-off channels;
+  mid-duty counts were five and six, with switching rates `0.031191/0.039079`.
+- Decision: reject the expanded context as a mainline improvement. It improves
+  selected macro comparisons but does not improve the static shortcut or the
+  ordinary-loss transfer problem. Aggregate:
+  `reports/aggregate/v293_forecast_quality_context_pdppo_sixch_dev_20260830/`.
