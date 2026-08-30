@@ -5477,3 +5477,12 @@ Evidence is stored in
 - Verified that validation checkpoint selection was active for both seeds, with finite validation records and selected updates 30 and 5. The test failure is therefore not caused by an inactive checkpoint selector.
 - Localized the remaining issue to seed-dependent policy transfer: seed6601 collapsed to one always-on, three always-off, and zero mid-duty channels, while seed6602 retained five mid-duty channels. V277 is closed.
 - Decision: stop trying checkpoint score formulas. Before another PPO wave, audit candidate-action-value supervision or scene identifiability and retain the arbitrary-subset geometry unchanged.
+
+## 2026-08-30 - V279 checkpoint-control correction
+
+- V279 used the intended checkpoint interval and behavior requirement, but the
+  run omitted `CONTROL_SOURCE_RUN_DIR`. Its checkpoint records therefore had
+  zero validation scenes and NaN selection scores; the reported V279 metrics
+  are excluded from controlled evidence.
+- V280 was created to repeat the same event-balanced control with same-seed
+  V279 truth/oracle/static-validation assets supplied explicitly.
