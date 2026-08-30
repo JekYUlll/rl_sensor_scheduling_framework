@@ -5460,6 +5460,16 @@ Evidence is stored in
 Evidence is stored in
 `reports/aggregate/v277_mean_staticnorm_checkpoint_pdppo_sixch_dev_retry2_20260830/`.
 
+## 2026-08-30 - V278 event-balanced ordinary forecast control
+
+- Changed only the training event-start probability from `0.70` to `1.0`; ordinary per-step forecast reward, scene, six-channel arbitrary-subset geometry, architecture, and evaluation were unchanged. Fresh seeds `6701--6702` completed remotely.
+- Feasibility and behavior passed `2/2`, with zero invalid actions, power or startup-peak violations, and warm-up aborts.
+- Static ordinary/macro wins were `0/2` and `1/2`; original-dynamic wins were `1/2` and `1/2`; full-open wins were `0/2` and `0/2`. Mean ordinary/macro margins were `-0.021626/+0.000314` against static, `-0.001235/+0.023106` against dynamic, and `-0.038540/-0.024024` against full-open.
+- Decision: event-start balancing does not restore predictive transfer. Close this hypothesis and do not expand V278; the next work unit must audit online state-to-action identifiability or matched all-candidate supervision.
+
+Evidence is stored in
+`reports/aggregate/v278_eventbalanced_forecast_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - Post-V277 action-space and checkpoint audit
 
 - Verified that V277 contains 22 masks: empty, all six single-channel subsets, and all 15 two-channel subsets. All are feasible under the reported steady-state and startup budgets; no artificial three-way selector was imposed.
