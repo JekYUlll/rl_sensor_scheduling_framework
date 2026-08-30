@@ -5486,3 +5486,17 @@ Evidence is stored in
   are excluded from controlled evidence.
 - V280 was created to repeat the same event-balanced control with same-seed
   V279 truth/oracle/static-validation assets supplied explicitly.
+## 2026-08-30 - V280 matched-source event-balanced control
+
+- Repeated V278 with same-seed V279 truth/oracle/static-validation assets as an
+  explicit control source, restoring effective validation-only checkpoint
+  selection. Seeds `6801--6802` selected updates 15 and 5.
+- Behavior/feasibility passed `2/2` with zero invalid, power, startup-peak, and
+  warm-up violations. Ordinary forecast wins were `0/2` against static and
+  `0/2` against original dynamic; macro wins were `1/2` and `2/2`.
+- Mean ordinary margins were `-0.068899` (static) and `-0.015089` (dynamic);
+  mean macro margins were `-0.039221` and `+0.031311`. Event-start balancing
+  did not restore ordinary predictive performance; close this hypothesis.
+
+Evidence is stored in
+`reports/aggregate/v280_eventbalanced_forecast_matched_checkpoint_pdppo_sixch_dev_20260830/`.
