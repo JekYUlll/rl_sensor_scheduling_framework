@@ -16,6 +16,7 @@ from v2.custom_ppo import (  # noqa: E402
     MaskedActor,
     advantage_weighted_bc_loss,
     channel_marginal_distribution_entropy,
+    compute_decision_block_credit,
     feasible_candidate_mask,
     full_rollout_schedule,
     masked_soft_target_cross_entropy,
@@ -35,6 +36,35 @@ def test_policy_decision_mask_excludes_forced_dwell_rows() -> None:
     assert np.array_equal(policy_decision_mask(masks), np.asarray([0.0, 1.0, 0.0]))
     with pytest.raises(ValueError):
         policy_decision_mask(np.asarray([True, False, True]))
+
+
+def test_decision_block_credit_accumulates_forced_rows_and_duration_discount() -> None:
+    advantages, returns, durations = compute_decision_block_credit(
+        np.asarray([1.0, 2.0, 3.0, 4.0]),
+        np.zeros(4),
+        np.zeros(4),
+        np.asarray([1.0, 0.0, 0.0, 1.0]),
+        np.zeros(4, dtype=int),
+        gamma=0.5,
+        gae_lambda=1.0,
+    )
+    assert np.allclose(advantages, [3.25, 0.0, 0.0, 4.0])
+    assert np.allclose(returns, [3.25, 0.0, 0.0, 4.0])
+    assert np.array_equal(durations, [3, 0, 0, 1])
+
+
+def test_decision_block_credit_resets_at_episode_boundary() -> None:
+    advantages, _, durations = compute_decision_block_credit(
+        np.asarray([1.0, 2.0, 10.0]),
+        np.zeros(3),
+        np.asarray([0.0, 1.0, 1.0]),
+        np.asarray([1.0, 0.0, 1.0]),
+        np.asarray([0, 0, 1]),
+        gamma=0.5,
+        gae_lambda=1.0,
+    )
+    assert np.allclose(advantages, [2.0, 0.0, 10.0])
+    assert np.array_equal(durations, [2, 0, 1])
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
 from v2.oracle import LinearFrozenForecastOracle, OracleConfig, build_supervised_windows  # noqa: E402
 from v2.power_projector import PowerConstraintsV2  # noqa: E402

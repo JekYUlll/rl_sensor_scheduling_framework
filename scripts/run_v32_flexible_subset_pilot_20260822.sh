@@ -118,6 +118,7 @@ ONPOLICY_ACTION_VALUE_SCALE="${ONPOLICY_ACTION_VALUE_SCALE:-1}"
 TEMPORAL_ENCODER="${TEMPORAL_ENCODER:-0}"
 TEMPORAL_HIDDEN_DIM="${TEMPORAL_HIDDEN_DIM:-64}"
 DECISION_ONLY_POLICY_UPDATES="${DECISION_ONLY_POLICY_UPDATES:-0}"
+DECISION_BLOCK_CREDIT="${DECISION_BLOCK_CREDIT:-0}"
 MEASUREMENT_UPDATE_MODE="${MEASUREMENT_UPDATE_MODE:-direct}"
 COMMON_RANDOM_NUMBERS="${COMMON_RANDOM_NUMBERS:-0}"
 CHANNEL_QUALITY_ENABLED="${CHANNEL_QUALITY_ENABLED:-0}"
@@ -146,6 +147,10 @@ fi
 DECISION_UPDATE_ARGS=(--no-decision-only-policy-updates)
 if [[ "$DECISION_ONLY_POLICY_UPDATES" == "1" ]]; then
   DECISION_UPDATE_ARGS=(--decision-only-policy-updates)
+fi
+DECISION_BLOCK_ARGS=(--no-decision-block-credit)
+if [[ "$DECISION_BLOCK_CREDIT" == "1" ]]; then
+  DECISION_BLOCK_ARGS=(--decision-block-credit)
 fi
 QUALITY_ARGS=(--no-channel-quality-enabled)
 if [[ "$CHANNEL_QUALITY_ENABLED" == "1" ]]; then
@@ -422,6 +427,7 @@ for seed in "${SEEDS[@]}"; do
     "${CANDIDATE_INTERACTION_SCORE_ARGS[@]}" \
     "${TEMPORAL_ARGS[@]}" \
     "${DECISION_UPDATE_ARGS[@]}" \
+    "${DECISION_BLOCK_ARGS[@]}" \
     --temporal-hidden-dim "$TEMPORAL_HIDDEN_DIM" \
     --no-include-event-flag-in-state \
     --soc-aux-horizon 0 \

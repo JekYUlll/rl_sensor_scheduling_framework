@@ -873,6 +873,12 @@ def main() -> None:
         default=False,
         help="Update PPO actor terms only on rows with multiple executable actions.",
     )
+    parser.add_argument(
+        "--decision-block-credit",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use semi-Markov reward credit accumulated between executable decisions.",
+    )
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
@@ -1678,6 +1684,7 @@ def main() -> None:
             candidate_interaction_score=bool(args.candidate_interaction_score),
             temporal_encoder_enabled=bool(args.temporal_encoder),
             decision_only_policy_updates=bool(args.decision_only_policy_updates),
+            decision_block_credit=bool(args.decision_block_credit),
             temporal_history_steps=int(args.lookback),
             temporal_state_dim=len(helpers.STATE_COLUMNS),
             temporal_hidden_dim=max(1, int(args.temporal_hidden_dim)),
@@ -2802,6 +2809,7 @@ def as_serializable_config(
         "candidate_interaction_score": int(bool(cfg.candidate_interaction_score)),
             "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
             "decision_only_policy_updates": int(bool(cfg.decision_only_policy_updates)),
+            "decision_block_credit": int(bool(cfg.decision_block_credit)),
         "temporal_history_steps": int(cfg.temporal_history_steps),
         "temporal_state_dim": int(cfg.temporal_state_dim),
         "temporal_hidden_dim": int(cfg.temporal_hidden_dim),

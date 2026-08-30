@@ -853,6 +853,11 @@ def main() -> None:
         action=argparse.BooleanOptionalAction,
         default=False,
     )
+    parser.add_argument(
+        "--decision-block-credit",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
@@ -1711,6 +1716,11 @@ def main() -> None:
         "--decision-only-policy-updates"
         if bool(args.decision_only_policy_updates)
         else "--no-decision-only-policy-updates"
+    )
+    cmd.append(
+        "--decision-block-credit"
+        if bool(args.decision_block_credit)
+        else "--no-decision-block-credit"
     )
     cmd.extend(["--temporal-hidden-dim", str(max(1, int(args.temporal_hidden_dim)))])
     cmd.append(

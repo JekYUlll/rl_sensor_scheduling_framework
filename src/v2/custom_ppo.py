@@ -36,6 +36,83 @@ def policy_decision_mask(action_masks: np.ndarray) -> np.ndarray:
     return (np.sum(masks, axis=1) > 1).astype(np.float32)
 
 
+def compute_decision_block_credit(
+    rewards: np.ndarray,
+    values: np.ndarray,
+    dones: np.ndarray,
+    decision_rows: np.ndarray,
+    episode_ids: np.ndarray,
+    *,
+    gamma: float,
+    gae_lambda: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Compute semi-Markov advantages for rows where a new action was possible.
+
+    Each decision receives the discounted reward accumulated until the next
+    decision in the same episode. Forced dwell rows remain available to the
+    critic, but do not become separate policy transitions.
+    """
+    rewards = np.asarray(rewards, dtype=np.float32).reshape(-1)
+    values = np.asarray(values, dtype=np.float32).reshape(-1)
+    dones = np.asarray(dones, dtype=np.float32).reshape(-1)
+    decisions = np.asarray(decision_rows, dtype=np.float32).reshape(-1) > 0.5
+    episodes = np.asarray(episode_ids, dtype=np.int64).reshape(-1)
+    n = int(rewards.size)
+    if not (values.size == dones.size == decisions.size == episodes.size == n):
+        raise ValueError("reward, value, done, decision, and episode arrays must have equal length")
+    block_advantages = np.zeros(n, dtype=np.float32)
+    block_returns = np.zeros(n, dtype=np.float32)
+    durations = np.zeros(n, dtype=np.int64)
+    decision_indices = np.flatnonzero(decisions)
+    if decision_indices.size == 0:
+        return block_advantages, block_returns, durations
+
+    deltas: list[float] = []
+    block_indices: list[int] = []
+    block_discounts: list[float] = []
+    for position, start in enumerate(decision_indices.tolist()):
+        episode = int(episodes[start])
+        next_start = n
+        if position + 1 < decision_indices.size:
+            candidate = int(decision_indices[position + 1])
+            if int(episodes[candidate]) == episode:
+                next_start = candidate
+        block_reward = 0.0
+        discount = 1.0
+        for row in range(int(start), int(next_start)):
+            block_reward += discount * float(rewards[row])
+            discount *= float(gamma)
+            if float(dones[row]) > 0.5:
+                next_start = row + 1
+                break
+        duration = max(1, int(next_start) - int(start))
+        next_value = (
+            float(values[next_start])
+            if next_start < n and int(episodes[next_start]) == episode
+            else 0.0
+        )
+        transition_discount = float(gamma) ** duration
+        block_indices.append(int(start))
+        block_discounts.append(transition_discount)
+        durations[start] = int(duration)
+        deltas.append(block_reward + transition_discount * next_value - float(values[start]))
+
+    next_advantage = 0.0
+    previous_episode: int | None = None
+    for reverse_position in range(len(block_indices) - 1, -1, -1):
+        start = block_indices[reverse_position]
+        episode = int(episodes[start])
+        if previous_episode is None or episode != previous_episode:
+            next_advantage = 0.0
+        continuation = block_discounts[reverse_position] * float(gae_lambda)
+        advantage = float(deltas[reverse_position]) + continuation * next_advantage
+        block_advantages[start] = np.float32(advantage)
+        block_returns[start] = np.float32(advantage + float(values[start]))
+        next_advantage = advantage
+        previous_episode = episode
+    return block_advantages, block_returns, durations
+
+
 def channel_marginal_distribution_entropy(action_probs: Any, candidate_masks: Any) -> Any:
     """Return normalized entropy of channel inclusion mass over a policy batch."""
     torch, _ = _torch_modules()
@@ -191,6 +268,7 @@ class CustomPPOConfig:
     temporal_state_dim: int = 0
     temporal_hidden_dim: int = 64
     decision_only_policy_updates: bool = False
+    decision_block_credit: bool = False
     soc_aux_horizon: int = 0
     soc_aux_coef: float = 0.0
     device: str = "auto"
@@ -1259,6 +1337,20 @@ class CustomPPO:
             gae_lambda=float(self.cfg.gae_lambda),
         )
         returns = advantages + values
+        if bool(self.cfg.decision_block_credit):
+            policy_advantages, policy_returns, decision_durations = compute_decision_block_credit(
+                rewards,
+                values,
+                dones,
+                np.asarray(decision_rows, dtype=np.float32),
+                np.asarray(episode_rows, dtype=np.int64),
+                gamma=float(self.cfg.gamma),
+                gae_lambda=float(self.cfg.gae_lambda),
+            )
+        else:
+            policy_advantages = advantages.astype(np.float32)
+            policy_returns = returns.astype(np.float32)
+            decision_durations = np.zeros(len(rewards), dtype=np.int64)
         soc_targets, soc_mask = build_future_soc_targets(
             np.asarray(soc_rows, dtype=np.float32),
             np.asarray(episode_rows, dtype=np.int64),
@@ -1274,6 +1366,9 @@ class CustomPPO:
             "values": values,
             "advantages": advantages.astype(np.float32),
             "returns": returns.astype(np.float32),
+            "policy_advantages": policy_advantages.astype(np.float32),
+            "policy_returns": policy_returns.astype(np.float32),
+            "decision_durations": decision_durations.astype(np.int64),
             "event_flags": np.asarray(event_rows, dtype=np.float32),
             "action_masks": np.vstack(action_mask_rows).astype(bool),
             "decision_rows": np.asarray(decision_rows, dtype=np.float32),
@@ -1739,6 +1834,9 @@ class CustomPPO:
         old_logprobs = torch_tensor(batch["old_logprobs"], device=self.device)
         returns = torch_tensor(batch["returns"], device=self.device)
         advantages = torch_tensor(batch["advantages"], device=self.device)
+        policy_advantages = torch_tensor(
+            batch.get("policy_advantages", batch["advantages"]), device=self.device
+        )
         event_flags = torch_tensor(batch["event_flags"], device=self.device)
         action_masks = torch_tensor(batch["action_masks"], device=self.device, dtype=torch.bool)
         decision_rows = torch_tensor(
@@ -1752,11 +1850,12 @@ class CustomPPO:
         soc_aux_mask = torch_tensor(batch["soc_aux_mask"], device=self.device)
         forecast_value_targets = torch_tensor(batch["forecast_value_targets"], device=self.device)
         forecast_value_valid = torch_tensor(batch["forecast_value_valid"], device=self.device)
-        if advantages.numel() > 1:
-            norm_rows = decision_rows > 0.5 if bool(self.cfg.decision_only_policy_updates) else torch.ones_like(decision_rows, dtype=torch.bool)
+        decision_policy = bool(self.cfg.decision_only_policy_updates or self.cfg.decision_block_credit)
+        if policy_advantages.numel() > 1:
+            norm_rows = decision_rows > 0.5 if decision_policy else torch.ones_like(decision_rows, dtype=torch.bool)
             if bool(norm_rows.any().detach().cpu().item()):
-                norm_advantages = advantages[norm_rows]
-                advantages = (advantages - norm_advantages.mean()) / (norm_advantages.std(unbiased=False) + 1e-8)
+                norm_advantages = policy_advantages[norm_rows]
+                policy_advantages = (policy_advantages - norm_advantages.mean()) / (norm_advantages.std(unbiased=False) + 1e-8)
 
         n = int(obs.shape[0])
         batch_size = max(1, min(int(self.cfg.batch_size), n))
@@ -1771,7 +1870,7 @@ class CustomPPO:
                 mb_greedy = greedy_actions[idx]
                 mb_old_logprobs = old_logprobs[idx]
                 mb_returns = returns[idx]
-                mb_advantages = advantages[idx]
+                mb_advantages = policy_advantages[idx]
                 mb_events = event_flags[idx]
                 mb_masks = action_masks[idx]
                 mb_decision_rows = decision_rows[idx]
@@ -1787,7 +1886,7 @@ class CustomPPO:
                 new_logprobs = dist.log_prob(mb_actions)
                 policy_weights = (
                     mb_decision_rows
-                    if bool(self.cfg.decision_only_policy_updates)
+                    if decision_policy
                     else torch.ones_like(mb_decision_rows)
                 )
                 policy_denominator = policy_weights.sum().clamp_min(1.0)
