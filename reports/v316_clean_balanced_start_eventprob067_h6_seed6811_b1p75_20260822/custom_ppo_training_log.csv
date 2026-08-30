@@ -1,0 +1,2 @@
+step,loss,policy_loss,value_loss,entropy_mean,awbc_loss,prior_kl_loss,soc_aux_loss,subtype_aux_loss,subtype_aux_accuracy,advantage_mean,advantage_std,event_rate,awbc_label_rate,greedy_unique_actions,bc_pretrain,bc_steps,bc_accuracy,forecast_weighted_mae_overall,reward_mean
+0,0.6600908750900999,,,0.6260501754470169,0.5974693699274212,,,0.2087383420439437,0.928582763671875,,,0.30038517713546753,1.0,22,1,16384,0.8299224853515625,,

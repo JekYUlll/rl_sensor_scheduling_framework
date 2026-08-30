@@ -6221,3 +6221,17 @@ Evidence is stored in
 - Decision: V315 is not a valid single-variable sampler experiment. Do not
   attribute its degradation to start-probability balancing or launch a fresh
   final evaluation from it. Restore V311 settings before any clean rerun.
+
+## 2026-08-31 - V316 clean balanced-start follow-up
+
+- Completed the valid V316 follow-up for scene seeds 6811 and 6812.
+- V316 restored V311's reward normalization and warm-up coefficient and
+  changed only `event_start_prob=1.0` to `0.67`.
+- PD-PPO lost to both static references and all tested dynamic references in
+  both seeds on ordinary and static-normalized macro loss.
+- The behavior gate failed in both seeds: seed6811 had `1/3/2` and seed6812
+  had `0/1/5` always-on/always-off/mid-duty channels; warm-up aborts were 0.
+- Aggregate evidence is stored in
+  `reports/aggregate/v316_clean_sampler_eventprob067_h6_pdppo_diag_20260831/`.
+- Decision: reject balanced training starts as a sufficient repair and move to
+  a different clean layer, such as closed-loop return/credit alignment.
