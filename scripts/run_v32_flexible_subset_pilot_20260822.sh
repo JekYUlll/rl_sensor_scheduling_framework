@@ -303,6 +303,7 @@ for seed in "${SEEDS[@]}"; do
     --truth-steps "$TRUTH_STEPS" \
     --freq-s 3600 \
     --lookback "$LOOKBACK" \
+    --forecast-horizon "${FORECAST_HORIZON:-8}" \
     --split-ratios 0.35 0.50 0.075 0.075 \
     --event-coverage "$EVENT_COVERAGE" \
     --min-duration "$MIN_DURATION" \

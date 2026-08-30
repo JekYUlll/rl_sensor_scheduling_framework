@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V265 rejects non-overlapping horizon/dwell alignment
+
+- Completed remote seeds `5501--5502` with a parameterized forecast horizon
+  set to `6`, matching the six-step minimum dwell. Combined with
+  `forecast_decision`, each executable decision received a non-overlapping
+  six-step forecast target. The six-channel scene, masked PPO, online context,
+  and evaluation protocol were unchanged.
+- Dynamic performance improved: the best original dynamic family achieved
+  `2/2` macro wins with mean baseline-minus-PD-PPO margin `+0.016036`; ordinary
+  wins were `1/2` with mean margin `-0.005246`.
+- The static shortcut remained stronger: best-static ordinary and macro wins
+  were both `0/2`, with mean margins `-0.046216` and `-0.021243`.
+- Behavior failed the channel-usage gate: seed5501 had two always-off
+  channels and seed5502 had three. Both had zero always-on channels and zero
+  warm-up aborts; switching rates were `0.041757` and `0.042264`.
+- Decision: horizon/dwell alignment helps dynamic credit but does not solve
+  the static shortcut or permanent-channel collapse. V265 is rejected without
+  final expansion. Evidence is stored in
+  `reports/aggregate/v265_nonoverlap_decision_forecast_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V264 rejects decision-sampled forecast reward
 
 - Completed remote seeds `5401--5402` with `forecast_decision`, which emits

@@ -616,6 +616,7 @@ def main() -> None:
     parser.add_argument("--truth-steps", type=int, default=90000)
     parser.add_argument("--freq-s", type=int, default=3600)
     parser.add_argument("--lookback", type=int, default=20)
+    parser.add_argument("--forecast-horizon", type=int, default=8)
     parser.add_argument("--split-ratios", nargs=4, type=float, default=[0.35, 0.50, 0.075, 0.075])
     parser.add_argument("--event-coverage", type=float, default=0.28)
     parser.add_argument("--min-duration", type=int, default=12)
@@ -995,7 +996,9 @@ def main() -> None:
     )
     ratios = tuple(float(value) for value in args.split_ratios)
     bounds = partition_bounds(int(args.truth_steps), ratios)
-    horizon = 8
+    horizon = int(args.forecast_horizon)
+    if horizon < 1:
+        raise ValueError("forecast horizon must be positive")
     prior_starts = non_overlapping_starts(
         bounds=bounds["rl_train"],
         window_steps=int(args.candidate_prior_steps),
@@ -1091,6 +1094,7 @@ def main() -> None:
         "matched_control_assets": control_source_dir is not None,
         "truth_steps": int(args.truth_steps),
         "lookback": int(args.lookback),
+        "forecast_horizon": int(horizon),
         "seed": int(args.seed),
         "policy_seed": int(args.seed if args.policy_seed is None else args.policy_seed),
         "budget": float(args.budget),
