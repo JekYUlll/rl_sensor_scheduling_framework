@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V263 rejects terminal-only semi-Markov dwell credit
+
+- Completed a two-seed development run (`5301--5302`) using terminal-only
+  dwell-block credit. Each genuine decision received only the forecast loss
+  at the end of its minimum-dwell block, with duration discounting between
+  decisions. The forecast-loss reward, arbitrary six-channel action geometry,
+  online context, and no-teacher training boundary were unchanged.
+- The variant preserved operational behavior: both seeds had zero always-on
+  channels, zero always-off channels, zero warm-up aborts, and five or six
+  mid-duty channels. Switching rates were `0.078014` and `0.081777` per step.
+- Predictive performance did not recover. Validation-selected static ordinary
+  wins were `0/2` and macro wins `2/2`; best static ordinary wins were `0/2`
+  and macro wins `1/2`. The best original dynamic family won `0/2` on both
+  endpoints. Mean baseline-minus-PD-PPO margins were `-0.019644` (best static
+  ordinary), `-0.004499` (best static macro), `-0.013478` (best original
+  dynamic ordinary), and `-0.012745` (best original dynamic macro).
+- Decision: terminal-only credit is also rejected as a primary improvement.
+  The two dwell-block credit variants indicate that the current absolute
+  epoch-level forecast loss is not repaired by simple block aggregation;
+  further blind credit-horizon changes are closed.
+- Evidence is stored in
+  `reports/aggregate/v263_terminal_dwell_credit_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V262 rejects naive semi-Markov dwell-block credit
 
 - Completed a two-seed development run (`5201--5202`) using semi-Markov
