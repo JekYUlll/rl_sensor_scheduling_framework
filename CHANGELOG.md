@@ -4936,3 +4936,28 @@ tar -czf "$OUT…`
   behavior without predictive quality and is rejected before any larger seed
   wave. Evidence is stored in
   `reports/aggregate/v252_offline_forecast_value_pdppo_sixch_dev_retry_20260830/`.
+
+## 2026-08-30 - V253 soft forecast-value pretraining pilot
+
+- V253 tested a one-time soft forecast-value target for BC pretraining on fresh
+  seeds `4301--4302`. The V249/V251 physical six-channel scene, B=`1.75`,
+  minimum dwell `6`, solar target weight `3`, and 50,000 PPO steps were kept
+  unchanged; target temperature was `0.75`.
+- No candidate forecast evaluation was used during on-policy rollout
+  collection. AWBC, online forecast-value auxiliary loss, and oracle/bandit
+  teacher signals remained disabled; final execution used online context only.
+- The behavior gate passed in both seeds: zero always-on/off channels, five or
+  six intermediate-duty channels, zero warm-up aborts, and switching rates
+  `0.052974--0.087856` per step.
+- Predictive performance did not recover. PD-PPO won ordinary loss `0/2`
+  against validation-selected static, feasible static, AoI, random, and
+  full-open references; it won `1/2` against round-robin. Macro wins were
+  `1/2` for static, feasible static, AoI, round-robin, and random, and `0/2`
+  against full-open. Mean baseline-minus-PD-PPO margins were `-0.042601` for
+  validation-selected static, `-0.022263` for feasible static, and `-0.004685`
+  for the best original dynamic family on ordinary loss; macro margins were
+  `-0.032048`, `+0.010285`, and `-0.004684`, respectively.
+- Interpretation: softening the offline target preserves feasible dynamic
+  behavior but remains insufficient for predictive learning. V253 is rejected
+  before expansion. Evidence is stored in
+  `reports/aggregate/v253_soft_forecast_value_pdppo_sixch_dev_20260830/`.
