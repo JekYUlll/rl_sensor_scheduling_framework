@@ -4841,3 +4841,26 @@ tar -czf "$OUT…`
   `reports/aggregate/v247_sixch_admission_gate_20260830/`. The V247 scene is
   admitted for a complete six-channel PPO wave; V247 itself is a scene gate,
   not evidence that PPO has already learned the opportunity.
+
+## 2026-08-30 - V248 rejects the first complete six-channel PPO configuration
+
+- V248 ran the complete training scaffold on fresh seeds `3801--3805` using
+  the V247-admitted six-channel configuration, B=`1.75`, startup budget
+  `2.15`, minimum dwell `6`, and `100,000` PPO timesteps per seed.
+- The run retained forecast-loss reward, online alert context, subtype
+  auxiliary supervision, and training-only AWBC/teacher guidance. No event
+  labels or action-value head were used at final execution.
+- PD-PPO did not beat the validation-selected static schedule: ordinary wins
+  `0/5` and macro wins `1/5`, with mean margins (static - PD-PPO)
+  `-0.029549/-0.031311`. It did beat the best original dynamic heuristic
+  family in `4/5` seeds on both endpoints, with mean margins
+  `+0.013856/+0.010058`.
+- The behavior gate failed structurally: `radiometer_basic` had zero duty in
+  all five runs; always-off counts were `1,2,2,2,2`, always-on counts were
+  `0,0,1,1,0`, and mid-duty counts were `5,4,3,3,4`. Warm-up aborts were zero.
+- V248 is therefore a complete-policy rejection, not a scene rejection. The
+  next bounded development test changes only the physically meaningful solar
+  target weight to test whether the radiometer channel has sufficient forecast
+  value under the current objective.
+- Aggregate evidence is stored in
+  `reports/aggregate/v248_full_pdppo_sixch_dev_20260830/`.
