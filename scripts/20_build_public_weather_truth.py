@@ -129,7 +129,7 @@ def add_channel_quality_dynamics(
                 0.25 * wind + 0.75 * severe_wind, 0.0, 1.0
             )
             if mode == "condition_dependent_crossover":
-                return {
+                profiles = {
                     "met_station_core": 0.70 * icing + 0.15 * severe_wind,
                     "radiometer_basic": 0.60 * (1.0 - radiation) + 0.25 * humidity,
                     "shielded_thermo_hygro": 0.35 * icing + 0.25 * humidity + 0.10 * severe_wind,
@@ -139,6 +139,14 @@ def add_channel_quality_dynamics(
                     ),
                     "fc4_flux": 0.75 * low_transport_signal + 0.10 * icing,
                 }
+                profiles.update({
+                    "gmx500_weather_station": profiles["met_station_core"],
+                    "lps10_pyranometer": profiles["radiometer_basic"],
+                    "si111_surface_ir": profiles["surface_temp_ir"],
+                    "parsivel2_disdrometer": profiles["laser_disdrometer"],
+                    "flowcapt_fc4": profiles["fc4_flux"],
+                })
+                return profiles
             exposure_profiles = {
                 "met_station_core": 0.80 * severe_wind + 0.20 * humidity,
                 "radiometer_basic": 0.80 * (1.0 - radiation) + 0.20 * humidity,
@@ -155,6 +163,13 @@ def add_channel_quality_dynamics(
                 exposure_profiles = {
                     sensor: balanced[idx] for idx, sensor in enumerate(profile_ids)
                 }
+            exposure_profiles.update({
+                "gmx500_weather_station": exposure_profiles["met_station_core"],
+                "lps10_pyranometer": exposure_profiles["radiometer_basic"],
+                "si111_surface_ir": exposure_profiles["surface_temp_ir"],
+                "parsivel2_disdrometer": exposure_profiles["laser_disdrometer"],
+                "flowcapt_fc4": exposure_profiles["fc4_flux"],
+            })
             return exposure_profiles
 
         wind = positive_unit("wind_speed_ms")
