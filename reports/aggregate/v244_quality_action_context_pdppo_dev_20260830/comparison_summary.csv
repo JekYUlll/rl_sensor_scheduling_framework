@@ -1,0 +1,13 @@
+baseline,metric,wins,n,mean_margin_baseline_minus_ppo
+validation_selected_static,oracle_loss_mean,1,5,-0.051067017601841735
+validation_selected_static,oracle_loss_macro_subtype_event,0,5,-0.06919969636432313
+feasible_static_projected,oracle_loss_mean,1,5,-0.021761287885278237
+feasible_static_projected,oracle_loss_macro_subtype_event,2,5,-0.0017140549960660168
+aoi,oracle_loss_mean,1,5,-0.015037897419986412
+aoi,oracle_loss_macro_subtype_event,1,5,-0.009108652180516708
+round_robin,oracle_loss_mean,1,5,-0.01047959235276924
+round_robin,oracle_loss_macro_subtype_event,3,5,-0.0020436373991250313
+random,oracle_loss_mean,3,5,-0.004940904072524644
+random,oracle_loss_macro_subtype_event,3,5,-0.007202613767072019
+full_open_unconstrained,oracle_loss_mean,1,5,-0.031189109790526935
+full_open_unconstrained,oracle_loss_macro_subtype_event,1,5,-0.02571899568758924

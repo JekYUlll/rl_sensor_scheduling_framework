@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V244 rejects direct quality-action scoring
+
+- V244 evaluated the existing action-conditioned quality representation on fresh
+  seeds `3501--3505`, retaining the V243 clean forecast-loss PPO configuration
+  and placing the five quality forecasts first in the context vector.
+- Behavior passed in all five runs: zero warm-up aborts, zero always-on/off
+  channels, five mid-duty channels, and switching rates of `0.0630--0.0954`.
+- The representation did not recover performance: PD-PPO beat
+  validation-selected static in `1/5` ordinary and `0/5` macro comparisons,
+  with mean margins `-0.051067/-0.069200`. It also failed to beat AoI or
+  round-robin consistently.
+- V244 closes the direct quality-action-score route. The next diagnosis must
+  examine whether the forecast-loss reward provides an identifiable action
+  consequence under partial observations, rather than adding another context
+  feature or teacher prior.
+- Aggregates are stored under
+  `reports/aggregate/v244_quality_action_context_pdppo_dev_20260830/`.
+
 ## 2026-08-30 - V244 tests action-conditioned quality representation
 
 - Added a five-seed development launcher that reuses the V243 clean PPO
