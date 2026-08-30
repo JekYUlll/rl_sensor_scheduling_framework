@@ -760,6 +760,12 @@ def main() -> None:
         choices=["hard", "hard_forecast_value", "soft_forecast_value", "forecast_value_regression"],
         default="hard",
     )
+    parser.add_argument(
+        "--bc-pretrain-decision-only",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use only executable decision rows for BC pretraining.",
+    )
     parser.add_argument("--bc-soft-temperature", type=float, default=1.0)
     parser.add_argument("--forecast-value-aux-coef", type=float, default=0.0)
     parser.add_argument("--forecast-value-aux-stride", type=int, default=64)
@@ -1548,6 +1554,9 @@ def main() -> None:
         str(float(args.bc_pretrain_loss_coef)),
         "--bc-pretrain-target-mode",
         str(args.bc_pretrain_target_mode),
+        "--bc-pretrain-decision-only"
+        if bool(args.bc_pretrain_decision_only)
+        else "--no-bc-pretrain-decision-only",
         "--bc-soft-temperature",
         str(float(args.bc_soft_temperature)),
         "--forecast-value-aux-coef",
