@@ -5792,3 +5792,40 @@ Evidence is stored in
   not pass the deployment behavior or static-shortcut gate. Do not promote
   V294 to the mainline evidence set.
 - Aggregate: `reports/aggregate/v294_corrected_sixchannel_quality_pdppo_dev_20260830/`.
+## 2026-08-31 - V294 receding structural scene screen
+
+### Result
+- The corrected six-channel scene has genuine dynamic value independent of
+  PPO training. An 8-step receding oracle achieved ordinary forecast losses
+  `0.283959` and `0.371170` on seeds `6811` and `6812`, versus PPO losses
+  `0.401794` and `0.519586`.
+- The receding schedules used all six channels at intermediate duty, had no
+  constant channels, and switched at approximately `0.054` per step.
+
+### Decision
+- The corrected scene is retained as a viable dynamic-scheduling candidate.
+  The remaining gap is policy learning and credit assignment, not absence of
+  state-dependent value. PPO performance remains unsuitable as final evidence
+  until this gap is addressed.
+- Evidence:
+  `reports/v294_corrected_sixchannel_quality_pdppo_dev_seed6811_b1p75_20260822/receding_summary.json`,
+  `reports/v294_corrected_sixchannel_quality_pdppo_dev_seed6812_b1p75_20260822/receding_summary.json`.
+# V295 - Corrected-scene block-gain reward screen (2026-08-31)
+
+### Change
+- Replaced point forecast-loss reward with `forecast_block_gain` while keeping
+  the corrected six-channel scene, arbitrary feasible subsets, ordinary PPO,
+  partitions, and checkpoint selection matched to V294.
+- Ran fresh remote development seeds `6813--6814` on GPU1/GPU2.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `0/2`,
+  full-open `0/2`, AoI `2/2`, random `2/2`, round-robin `2/2`.
+- Static-normalized macro wins: validation static `2/2`, feasible static
+  `1/2`, full-open `0/2`, AoI `2/2`, random `2/2`, round-robin `2/2`.
+- Behavior: zero warm-up aborts; seed6813 had six mid-duty channels, while
+  seed6814 had five mid-duty and one always-off channel.
+- Decision: reject as a mainline improvement. The block-gain reward did not
+  improve the static comparison and does not establish better temporal credit
+  assignment.
+- Aggregate: `reports/aggregate/v295_corrected_scene_block_gain_pdppo_dev_20260831/`.
