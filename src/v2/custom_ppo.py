@@ -28,6 +28,14 @@ def full_rollout_schedule(total_timesteps: int, n_steps: int) -> tuple[int, ...]
     return tuple(rollout for _ in range(count))
 
 
+def policy_decision_mask(action_masks: np.ndarray) -> np.ndarray:
+    """Mark rollout rows where the policy had more than one executable action."""
+    masks = np.asarray(action_masks, dtype=bool)
+    if masks.ndim != 2:
+        raise ValueError("action_masks must be a rank-2 array")
+    return (np.sum(masks, axis=1) > 1).astype(np.float32)
+
+
 def channel_marginal_distribution_entropy(action_probs: Any, candidate_masks: Any) -> Any:
     """Return normalized entropy of channel inclusion mass over a policy batch."""
     torch, _ = _torch_modules()
@@ -182,6 +190,7 @@ class CustomPPOConfig:
     temporal_history_steps: int = 0
     temporal_state_dim: int = 0
     temporal_hidden_dim: int = 64
+    decision_only_policy_updates: bool = False
     soc_aux_horizon: int = 0
     soc_aux_coef: float = 0.0
     device: str = "auto"
@@ -1134,6 +1143,7 @@ class CustomPPO:
         value_rows: list[float] = []
         event_rows: list[float] = []
         action_mask_rows: list[np.ndarray] = []
+        decision_rows: list[float] = []
         awbc_valid_rows: list[float] = []
         subtype_label_rows: list[int] = []
         subtype_valid_rows: list[float] = []
@@ -1205,6 +1215,7 @@ class CustomPPO:
             value_rows.append(float(value_t.detach().cpu().item()))
             event_rows.append(event_flag)
             action_mask_rows.append(action_mask_np.astype(bool))
+            decision_rows.append(float(np.sum(action_mask_np) > 1))
             awbc_valid_rows.append(float(awbc_valid))
             subtype_label_rows.append(int(subtype_label))
             subtype_valid_rows.append(float(subtype_valid))
@@ -1265,6 +1276,7 @@ class CustomPPO:
             "returns": returns.astype(np.float32),
             "event_flags": np.asarray(event_rows, dtype=np.float32),
             "action_masks": np.vstack(action_mask_rows).astype(bool),
+            "decision_rows": np.asarray(decision_rows, dtype=np.float32),
             "awbc_valid": np.asarray(awbc_valid_rows, dtype=np.float32),
             "subtype_labels": np.asarray(subtype_label_rows, dtype=np.int64),
             "subtype_valid": np.asarray(subtype_valid_rows, dtype=np.float32),
@@ -1729,6 +1741,10 @@ class CustomPPO:
         advantages = torch_tensor(batch["advantages"], device=self.device)
         event_flags = torch_tensor(batch["event_flags"], device=self.device)
         action_masks = torch_tensor(batch["action_masks"], device=self.device, dtype=torch.bool)
+        decision_rows = torch_tensor(
+            batch.get("decision_rows", policy_decision_mask(batch["action_masks"])),
+            device=self.device,
+        )
         awbc_valid = torch_tensor(batch["awbc_valid"], device=self.device)
         subtype_labels = torch_tensor(batch["subtype_labels"], device=self.device, dtype=torch.long)
         subtype_valid = torch_tensor(batch["subtype_valid"], device=self.device)
@@ -1737,7 +1753,10 @@ class CustomPPO:
         forecast_value_targets = torch_tensor(batch["forecast_value_targets"], device=self.device)
         forecast_value_valid = torch_tensor(batch["forecast_value_valid"], device=self.device)
         if advantages.numel() > 1:
-            advantages = (advantages - advantages.mean()) / (advantages.std(unbiased=False) + 1e-8)
+            norm_rows = decision_rows > 0.5 if bool(self.cfg.decision_only_policy_updates) else torch.ones_like(decision_rows, dtype=torch.bool)
+            if bool(norm_rows.any().detach().cpu().item()):
+                norm_advantages = advantages[norm_rows]
+                advantages = (advantages - norm_advantages.mean()) / (norm_advantages.std(unbiased=False) + 1e-8)
 
         n = int(obs.shape[0])
         batch_size = max(1, min(int(self.cfg.batch_size), n))
@@ -1755,6 +1774,7 @@ class CustomPPO:
                 mb_advantages = advantages[idx]
                 mb_events = event_flags[idx]
                 mb_masks = action_masks[idx]
+                mb_decision_rows = decision_rows[idx]
                 mb_awbc_valid = awbc_valid[idx]
                 mb_subtype_labels = subtype_labels[idx]
                 mb_subtype_valid = subtype_valid[idx]
@@ -1765,11 +1785,17 @@ class CustomPPO:
 
                 dist = self.model.dist(mb_obs, self.candidate_masks_t, mb_masks, mb_events)
                 new_logprobs = dist.log_prob(mb_actions)
-                entropy = dist.entropy().mean()
-                channel_marginal_entropy = channel_marginal_distribution_entropy(
-                    dist.probs,
-                    self.candidate_masks_t,
+                policy_weights = (
+                    mb_decision_rows
+                    if bool(self.cfg.decision_only_policy_updates)
+                    else torch.ones_like(mb_decision_rows)
                 )
+                policy_denominator = policy_weights.sum().clamp_min(1.0)
+                entropy = (dist.entropy() * policy_weights).sum() / policy_denominator
+                channel_marginal_entropy = channel_marginal_distribution_entropy(
+                    dist.probs[policy_weights > 0.5],
+                    self.candidate_masks_t,
+                ) if bool((policy_weights > 0.5).any().detach().cpu().item()) else torch.zeros((), device=dist.probs.device)
                 values = self.model.value(mb_obs, mb_events)
                 ratio = torch.exp(new_logprobs - mb_old_logprobs)
                 clipped_ratio = torch.clamp(
@@ -1777,7 +1803,8 @@ class CustomPPO:
                     1.0 - float(self.cfg.clip_range),
                     1.0 + float(self.cfg.clip_range),
                 )
-                policy_loss = -torch.min(ratio * mb_advantages, clipped_ratio * mb_advantages).mean()
+                policy_terms = torch.min(ratio * mb_advantages, clipped_ratio * mb_advantages)
+                policy_loss = -(policy_terms * policy_weights).sum() / policy_denominator
                 value_loss = nn.functional.mse_loss(values, mb_returns)
                 onpolicy_action_value_loss = torch.zeros((), device=self.device)
                 if float(self.cfg.onpolicy_action_value_coef) > 0.0:
@@ -1923,6 +1950,7 @@ class CustomPPO:
             "awbc_label_rate": float(np.mean(batch["awbc_valid"])),
             "awbc_coef": float(self._current_awbc_coef()),
             "greedy_unique_actions": int(np.unique(batch["greedy_actions"]).size),
+            "policy_decision_rate": float(np.mean(batch.get("decision_rows", policy_decision_mask(batch["action_masks"])) )),
         }
 
     def _effective_awbc_coef(self, timesteps: int) -> float:

@@ -19,11 +19,22 @@ from v2.custom_ppo import (  # noqa: E402
     feasible_candidate_mask,
     full_rollout_schedule,
     masked_soft_target_cross_entropy,
+    policy_decision_mask,
     soft_forecast_value_targets,
     restore_env,
     snapshot_env,
     standardized_negative_cost_targets,
 )
+
+
+def test_policy_decision_mask_excludes_forced_dwell_rows() -> None:
+    masks = np.asarray(
+        [[True, False, False], [True, True, False], [False, False, True]],
+        dtype=bool,
+    )
+    assert np.array_equal(policy_decision_mask(masks), np.asarray([0.0, 1.0, 0.0]))
+    with pytest.raises(ValueError):
+        policy_decision_mask(np.asarray([True, False, True]))
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv  # noqa: E402
 from v2.oracle import LinearFrozenForecastOracle, OracleConfig, build_supervised_windows  # noqa: E402
 from v2.power_projector import PowerConstraintsV2  # noqa: E402

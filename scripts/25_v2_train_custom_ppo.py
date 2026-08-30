@@ -867,6 +867,12 @@ def main() -> None:
     parser.add_argument("--onpolicy-action-value-scale", type=float, default=1.0)
     parser.add_argument("--candidate-interaction-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument(
+        "--decision-only-policy-updates",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Update PPO actor terms only on rows with multiple executable actions.",
+    )
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
@@ -1671,6 +1677,7 @@ def main() -> None:
             onpolicy_action_value_scale=float(args.onpolicy_action_value_scale),
             candidate_interaction_score=bool(args.candidate_interaction_score),
             temporal_encoder_enabled=bool(args.temporal_encoder),
+            decision_only_policy_updates=bool(args.decision_only_policy_updates),
             temporal_history_steps=int(args.lookback),
             temporal_state_dim=len(helpers.STATE_COLUMNS),
             temporal_hidden_dim=max(1, int(args.temporal_hidden_dim)),
@@ -2793,7 +2800,8 @@ def as_serializable_config(
         "onpolicy_action_value_coef": float(cfg.onpolicy_action_value_coef),
         "onpolicy_action_value_scale": float(cfg.onpolicy_action_value_scale),
         "candidate_interaction_score": int(bool(cfg.candidate_interaction_score)),
-        "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
+            "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
+            "decision_only_policy_updates": int(bool(cfg.decision_only_policy_updates)),
         "temporal_history_steps": int(cfg.temporal_history_steps),
         "temporal_state_dim": int(cfg.temporal_state_dim),
         "temporal_hidden_dim": int(cfg.temporal_hidden_dim),

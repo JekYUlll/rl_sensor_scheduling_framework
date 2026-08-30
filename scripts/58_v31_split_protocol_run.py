@@ -848,6 +848,11 @@ def main() -> None:
     parser.add_argument("--onpolicy-action-value-scale", type=float, default=1.0)
     parser.add_argument("--candidate-interaction-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument(
+        "--decision-only-policy-updates",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
@@ -1702,6 +1707,11 @@ def main() -> None:
     cmd.extend(["--context-fusion-mode", str(args.context_fusion_mode)])
     cmd.append("--context-layer-norm" if bool(args.context_layer_norm) else "--no-context-layer-norm")
     cmd.append("--temporal-encoder" if bool(args.temporal_encoder) else "--no-temporal-encoder")
+    cmd.append(
+        "--decision-only-policy-updates"
+        if bool(args.decision_only_policy_updates)
+        else "--no-decision-only-policy-updates"
+    )
     cmd.extend(["--temporal-hidden-dim", str(max(1, int(args.temporal_hidden_dim)))])
     cmd.append(
         "--separate-actor-critic-grad-clip"
