@@ -5414,3 +5414,26 @@ Audit evidence is stored in
 Evidence is stored in
 `reports/aggregate/v275_selected_forecast_pdppo_sixch_dev_20260830/`; source
 and selected run directories are `reports/v275_*_seed6401--6402_*`.
+
+## 2026-08-30 - V276 static-normalized checkpoint selection
+
+- V276 changed only validation checkpoint selection, from `oracle_loss_mean`
+  to `max_static_ratio`, which minimizes the worse of ordinary and
+  static-normalized macro validation ratios. Ordinary forecast reward,
+  arbitrary-subset action geometry, scene, and behavior gate were unchanged.
+- Fresh same-seed source/selected runs `6501--6502` completed with active
+  finite validation selection. Selected updates were `30` and `40`.
+- Feasibility and behavior passed `2/2`: zero invalid actions, power or
+  startup-peak violations, and warm-up aborts. Mid-duty counts were four and
+  six; seed6501 had one always-off channel and neither seed had an always-on
+  channel.
+- Static macro wins were `2/2`, but ordinary static wins were `0/2`; mean
+  margins were `+0.020152` macro and `-0.030830` ordinary. Dynamic ordinary
+  wins were `0/2`, macro wins `1/2`, with mean margins `-0.017230` and
+  `+0.024988`. Full-open ordinary wins were `0/2`, macro wins `1/2`.
+- Decision: reject V276 as a primary-method pass. The validation criterion
+  trades ordinary forecast performance for macro improvement and fails the
+  two co-primary endpoint gate. Do not expand to a final 24-seed evaluation.
+
+Evidence is stored in
+`reports/aggregate/v276_staticnorm_checkpoint_pdppo_sixch_dev_20260830/`.
