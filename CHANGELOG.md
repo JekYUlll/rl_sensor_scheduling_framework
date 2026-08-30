@@ -5941,3 +5941,25 @@ Evidence is stored in
   complete mainline result because ordinary validation-static transfer remains
   `0/2`.
 - Aggregate: `reports/aggregate/v300_corrected_scene_decision_only_pdppo_dev_20260831/`.
+
+# V301 - Corrected-scene decision-only low-entropy screen (2026-08-31)
+
+### Change
+- Reduced the PPO entropy coefficient from `0.02` to `0.002` while retaining
+  V300's decision-only actor updates and all scene, reward, action, and
+  evaluation settings.
+- Ran fresh remote policy seeds `6871--6872` on seeds `6811--6812`.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `0/2`,
+  full-open `0/2`, AoI `0/2`, random `1/2`, and round-robin `1/2`.
+- Static-normalized macro wins: validation static `0/2`, feasible static
+  `0/2`, full-open `0/2`, AoI `0/2`, random `1/2`, and round-robin `0/2`.
+- Mean ordinary margin versus validation static was `-0.046824`; mean macro
+  margin was `-0.114378`.
+- Behavior remained executable: zero warm-up aborts, zero always-on and
+  always-off channels, all six channels at intermediate duty, and switching
+  rates `0.084310/0.032132`.
+- Decision: reject V301. Lowering entropy did not improve exploitation or
+  static transfer; reward-scale and value-conditioning diagnostics are next.
+- Aggregate: `reports/aggregate/v301_corrected_scene_decision_only_lowentropy_pdppo_dev_20260831/`.
