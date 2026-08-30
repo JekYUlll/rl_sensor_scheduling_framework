@@ -4665,3 +4665,22 @@ tar -czf "$OUT…`
   complete PD-PPO training scaffold (online alert context, subtype-aware
   auxiliary supervision, and training-only action guidance) must be evaluated
   before concluding that the method cannot learn the flexible subset task.
+
+## 2026-08-30 - V242 restores the complete training scaffold
+
+- V242 evaluates the corrected balanced quality scene on fresh seeds
+  `3301--3305` for `100,000` timesteps, restoring online alert context,
+  subtype-aware auxiliary supervision, and training-only AWBC/action guidance.
+  Final execution still uses no simulator event labels.
+- The complete configuration beats AoI on the macro endpoint in `5/5` seeds
+  and on the ordinary endpoint in `2/5`; it beats round-robin on macro in
+  `3/5` and random in `4/5`. It beats validation-selected static in only
+  `1/5` ordinary and `1/5` macro comparisons, with mean margins
+  `-0.015147/-0.008286`. The mean PPO ordinary/macro losses are
+  `0.475125/0.862288` (computed from the five raw per-seed files).
+- Behavior is feasible (zero warm-up aborts), but not yet clean: mean
+  switching rate is `0.028919`, mean always-on count `0.2`, mean always-off
+  count `1.0`, and mean mid-duty count `3.8`. V242 therefore confirms that the
+  training scaffold is required, but does not pass the static-shortcut and
+  no-permanent-off gates. Further work must target action-value representation
+  or the physical value/cost mapping, not claim completion.
