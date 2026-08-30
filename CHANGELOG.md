@@ -5241,3 +5241,25 @@ tar -czf "$OUT…`
   switching behavior but does not repair forecast quality. V257 is rejected
   before expansion. Evidence is stored in
   `reports/aggregate/v257_dense_mask_forecast_head_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V267 action-sensitive dwell-block reward
+
+- Added `forecast_block_gain`, comparing the selected subset with the
+  previously executed subset over the full six-step dwell block using restored
+  environment snapshots and the frozen forecaster. No bandit action, teacher
+  action, or test label is used.
+- Made alert columns explicit in the flexible-subset launcher and added a
+  regression test for state restoration. The targeted test suite passed `65/65`.
+- Completed fresh remote seeds `5701--5702`. Feasibility and behavior passed
+  in `2/2` seeds with zero invalid actions, power violations, peak violations,
+  warm-up aborts, or permanent-channel failures.
+- Predictive transfer failed: static, original dynamic, and full-open families
+  each had `0/2` ordinary and macro wins. Mean macro margins were
+  `-0.096793`, `-0.005586`, and `-0.054503`, respectively.
+- Decision: reject V267 and do not expand it. The block-relative gain target is
+  action-sensitive but is not a sufficient replacement for the policy's
+  forecast objective; further work should address objective/return scaling,
+  not add another unbounded reward variant.
+
+Evidence is stored in
+`reports/aggregate/v267_block_gain_pdppo_sixch_dev_20260830/`.
