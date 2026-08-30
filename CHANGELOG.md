@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V266 rejects soft forecast-value auxiliary
+
+- Completed remote seeds `5601--5602` with the existing frozen-forecaster
+  soft forecast-value auxiliary (`coef=0.20`, six-step lookahead) added to the
+  horizon/dwell-aligned V265 objective. No bandit-dependent signal, teacher
+  action, or duty quota was introduced.
+- Behavior passed in both seeds: zero always-on/off channels, zero warm-up
+  aborts, and four/six mid-duty channels. Switching rates were `0.048777` and
+  `0.057751` per step.
+- Prediction remained below the gates. Best-static ordinary and macro wins
+  were `1/2`, with mean margins `-0.019259` and `-0.020492`. Best-original-
+  dynamic ordinary and macro wins were `0/2`, with mean margins `-0.006518`
+  and `-0.010840`.
+- Decision: the auxiliary restores deployment behavior but not predictive
+  transfer. V266 is rejected without expansion. Evidence is stored in
+  `reports/aggregate/v266_soft_forecast_aux_nonoverlap_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V265 rejects non-overlapping horizon/dwell alignment
 
 - Completed remote seeds `5501--5502` with a parameterized forecast horizon
