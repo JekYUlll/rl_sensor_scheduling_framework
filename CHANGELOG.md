@@ -6060,3 +6060,20 @@ Evidence is stored in
 - Decision: reject as a primary improvement; pretraining did not recover
   static transfer and is not expanded to fresh confirmation.
 - Aggregate: `reports/aggregate/v305_corrected_scene_staticnorm_softpretrain_pdppo_dev_20260831/`.
+
+# V306 - Pretraining-only PD-PPO diagnostic (2026-08-31)
+
+- Added 4096-step training-partition soft forecast-value pretraining with
+  `TOTAL_TIMESTEPS=0`; no PPO update was applied. Scene seeds were 6811 and
+  6812, with policy seeds 6921 and 6922.
+- Ordinary-loss wins were validation static `0/2`, feasible static `0/2`,
+  full-open `0/2`, AoI `1/2`, random `1/2`, and round-robin `1/2`.
+- Static-normalized macro wins were validation static `1/2`, feasible static
+  `1/2`, full-open `0/2`, AoI `1/2`, random `2/2`, and round-robin
+  `1/2`.
+- Behavior had zero aborts and zero always-on channels, but seed 6812 had one
+  always-off channel; both seeds had five mid-duty channels.
+- Decision: reject as a primary improvement. Pretraining can fit oracle-action
+  labels but does not by itself yield static-transfer or uniformly deployable
+  policy performance.
+- Aggregate: `reports/aggregate/v306_corrected_scene_softpretrain_only_pdppo_diag_20260831/`.
