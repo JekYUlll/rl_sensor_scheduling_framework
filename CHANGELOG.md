@@ -6152,3 +6152,16 @@ Evidence is stored in
   semantically correct, but hard pretraining still does not transfer
   reliably to held-out closed-loop performance.
 - Aggregate: `reports/aggregate/v311_corrected_scene_hardforecastpretrain16k_maskedteacher_pdppo_diag_20260831/`.
+
+# V311 state-distribution audit (2026-08-31)
+
+- Compared the configured training partition with the six final evaluation
+  windows for both V311 scene seeds.
+- Training event rates were `0.537582/0.502860`; final-window rates were
+  `0.369792/0.704861` for seeds 6811/6812. Event-alert prevalence shifted from
+  `0.248298/0.230302` in training to `0.181046/0.329273` in evaluation.
+- The two final seeds therefore lie on opposite sides of the training event
+  distribution, providing a concrete state-distribution-shift hypothesis for
+  the V311 seed divergence. This is partition-level evidence, not proof about
+  the exact pretraining batches.
+- Audit: `reports/aggregate/v311_corrected_scene_hardforecastpretrain16k_maskedteacher_pdppo_diag_20260831/state_distribution_audit.md`.
