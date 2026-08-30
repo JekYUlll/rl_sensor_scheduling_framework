@@ -1491,7 +1491,11 @@ class CustomPPO:
                     self.candidate_masks_np,
                     lookahead_steps=int(self.cfg.greedy_lookahead_steps),
                 )
-                teacher = int(np.argmin(teacher_costs))
+                feasible = np.flatnonzero(action_mask_np)
+                if feasible.size:
+                    teacher = int(feasible[np.argmin(teacher_costs[feasible])])
+                else:
+                    teacher = int(np.argmin(teacher_costs))
                 if str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value":
                     teacher_distribution = soft_forecast_value_targets(
                         teacher_costs.reshape(1, -1),

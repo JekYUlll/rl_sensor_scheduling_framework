@@ -1326,6 +1326,19 @@ def test_forecast_value_pretraining_collects_costs_without_oracle_awbc_teacher()
         assert feasible.size > 0
         assert int(teacher) == int(feasible[np.argmin(costs[feasible])])
 
+    # The hard forecast target must never choose an infeasible lower-cost
+    # candidate and then fall back to the first feasible action.
+    original = hard_trainer._make_env
+    env = original(seed_offset=0)
+    env.reset(start_idx=20)
+    hard_trainer._make_env = lambda *, seed_offset=0: env
+    hard_trainer.cfg = replace(hard_trainer.cfg, train_start_min=20, train_start_max=20)
+    masked_batch = hard_trainer.collect_teacher_batch(1)
+    feasible = np.flatnonzero(masked_batch["action_masks"][0])
+    assert int(masked_batch["teacher_actions"][0]) == int(
+        feasible[np.argmin(masked_batch["teacher_costs"][0, feasible])]
+    )
+
 
 def test_awbc_coefficient_can_decay_to_zero_without_changing_default() -> None:
     constant = CustomPPO.__new__(CustomPPO)
