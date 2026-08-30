@@ -5373,3 +5373,19 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/aggregate/v273_forecast_control_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V274 checkpoint-selection configuration audit
+
+- A two-seed run enabled validation checkpoint selection and the existing
+  behavior gate, but supplied no `control_source_run_dir`.
+- The resulting `custom_ppo_checkpoint_selection.csv` files contain ten rows
+  with `validation_scene_count=0`, NaN selection scores, and no selected
+  checkpoint. The recorded policy is therefore the ordinary final checkpoint,
+  not a validation-selected policy.
+- The predictive and behavior results are retained as ordinary-reward
+  replication evidence, but V274 is not evidence for checkpoint selection. A
+  valid test requires a same-seed source run containing frozen validation
+  candidates.
+
+Audit evidence is stored in
+`reports/aggregate/v274_validation_checkpoint_pdppo_sixch_dev_20260830/`.
