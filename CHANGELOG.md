@@ -5459,3 +5459,10 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/aggregate/v277_mean_staticnorm_checkpoint_pdppo_sixch_dev_retry2_20260830/`.
+
+## 2026-08-30 - Post-V277 action-space and checkpoint audit
+
+- Verified that V277 contains 22 masks: empty, all six single-channel subsets, and all 15 two-channel subsets. All are feasible under the reported steady-state and startup budgets; no artificial three-way selector was imposed.
+- Verified that validation checkpoint selection was active for both seeds, with finite validation records and selected updates 30 and 5. The test failure is therefore not caused by an inactive checkpoint selector.
+- Localized the remaining issue to seed-dependent policy transfer: seed6601 collapsed to one always-on, three always-off, and zero mid-duty channels, while seed6602 retained five mid-duty channels. V277 is closed.
+- Decision: stop trying checkpoint score formulas. Before another PPO wave, audit candidate-action-value supervision or scene identifiability and retain the arbitrary-subset geometry unchanged.
