@@ -24,7 +24,7 @@ run_one() {
     export FORECAST_VALUE_AUX_COEF=0 FORECAST_VALUE_RANKING_COEF=0
     export CANDIDATE_INTERACTION_SCORE=1 FACTORIZED_ACTION_POLICY=0
     export CONTROL_SOURCE_RUN_DIR="reports/v279_eventbalanced_forecast_checkpoint_pdppo_sixch_dev_seed${seed}_b1p75_20260822"
-    bash scripts/run_v267_block_gain_pdppo_sixch_dev.sh "$seed"
+    bash scripts/run_v267_block_gain_pdppo_sixch_dev_20260830.sh "$seed"
   ) >"logs/v292_matched_candidate_interaction_pdppo_sixch_seed${seed}.log" 2>&1
 }
 
