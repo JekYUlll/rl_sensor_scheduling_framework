@@ -33,6 +33,22 @@
   `reports/aggregate/v245_onpolicy_action_value_pdppo_dev_20260830/`. No
   confirmatory expansion is authorized for this variant.
 
+## 2026-08-30 - V246 rejects normalized candidate values
+
+- V246 reran the V245 candidate-conditioned on-policy value head after
+  standardizing candidate values per state before detached logit fusion. All
+  other settings were unchanged; fresh seeds were `3606--3610`.
+- The correction did not recover state-dependent behavior. Mid-duty counts were
+  `0/5`; always-off counts were `3,4,3,3,3`; always-on counts were `2,1,2,2,2`;
+  switching was `0` in every seed; warm-up aborts remained zero.
+- The variant failed to beat the best static family (`0/5` ordinary and `2/5`
+  macro wins; mean margins `-0.095166/-0.073904`) and the best original
+  dynamic family (`2/5` ordinary and `3/5` macro wins; mean margins
+  `-0.052972/-0.034562`). The normalized action-value route is closed.
+- Recomputed evidence is stored under
+  `reports/aggregate/v246_normalized_action_value_pdppo_dev_20260830/`. No
+  confirmatory expansion is authorized for this route.
+
 ## 2026-08-30 - V244 result closes the direct quality-action route
 
 - V244 completed on fresh seeds `3501--3505` with the existing forecast-loss
