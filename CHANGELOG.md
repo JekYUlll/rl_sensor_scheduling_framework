@@ -4911,3 +4911,28 @@ tar -czf "$OUT…`
   behavior but not predictive/static performance. V251 is a learner-control
   result, not a passing mainline configuration. Aggregate evidence is stored
   in `reports/aggregate/v251_no_teacher_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V252 offline forecast-value pretraining pilot
+
+- V252 tested one-time forecast-value target collection followed by BC
+  pretraining and on-policy PPO on seeds `4201--4202`. The V249/V251 physical
+  six-channel scene, B=`1.75`, minimum dwell `6`, solar target weight `3`, and
+  event-label-free execution were retained.
+- Unlike V250, candidate forecast costs were computed only during the bounded
+  pretraining batch (`512` states, `10` epochs); no candidate oracle calls were
+  made during PPO rollout collection. AWBC and on-policy forecast-value
+  auxiliary terms were disabled.
+- The behavior gate passed in both seeds: six intermediate-duty channels, zero
+  always-on/off channels, zero warm-up aborts, and switching rates
+  `0.059053--0.062093` per step.
+- Predictive performance failed in both seeds. PD-PPO won `0/2` against each
+  validation-selected static, feasible projected static, AoI, round-robin,
+  random, and full-open reference on both ordinary and macro endpoints. Mean
+  baseline-minus-PD-PPO margins were negative for every comparison, including
+  `-0.076373/-0.125622` against validation-selected static and
+  `-0.038183/-0.052582` against the best original dynamic family.
+- Interpretation: one-time forecast-value regression is computationally
+  feasible but is not a valid improvement in this form. It recovers dynamic
+  behavior without predictive quality and is rejected before any larger seed
+  wave. Evidence is stored in
+  `reports/aggregate/v252_offline_forecast_value_pdppo_sixch_dev_retry_20260830/`.
