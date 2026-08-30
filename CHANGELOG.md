@@ -4864,3 +4864,26 @@ tar -czf "$OUT…`
   value under the current objective.
 - Aggregate evidence is stored in
   `reports/aggregate/v248_full_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V249 tests solar-target reweighting
+
+- V249 repeated the complete six-channel PD-PPO configuration on fresh seeds
+  `3901--3905`, changing only the solar-radiation target weight from `1` to
+  `3`. The physical channel geometry, B=`1.75`, startup budget `2.15`,
+  minimum dwell `6`, scene profile, and PPO scaffold were unchanged.
+- Against validation-selected static, PD-PPO won `2/5` ordinary and `2/5`
+  macro comparisons; mean baseline-minus-PD-PPO margins were `-0.004638` and
+  `-0.005653`. Against the feasible projected static baseline it won `2/5`
+  ordinary and `5/5` macro, with mean margins `+0.002543` and `+0.033387`.
+- Against the best original dynamic family it won `3/5` ordinary and `3/5`
+  macro, with mean margins `+0.002144` and `-0.001998`. The full-open
+  unconstrained reference remained stronger on average.
+- The solar reweighting changed channel usage: the radiometer had nonzero
+  duty in three of five seeds, but the behavior gate still failed. Always-off
+  counts were `1,1,1,2,2`, mid-duty counts were `5,5,5,4,4`, always-on counts
+  were zero, and warm-up aborts were zero. Switching remained positive in all
+  seeds.
+- V249 therefore rejects the hypothesis that a single solar target-weight
+  change is sufficient. It is a useful calibration result, not a completed
+  mainline confirmation. Aggregate evidence is stored in
+  `reports/aggregate/v249_solar_weight_pdppo_sixch_dev_20260830/`.
