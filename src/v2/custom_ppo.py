@@ -2439,7 +2439,20 @@ def evaluate_custom_ppo(
             replace(cfg, seed=int(cfg.seed) + int(offset)),
             oracle=oracle,
         )
-        rollouts.append(run_policy_rollout(env, policy, steps=int(steps), start_idx=int(start_idx)))
+        rollouts.append(
+            run_policy_rollout(
+                env,
+                policy,
+                steps=int(steps),
+                start_idx=int(start_idx),
+                reward_proxy_mode=str(cfg.reward_proxy_mode),
+                reward_proxy_horizon=max(
+                    1,
+                    int(trainer.cfg.forecast_value_aux_lookahead_steps)
+                    or int(trainer.cfg.greedy_lookahead_steps),
+                ),
+            )
+        )
     result = rollouts[0] if len(rollouts) == 1 else concat_rollout_results(rollouts, policy_name=policy.name)
     return result, rollout_metrics(result)
 

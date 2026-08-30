@@ -27,6 +27,7 @@ from v2.custom_ppo import (  # noqa: E402
     snapshot_env,
     standardized_negative_cost_targets,
 )
+from v2.rollout import run_policy_rollout  # noqa: E402
 
 
 def test_policy_decision_mask_excludes_forced_dwell_rows() -> None:
@@ -424,6 +425,57 @@ def test_forecast_block_gain_restores_env_and_zeroes_same_action_delta() -> None
     assert env.current_idx == before["current_idx"]
     assert env.dwell_hold_remaining == before["dwell_hold_remaining"]
     assert np.array_equal(env.previous_action_mask, before["previous_action_mask"])
+
+
+def test_block_gain_evaluation_reward_matches_training_style_reward() -> None:
+    truth = _truth(96)
+    constraints = PowerConstraintsV2(
+        max_active=3, per_step_budget=1.7, startup_peak_budget=2.0
+    )
+    cfg = WarmupEnvConfig(
+        state_columns=STATE_COLUMNS,
+        reward_target_columns=STATE_COLUMNS,
+        reward_proxy_mode="forecast_block_relative_gain",
+        lookback=4,
+        episode_len=16,
+        min_dwell_steps=3,
+        lambda_warmup_abort=0.0,
+        lambda_switch=0.0,
+    )
+    oracle = _oracle(truth)
+    expected_env = WarmupSchedulingEnv(truth, _sensors(), constraints, cfg, oracle=oracle)
+    expected_env.reset(start_idx=12)
+    mask = np.asarray([True, False, True])
+    gain = forecast_block_gain(
+        expected_env,
+        mask,
+        np.asarray(expected_env.previous_action_mask, dtype=bool),
+        horizon=3,
+        relative=True,
+    )
+    _, _, _, expected_info = expected_env.step_mask(mask)
+    expected_reward = float(gain) - float(expected_info.get("shaping_penalty", 0.0))
+
+    eval_env = WarmupSchedulingEnv(truth, _sensors(), constraints, cfg, oracle=oracle)
+
+    class FixedMaskPolicy:
+        name = "fixed-mask-test"
+
+        def reset(self) -> None:
+            return None
+
+        def act_mask(self, env: WarmupSchedulingEnv) -> np.ndarray:
+            return mask
+
+    result = run_policy_rollout(
+        eval_env,
+        FixedMaskPolicy(),
+        steps=1,
+        start_idx=12,
+        reward_proxy_mode="forecast_block_relative_gain",
+        reward_proxy_horizon=3,
+    )
+    assert result.rewards[0] == pytest.approx(expected_reward)
 
 
 def test_separate_gradient_clipping_limits_actor_and_critic_independently() -> None:

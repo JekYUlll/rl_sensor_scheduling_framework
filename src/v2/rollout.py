@@ -41,6 +41,8 @@ def run_policy_rollout(
     *,
     steps: int,
     start_idx: int = 0,
+    reward_proxy_mode: str | None = None,
+    reward_proxy_horizon: int | None = None,
 ) -> RolloutResult:
     policy.reset()
     env.reset(start_idx=int(start_idx))
@@ -60,6 +62,10 @@ def run_policy_rollout(
     energy_guard_dropped: list[int] = []
     soc: list[float] = []
     warmup_abort_count = 0
+    block_reward_mode = str(reward_proxy_mode or "").strip().lower() in {
+        "forecast_block_gain",
+        "forecast_block_relative_gain",
+    }
 
     for _ in range(int(steps)):
         step_idx = int(env.current_idx)
@@ -69,7 +75,34 @@ def run_policy_rollout(
         if desired is not None:
             desired_mask = np.asarray(desired, dtype=bool).reshape(-1)
             scores = np.where(desired_mask, 1.0, -1.0)
+            block_gain = 0.0
+            if block_reward_mode:
+                # Keep evaluation rewards identical to the custom PPO
+                # collection path. The local import avoids a module cycle.
+                from v2.custom_ppo import forecast_block_gain
+
+                decision_available = (
+                    int(getattr(env, "elapsed_steps", 0)) <= 0
+                    or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
+                )
+                if decision_available:
+                    block_gain = forecast_block_gain(
+                        env,
+                        desired_mask,
+                        np.asarray(env.previous_action_mask, dtype=bool),
+                        horizon=max(
+                            1,
+                            int(
+                                reward_proxy_horizon
+                                if reward_proxy_horizon is not None
+                                else getattr(env.cfg, "min_dwell_steps", 1)
+                            ),
+                        ),
+                        relative=(str(reward_proxy_mode).strip().lower() == "forecast_block_relative_gain"),
+                    )
             _, reward, done, info = env.step_mask(desired_mask)
+            if block_reward_mode:
+                reward = float(block_gain) - float(info.get("shaping_penalty", 0.0))
         else:
             scores = policy.act_scores(env)
             _, reward, done, info = env.step_scores(scores)
