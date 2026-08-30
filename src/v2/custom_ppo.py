@@ -1298,15 +1298,22 @@ class CustomPPO:
                 int(getattr(env, "elapsed_steps", 0)) <= 0
                 or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
             )
-            if str(self.env_cfg.reward_proxy_mode) == "forecast_block_gain" and decision_available:
+            if str(self.env_cfg.reward_proxy_mode) in {
+                "forecast_block_gain",
+                "forecast_block_relative_gain",
+            } and decision_available:
                 block_gain = forecast_block_gain(
                     env,
                     self.candidate_masks_np[action],
                     np.asarray(env.previous_action_mask, dtype=bool),
                     horizon=max(1, int(self.cfg.forecast_value_aux_lookahead_steps) or int(self.cfg.greedy_lookahead_steps)),
+                    relative=(str(self.env_cfg.reward_proxy_mode) == "forecast_block_relative_gain"),
                 )
             _, reward, done, info = env.step_mask(self.candidate_masks_np[action])
-            if str(self.env_cfg.reward_proxy_mode) == "forecast_block_gain":
+            if str(self.env_cfg.reward_proxy_mode) in {
+                "forecast_block_gain",
+                "forecast_block_relative_gain",
+            }:
                 reward = float(block_gain) - float(info.get("shaping_penalty", 0.0))
 
             obs_rows.append(obs_np)
@@ -2497,6 +2504,7 @@ def forecast_block_gain(
     baseline_mask: np.ndarray,
     *,
     horizon: int,
+    relative: bool = False,
 ) -> float:
     """Return baseline block loss minus selected block loss from one state.
 
@@ -2523,7 +2531,11 @@ def forecast_block_gain(
     restore_env(env, snapshot)
     if not np.isfinite(selected_cost) or not np.isfinite(baseline_cost):
         return 0.0
-    return float(baseline_cost - selected_cost)
+    gain = float(baseline_cost - selected_cost)
+    if bool(relative):
+        scale = max(abs(float(baseline_cost)) + abs(float(selected_cost)), 1.0e-6)
+        return float(np.clip(2.0 * gain / scale, -1.0, 1.0))
+    return gain
 
 
 def soft_forecast_value_targets(

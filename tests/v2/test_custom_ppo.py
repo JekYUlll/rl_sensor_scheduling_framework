@@ -418,6 +418,9 @@ def test_forecast_block_gain_restores_env_and_zeroes_same_action_delta() -> None
     mask = np.asarray([True, False, True])
     gain = forecast_block_gain(env, mask, mask, horizon=3)
     assert gain == pytest.approx(0.0)
+    relative_gain = forecast_block_gain(env, mask, mask, horizon=3, relative=True)
+    assert relative_gain == pytest.approx(0.0)
+    assert -1.0 <= relative_gain <= 1.0
     assert env.current_idx == before["current_idx"]
     assert env.dwell_hold_remaining == before["dwell_hold_remaining"]
     assert np.array_equal(env.previous_action_mask, before["previous_action_mask"])
