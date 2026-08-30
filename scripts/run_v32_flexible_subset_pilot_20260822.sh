@@ -77,6 +77,7 @@ NOWCAST_WIND_NOISE_STD="${NOWCAST_WIND_NOISE_STD:-1.0}"
 NOWCAST_HUMIDITY_NOISE_STD="${NOWCAST_HUMIDITY_NOISE_STD:-3.0}"
 NOWCAST_TEMPERATURE_NOISE_STD="${NOWCAST_TEMPERATURE_NOISE_STD:-0.7}"
 NOWCAST_SOLAR_NOISE_STD="${NOWCAST_SOLAR_NOISE_STD:-35.0}"
+EVENT_START_PROB="${EVENT_START_PROB:-0.70}"
 read -r -a AGENT_CONTEXT_COLUMN_ARGS <<< "${AGENT_CONTEXT_COLUMNS:-}"
 INCLUDE_ALERT_CONTEXT_FEATURES="${INCLUDE_ALERT_CONTEXT_FEATURES:-1}"
 read -r -a ALERT_CONTEXT_COLUMN_ARGS <<< "${ALERT_CONTEXT_COLUMNS:-agent_context_particle_alert agent_context_flux_alert agent_context_thermal_alert}"
@@ -414,7 +415,7 @@ for seed in "${SEEDS[@]}"; do
     --awbc-teacher-dwell-steps 6 \
     --prior-kl-coef 0.0 \
     --greedy-lookahead-steps "$GREEDY_LOOKAHEAD_STEPS" \
-    --event-start-prob 0.70 \
+    --event-start-prob "$EVENT_START_PROB" \
     --event-aware-critic \
     --no-event-gated-actor \
     "${CONTEXT_ENCODER_ARGS[@]}" \

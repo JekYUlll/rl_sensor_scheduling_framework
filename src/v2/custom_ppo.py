@@ -1191,6 +1191,10 @@ class CustomPPO:
             metrics = self.update(batch)
             steps_done += int(batch["obs"].shape[0])
             metrics["timesteps"] = int(steps_done)
+            metrics["rollout_reward_mean"] = float(np.mean(batch["rewards"]))
+            metrics["rollout_reward_std"] = float(np.std(batch["rewards"]))
+            metrics["rollout_return_mean"] = float(np.mean(batch["returns"]))
+            metrics["rollout_return_std"] = float(np.std(batch["returns"]))
             self.history.append(metrics)
             self._flush_history()
             if on_update is not None:
