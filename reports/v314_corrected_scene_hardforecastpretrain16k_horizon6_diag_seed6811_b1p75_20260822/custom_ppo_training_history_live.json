@@ -1,0 +1,22 @@
+[
+  {
+    "loss": 0.6831374413799495,
+    "policy_loss": NaN,
+    "value_loss": NaN,
+    "entropy": 0.6522740494459868,
+    "awbc_loss": 0.6202728664968162,
+    "prior_kl_loss": NaN,
+    "soc_aux_loss": NaN,
+    "subtype_aux_loss": 0.20954857306787744,
+    "subtype_aux_accuracy": 0.9267669677734375,
+    "advantage_mean": NaN,
+    "advantage_std": NaN,
+    "event_rate": 0.33026617765426636,
+    "awbc_label_rate": 1.0,
+    "greedy_unique_actions": 22,
+    "bc_pretrain": 1,
+    "bc_steps": 16384,
+    "bc_accuracy": 0.824700927734375,
+    "timesteps": 0
+  }
+]

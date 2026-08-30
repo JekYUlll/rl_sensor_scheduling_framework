@@ -6189,3 +6189,19 @@ Evidence is stored in
   cover a full six-step executable block. The next diagnostic must align the
   teacher horizon with the minimum dwell while separately testing the observed
   training/evaluation state-distribution shift.
+
+# V314 aligned-horizon diagnostic (2026-08-31)
+
+- Repeated the V311 feasible-only hard forecast-value pretraining diagnostic
+  with `greedy-lookahead-steps=6`, matching the environment
+  `min_dwell_steps=6`. All V311 scene, evaluator, context, state, validation,
+  and candidate-prior settings were restored; no PPO updates were applied.
+- Both development seeds lost to validation-selected static on ordinary loss
+  and static-normalized event macro: `0/2` wins for each endpoint. Mean
+  ordinary margins (reference minus custom) were `-0.041614` and `-0.043228`
+  for validation static and feasible static, respectively.
+- Behavior also failed: seed 6811 had 1 always-on, 3 always-off, and 2
+  mid-duty channels; seed 6812 had 0 always-on, 2 always-off, and 4 mid-duty
+  channels. Warm-up aborts were zero in both seeds.
+- Decision: reject horizon alignment as a primary improvement. Evidence is in
+  `reports/aggregate/v314_corrected_scene_hardforecastpretrain16k_horizon6_pdppo_diag_20260831/`.
