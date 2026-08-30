@@ -15,8 +15,8 @@ run_one() {
   local source="reports/v294_corrected_sixchannel_quality_pdppo_dev_seed${seed}_b1p75_20260822"
   (
     export CUDA_VISIBLE_DEVICES="$((idx + GPU_OFFSET))"
-    export RUN_PREFIX="v302_corrected_scene_decision_only_staticnorm_pdppo_dev"
-    export LOG_PREFIX="v302_corrected_scene_decision_only_staticnorm_pdppo"
+    export RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v302_corrected_scene_decision_only_staticnorm_pdppo_dev}"
+    export LOG_PREFIX="${LOG_PREFIX_OVERRIDE:-v302_corrected_scene_decision_only_staticnorm_pdppo}"
     export TOTAL_TIMESTEPS=50000 POLICY_SEED="$policy_seed" CONTROL_SOURCE_RUN_DIR="$source"
     export REWARD_PROXY_MODE=forecast REWARD_LOSS_NORMALIZATION=staticnorm_subtype EVENT_START_PROB=1.0
     export DECISION_ONLY_POLICY_UPDATES=1 DECISION_BLOCK_CREDIT=0 DECISION_BLOCK_REWARD_MODE=sum
