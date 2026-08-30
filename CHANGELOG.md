@@ -5329,3 +5329,47 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/aggregate/v271_relative_event_aligned_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V272 semi-Markov decision credit
+
+- Enabled the existing semi-Markov decision-block advantage path on fresh
+  seeds `6101--6102`, while retaining V271's relative six-step selected-versus-
+  held forecast gain, scene, action geometry, and context features.
+- The matched evaluation reward replay was active; evaluation reward fields
+  therefore reflect the same relative block-gain calculation used in training.
+- Feasibility and behavior passed `2/2`: zero invalid actions, power or peak
+  violations, warm-up aborts, and permanent-channel failures; both seeds had
+  six mid-duty channels.
+- Predictive transfer failed. Static ordinary/macro wins were `0/2`; original
+  dynamic wins were `1/2` on both endpoints. Mean macro margins were
+  `-0.123171` for static, `-0.046367` for original dynamic, and `-0.066923`
+  for full-open.
+- Decision: reject V272. Semi-Markov decision credit does not repair the
+  relative block-gain transfer failure; stop this objective family and retain
+  the implementation only as an isolated diagnostic.
+
+Evidence is stored in
+`reports/aggregate/v272_semimarkov_relative_gain_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V273 matched ordinary forecast-reward control
+
+- Restored ordinary per-step forecast reward and row-wise PPO updates while
+  preserving V272's scene, arbitrary-subset action geometry, context encoder,
+  budget, and training length. Fresh remote seeds `6201--6202` completed.
+- Predictive result: static macro wins `2/2` with mean margin `+0.094015`;
+  original dynamic macro wins `1/2` with mean margin `+0.035930`; full-open
+  macro wins `1/2` with mean margin `+0.008355`. Ordinary wins were `1/2`,
+  `1/2`, and `0/2`, respectively.
+- The behavior gate passed only `1/2`. Seed6201 had four mid-duty channels,
+  zero always-on/off channels, and `0.049356` switches per step. Seed6202
+  collapsed to two always-on and four always-off channels, zero mid-duty
+  channels, and `0.000289` switches per step. Feasibility and warm-up checks
+  passed with zero invalid, power, peak, and warm-up violations.
+- Decision: reject V273 as a primary method candidate. Ordinary forecast
+  reward improves predictive transfer but permits severe seed-dependent policy
+  collapse; V272's block-credit path is not a solution because its predictive
+  transfer failed. Do not expand either objective family without a new,
+  independently justified stabilization hypothesis.
+
+Evidence is stored in
+`reports/aggregate/v273_forecast_control_pdppo_sixch_dev_20260830/`.
