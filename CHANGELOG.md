@@ -4617,3 +4617,13 @@ tar -czf "$OUT…`
 - The corrected eight-step forecast-quality correlations remained mixed:
   `0.394/-0.189/0.537/0.375/-0.525` for GMX500/LPS10/SI-111/Parsivel 2/FC4.
   The quality-only route is closed; no larger PPO run is justified by it.
+
+## 2026-08-30 - V239 invalidated and balanced quality generation corrected
+
+- A source audit found that the balanced actual-quality branch still fell
+  through to the historical latent-event profile, so V239's actual and
+  forecast quality columns described different processes. Its partial runs
+  were stopped and are retained only as invalid diagnostics.
+- The branch condition is corrected in `1e45d75`, with a regression test that
+  identical nowcast and realized weather produce identical quality profiles.
+  V240 must regenerate fresh scenes before this route can be evaluated.
