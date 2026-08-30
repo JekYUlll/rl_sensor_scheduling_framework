@@ -6205,3 +6205,19 @@ Evidence is stored in
   channels. Warm-up aborts were zero in both seeds.
 - Decision: reject horizon alignment as a primary improvement. Evidence is in
   `reports/aggregate/v314_corrected_scene_hardforecastpretrain16k_horizon6_pdppo_diag_20260831/`.
+## 2026-08-31 - V315 balanced training-start diagnostic
+
+- Completed the corrected remote V315 run for scene seeds 6811 and 6812.
+- The intended change was `event_start_prob=1.0` to `0.67`, but metadata audit
+  found additional drift: V315 used unnormalised reward loss and
+  `lambda_warmup_abort=0.08`, while V311 used static-normalised loss and `1.0`.
+- PD-PPO lost to validation-selected static, feasible static, full-open, AoI,
+  random, and round-robin in both seeds on ordinary and static-normalized
+  macro loss.
+- The behavior gate also failed: seed 6811 had `1/3/2` always-on/always-off/
+  mid-duty channels and seed 6812 had `0/1/5`; warm-up aborts remained zero.
+- Aggregate evidence is stored in
+  `reports/aggregate/v315_balanced_start_eventprob067_h6_pdppo_diag_20260831/`.
+- Decision: V315 is not a valid single-variable sampler experiment. Do not
+  attribute its degradation to start-probability balancing or launch a fresh
+  final evaluation from it. Restore V311 settings before any clean rerun.
