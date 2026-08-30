@@ -161,7 +161,11 @@ def add_channel_quality_dynamics(
             0.0,
             1.0,
         )
-        if mode == "condition_dependent_crossover":
+        if mode in {
+            "condition_dependent_crossover",
+            "condition_dependent_crossover_strong",
+            "condition_dependent_crossover_balanced",
+        }:
             temperature = out["air_temperature_c"].to_numpy(dtype=float)
             radiation = positive_unit("solar_radiation_wm2")
             cold = np.clip((-temperature - 5.0) / 20.0, 0.0, 1.0)
@@ -177,23 +181,11 @@ def add_channel_quality_dynamics(
             # reliable in moderate transport and suffers optical deposition in
             # severe wind; FlowCapt's signal-to-noise improves with transport.
             # All drivers are ordinary meteorological variables, not labels.
-            if mode in {
-                "condition_dependent_crossover_strong",
-                "condition_dependent_crossover_balanced",
-            }:
-                # Development-only stress calibration: each physical group has
-                # a distinct, weather-observable exposure mechanism.
-                exposure_profiles = profiles_for()
-            else:
-                exposure_profiles = {
-                "gmx500_weather_station": 0.70 * icing + 0.15 * severe_wind,
-                "lps10_pyranometer": 0.60 * (1.0 - radiation) + 0.25 * humidity,
-                "si111_surface_ir": 0.65 * icing + 0.15 * severe_wind,
-                "parsivel2_disdrometer": (
-                    0.65 * severe_wind + 0.20 * humidity + 0.10 * (1.0 - moderate_wind)
-                ),
-                "flowcapt_fc4": 0.75 * low_transport_signal + 0.10 * icing,
-                }
+            # Each physical group has a distinct, weather-observable exposure
+            # mechanism. The balanced variant centers these same profiles
+            # across groups; it must be used for both actual and forecast
+            # quality so the two columns describe one physical process.
+            exposure_profiles = profiles_for()
         else:
             particle = positive_unit("event_subtype_particle_latent")
             flux = positive_unit("event_subtype_flux_latent")

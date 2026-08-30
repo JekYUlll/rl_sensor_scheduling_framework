@@ -153,3 +153,38 @@ def test_forecast_quality_uses_nowcast_columns_and_stays_separate() -> None:
     assert np.isfinite(predicted).all()
     assert not np.allclose(actual, predicted)
     assert all(f"agent_context_quality_forecast_{sensor}" in out for sensor in sensors)
+
+
+def test_balanced_forecast_quality_matches_actual_for_matching_nowcast() -> None:
+    builder = _quality_builder()
+    frame = pd.DataFrame({
+        "wind_speed_ms": [2.0, 11.0, 18.0, 7.0],
+        "relative_humidity": [45.0, 82.0, 94.0, 70.0],
+        "air_temperature_c": [-4.0, -14.0, -24.0, -10.0],
+        "solar_radiation_wm2": [0.0, 160.0, 15.0, 90.0],
+        "event_subtype_particle_latent": [0.0] * 4,
+        "event_subtype_flux_latent": [0.0] * 4,
+        "event_subtype_thermal_latent": [0.0] * 4,
+    })
+    for column in (
+        "wind_speed_ms", "relative_humidity", "air_temperature_c",
+        "solar_radiation_wm2",
+    ):
+        frame[f"agent_context_nowcast_{column}"] = frame[column]
+    sensors = (
+        "gmx500_weather_station", "lps10_pyranometer", "si111_surface_ir",
+        "parsivel2_disdrometer", "flowcapt_fc4",
+    )
+    out = builder(
+        frame, sensor_ids=sensors, seed=19, coverage=0.0,
+        min_duration=1, max_duration=1, min_gap=0, degraded_quality=0.10,
+        transition_steps=0, report_noise_std=0.0,
+        mode="condition_dependent_crossover_balanced", forecast_quality=True,
+    )
+    for sensor in sensors:
+        np.testing.assert_allclose(
+            out[f"agent_context_quality_{sensor}"].to_numpy(),
+            out[f"agent_context_quality_forecast_{sensor}"].to_numpy(),
+            rtol=0.0,
+            atol=1e-12,
+        )
