@@ -5963,3 +5963,32 @@ Evidence is stored in
 - Decision: reject V301. Lowering entropy did not improve exploitation or
   static transfer; reward-scale and value-conditioning diagnostics are next.
 - Aggregate: `reports/aggregate/v301_corrected_scene_decision_only_lowentropy_pdppo_dev_20260831/`.
+
+# V302 - Corrected-scene decision-only static-normalized reward screen (2026-08-31)
+
+### Change
+- Enabled the existing validation-frozen `staticnorm_subtype` reward scaling
+  after correcting the V267 wrapper to honor the caller's setting.
+- Kept the forecast-loss objective, V300 decision-only updates, context and
+  temporal encoders, action geometry, and evaluation protocol unchanged.
+- The first launch was stopped at source validation because V294 had not saved
+  the two required normalization artifacts. Those files were then generated
+  from the unchanged V294 validation candidate set before the retry.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `1/2`,
+  full-open `1/2`, AoI `1/2`, random `2/2`, and round-robin `2/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `2/2`, full-open `1/2`, AoI `1/2`, random `2/2`, and round-robin `2/2`.
+- Mean ordinary margins versus validation static, feasible static, full-open,
+  AoI, random, and round-robin were `-0.022041`, `+0.002096`, `-0.011675`,
+  `+0.001026`, `+0.018513`, and `+0.023857`.
+- Mean macro margins for the same references were `-0.013303`, `+0.072613`,
+  `-0.003614`, `+0.020642`, `+0.094963`, and `+0.069118`.
+- Behavior: zero warm-up aborts and zero always-on channels; seed6811 had one
+  always-off channel and seed6812 had none. Both retained intermediate-duty
+  channels, with switching rates `0.017224/0.039224`.
+- Decision: retain as the strongest current development candidate, but do not
+  promote to final evidence because ordinary static wins were `0/2` and one
+  seed retained an always-off channel.
+- Aggregate: `reports/aggregate/v302_corrected_scene_decision_only_staticnorm_pdppo_dev_20260831/`.
