@@ -13,6 +13,26 @@
 - Results will be compared with V243 and V244 after raw metrics and behavior
   diagnostics are complete.
 
+## 2026-08-30 - V245 rejects candidate-conditioned on-policy values
+
+- V245 completed on seeds `3601--3605` with the V243 clean forecast-loss PPO
+  scaffold and the existing candidate-conditioned on-policy value head
+  (`coef=0.10`, actor logit scale `0.50`). No bandit signal, teacher action,
+  counterfactual label, or test-time event label was used.
+- The variant failed the behavior gate: four of five runs had zero mid-duty
+  channels, and the runs contained 2--5 always-off or always-on channels. All
+  runs had zero warm-up aborts; switching was zero in four runs and `0.008684`
+  in the fifth.
+- Relative to the V245 PD-PPO row, the mean baseline-minus-PD-PPO margins were
+  `-0.253446` for validation-selected static, `-0.009292` for feasible static,
+  `-0.101001` for the best original dynamic family, and `-0.128526` for the
+  unconstrained full-open reference. Macro wins were `1/5`, `2/5`, `1/5`, and
+  `1/5`, respectively. The auxiliary value head therefore did not improve the
+  action-value mapping and caused policy concentration.
+- Raw and recomputed aggregates are stored under
+  `reports/aggregate/v245_onpolicy_action_value_pdppo_dev_20260830/`. No
+  confirmatory expansion is authorized for this variant.
+
 ## 2026-08-30 - V244 result closes the direct quality-action route
 
 - V244 completed on fresh seeds `3501--3505` with the existing forecast-loss
