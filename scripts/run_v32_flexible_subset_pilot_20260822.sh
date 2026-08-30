@@ -36,6 +36,7 @@ BC_PRETRAIN_STEPS="${BC_PRETRAIN_STEPS:-1500}"
 BC_PRETRAIN_EPOCHS="${BC_PRETRAIN_EPOCHS:-4}"
 BC_PRETRAIN_LOSS_COEF="${BC_PRETRAIN_LOSS_COEF:-0.5}"
 BC_PRETRAIN_TARGET_MODE="${BC_PRETRAIN_TARGET_MODE:-hard}"
+BC_PRETRAIN_DECISION_ONLY="${BC_PRETRAIN_DECISION_ONLY:-0}"
 BC_SOFT_TEMPERATURE="${BC_SOFT_TEMPERATURE:-1.0}"
 FORECAST_VALUE_AUX_COEF="${FORECAST_VALUE_AUX_COEF:-0.0}"
 FORECAST_VALUE_AUX_STRIDE="${FORECAST_VALUE_AUX_STRIDE:-64}"
@@ -157,6 +158,10 @@ if [[ "$DECISION_BLOCK_CREDIT" == "1" ]]; then
 fi
 DECISION_BLOCK_REWARD_MODE="${DECISION_BLOCK_REWARD_MODE:-sum}"
 DECISION_BLOCK_REWARD_ARGS=(--decision-block-reward-mode "$DECISION_BLOCK_REWARD_MODE")
+BC_DECISION_ARGS=(--no-bc-pretrain-decision-only)
+if [[ "$BC_PRETRAIN_DECISION_ONLY" == "1" ]]; then
+  BC_DECISION_ARGS=(--bc-pretrain-decision-only)
+fi
 QUALITY_ARGS=(--no-channel-quality-enabled)
 if [[ "$CHANNEL_QUALITY_ENABLED" == "1" ]]; then
   QUALITY_ARGS=(
@@ -397,6 +402,7 @@ for seed in "${SEEDS[@]}"; do
     --bc-pretrain-batch-size 256 \
     --bc-pretrain-loss-coef "$BC_PRETRAIN_LOSS_COEF" \
     --bc-pretrain-target-mode "$BC_PRETRAIN_TARGET_MODE" \
+    "${BC_DECISION_ARGS[@]}" \
     --bc-soft-temperature "$BC_SOFT_TEMPERATURE" \
     --forecast-value-aux-coef "$FORECAST_VALUE_AUX_COEF" \
     --forecast-value-aux-stride "$FORECAST_VALUE_AUX_STRIDE" \

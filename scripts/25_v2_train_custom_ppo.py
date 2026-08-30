@@ -744,6 +744,12 @@ def main() -> None:
         choices=["hard", "hard_forecast_value", "soft_forecast_value", "forecast_value_regression"],
         default="hard",
     )
+    parser.add_argument(
+        "--bc-pretrain-decision-only",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use only states at which a new mask can be executed during BC pretraining.",
+    )
     parser.add_argument("--bc-soft-temperature", type=float, default=1.0)
     parser.add_argument("--forecast-value-aux-coef", type=float, default=0.0)
     parser.add_argument("--forecast-value-aux-stride", type=int, default=64)
@@ -1624,6 +1630,7 @@ def main() -> None:
             bc_pretrain_batch_size=int(args.bc_pretrain_batch_size),
             bc_pretrain_loss_coef=float(args.bc_pretrain_loss_coef),
             bc_pretrain_target_mode=str(args.bc_pretrain_target_mode),
+            bc_pretrain_decision_only=bool(args.bc_pretrain_decision_only),
             bc_soft_temperature=float(args.bc_soft_temperature),
             forecast_value_aux_coef=float(args.forecast_value_aux_coef),
             forecast_value_aux_stride=max(1, int(args.forecast_value_aux_stride)),
@@ -2774,6 +2781,7 @@ def as_serializable_config(
         "bc_pretrain_epochs": int(cfg.bc_pretrain_epochs),
         "bc_pretrain_batch_size": int(cfg.bc_pretrain_batch_size),
         "bc_pretrain_loss_coef": float(cfg.bc_pretrain_loss_coef),
+        "bc_pretrain_decision_only": bool(cfg.bc_pretrain_decision_only),
         "subtype_aux_coef": float(cfg.subtype_aux_coef),
         "subtype_aux_classes": int(cfg.subtype_aux_classes),
         "subtype_aux_lookahead_steps": int(cfg.subtype_aux_lookahead_steps),

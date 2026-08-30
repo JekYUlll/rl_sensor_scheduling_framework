@@ -207,6 +207,7 @@ class CustomPPOConfig:
     bc_pretrain_batch_size: int = 128
     bc_pretrain_loss_coef: float = 1.0
     bc_pretrain_target_mode: str = "hard"
+    bc_pretrain_decision_only: bool = False
     bc_soft_temperature: float = 1.0
     forecast_value_aux_coef: float = 0.0
     forecast_value_aux_stride: int = 64
@@ -1473,6 +1474,7 @@ class CustomPPO:
         subtype_valid_rows: list[float] = []
         teacher_distribution_rows: list[np.ndarray] = []
         teacher_cost_rows: list[np.ndarray] = []
+        decision_rows: list[float] = []
         episode_id = 0
         for step in range(int(n_steps)):
             obs_np = env._state().astype(np.float32)
@@ -1527,6 +1529,11 @@ class CustomPPO:
             action_mask_rows.append(action_mask_np.astype(bool))
             subtype_label_rows.append(int(subtype_label))
             subtype_valid_rows.append(float(subtype_valid))
+            decision_available = (
+                int(getattr(env, "elapsed_steps", 0)) <= 0
+                or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
+            )
+            decision_rows.append(float(decision_available))
 
             _, _, done, _ = env.step_mask(self.candidate_masks_np[teacher])
             if done and step < int(n_steps) - 1:
@@ -1549,12 +1556,29 @@ class CustomPPO:
             "action_masks": np.vstack(action_mask_rows).astype(bool),
             "subtype_labels": np.asarray(subtype_label_rows, dtype=np.int64),
             "subtype_valid": np.asarray(subtype_valid_rows, dtype=np.float32),
+            "decision_rows": np.asarray(decision_rows, dtype=np.float32),
             "episode_ids": np.full(len(teacher_rows), int(episode_id), dtype=np.int64),
         }
 
     def bc_pretrain(self, n_steps: int) -> dict[str, float | int]:
         torch, nn = _torch_modules()
         batch = self.collect_teacher_batch(int(n_steps), seed_offset=91_000)
+        if bool(self.cfg.bc_pretrain_decision_only):
+            decision_mask = np.asarray(batch["decision_rows"], dtype=np.float32) > 0.5
+            if not np.any(decision_mask):
+                raise RuntimeError("decision-only BC pretraining produced no executable decision rows")
+            for key in (
+                "obs",
+                "teacher_actions",
+                "teacher_distributions",
+                "teacher_costs",
+                "event_flags",
+                "action_masks",
+                "subtype_labels",
+                "subtype_valid",
+                "decision_rows",
+            ):
+                batch[key] = batch[key][decision_mask]
         obs = torch_tensor(batch["obs"], device=self.device)
         teacher_actions = torch_tensor(batch["teacher_actions"], device=self.device, dtype=torch.long)
         teacher_distributions = torch_tensor(batch["teacher_distributions"], device=self.device)
@@ -1666,6 +1690,7 @@ class CustomPPO:
             "greedy_unique_actions": int(np.unique(batch["teacher_actions"]).size),
             "bc_pretrain": 1,
             "bc_steps": int(n),
+            "bc_decision_rows": int(n),
             "bc_accuracy": _mean_metric(rows, "accuracy"),
         }
 
