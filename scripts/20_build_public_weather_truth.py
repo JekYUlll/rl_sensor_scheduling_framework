@@ -130,20 +130,22 @@ def add_channel_quality_dynamics(
             )
             if mode == "condition_dependent_crossover":
                 return {
-                    "gmx500_weather_station": 0.70 * icing + 0.15 * severe_wind,
-                    "lps10_pyranometer": 0.60 * (1.0 - radiation) + 0.25 * humidity,
-                    "si111_surface_ir": 0.65 * icing + 0.15 * severe_wind,
-                    "parsivel2_disdrometer": (
+                    "met_station_core": 0.70 * icing + 0.15 * severe_wind,
+                    "radiometer_basic": 0.60 * (1.0 - radiation) + 0.25 * humidity,
+                    "shielded_thermo_hygro": 0.35 * icing + 0.25 * humidity + 0.10 * severe_wind,
+                    "surface_temp_ir": 0.65 * icing + 0.15 * severe_wind,
+                    "laser_disdrometer": (
                         0.65 * severe_wind + 0.20 * humidity + 0.10 * (1.0 - moderate_wind)
                     ),
-                    "flowcapt_fc4": 0.75 * low_transport_signal + 0.10 * icing,
+                    "fc4_flux": 0.75 * low_transport_signal + 0.10 * icing,
                 }
             exposure_profiles = {
-                "gmx500_weather_station": 0.80 * severe_wind + 0.20 * humidity,
-                "lps10_pyranometer": 0.80 * (1.0 - radiation) + 0.20 * humidity,
-                "si111_surface_ir": 0.80 * icing + 0.20 * severe_wind,
-                "parsivel2_disdrometer": 0.80 * (1.0 - moderate_wind) + 0.20 * humidity,
-                "flowcapt_fc4": 0.80 * low_transport_signal + 0.20 * icing,
+                "met_station_core": 0.80 * severe_wind + 0.20 * humidity,
+                "radiometer_basic": 0.80 * (1.0 - radiation) + 0.20 * humidity,
+                "shielded_thermo_hygro": 0.35 * icing + 0.25 * humidity + 0.10 * severe_wind,
+                "surface_temp_ir": 0.80 * icing + 0.20 * severe_wind,
+                "laser_disdrometer": 0.80 * (1.0 - moderate_wind) + 0.20 * humidity,
+                "fc4_flux": 0.80 * low_transport_signal + 0.20 * icing,
             }
             if mode == "condition_dependent_crossover_balanced":
                 profile_ids = list(exposure_profiles)
