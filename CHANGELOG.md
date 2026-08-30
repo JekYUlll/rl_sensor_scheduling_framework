@@ -5263,3 +5263,23 @@ tar -czf "$OUT…`
 
 Evidence is stored in
 `reports/aggregate/v267_block_gain_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V268 relative action-sensitive dwell-block reward
+
+- Tested a normalized form of the V267 action-sensitive six-step dwell-block
+  gain on fresh seeds `5801--5802`. No bandit, teacher, test label, or new
+  deployment constraint was introduced.
+- Feasibility and behavior passed in `2/2` seeds: zero invalid actions, power
+  violations, startup-peak violations, warm-up aborts, and permanent-channel
+  failures. Mid-duty channels were `6` and `5`; switching rates were
+  `0.044001` and `0.033579` per step.
+- Predictive transfer failed. Static ordinary/macro wins were `0/2` and
+  original-dynamic macro wins were `0/2` (ordinary `1/2`). Mean
+  baseline-minus-PD-PPO macro margins were `-0.124932` for static,
+  `-0.008471` for original dynamic, and `-0.091523` for full-open.
+- Decision: reject V268 without expansion. Normalizing the local block gain
+  preserves valid behavior but does not recover the forecast objective. The
+  next audit targets reward/return scale and the training-start distribution.
+
+Evidence is stored in
+`reports/aggregate/v268_relative_block_gain_pdppo_sixch_dev_20260830/`.
