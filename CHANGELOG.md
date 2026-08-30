@@ -4887,3 +4887,27 @@ tar -czf "$OUT…`
   change is sufficient. It is a useful calibration result, not a completed
   mainline confirmation. Aggregate evidence is stored in
   `reports/aggregate/v249_solar_weight_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V251 no-teacher six-channel PD-PPO
+
+- V251 ran seeds `4101--4105` on the V249 six-channel physical scene with
+  arbitrary feasible subsets, budget `1.75`, startup budget `2.15`, minimum
+  dwell `6`, solar target weight `3`, and `200,000` PPO timesteps.
+- AWBC, behavior-cloning pretraining, and oracle subtype teacher computation
+  were disabled. The online context encoder and subtype auxiliary loss were
+  retained; final execution used no simulator event labels.
+- The deployment behavior gate passed in all five seeds: six intermediate-duty
+  channels, zero always-on/off channels, zero warm-up aborts, and switching
+  rates of `0.062238--0.075337` per step.
+- PD-PPO won validation-selected static in `1/5` ordinary and `1/5` macro
+  comparisons, feasible projected static in `1/5` ordinary and `3/5` macro
+  comparisons, and AoI in `0/5` for both endpoints. Mean baseline-minus-PD-PPO
+  margins were `-0.027859/-0.035112`, `-0.017934/-0.003284`, and
+  `-0.006144/-0.006958`, respectively.
+- PD-PPO won round-robin in `4/5` ordinary and macro comparisons and random in
+  `4/5` ordinary and `5/5` macro comparisons. Mean margins were
+  `+0.009287/+0.013771` and `+0.014142/+0.020089`.
+- Interpretation: removing teacher computation restores non-collapsed dynamic
+  behavior but not predictive/static performance. V251 is a learner-control
+  result, not a passing mainline configuration. Aggregate evidence is stored
+  in `reports/aggregate/v251_no_teacher_pdppo_sixch_dev_20260830/`.
