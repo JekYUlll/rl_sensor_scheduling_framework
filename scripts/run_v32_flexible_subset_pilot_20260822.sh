@@ -79,6 +79,7 @@ NOWCAST_TEMPERATURE_NOISE_STD="${NOWCAST_TEMPERATURE_NOISE_STD:-0.7}"
 NOWCAST_SOLAR_NOISE_STD="${NOWCAST_SOLAR_NOISE_STD:-35.0}"
 read -r -a AGENT_CONTEXT_COLUMN_ARGS <<< "${AGENT_CONTEXT_COLUMNS:-}"
 INCLUDE_ALERT_CONTEXT_FEATURES="${INCLUDE_ALERT_CONTEXT_FEATURES:-1}"
+read -r -a ALERT_CONTEXT_COLUMN_ARGS <<< "${ALERT_CONTEXT_COLUMNS:-agent_context_particle_alert agent_context_flux_alert agent_context_thermal_alert}"
 PARTICLE_HUMIDITY_BOOST="${PARTICLE_HUMIDITY_BOOST:-1.0}"
 FLUX_WIND_BOOST="${FLUX_WIND_BOOST:-1.0}"
 THERMAL_AIR_TEMP_DROP="${THERMAL_AIR_TEMP_DROP:-1.0}"
@@ -181,7 +182,7 @@ if [[ "${#AGENT_CONTEXT_COLUMN_ARGS[@]}" -gt 0 ]]; then
   CONTEXT_INPUT_ARGS+=(--agent-context-columns "${AGENT_CONTEXT_COLUMN_ARGS[@]}")
 fi
 if [[ "$INCLUDE_ALERT_CONTEXT_FEATURES" == "1" ]]; then
-  CONTEXT_INPUT_ARGS+=(--include-alert-context-features)
+  CONTEXT_INPUT_ARGS+=(--include-alert-context-features --alert-context-columns "${ALERT_CONTEXT_COLUMN_ARGS[@]}")
 fi
 CONTEXT_ENCODER_ARGS=(--no-context-encoder)
 if [[ "${#CONTEXT_INPUT_ARGS[@]}" -gt 0 ]]; then

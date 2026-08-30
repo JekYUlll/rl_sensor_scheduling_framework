@@ -1293,7 +1293,21 @@ class CustomPPO:
             else:
                 greedy = action
                 awbc_valid = 0.0
+            block_gain = 0.0
+            decision_available = (
+                int(getattr(env, "elapsed_steps", 0)) <= 0
+                or int(getattr(env, "dwell_hold_remaining", 0)) <= 0
+            )
+            if str(self.env_cfg.reward_proxy_mode) == "forecast_block_gain" and decision_available:
+                block_gain = forecast_block_gain(
+                    env,
+                    self.candidate_masks_np[action],
+                    np.asarray(env.previous_action_mask, dtype=bool),
+                    horizon=max(1, int(self.cfg.forecast_value_aux_lookahead_steps) or int(self.cfg.greedy_lookahead_steps)),
+                )
             _, reward, done, info = env.step_mask(self.candidate_masks_np[action])
+            if str(self.env_cfg.reward_proxy_mode) == "forecast_block_gain":
+                reward = float(block_gain) - float(info.get("shaping_penalty", 0.0))
 
             obs_rows.append(obs_np)
             action_rows.append(action)
@@ -2475,6 +2489,41 @@ def oracle_greedy_candidate_costs(
         costs_by_action[idx] = float(avg_cost)
     restore_env(env, snapshot)
     return costs_by_action
+
+
+def forecast_block_gain(
+    env: WarmupSchedulingEnv,
+    selected_mask: np.ndarray,
+    baseline_mask: np.ndarray,
+    *,
+    horizon: int,
+) -> float:
+    """Return baseline block loss minus selected block loss from one state.
+
+    Both branches use the same snapshot and random-number state.  The baseline
+    is the previously executed subset, so the target measures the incremental
+    value of changing the action over the full minimum-dwell block.
+    """
+    snapshot = snapshot_env(env)
+
+    def block_cost(mask: np.ndarray) -> float:
+        restore_env(env, snapshot)
+        costs: list[float] = []
+        for _ in range(max(1, int(horizon))):
+            _, _, done, info = env.step_mask(np.asarray(mask, dtype=bool))
+            value = float(info.get("oracle_loss", float("nan")))
+            if np.isfinite(value):
+                costs.append(value)
+            if done:
+                break
+        return float(np.mean(costs)) if costs else float("nan")
+
+    selected_cost = block_cost(selected_mask)
+    baseline_cost = block_cost(baseline_mask)
+    restore_env(env, snapshot)
+    if not np.isfinite(selected_cost) or not np.isfinite(baseline_cost):
+        return 0.0
+    return float(baseline_cost - selected_cost)
 
 
 def soft_forecast_value_targets(

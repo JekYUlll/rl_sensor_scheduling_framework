@@ -18,6 +18,7 @@ from v2.custom_ppo import (  # noqa: E402
     channel_marginal_distribution_entropy,
     compute_decision_block_credit,
     feasible_candidate_mask,
+    forecast_block_gain,
     full_rollout_schedule,
     masked_soft_target_cross_entropy,
     policy_decision_mask,
@@ -393,6 +394,33 @@ def test_forecast_gain_reward_uses_same_epoch_no_measurement_counterfactual() ->
     expected_loss = float(info["oracle_loss"]) - float(info["counterfactual_oracle_loss"])
     assert float(info["reward_proxy_loss"]) == pytest.approx(expected_loss)
     assert reward == pytest.approx(-expected_loss)
+
+
+def test_forecast_block_gain_restores_env_and_zeroes_same_action_delta() -> None:
+    truth = _truth(64)
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=STATE_COLUMNS,
+            reward_proxy_mode="forecast_block_gain",
+            lookback=4,
+            episode_len=16,
+            lambda_warmup_abort=0.0,
+            lambda_switch=0.0,
+        ),
+        oracle=_oracle(truth),
+    )
+    env.reset(start_idx=12)
+    before = snapshot_env(env)
+    mask = np.asarray([True, False, True])
+    gain = forecast_block_gain(env, mask, mask, horizon=3)
+    assert gain == pytest.approx(0.0)
+    assert env.current_idx == before["current_idx"]
+    assert env.dwell_hold_remaining == before["dwell_hold_remaining"]
+    assert np.array_equal(env.previous_action_mask, before["previous_action_mask"])
 
 
 def test_separate_gradient_clipping_limits_actor_and_critic_independently() -> None:
