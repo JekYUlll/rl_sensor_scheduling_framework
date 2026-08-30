@@ -5308,3 +5308,24 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/aggregate/v269_event_aligned_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V271 relative block-gain event-start alignment
+
+- V271 correctly used the relative selected-versus-held six-step block-gain
+  objective with `event_start_prob=1.0` on fresh seeds `6001--6002`.
+- Feasibility passed in `2/2` seeds with zero invalid actions, power or peak
+  violations, and warm-up aborts. Seed6002 nevertheless had one always-off
+  channel; both seeds had five mid-duty channels.
+- Predictive transfer remained inadequate: static ordinary/macro wins were
+  `1/2` and `1/2`, while original-dynamic ordinary/macro wins were `0/2` and
+  `0/2`. Mean macro margins were `+0.036350` static, `-0.020801` dynamic,
+  and `-0.090452` full-open.
+- Training event-history means were `0.3181` and `0.3100`; reward means ranged
+  from `-0.001686` to `0.008980`, and return standard deviations ranged from
+  `0.1957` to `0.4274`.
+- Decision: reject V271 without expansion. Event-start balancing plus relative
+  block gain does not provide reliable dynamic transfer and introduces a
+  behavior failure in one seed.
+
+Evidence is stored in
+`reports/aggregate/v271_relative_event_aligned_pdppo_sixch_dev_20260830/`.
