@@ -5550,3 +5550,25 @@ Evidence is stored in
 - Consequently, V281's predictive metrics remain useful for diagnosis but are
   not strict evidence for decision-only policy updates. A corrected rerun is
   required before interpreting this branch as an ablation or mainline result.
+
+## 2026-08-30 - V283 candidate-action forecast separation audit
+
+- Audited all 64 enumerated subsets on the V282 seed-6801 scene with the
+  frozen TCN oracle. Four valid in-range evaluation windows were used, with
+  the 12 observable state columns explicitly matched to the frozen oracle.
+- Ordinary candidate mean forecast loss spanned `0.269966--0.710334` (range
+  `0.440367`). The best action was
+  `met_station_core|radiometer_basic|ultrasonic_anemometer_hd`; the worst was
+  `ultrasonic_anemometer_hd` alone. The ordinary forecast reward therefore
+  contains substantial candidate-action separation in this scene.
+- The audit exposed two reproducibility hazards: V282 metadata stores
+  long-sequence evaluation starts while its synchronized truth file has 30,000
+  rows, and the audit script's default 15-state configuration is incompatible
+  with the 12-state frozen TCN. Explicit compatible arguments were used; no
+  training result was changed.
+- Decision: do not add another reward proxy or scene perturbation from this
+  hypothesis. Next work should instrument PPO policy probabilities and
+  advantages at genuine decision rows before one bounded learner-side change.
+
+Evidence is stored in
+`reports/analysis/v283_candidate_action_separation_seed6801_12state_20260830/`.
