@@ -17,7 +17,7 @@ run_one() {
   local seed="$1" gpu="$2"
   (
     export CUDA_VISIBLE_DEVICES="$gpu"
-    export RUN_PREFIX="v252_offline_forecast_value_pdppo_sixch_dev"
+    export RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v252_offline_forecast_value_pdppo_sixch_dev_retry}"
     export TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS_OVERRIDE:-50000}" TRUTH_STEPS=36000 LOOKBACK=20
     export BUDGET=1.75 STARTUP_BUDGET=2.15 BUDGET_LABEL=b1p75
     export SENSOR_CFG="configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml"
@@ -55,7 +55,7 @@ run_one() {
     export TRAINABLE_ACTION_PRIOR=0 NONLINEAR_ACTION_EMBEDDING=1
     export ENT_COEF=0.02 CHANNEL_MARGINAL_ENTROPY_COEF=0
     export TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS_OVERRIDE:-50000}"
-    export CHECKPOINT_SELECTION_INTERVAL_UPDATES=5 CHECKPOINT_SELECTION_SCORE=max_static_ratio CHECKPOINT_REQUIRE_VALID_BEHAVIOR=0
+    export CHECKPOINT_SELECTION_INTERVAL_UPDATES=5 CHECKPOINT_SELECTION_SCORE=oracle_loss_mean CHECKPOINT_REQUIRE_VALID_BEHAVIOR=0
     export EVALUATION_POLICY_MODE=deterministic
     bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
   ) >"logs/v252_offline_forecast_value_pdppo_sixch_seed${seed}.log" 2>&1
