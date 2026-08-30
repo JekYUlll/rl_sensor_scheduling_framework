@@ -5917,3 +5917,27 @@ Evidence is stored in
 - Decision: reject as a mainline improvement. Less event-centered starts did
   not improve ordinary-loss transfer or eliminate residual constant behavior.
 - Aggregate: `reports/aggregate/v299_corrected_scene_balanced_start_pdppo_dev_20260831/`.
+
+# V300 - Corrected-scene decision-only policy-update screen (2026-08-31)
+
+### Change
+- Enabled the existing semi-Markov `decision_only_policy_updates` path so
+  actor gradients are applied only when a new mask can be executed; critic,
+  reward, scene, and evaluation settings remain unchanged from V298.
+- Ran fresh remote policy seeds `6861--6862`.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `1/2`,
+  full-open `1/2`, AoI `1/2`, random `1/2`, round-robin `2/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `2/2`, full-open `1/2`, AoI `1/2`, random `2/2`, round-robin `2/2`.
+- Mean ordinary margins versus validation static and feasible static were
+  `-0.022906` and `+0.001231`; mean macro margins were `-0.020483` and
+  `+0.065434`.
+- Behavior: zero warm-up aborts and zero always-on channels; seed6811 had one
+  always-off channel and seed6812 had none. Switching rates were
+  `0.061659/0.033435`.
+- Decision: retain as a method-correction diagnostic, but do not promote as a
+  complete mainline result because ordinary validation-static transfer remains
+  `0/2`.
+- Aggregate: `reports/aggregate/v300_corrected_scene_decision_only_pdppo_dev_20260831/`.
