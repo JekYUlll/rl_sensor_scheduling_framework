@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V261 rejects decision-time-only policy updates
+
+- Completed a two-seed development run (`5101--5102`) using the V259
+  dwell-aware executable-mask correction, the 64-unit temporal encoder, and
+  a clean decision-time update rule: actor loss, entropy, and advantage
+  normalization used only rows with more than one executable action, while
+  the critic continued to use all rollout rows. The forecast-loss reward,
+  six-channel arbitrary-subset geometry, B=`1.75`, minimum dwell `6`, and
+  50,000-step budget were unchanged.
+- The change did not recover the static shortcut. Validation-selected static
+  macro wins were `0/2`; mean baseline-minus-PD-PPO macro margin was
+  `-0.012396`. The best original dynamic family won only `1/2` on macro, with
+  mean margin `-0.012050`. The full-open reference remained an upper-bound
+  comparator, not a fair constrained baseline.
+- Behavior was mixed: seed5101 had four mid-duty channels and no permanent
+  channels; seed5102 had five mid-duty channels and one always-off channel.
+  Both had zero always-on channels and zero warm-up aborts; switching rates
+  were `0.036619` and `0.062238` per step.
+- Decision: restricting policy updates to genuine decision rows is a clean
+  implementation diagnostic, but it does not address the remaining
+  forecast-credit problem and is closed without expansion. Evidence is stored
+  in `reports/aggregate/v261_decision_time_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V260 rejects longer PPO credit horizon
 
 - Completed a two-seed development run (`5001--5002`) with the V259
