@@ -858,6 +858,11 @@ def main() -> None:
         action=argparse.BooleanOptionalAction,
         default=False,
     )
+    parser.add_argument(
+        "--decision-block-reward-mode",
+        choices=["sum", "terminal"],
+        default="sum",
+    )
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
@@ -1722,6 +1727,7 @@ def main() -> None:
         if bool(args.decision_block_credit)
         else "--no-decision-block-credit"
     )
+    cmd.extend(["--decision-block-reward-mode", str(args.decision_block_reward_mode)])
     cmd.extend(["--temporal-hidden-dim", str(max(1, int(args.temporal_hidden_dim)))])
     cmd.append(
         "--separate-actor-critic-grad-clip"

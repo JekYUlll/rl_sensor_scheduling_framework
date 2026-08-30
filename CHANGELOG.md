@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-30 - V262 rejects naive semi-Markov dwell-block credit
+
+- Completed a two-seed development run (`5201--5202`) using semi-Markov
+  actor credit. A genuine decision received the discounted sum of the
+  epoch-level forecast-loss rewards until the next executable decision, with
+  `gamma**duration` and `lambda**duration` between decision points. Critic
+  training and final evaluation remained epoch-level; no bandit signal,
+  teacher action, or test-time event label was added.
+- The change substantially degraded predictive performance. Validation static,
+  feasible static, original dynamic, and full-open macro wins were all `0/2`.
+  Mean baseline-minus-PD-PPO macro margins were `-0.206837`, `-0.102975`,
+  `-0.073359`, and `-0.094364`, respectively.
+- Behavior passed the permanent-channel gate in both seeds: seed5201 had five
+  mid-duty channels and seed5202 had six; both had zero always-on/off channels,
+  zero warm-up aborts, and switching rates `0.033869` and `0.045737`.
+- Decision: summing overlapping absolute forecast losses over a dwell block
+  overweights repeated measurement consequences and is rejected without
+  expansion. The semi-Markov code remains an isolated diagnostic; the next
+  candidate must use a non-overlapping or incremental block objective.
+- Evidence is stored in
+  `reports/aggregate/v262_semimarkov_dwell_credit_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V261 rejects decision-time-only policy updates
 
 - Completed a two-seed development run (`5101--5102`) using the V259

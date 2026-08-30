@@ -152,6 +152,8 @@ DECISION_BLOCK_ARGS=(--no-decision-block-credit)
 if [[ "$DECISION_BLOCK_CREDIT" == "1" ]]; then
   DECISION_BLOCK_ARGS=(--decision-block-credit)
 fi
+DECISION_BLOCK_REWARD_MODE="${DECISION_BLOCK_REWARD_MODE:-sum}"
+DECISION_BLOCK_REWARD_ARGS=(--decision-block-reward-mode "$DECISION_BLOCK_REWARD_MODE")
 QUALITY_ARGS=(--no-channel-quality-enabled)
 if [[ "$CHANNEL_QUALITY_ENABLED" == "1" ]]; then
   QUALITY_ARGS=(
@@ -428,6 +430,7 @@ for seed in "${SEEDS[@]}"; do
     "${TEMPORAL_ARGS[@]}" \
     "${DECISION_UPDATE_ARGS[@]}" \
     "${DECISION_BLOCK_ARGS[@]}" \
+    "${DECISION_BLOCK_REWARD_ARGS[@]}" \
     --temporal-hidden-dim "$TEMPORAL_HIDDEN_DIM" \
     --no-include-event-flag-in-state \
     --soc-aux-horizon 0 \

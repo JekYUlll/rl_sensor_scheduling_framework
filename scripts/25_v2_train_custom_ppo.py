@@ -879,6 +879,12 @@ def main() -> None:
         default=False,
         help="Use semi-Markov reward credit accumulated between executable decisions.",
     )
+    parser.add_argument(
+        "--decision-block-reward-mode",
+        choices=["sum", "terminal"],
+        default="sum",
+        help="Reward assigned to a decision block when semi-Markov credit is enabled.",
+    )
     parser.add_argument("--temporal-hidden-dim", type=int, default=64)
     parser.add_argument("--soc-aux-horizon", type=int, default=0)
     parser.add_argument("--soc-aux-coef", type=float, default=0.0)
@@ -1685,6 +1691,7 @@ def main() -> None:
             temporal_encoder_enabled=bool(args.temporal_encoder),
             decision_only_policy_updates=bool(args.decision_only_policy_updates),
             decision_block_credit=bool(args.decision_block_credit),
+            decision_block_reward_mode=str(args.decision_block_reward_mode),
             temporal_history_steps=int(args.lookback),
             temporal_state_dim=len(helpers.STATE_COLUMNS),
             temporal_hidden_dim=max(1, int(args.temporal_hidden_dim)),
@@ -2810,6 +2817,7 @@ def as_serializable_config(
             "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
             "decision_only_policy_updates": int(bool(cfg.decision_only_policy_updates)),
             "decision_block_credit": int(bool(cfg.decision_block_credit)),
+            "decision_block_reward_mode": str(cfg.decision_block_reward_mode),
         "temporal_history_steps": int(cfg.temporal_history_steps),
         "temporal_state_dim": int(cfg.temporal_state_dim),
         "temporal_hidden_dim": int(cfg.temporal_hidden_dim),

@@ -45,11 +45,14 @@ def compute_decision_block_credit(
     *,
     gamma: float,
     gae_lambda: float,
+    reward_mode: str = "sum",
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute semi-Markov advantages for rows where a new action was possible.
 
-    Each decision receives the discounted reward accumulated until the next
-    decision in the same episode. Forced dwell rows remain available to the
+    Each decision receives a reward defined over the interval until the next
+    decision in the same episode. ``sum`` uses the discounted block sum;
+    ``terminal`` uses only the block-end loss, avoiding repeated credit for
+    overlapping forecast windows. Forced dwell rows remain available to the
     critic, but do not become separate policy transitions.
     """
     rewards = np.asarray(rewards, dtype=np.float32).reshape(-1)
@@ -60,6 +63,9 @@ def compute_decision_block_credit(
     n = int(rewards.size)
     if not (values.size == dones.size == decisions.size == episodes.size == n):
         raise ValueError("reward, value, done, decision, and episode arrays must have equal length")
+    mode = str(reward_mode).strip().lower()
+    if mode not in {"sum", "terminal"}:
+        raise ValueError("reward_mode must be 'sum' or 'terminal'")
     block_advantages = np.zeros(n, dtype=np.float32)
     block_returns = np.zeros(n, dtype=np.float32)
     durations = np.zeros(n, dtype=np.int64)
@@ -79,13 +85,17 @@ def compute_decision_block_credit(
                 next_start = candidate
         block_reward = 0.0
         discount = 1.0
+        terminal_row = int(start)
         for row in range(int(start), int(next_start)):
             block_reward += discount * float(rewards[row])
             discount *= float(gamma)
+            terminal_row = int(row)
             if float(dones[row]) > 0.5:
                 next_start = row + 1
                 break
         duration = max(1, int(next_start) - int(start))
+        if mode == "terminal":
+            block_reward = (float(gamma) ** max(0, duration - 1)) * float(rewards[terminal_row])
         next_value = (
             float(values[next_start])
             if next_start < n and int(episodes[next_start]) == episode
@@ -269,6 +279,7 @@ class CustomPPOConfig:
     temporal_hidden_dim: int = 64
     decision_only_policy_updates: bool = False
     decision_block_credit: bool = False
+    decision_block_reward_mode: str = "sum"
     soc_aux_horizon: int = 0
     soc_aux_coef: float = 0.0
     device: str = "auto"
@@ -1346,6 +1357,7 @@ class CustomPPO:
                 np.asarray(episode_rows, dtype=np.int64),
                 gamma=float(self.cfg.gamma),
                 gae_lambda=float(self.cfg.gae_lambda),
+                reward_mode=str(self.cfg.decision_block_reward_mode),
             )
         else:
             policy_advantages = advantages.astype(np.float32)
