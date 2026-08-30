@@ -5572,3 +5572,31 @@ Evidence is stored in
 
 Evidence is stored in
 `reports/analysis/v283_candidate_action_separation_seed6801_12state_20260830/`.
+## 2026-08-30 - V284 learner decision diagnostics
+
+- Added non-invasive PPO diagnostics at genuine `decision_available` rows:
+  selected-action probability, greedy-action probability, maximum action
+  probability, argmax-match rate, decision entropy, and decision-advantage
+  statistics. These metrics are logged for diagnosis only and do not alter the
+  optimization loss.
+- Ran the matched flexible six-channel configuration on remote GPU1/GPU2 for
+  seeds `6801--6802`, using `forecast_decision`, decision-only policy updates,
+  online context encoding, and the existing feasibility mechanism. The first
+  launcher attempt failed before training because of a shell-variable scope
+  error; it was corrected and rerun without changing the experiment
+  configuration.
+- Both corrected runs completed 50,176 training timesteps and passed the
+  feasibility/behavior checks with zero warm-up aborts, zero always-on sensors,
+  and six mid-duty sensors for seed6801; seed6802 had five mid-duty and one
+  always-off sensor. Switching rates were `0.081777` and `0.059198` per step.
+- The learner-side diagnosis did not improve predictive performance. Custom
+  PPO ordinary forecast loss was `0.383434` (seed6801) and `0.383234`
+  (seed6802); it was worse than round-robin in seed6801 and worse than AoI,
+  random, and round-robin in seed6802. Macro static-normalized loss was also
+  worse than the static reference in seed6802. Both seeds lost to the
+  full-open unconstrained reference. V284 is therefore a diagnostic failure,
+  not a mainline candidate.
+- Evidence was synchronized to
+  `reports/v284_learner_diagnostics_pdppo_sixch_dev_seed6801_b1p75_20260822/`
+  and
+  `reports/v284_learner_diagnostics_pdppo_sixch_dev_seed6802_b1p75_20260822/`.
