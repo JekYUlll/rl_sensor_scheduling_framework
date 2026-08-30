@@ -6038,3 +6038,25 @@ Evidence is stored in
 - Decision: reject as a primary improvement because ordinary validation-static
   wins remained `0/2`; do not expand to fresh confirmation.
 - Aggregate: `reports/aggregate/v304_corrected_scene_staticnorm_softvalue_pdppo_dev_20260831/`.
+
+# V305 - Corrected-scene soft forecast-value pretraining screen (2026-08-31)
+
+### Change
+- Added the existing training-partition soft forecast-value pretraining
+  (`4096` steps, temperature `0.75`) before the unchanged V302 PPO updates.
+- Kept the forecast-loss reward, masked arbitrary-subset action space,
+  decision-only updates, and validation-only checkpoint selection fixed.
+- No bandit-dependent signal or test-time label was introduced.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `0/2`,
+  full-open `0/2`, AoI `1/2`, random `1/2`, and round-robin `1/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `1/2`, full-open `0/2`, AoI `1/2`, random `1/2`, and round-robin `1/2`.
+- Mean ordinary margins versus the same references were `-0.046643`,
+  `-0.022507`, `-0.036277`, `-0.023576`, `-0.006089`, and `-0.000745`.
+- Behavior passed in both seeds: zero warm-up aborts, zero always-on/off
+  channels, five/six mid-duty channels, and switching rates `0.030540/0.030612`.
+- Decision: reject as a primary improvement; pretraining did not recover
+  static transfer and is not expanded to fresh confirmation.
+- Aggregate: `reports/aggregate/v305_corrected_scene_staticnorm_softpretrain_pdppo_dev_20260831/`.
