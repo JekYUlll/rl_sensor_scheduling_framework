@@ -5692,3 +5692,43 @@ Evidence is stored in
 - Decision: reject as a mainline promotion; retain as the strongest tested
   initialization diagnostic. Summary:
   `reports/aggregate/v289_soft_forecast_pretrain_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V290 factorized feasible-subset policy
+
+- Added a clean structured actor variant. It emits one activation logit per
+  physical channel and composes each candidate subset's categorical logit from
+  channel-wise Bernoulli log-probabilities before applying the exact feasible
+  action mask.
+- Kept the V279/V289 scene, frozen forecaster, `forecast_decision` reward,
+  arbitrary feasible subsets, and online information boundary unchanged. No
+  bandit action, test label, or test feedback was used.
+- Completed the remote two-seed development run on GPU1/GPU2 (`6801--6802`)
+  with 30,720 collected PPO steps per seed. Ordinary wins were 0/2 against
+  validation-selected static, feasible static, and full-open; 2/2 against
+  AoI, random, and round-robin. Macro wins were 0/2 against validation static,
+  2/2 against feasible static, 1/2 against full-open, and 2/2 against each
+  conventional dynamic reference.
+- Behavior passed: zero warm-up aborts, zero always-on/always-off channels,
+  five and six mid-duty channels, and switching rates `0.058619/0.070198`.
+- Decision: reject the factorized actor as a mainline promotion. It improves
+  simple dynamic comparisons but does not address the static shortcut and is
+  not suitable for fresh confirmation.
+- Summary: `reports/aggregate/v290_factorized_action_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V291 candidate-interaction policy diagnostic
+
+- Completed the remote two-seed diagnostic on GPU1/GPU2 (`6801--6802`) with
+  the unchanged V279 scene/evaluator, `forecast_decision` reward, exact
+  feasible-subset action mask, and candidate-interaction score. No bandit
+  action, event label, or test feedback was used.
+- The variant lost to the validation-selected static schedule in ordinary
+  loss in both seeds (mean margin `-0.105433`) and also lost to feasible
+  static, full-open, AoI, random, and round-robin in both seeds. Mean macro
+  margins were negative for all six comparisons.
+- Operationally, both seeds had zero warm-up aborts and zero always-on
+  channels, but each had one always-off channel and five mid-duty channels.
+  Switching rates were `0.052540` and `0.090317` per step.
+- Decision: close and reject candidate-level interaction as a mainline
+  improvement. It does not resolve the static shortcut and is retained only
+  as a negative architecture diagnostic. Aggregate:
+  `reports/aggregate/v291_candidate_interaction_pdppo_sixch_dev_20260830/`.
