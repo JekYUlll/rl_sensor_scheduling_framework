@@ -5894,3 +5894,26 @@ Evidence is stored in
 - Decision: reject as a mainline improvement. Checkpoint selection was active
   but did not restore static transfer or the missing dynamic advantage.
 - Aggregate: `reports/aggregate/v298_corrected_scene_validation_checkpoint_pdppo_dev_20260831/`.
+
+# V299 - Corrected-scene balanced-start screen (2026-08-31)
+
+### Change
+- Reduced PPO event-centered training starts from `event_start_prob=1.0` to
+  `0.35` while retaining V298's corrected scene, point forecast reward,
+  arbitrary feasible subsets, validation checkpoint selection, and evaluation.
+- Ran fresh policy seeds `6851--6852` remotely.
+
+### Result
+- Ordinary-loss wins: validation static `0/2`, feasible static `0/2`,
+  full-open `0/2`, AoI `1/2`, random `1/2`, round-robin `1/2`.
+- Static-normalized macro wins: validation static `1/2`, feasible static
+  `2/2`, full-open `0/2`, AoI `0/2`, random `2/2`, round-robin `1/2`.
+- Mean ordinary margins versus validation static and feasible static were
+  `-0.035692` and `-0.011556`; mean macro margins were `-0.067641` and
+  `+0.018275`.
+- Behavior: zero warm-up aborts and zero always-on channels; seed6811 had one
+  always-off channel and seed6812 had none. Switching rates were
+  `0.034665/0.018165`.
+- Decision: reject as a mainline improvement. Less event-centered starts did
+  not improve ordinary-loss transfer or eliminate residual constant behavior.
+- Aggregate: `reports/aggregate/v299_corrected_scene_balanced_start_pdppo_dev_20260831/`.
