@@ -5733,3 +5733,22 @@ Evidence is stored in
 - Decision: retain V291 only as an unmatched diagnostic. A matched control is
   required before accepting or rejecting candidate-level interaction. Aggregate:
   `reports/aggregate/v291_candidate_interaction_pdppo_sixch_dev_20260830/`.
+
+## 2026-08-30 - V292 matched candidate-interaction control
+
+- Completed the matched remote control on GPU1/GPU2 (`6801--6802`). V292
+  matches V279 on scene, evaluator, `forecast` reward, ordinary PPO updates,
+  50,000 timesteps, and checkpoint selection; only candidate interaction is
+  enabled.
+- Relative ordinary wins were `1/2` against validation-selected static,
+  feasible static, and AoI, `0/2` against full-open, and `1/2` against random
+  and round-robin. Macro wins were `0/2` against validation static, `2/2`
+  against feasible static, `0/2` against full-open, `1/2` against AoI and
+  random, and `2/2` against round-robin.
+- Both seeds passed execution checks: zero warm-up aborts, zero always-on and
+  always-off channels, five mid-duty channels, and switching rates
+  `0.024316/0.043566` per step.
+- Decision: reject candidate interaction as a mainline improvement. It gives
+  a local seed6802 improvement but does not improve the static-normalized
+  macro result or produce stable overall gains over V279. Aggregate:
+  `reports/aggregate/v292_matched_candidate_interaction_pdppo_sixch_dev_20260830/`.
