@@ -1482,6 +1482,7 @@ class CustomPPO:
                 else np.ones(self.candidate_masks_np.shape[0], dtype=bool)
             )
             if str(self.cfg.bc_pretrain_target_mode) in {
+                "hard_forecast_value",
                 "soft_forecast_value",
                 "forecast_value_regression",
             }:
@@ -1497,6 +1498,10 @@ class CustomPPO:
                         action_mask_np.reshape(1, -1),
                         temperature=float(self.cfg.bc_soft_temperature),
                     )[0]
+                elif str(self.cfg.bc_pretrain_target_mode) == "hard_forecast_value":
+                    teacher_distribution = np.zeros(len(action_mask_np), dtype=np.float32)
+                    if 0 <= teacher < len(action_mask_np):
+                        teacher_distribution[teacher] = 1.0
                 else:
                     teacher_distribution = np.zeros(len(action_mask_np), dtype=np.float32)
             else:

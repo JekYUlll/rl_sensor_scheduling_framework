@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -1299,6 +1300,31 @@ def test_forecast_value_pretraining_collects_costs_without_oracle_awbc_teacher()
     valid = batch["action_masks"]
 
     assert np.all(np.isfinite(batch["teacher_costs"][valid]))
+
+    hard_trainer = CustomPPO(
+        truth_df=truth,
+        sensor_specs=_sensors(),
+        constraints=PowerConstraintsV2(max_active=3, per_step_budget=1.7, startup_peak_budget=2.0),
+        env_cfg=WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            reward_target_columns=STATE_COLUMNS,
+            lookback=4,
+            episode_len=4,
+            seed=3,
+        ),
+        oracle=_oracle(truth),
+        candidate_masks=np.asarray(
+            [[True, False, False], [False, False, True]], dtype=bool
+        ),
+        cfg=replace(trainer.cfg, bc_pretrain_target_mode="hard_forecast_value"),
+    )
+    hard_batch = hard_trainer.collect_teacher_batch(4)
+    for teacher, costs, mask in zip(
+        hard_batch["teacher_actions"], hard_batch["teacher_costs"], hard_batch["action_masks"]
+    ):
+        feasible = np.flatnonzero(mask)
+        assert feasible.size > 0
+        assert int(teacher) == int(feasible[np.argmin(costs[feasible])])
 
 
 def test_awbc_coefficient_can_decay_to_zero_without_changing_default() -> None:

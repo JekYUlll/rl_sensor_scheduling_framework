@@ -757,7 +757,7 @@ def main() -> None:
     parser.add_argument("--bc-pretrain-loss-coef", type=float, default=1.0)
     parser.add_argument(
         "--bc-pretrain-target-mode",
-        choices=["hard", "soft_forecast_value", "forecast_value_regression"],
+        choices=["hard", "hard_forecast_value", "soft_forecast_value", "forecast_value_regression"],
         default="hard",
     )
     parser.add_argument("--bc-soft-temperature", type=float, default=1.0)
