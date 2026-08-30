@@ -10,8 +10,10 @@ PY="${PY:-$HOME/.conda/envs/darts/bin/python}"
 if [[ "$#" -gt 0 ]]; then SEEDS=("$@"); else SEEDS=(5701 5702); fi
 
 run_one() {
-  local seed="$1" gpu="$2"
+  local seed="$1" gpu="${CUDA_VISIBLE_DEVICES:-${2:-0}}"
   (
+    # Preserve an explicit caller binding when this launcher is nested inside
+    # a per-GPU experiment; otherwise use the launcher's indexed assignment.
     export CUDA_VISIBLE_DEVICES="$gpu"
     export RUN_PREFIX="${RUN_PREFIX:-v267_block_gain_pdppo_sixch_dev}"
     export TOTAL_TIMESTEPS=50000 TRUTH_STEPS=36000 LOOKBACK=20 FORECAST_HORIZON=6
