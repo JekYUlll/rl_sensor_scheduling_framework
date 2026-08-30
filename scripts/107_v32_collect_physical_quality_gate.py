@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -31,11 +32,23 @@ def main() -> None:
     parser.add_argument("--seeds", nargs="+", type=int, required=True)
     parser.add_argument("--quality-policy", required=True)
     parser.add_argument("--receding-subdir", default="receding_oracle_l8_scene_gate")
+    parser.add_argument(
+        "--expected-mid-duty",
+        type=int,
+        default=None,
+        help="Expected number of sensors with intermediate duty; inferred from action geometry when omitted.",
+    )
     args = parser.parse_args()
 
     rows: list[dict[str, object]] = []
     for seed in args.seeds:
         run = args.report_root / f"{args.prefix}_seed{seed}_{args.budget_label}_{args.suffix}"
+        geometry = json.loads((run / "action_geometry.json").read_text())
+        expected_mid_duty = (
+            len(geometry["sensor_ids"])
+            if args.expected_mid_duty is None
+            else args.expected_mid_duty
+        )
         metrics = pd.read_csv(run / "v2_custom_ppo_metrics.csv").set_index("policy")
         static = metrics.loc["validation_selected_static"]
         quality = pd.read_csv(
@@ -63,7 +76,9 @@ def main() -> None:
             "receding_always_on": int(receding["always_on_sensor_count"]),
             "receding_always_off": int(receding["always_off_sensor_count"]),
             "receding_mid_duty": int(receding["mid_duty_sensor_count"]),
+            "receding_switches_per_step": float(receding["switches_per_step"]),
             "receding_warmup_aborts": int(receding["warmup_abort_count"]),
+            "receding_expected_mid_duty": int(expected_mid_duty),
         })
 
     table = pd.DataFrame(rows)
@@ -79,7 +94,15 @@ def main() -> None:
         "receding_macro_wins": int((table["receding_macro_margin_vs_static"] > 0.0).sum()),
         "receding_mean_ordinary_margin": float(table["receding_ordinary_margin_vs_static"].mean()),
         "receding_mean_macro_margin": float(table["receding_macro_margin_vs_static"].mean()),
-        "receding_behavior_passes": int(((table["receding_always_on"] == 0) & (table["receding_always_off"] == 0) & (table["receding_mid_duty"] == 5) & (table["receding_warmup_aborts"] == 0)).sum()),
+        "receding_behavior_passes": int(
+            (
+                (table["receding_always_on"] == 0)
+                & (table["receding_always_off"] == 0)
+                & (table["receding_mid_duty"] == table["receding_expected_mid_duty"])
+                & (table["receding_switches_per_step"] > 0.0)
+                & (table["receding_warmup_aborts"] == 0)
+            ).sum()
+        ),
     }])
     summary.to_csv(args.out_dir / "summary.csv", index=False)
     print(summary.to_string(index=False))

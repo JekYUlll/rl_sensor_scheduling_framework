@@ -4813,3 +4813,31 @@ tar -czf "$OUT…`
   residual actions, or test-time event information.
 - Results must be compared against V242 before any claim about action-value
   representation or permanent channel-off behavior is made.
+
+## 2026-08-30 - V247 admits the six-channel dynamic scene
+
+- V247 generated a fresh five-seed (`3701--3705`) scene with the physical
+  six-channel configuration, arbitrary feasible subsets, budget `1.75`,
+  startup budget `2.15`, minimum dwell `6`, and condition-dependent balanced
+  channel quality. Final execution used online alert context only; simulator
+  event labels were not supplied to the deployable policies.
+- The latent dynamic-opportunity diagnostic was positive in all five scenes:
+  the eight-step receding oracle beat the validation-selected static schedule
+  on both ordinary loss and static-normalized event macro loss in `5/5` seeds,
+  with mean margins `+0.043113` and `+0.127733`, respectively.
+- The receding policy passed the behavior gate in `5/5`: six intermediate-duty
+  channels, zero always-on channels, zero always-off channels, positive
+  switching rate, and zero warm-up aborts. It covered `22/23` candidate masks
+  in every seed.
+- The online context-alert bandit was not uniformly stronger than static:
+  it beat static in `2/5` ordinary and `2/5` macro comparisons, with mean
+  margins `-0.000343` and `+0.000101`. This confirms that the scene has
+  dynamic headroom without making every dynamic comparator trivially win.
+- The gate aggregation exposed and fixed a legacy five-channel assumption in
+  `scripts/107_v32_collect_physical_quality_gate.py`. The script now infers
+  the expected intermediate-duty count from `action_geometry.json`, records
+  switching rate, and requires positive switching for the behavior pass.
+- Aggregate evidence is stored in
+  `reports/aggregate/v247_sixch_admission_gate_20260830/`. The V247 scene is
+  admitted for a complete six-channel PPO wave; V247 itself is a scene gate,
+  not evidence that PPO has already learned the opportunity.
