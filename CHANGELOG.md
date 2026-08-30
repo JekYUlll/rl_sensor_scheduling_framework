@@ -4962,6 +4962,28 @@ tar -czf "$OUT…`
   before expansion. Evidence is stored in
   `reports/aggregate/v253_soft_forecast_value_pdppo_sixch_dev_20260830/`.
 
+## 2026-08-30 - V255 forecast-gain reward pilot
+
+- V255 tested the existing forecast-gain reward on fresh seeds `4501--4502`.
+  The six-channel physical scene, arbitrary feasible masks, online context,
+  masked PPO, B=`1.75`, minimum dwell `6`, and 50,000 PPO steps were retained;
+  no teacher, bandit signal, or test-time event label was used.
+- The operational gate passed in both seeds: zero always-on/off channels,
+  five or six intermediate-duty channels, zero warm-up aborts, and switching
+  rates `0.036185--0.062672` per step.
+- Predictive performance did not pass. PD-PPO won ordinary loss `0/2` against
+  validation-selected static, feasible static, AoI, and full-open references;
+  it won `1/2` against round-robin and random. Macro wins were `0/2` against
+  feasible static, AoI, and the best original dynamic family. Mean
+  baseline-minus-PD-PPO margins were `-0.056256` for validation-selected
+  static and `-0.027374/-0.020225` against AoI on ordinary/macro loss.
+- Interpretation: forecast-gain changes the reward to an incremental
+  measurement value, but this bounded pilot does not recover predictive
+  performance or overcome the static shortcut. V255 is rejected before
+  expansion; no larger final wave is justified without a new, principled
+  credit-assignment design. Evidence is stored in
+  `reports/aggregate/v255_forecast_gain_pdppo_sixch_dev_20260830/`.
+
 ## 2026-08-30 - V254 static-normalized reward pilot
 
 - V254 tested validation-derived subtype forecast-loss normalization on fresh
