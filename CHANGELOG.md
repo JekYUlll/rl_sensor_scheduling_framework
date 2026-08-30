@@ -12,6 +12,8 @@
   improves prediction-driven action selection.
 - Results will be interpreted against V243 only after all five raw metrics and
   behavior diagnostics are present.
+- The launcher records V244 logs under a separate prefix to preserve experiment
+  provenance when reusing the V243 execution scaffold.
 
 ## 2026-08-30 - V243 removes the teacher collapse but not the static gap
 

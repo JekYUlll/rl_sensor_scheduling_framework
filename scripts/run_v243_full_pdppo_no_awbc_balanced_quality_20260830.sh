@@ -7,6 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 SEEDS=("${@:-3401 3402 3403 3404 3405}")
+LOG_PREFIX="${LOG_PREFIX:-v243_no_awbc_pdppo}"
 
 run_one() {
   local seed="$1" gpu="$2"
@@ -37,7 +38,7 @@ run_one() {
     export TRAINABLE_ACTION_PRIOR=0 NONLINEAR_ACTION_EMBEDDING=1 FORECAST_VALUE_HEAD=0 REWARD_LOSS_NORMALIZATION=none REWARD_PROXY_MODE=forecast
     export TARGET_WEIGHTS="1 1 1 1 1 1 1 1 1" COMMON_RANDOM_NUMBERS=0 SEPARATE_ACTOR_CRITIC_GRAD_CLIP=1
     bash scripts/run_v32_flexible_subset_pilot_20260822.sh "$seed"
-  ) >"logs/v243_no_awbc_pdppo_seed${seed}.log" 2>&1
+  ) >"logs/${LOG_PREFIX}_seed${seed}.log" 2>&1
 }
 
 mkdir -p logs
