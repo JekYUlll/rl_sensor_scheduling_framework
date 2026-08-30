@@ -1898,6 +1898,37 @@ class CustomPPO:
                 norm_advantages = policy_advantages[norm_rows]
                 policy_advantages = (policy_advantages - norm_advantages.mean()) / (norm_advantages.std(unbiased=False) + 1e-8)
 
+        # Record pre-update policy confidence on genuine decision rows. These
+        # diagnostics do not enter the loss and isolate learner credit issues.
+        with torch.no_grad():
+            diagnostic_dist = self.model.dist(obs, self.candidate_masks_t, action_masks, event_flags)
+            diagnostic_rows = decision_rows > 0.5
+            if bool(diagnostic_rows.any().detach().cpu().item()):
+                diagnostic_probs = diagnostic_dist.probs[diagnostic_rows]
+                diagnostic_actions = actions[diagnostic_rows]
+                diagnostic_greedy = greedy_actions[diagnostic_rows]
+                diagnostic_advantages = policy_advantages[diagnostic_rows]
+                diagnostic_selected_prob = diagnostic_probs.gather(1, diagnostic_actions.reshape(-1, 1)).reshape(-1)
+                diagnostic_greedy_prob = diagnostic_probs.gather(1, diagnostic_greedy.reshape(-1, 1)).reshape(-1)
+                diagnostic_max_prob, diagnostic_argmax = diagnostic_probs.max(dim=1)
+                decision_diagnostic_metrics = {
+                    "decision_advantage_mean": float(diagnostic_advantages.mean().cpu().item()),
+                    "decision_advantage_std": float(diagnostic_advantages.std(unbiased=False).cpu().item()),
+                    "decision_selected_prob": float(diagnostic_selected_prob.mean().cpu().item()),
+                    "decision_greedy_prob": float(diagnostic_greedy_prob.mean().cpu().item()),
+                    "decision_max_prob": float(diagnostic_max_prob.mean().cpu().item()),
+                    "decision_argmax_match_rate": float((diagnostic_argmax == diagnostic_actions).float().mean().cpu().item()),
+                    "decision_greedy_match_rate": float((diagnostic_argmax == diagnostic_greedy).float().mean().cpu().item()),
+                    "decision_entropy": float(diagnostic_dist.entropy()[diagnostic_rows].mean().cpu().item()),
+                }
+            else:
+                decision_diagnostic_metrics = {name: float("nan") for name in (
+                    "decision_advantage_mean", "decision_advantage_std",
+                    "decision_selected_prob", "decision_greedy_prob",
+                    "decision_max_prob", "decision_argmax_match_rate",
+                    "decision_greedy_match_rate", "decision_entropy",
+                )}
+
         n = int(obs.shape[0])
         batch_size = max(1, min(int(self.cfg.batch_size), n))
         indices = np.arange(n)
@@ -2091,6 +2122,7 @@ class CustomPPO:
             "awbc_coef": float(self._current_awbc_coef()),
             "greedy_unique_actions": int(np.unique(batch["greedy_actions"]).size),
             "policy_decision_rate": float(np.mean(batch.get("decision_rows", policy_decision_mask(batch["action_masks"])) )),
+            **decision_diagnostic_metrics,
         }
 
     def _effective_awbc_coef(self, timesteps: int) -> float:
