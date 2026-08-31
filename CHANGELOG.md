@@ -6799,3 +6799,24 @@ Evidence is stored in
   supervised candidate fitting but not long-horizon executed-return
   optimization. Aggregate:
   `reports/aggregate/v344_direct_mask_action_pdppo_dev_20260901/`.
+
+## 2026-09-01 - V345 direct mask-action BC-only diagnostic
+
+- Ran the V344 direct state--raw-mask utility head on frozen V338 scenes
+  `6871/6872` with all PPO updates disabled (`total_timesteps=0`). This was a
+  teacher-transfer diagnostic, not a primary method change; forecast-loss
+  reward, the 22-action feasible-subset geometry, and hard constraints were
+  unchanged.
+- BC action accuracy remained high (`0.829/0.830`) and all 22 candidate actions
+  were represented in each run. Nevertheless, custom ordinary loss was worse
+  than validation-selected static in both seeds; mean baseline-minus-custom
+  margins were `-0.082032372` and macro margins `-0.167354628`. It won
+  ordinary AoI in `1/2` and macro AoI in `1/2`, but did not recover the primary
+  static transfer gate.
+- Behavior was mixed: zero warm-up aborts and zero always-on channels, but
+  always-off counts were `1/3` and intermediate-duty counts `4/3`; switching
+  rates were `0.014257/0.001447` per step.
+- Decision: reject the hypothesis that PPO updates alone caused V344's
+  closed-loop failure. Local action fitting is adequate, while long-horizon
+  executed-return alignment remains unresolved. Aggregate:
+  `reports/aggregate/v345_direct_mask_action_bc_only_diag_20260901/`.
