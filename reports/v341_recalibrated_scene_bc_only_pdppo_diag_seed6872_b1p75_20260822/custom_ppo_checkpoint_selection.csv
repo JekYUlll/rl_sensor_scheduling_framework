@@ -1,0 +1,2 @@
+update,timesteps,oracle_loss_mean,oracle_loss_macro_subtype_event,oracle_loss_macro_subtype_event_staticnorm,selection_score_name,selection_score,validation_scene_count,ordinary_static_ratio_mean,macro_static_ratio_mean,behavior_failure_count,behavior_valid_scene_count
+0,0,0.5085697882968816,,0.9573594602448153,oracle_loss_mean,0.5085697882968816,1,1.0693319547375126,1.1311715650432181,1,0

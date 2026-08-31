@@ -6707,3 +6707,22 @@ Evidence is stored in
   duty channels. V340 therefore rejects the hypothesis that hard pretraining
   alone caused the V339 transfer failure.
 - Aggregate: `reports/aggregate/v340_recalibrated_scene_teacherfree_pdppo_dev_20260901/`.
+
+## 2026-09-01 - V341 BC-only transfer diagnostic
+
+- Evaluated the hard forecast-value pretrained policy before any PPO update
+  (`total_timesteps=0`) on the unchanged V338 recalibrated six-channel scenes.
+  Seeds were `6871/6872`, with policy seeds `7341/7342`; the run used no
+  bandit signal, final-test event label, or post-hoc scene selection.
+- The teacher-only policy failed the static-transfer gate on both scenes:
+  ordinary and static-normalized macro wins were `0/2` against the best static
+  family. It won the best original dynamic family on `1/2` ordinary and macro
+  endpoints. The full-open reference was not beaten on ordinary loss (`0/2`),
+  and macro wins were `2/2` but remain an unconstrained diagnostic.
+- Behavior was valid on seed `6871` but failed on seed `6872` because three
+  channels were always off; both seeds had zero warm-up aborts. The policy
+  still produced four and two intermediate-duty channels, respectively.
+- Decision: reject the BC-only teacher mapping as a primary transfer solution.
+  Together with V339 and V340, this indicates that neither hard pretraining
+  nor its removal solves the recalibrated-scene learner-transfer problem.
+- Aggregate: `reports/aggregate/v341_recalibrated_scene_bc_only_pdppo_diag_20260901/`.
