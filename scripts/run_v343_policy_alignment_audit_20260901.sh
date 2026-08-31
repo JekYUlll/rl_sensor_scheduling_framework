@@ -23,9 +23,10 @@ run_one() {
     export CUDA_VISIBLE_DEVICES="$idx"
     export RUN_PREFIX_OVERRIDE="v343_policy_alignment_audit"
     export LOG_PREFIX_OVERRIDE="v343_policy_alignment_audit"
-    export POLICY_SEEDS_OVERRIDE="$policy_seed"
-    export POLICY_CHECKPOINT_SOURCE="$checkpoint"
-    export POLICY_ALIGNMENT_AUDIT_OUTPUT="reports/v343_policy_alignment_audit_seed${seed}_b1p75_20260822/policy_alignment_audit.csv"
+    export SEEDS_OVERRIDE="$seed" POLICY_SEEDS_OVERRIDE="$policy_seed"
+    export CONTROL_SOURCE_RUN_DIR_OVERRIDE="reports/v342_decision_only_bc_diag_seed${seed}_b1p75_20260822"
+    export POLICY_CHECKPOINT_SOURCE_OVERRIDE="$checkpoint"
+    export POLICY_ALIGNMENT_AUDIT_OUTPUT_OVERRIDE="reports/v343_policy_alignment_audit_seed${seed}_b1p75_20260822/policy_alignment_audit.csv"
     export EVAL_START_INDICES="$starts" EVAL_STEPS=384 EVAL_ROLLOUTS=6
     export TOTAL_TIMESTEPS_OVERRIDE=0
     export BC_PRETRAIN_DECISION_ONLY_OVERRIDE=1

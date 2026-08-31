@@ -6,7 +6,7 @@ set -euo pipefail
 # teacher, and observation/action geometry match V339 exactly.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SEEDS=(6871 6872)
+read -r -a SEEDS <<< "${SEEDS_OVERRIDE:-6871 6872}"
 POLICY_SEEDS=(${POLICY_SEEDS_OVERRIDE:-7341 7342})
 GPU_OFFSET="${GPU_OFFSET:-0}"
 
@@ -17,7 +17,9 @@ run_one() {
     export RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v341_recalibrated_scene_bc_only_pdppo_diag}"
     export LOG_PREFIX="${LOG_PREFIX_OVERRIDE:-v341_recalibrated_scene_bc_only_pdppo}"
     export TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS_OVERRIDE:-0}" POLICY_SEED="$policy_seed"
-    export CONTROL_SOURCE_RUN_DIR="reports/v338_recalibrated_scene_control_seed${seed}_b1p75_20260822"
+    export CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR_OVERRIDE:-reports/v338_recalibrated_scene_control_seed${seed}_b1p75_20260822}"
+    export POLICY_CHECKPOINT_SOURCE="${POLICY_CHECKPOINT_SOURCE_OVERRIDE:-}"
+    export POLICY_ALIGNMENT_AUDIT_OUTPUT="${POLICY_ALIGNMENT_AUDIT_OUTPUT_OVERRIDE:-}"
     export EVENT_COVERAGE=0.70 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12 LEAD_STEPS=8
     export EVENT_SUBTYPE_ASSIGNMENT=stratified
     export EVENT_SUBTYPE_PARTICLE_PROB=0.3333333333 EVENT_SUBTYPE_FLUX_PROB=0.3333333333 EVENT_SUBTYPE_THERMAL_PROB=0.3333333334
