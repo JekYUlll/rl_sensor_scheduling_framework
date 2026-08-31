@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V334 matched forecast-gain guard diagnostic completed
+
+- Re-ran the guarded one-step `forecast_gain` objective with valid matched
+  V294 control directories and fresh policy seeds 7221/7222. Checkpoint
+  selection used non-empty validation scenes and selected update 49 for both
+  runs.
+- The decision-availability guard did not repair predictive transfer. Ordinary
+  forecast-loss wins were 0/2 against validation-selected static, feasible
+  static, AoI, and full-open; 1/2 against round-robin and random. Macro wins
+  were 1/2, 1/2, 0/2, 0/2, 0/2, and 0/2 in the same comparator order.
+- Mean baseline-minus-PD-PPO margins were -0.060895, -0.036759, -0.037828,
+  -0.014997, -0.020341, and -0.050529 for ordinary loss, respectively;
+  macro margins were -0.116130, -0.030213, -0.082185, -0.033709, -0.007864,
+  and -0.106441. Negative values indicate that PD-PPO had higher loss.
+- Operational checks passed for warm-up aborts and constant-on channels, but
+  seed 6811 had one constant-off channel. Mid-duty counts were 5 and 6.
+- Decision: reject V334 as a primary improvement and do not launch final
+  evaluation from it. The aggregate is stored in
+  `reports/aggregate/v334_forecast_gain_guard_matched_pdppo_dev_20260831/`.
+
 ## 2026-08-31 - V332 one-step forecast-gain diagnostic completed
 
 - Tested the existing one-step counterfactual `forecast_gain` reward on fresh
