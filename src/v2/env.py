@@ -608,6 +608,8 @@ class WarmupSchedulingEnv:
             # environment emits no duplicate absolute loss for this mode.
             return 0.0, 0.0
         if mode == "forecast_gain":
+            if not bool(decision_available):
+                return 0.0, 0.0
             if oracle_loss is None or counterfactual_oracle_loss is None:
                 return float(instant_error), float(instant_error)
             raw_loss = float(oracle_loss) - float(counterfactual_oracle_loss)

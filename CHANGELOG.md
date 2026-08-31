@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V332 one-step forecast-gain diagnostic completed
+
+- Tested the existing one-step counterfactual `forecast_gain` reward on fresh
+  corrected-scene seeds 6841/6842 at budget 1.75 with minimum dwell 6.
+- The change did not improve predictive transfer: ordinary forecast-loss wins
+  against validation-selected static, round-robin, random, and AoI were `0/2`
+  for each; wins against feasible static were `1/2`; full-open was `0/2`.
+  Mean ordinary-loss margins (PD-PPO minus comparator) were respectively
+  `+0.057180`, `+0.034175`, `+0.022855`, `+0.033996`, `+0.012743`, and
+  `+0.059761` (positive means worse because loss is minimized).
+- Both seeds passed execution checks: zero warm-up aborts, zero constant-on or
+  constant-off channels, and 5/6 mid-duty channels. The result is rejected as
+  a primary improvement.
+- Audit found that the reward was assigned on minimum-dwell hold steps even
+  when no new decision was executable. V333 adds the matching decision-available
+  guard while retaining the same forecast-gain objective and protocol.
+
 ## 2026-08-31 - V324 state-dependent teacher-trust diagnostic
 
 - Completed the corrected six-channel V324 development run for seeds `6811--6812`.
