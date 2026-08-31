@@ -323,7 +323,16 @@ def validate_control_source(
             raise ValueError(f"control source constraint {key}={actual} != {expected}")
     if int(metadata.get("lookback", -1)) != int(args.lookback) or int(metadata.get("horizon", -1)) != int(args.horizon):
         raise ValueError("control source lookback/horizon does not match requested protocol")
-    source_eval = tuple(int(value) for value in metadata.get("eval_start_indices", ()))
+    final_test_metadata = metadata.get("final_test", {})
+    if not isinstance(final_test_metadata, dict):
+        final_test_metadata = {}
+    source_eval = tuple(
+        int(value)
+        for value in metadata.get(
+            "eval_start_indices",
+            final_test_metadata.get("eval_starts", ()),
+        )
+    )
     requested_eval = tuple(int(value) for value in (args.eval_start_indices or ()))
     if requested_eval and source_eval != requested_eval:
         raise ValueError("control source final-test start indices do not match requested indices")
