@@ -7,7 +7,7 @@
 - Budget 1.75, minimum dwell 6, 50,000 training timesteps.
 - Same network, pretraining, auxiliary heads, and valid checkpoint selection
   protocol as V334; only `REWARD_PROXY_MODE=forecast` was restored.
-- Selected update 49 for both seeds from non-empty validation scenes.
+- Selected update 10 for both seeds from non-empty validation scenes.
 
 ## Predictive result
 

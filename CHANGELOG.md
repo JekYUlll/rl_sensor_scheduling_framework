@@ -4,7 +4,7 @@
 
 - Repeated the valid V334 protocol on corrected scenes 6811/6812 with fresh
   policy seeds 7231/7232, restoring the original `forecast` reward as the only
-  intended change. Both runs selected update 49 from non-empty validation
+  intended change. Both runs selected update 10 from non-empty validation
   scenes.
 - PD-PPO won ordinary loss against round-robin and random in `2/2` seeds, but
   won `0/2` against validation-selected static, feasible static, AoI, and
@@ -23,8 +23,8 @@
 
 - Re-ran the guarded one-step `forecast_gain` objective with valid matched
   V294 control directories and fresh policy seeds 7221/7222. Checkpoint
-  selection used non-empty validation scenes and selected update 49 for both
-  runs.
+  selection used non-empty validation scenes and selected update 30 for seed
+  6811 and update 40 for seed 6812.
 - The decision-availability guard did not repair predictive transfer. Ordinary
   forecast-loss wins were 0/2 against validation-selected static, feasible
   static, AoI, and full-open; 1/2 against round-robin and random. Macro wins

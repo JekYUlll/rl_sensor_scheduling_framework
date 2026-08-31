@@ -8,8 +8,8 @@
 - Budget: 1.75; minimum dwell: 6 steps.
 - Intervention: guard the one-step `forecast_gain` reward so hold steps with
   `decision_available=0` receive no decision credit.
-- Checkpoints: selected update 49 for both seeds from non-empty validation
-  scenes.
+- Checkpoints: selected update 30 (seed 6811) and update 40 (seed 6812)
+  from non-empty validation scenes.
 
 ## Predictive result
 
