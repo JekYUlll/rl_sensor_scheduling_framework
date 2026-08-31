@@ -15,9 +15,9 @@ run_one() {
   local checkpoint="reports/v342_decision_only_bc_diag_seed${seed}_b1p75_20260822/custom_ppo.pt"
   local starts
   if [[ "$seed" == "6871" ]]; then
-    starts="33300 33300 34452 34452 34452 35609"
+    starts="33300 33684 34452 34836 35220 35609"
   else
-    starts="33300 33300 34116 34116 34116 35609"
+    starts="33300 33684 34116 34500 34884 35609"
   fi
   (
     export CUDA_VISIBLE_DEVICES="$idx"
