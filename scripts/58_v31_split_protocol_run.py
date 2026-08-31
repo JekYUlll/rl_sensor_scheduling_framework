@@ -736,6 +736,12 @@ def main() -> None:
     parser.add_argument("--awbc-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
     parser.add_argument(
+        "--checkpoint-selection-min-update",
+        type=int,
+        default=0,
+        help="Exclude checkpoints before this PPO update from validation selection.",
+    )
+    parser.add_argument(
         "--checkpoint-require-valid-behavior",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -1270,6 +1276,9 @@ def main() -> None:
             "checkpoint_selection_interval_updates": max(
                 0, int(args.checkpoint_selection_interval_updates)
             ),
+            "checkpoint_selection_min_update": max(
+                0, int(args.checkpoint_selection_min_update)
+            ),
             "checkpoint_selection_score": str(args.checkpoint_selection_score),
             "bc_pretrain_steps": int(args.bc_pretrain_steps),
             "bc_pretrain_epochs": int(args.bc_pretrain_epochs),
@@ -1546,6 +1555,8 @@ def main() -> None:
         "--awbc-event-only" if bool(args.awbc_event_only) else "--no-awbc-event-only",
         "--checkpoint-selection-interval-updates",
         str(max(0, int(args.checkpoint_selection_interval_updates))),
+        "--checkpoint-selection-min-update",
+        str(max(0, int(args.checkpoint_selection_min_update))),
         (
             "--checkpoint-require-valid-behavior"
             if bool(args.checkpoint_require_valid_behavior)

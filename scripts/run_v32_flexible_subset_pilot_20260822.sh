@@ -67,6 +67,7 @@ GAMMA="${GAMMA:-0.99}"
 GAE_LAMBDA="${GAE_LAMBDA:-0.95}"
 GREEDY_LOOKAHEAD_STEPS="${GREEDY_LOOKAHEAD_STEPS:-4}"
 CHECKPOINT_SELECTION_INTERVAL_UPDATES="${CHECKPOINT_SELECTION_INTERVAL_UPDATES:-0}"
+CHECKPOINT_SELECTION_MIN_UPDATE="${CHECKPOINT_SELECTION_MIN_UPDATE:-0}"
 CHECKPOINT_SELECTION_SCORE="${CHECKPOINT_SELECTION_SCORE:-oracle_loss_mean}"
 CHECKPOINT_REQUIRE_VALID_BEHAVIOR="${CHECKPOINT_REQUIRE_VALID_BEHAVIOR:-0}"
 TRAINABLE_ACTION_PRIOR="${TRAINABLE_ACTION_PRIOR:-1}"
@@ -404,6 +405,7 @@ for seed in "${SEEDS[@]}"; do
     --awbc-decay-timesteps "$AWBC_DECAY_TIMESTEPS" \
     --awbc-label-stride "$AWBC_LABEL_STRIDE" \
     --checkpoint-selection-interval-updates "$CHECKPOINT_SELECTION_INTERVAL_UPDATES" \
+    --checkpoint-selection-min-update "$CHECKPOINT_SELECTION_MIN_UPDATE" \
     "$([[ "$CHECKPOINT_REQUIRE_VALID_BEHAVIOR" == "1" ]] && printf '%s' --checkpoint-require-valid-behavior || printf '%s' --no-checkpoint-require-valid-behavior)" \
     --checkpoint-selection-score "$CHECKPOINT_SELECTION_SCORE" \
     --bc-pretrain-steps "$BC_PRETRAIN_STEPS" \

@@ -716,6 +716,12 @@ def main() -> None:
     parser.add_argument("--awbc-event-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--checkpoint-selection-interval-updates", type=int, default=0)
     parser.add_argument(
+        "--checkpoint-selection-min-update",
+        type=int,
+        default=0,
+        help="Exclude checkpoints before this PPO update from validation selection.",
+    )
+    parser.add_argument(
         "--checkpoint-require-valid-behavior",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -1734,6 +1740,7 @@ def main() -> None:
     best_checkpoint_behavior_failures = sys.maxsize
     best_checkpoint_update = 0
     checkpoint_interval = max(0, int(args.checkpoint_selection_interval_updates))
+    checkpoint_min_update = max(0, int(args.checkpoint_selection_min_update))
     checkpoint_starts = tuple(int(x) for x in (args.static_selection_start_indices or ()))
     checkpoint_score_name = str(args.checkpoint_selection_score)
     checkpoint_normalizers: dict[str, float] = {}
@@ -1846,6 +1853,8 @@ def main() -> None:
         nonlocal best_checkpoint_state, best_checkpoint_score, best_checkpoint_update
         nonlocal best_checkpoint_behavior_failures
         if checkpoint_interval <= 0 or not checkpoint_starts:
+            return
+        if int(update_idx) < checkpoint_min_update:
             return
         final_update = int(timesteps) >= int(args.total_timesteps)
         if int(update_idx) % checkpoint_interval != 0 and not final_update:
@@ -2592,6 +2601,7 @@ def main() -> None:
         "checkpoint_selection": {
             "enabled": checkpoint_interval > 0,
             "interval_updates": checkpoint_interval,
+            "min_update": checkpoint_min_update,
             "partition": "calibration_validation",
             "start_indices": [int(x) for x in checkpoint_starts],
             "steps": int(args.static_selection_steps),
