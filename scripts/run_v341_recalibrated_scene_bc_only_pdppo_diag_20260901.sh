@@ -14,9 +14,9 @@ run_one() {
   local idx="$1" seed="${SEEDS[$1]}" policy_seed="${POLICY_SEEDS[$1]}"
   (
     export CUDA_VISIBLE_DEVICES="$((idx + GPU_OFFSET))"
-    export RUN_PREFIX="v341_recalibrated_scene_bc_only_pdppo_diag"
-    export LOG_PREFIX="v341_recalibrated_scene_bc_only_pdppo"
-    export TOTAL_TIMESTEPS=0 POLICY_SEED="$policy_seed"
+    export RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v341_recalibrated_scene_bc_only_pdppo_diag}"
+    export LOG_PREFIX="${LOG_PREFIX_OVERRIDE:-v341_recalibrated_scene_bc_only_pdppo}"
+    export TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS_OVERRIDE:-0}" POLICY_SEED="$policy_seed"
     export CONTROL_SOURCE_RUN_DIR="reports/v338_recalibrated_scene_control_seed${seed}_b1p75_20260822"
     export EVENT_COVERAGE=0.70 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12 LEAD_STEPS=8
     export EVENT_SUBTYPE_ASSIGNMENT=stratified
@@ -28,6 +28,7 @@ run_one() {
     export DECISION_ONLY_POLICY_UPDATES=1 DECISION_BLOCK_CREDIT=0 DECISION_BLOCK_REWARD_MODE=sum
     export CHECKPOINT_SELECTION_INTERVAL_UPDATES=1 CHECKPOINT_SELECTION_MIN_UPDATE=0 CHECKPOINT_SELECTION_SCORE=oracle_loss_mean CHECKPOINT_REQUIRE_VALID_BEHAVIOR=1
     export BC_PRETRAIN_STEPS=16384 BC_PRETRAIN_EPOCHS=20 BC_PRETRAIN_LOSS_COEF=1
+    export BC_PRETRAIN_DECISION_ONLY="${BC_PRETRAIN_DECISION_ONLY_OVERRIDE:-0}"
     export BC_PRETRAIN_TARGET_MODE=hard_forecast_value BC_SOFT_TEMPERATURE=1.0
     export FORECAST_VALUE_AUX_COEF=0 FORECAST_VALUE_RANKING_COEF=0 CANDIDATE_INTERACTION_SCORE=0 FACTORIZED_ACTION_POLICY=0
     export AGENT_CONTEXT_COLUMNS="agent_context_particle_alert agent_context_flux_alert agent_context_thermal_alert" CONTEXT_FEATURE_DIM=20
