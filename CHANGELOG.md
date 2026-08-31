@@ -1,5 +1,22 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V336 clean V319 repeat completed
+
+- Repeated the strongest prior transfer configuration V319 on corrected scenes
+  6811/6812 with fresh policy seeds 7251/7252. The configuration used
+  static-normalized forecast reward, hard forecast-value pretraining, and
+  decision-only PPO updates without the later forecast-value or interaction
+  heads. Valid checkpoint selection chose updates 30 and 20.
+- PD-PPO won ordinary loss `0/2` against validation-selected static, feasible
+  static, AoI, round-robin, random, and full-open. Macro wins were `0/2`,
+  `1/2`, `0/2`, `0/2`, `0/2`, and `0/2` in the same order.
+- Warm-up aborts and constant-on channels were zero. Seed 6812 had one
+  constant-off channel; mid-duty counts were 3 and 4.
+- Decision: V336 does not reproduce V319 and is rejected as a primary
+  improvement. The result indicates substantial policy-seed sensitivity and
+  motivates variance diagnostics before further method changes. Aggregate:
+  `reports/aggregate/v336_v319_clean_repeat_pdppo_dev_20260831/`.
+
 ## 2026-08-31 - V335 matched forecast-objective repeat completed
 
 - Repeated the valid V334 protocol on corrected scenes 6811/6812 with fresh
