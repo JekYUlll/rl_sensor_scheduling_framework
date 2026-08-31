@@ -6433,3 +6433,20 @@ Evidence is stored in
   not repair the static shortcut or the ordinary-loss endpoint. Do not launch
   final evaluation from V325. Evidence is archived at
   `reports/aggregate/v325_candidate_interaction_pdppo_dev_20260831/`.
+
+## 2026-08-31 - V326 macro-checkpoint PD-PPO diagnostic
+
+- Retained V325 in full and changed only validation checkpoint selection from
+  ordinary oracle loss to `oracle_loss_macro_subtype_event_staticnorm`.
+- Both seeds completed with zero invalid actions, power violations,
+  startup-peak violations, and warm-up aborts. Seed6812 had no permanent
+  channels; seed6811 had two always-off channels and four mid-duty channels.
+- Against static, ordinary wins were `0/2` and macro wins `1/2`, with mean
+  margins `-0.028177` and `-0.029264`. Against original dynamic references,
+  ordinary and macro wins were both `1/2`, with mean margins `-0.005110` and
+  `+0.004681`. Against full-open, ordinary wins were `0/2` and macro wins
+  `1/2`.
+- Decision: macro-based checkpoint selection did not repair predictive
+  transfer and failed the behavior gate in one seed. Do not promote V326.
+  Evidence is archived at
+  `reports/aggregate/v326_macro_checkpoint_pdppo_dev_20260831/`.
