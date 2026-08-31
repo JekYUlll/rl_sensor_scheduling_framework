@@ -6726,3 +6726,15 @@ Evidence is stored in
   Together with V339 and V340, this indicates that neither hard pretraining
   nor its removal solves the recalibrated-scene learner-transfer problem.
 - Aggregate: `reports/aggregate/v341_recalibrated_scene_bc_only_pdppo_diag_20260901/`.
+
+### V341 action-alignment audit correction
+
+- Compared V341 rollout masks with the V338 six-step receding trace only after
+  mapping bitmasks through `action_geometry.json` to candidate indices and
+  joining on `truth_step_idx`. The corrected action agreement was `7.51%` for
+  seed `6871` and `7.77%` for seed `6872`; mean oracle-loss gaps were `+0.146`
+  and `+0.104`. Earlier direct bitmask/index comparisons (`5.2%` and `2.9%`)
+  were invalid and are superseded.
+- The corrected audit confirms that the BC-only mapping is not approximating
+  the dynamic receding reference. This is a diagnostic result only and does
+  not promote V341 to primary evidence.
