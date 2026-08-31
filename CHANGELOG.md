@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-01 - V349 lower MSE auxiliary diagnostic completed
+
+- Completed V349 on paired V338 physical six-channel scenes `6871/6872`.
+  The only changed factor was reducing the on-policy candidate forecast-value
+  masked-MSE coefficient to `0.05`; reward, feasible-subset geometry, hard
+  masking, six-step dwell target, online information, and partitions were
+  unchanged.
+- Static ordinary and macro wins were both `0/2`, with mean margins
+  `-0.013620` and `-0.059825`. Original dynamic ordinary and macro wins were
+  both `2/2`, with mean margins `+0.031193` and `+0.063279`.
+- Behavior gates passed in both scenes: warm-up aborts `0/2`, always-on/off
+  channels `0/2`, mid-duty channel counts `6/5`, switching rates
+  `0.031046/0.024678`, and peak power `1.92`.
+- Decision: V349 improves over V348 on dynamic references but does not recover
+  the static-shortcut gate. The coefficient-only repair line is closed and
+  V349 is not promoted. Aggregate:
+  `reports/aggregate/v349_mse_aux005_onpolicy_direct_mask_dev_20260901/`.
+
 ## 2026-09-01 - V348 stronger MSE auxiliary diagnostic completed
 
 - Completed V348 on the paired V338 physical six-channel scenes `6871/6872`.
