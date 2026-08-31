@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V323 on-policy forecast-value transfer diagnostic
+
+- Completed the corrected-scene V323 diagnostic for seeds `6811--6812`.
+- V323 retained V322's temporal encoder and hard forecast-value initialization
+  and added a candidate-level forecast-value head trained on on-policy
+  decision states using the frozen forecast oracle. No bandit signal, prior,
+  residual action, or final-test event label was used.
+- The intervention did not repair predictive transfer. Against the best static
+  reference, ordinary-loss wins were `0/2` and static-normalized macro wins
+  were `1/2`, with mean margins `-0.073108` and `-0.054085`.
+- Against the original dynamic references, ordinary-loss wins were `1/2` and
+  macro wins were `1/2`, with mean margins `-0.050041` and `-0.020140`.
+- Behavior degraded relative to V322: the gate passed only `1/2` seeds. Seed
+  6811 had `0/1/5` always-on/always-off/mid-duty channels and seed 6812 had
+  `0/2/2`; warm-up aborts and feasibility violations remained zero.
+- Aggregate evidence is stored in
+  `reports/aggregate/v323_onpolicy_forecast_value_transfer_pdppo_dev_20260831/`;
+  raw policy metrics and rollouts are stored in the two V323 seed directories.
+- Decision: reject direct on-policy forecast-head fusion as a sufficient repair.
+  Do not launch a final evaluation from V323. The next structural test must
+  address how teacher information is transferred to the actor, with an
+  explicit state-dependent trust mechanism rather than another fixed scalar.
+
 ## 2026-08-31 - V322 temporal hard-pretraining diagnostic
 
 - Completed the corrected-scene V322 diagnostic for seeds `6811--6812`.
