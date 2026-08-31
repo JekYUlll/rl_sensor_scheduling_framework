@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V320 rejects decision-only hard pretraining
+
+- Completed the corrected V320 retry on remote seeds `6811--6812`. The first
+  launch exited before training because the new Boolean option was not yet
+  forwarded through the split-protocol wrapper; it produced no metrics and is
+  excluded. The retry used unique output directories.
+- V320 retained V319's dwell-aligned hard forecast-value teacher and actual
+  decision-only PPO, but excluded forced dwell rows from the hard pretraining
+  loss. No bandit-dependent signal or test-time event label was added.
+- Predictive performance regressed: validation-selected static ordinary and
+  macro wins were both `0/2`, with mean baseline-minus-PD-PPO margins
+  `-0.062078` and `-0.113380`. Feasible-static ordinary wins were `0/2` and
+  macro wins `1/2`, with mean margins `-0.037942` and `-0.027463`.
+- Behavior remained mixed: no always-on channels and zero warm-up aborts, but
+  seed 6812 had one always-off channel; mid-duty counts were six and three.
+- Decision: reject decision-only hard pretraining as a primary repair. The
+  forced-row label issue cannot be solved by simple sample deletion without
+  losing state-distribution coverage. Full evidence is stored in
+  `reports/aggregate/v320_decision_only_hardpretrain_pdppo_dev_20260831/`.
+
 ## 2026-08-31 - V319 improves feasible-static transfer but misses primary gate
 
 - Completed remote seeds `6811--6812` with the V318 combination and a single
