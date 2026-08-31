@@ -62,6 +62,9 @@ EVALUATION_POLICY_MODE="${EVALUATION_POLICY_MODE:-deterministic}"
 EVALUATION_SAMPLING_SEED="${EVALUATION_SAMPLING_SEED:-}"
 EVALUATION_SAMPLING_TEMPERATURE="${EVALUATION_SAMPLING_TEMPERATURE:-1.0}"
 EVALUATION_TEMPERATURE_CANDIDATES="${EVALUATION_TEMPERATURE_CANDIDATES:-}"
+EVAL_STEPS="${EVAL_STEPS:-384}"
+EVAL_ROLLOUTS="${EVAL_ROLLOUTS:-6}"
+EVAL_START_INDICES="${EVAL_START_INDICES:-}"
 LEARNING_RATE="${LEARNING_RATE:-0.0003}"
 GAMMA="${GAMMA:-0.99}"
 GAE_LAMBDA="${GAE_LAMBDA:-0.95}"
@@ -219,6 +222,12 @@ if [[ "$#" -gt 0 ]]; then
   SEEDS=("$@")
 else
   SEEDS=(401)
+fi
+
+EVAL_START_ARGS=()
+if [[ -n "$EVAL_START_INDICES" ]]; then
+  read -r -a eval_start_indices <<< "$EVAL_START_INDICES"
+  EVAL_START_ARGS+=(--eval-start-indices "${eval_start_indices[@]}")
 fi
 
 for seed in "${SEEDS[@]}"; do
@@ -467,13 +476,14 @@ for seed in "${SEEDS[@]}"; do
     --soc-aux-coef 0.0 \
     --train-episode-len 512 \
     --no-use-candidate-prior \
-    --static-selection-steps 384 \
+    --static-selection-steps "$EVAL_STEPS" \
     --static-selection-rollouts 4 \
-    --eval-steps 384 \
-    --eval-rollouts 6 \
+    --eval-steps "$EVAL_STEPS" \
+    --eval-rollouts "$EVAL_ROLLOUTS" \
     --eval-start-selection subtype_balanced_transport_rich \
     --eval-event-fraction 0.70 \
     --eval-selection-stride 48 \
+    "${EVAL_START_ARGS[@]}" \
     --lambda-warmup-abort 1.0 \
     --lambda-switch 0.002 \
     --event-reward-multiplier 1.0 \
