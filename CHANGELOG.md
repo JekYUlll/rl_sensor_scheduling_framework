@@ -1,5 +1,26 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V324 state-dependent teacher-trust diagnostic
+
+- Completed the corrected six-channel V324 development run for seeds `6811--6812`.
+- V324 retained the forecast-loss reward, feasibility-masked action space,
+  temporal/context encoders, and forecast-value head, adding only a learned
+  state-dependent trust gate on the detached forecast-value logits. No bandit
+  objective, residual action, bandit prior, or final-test event label was used.
+- Behavior and feasibility passed for both seeds: zero warm-up aborts, invalid
+  actions, power violations, and startup-peak violations; no always-on channels;
+  mid-duty channels were 5 and 3. The second seed had one always-off channel.
+- Predictive transfer failed the primary gate. Against validation-selected
+  static, ordinary-loss and macro wins were `0/2` and `0/2`, with mean margins
+  `-0.019251` and `-0.058589`. Against the original dynamic references, wins
+  were `1/2` for both endpoints, with mean margins `+0.003816` and `-0.024644`.
+- The aggregate confirms that state-dependent trust gating alone does not
+  overcome the static shortcut. V324 is therefore rejected as a sufficient
+  repair; no final evaluation is launched from this variant.
+- Aggregate evidence is stored in
+  `reports/aggregate/v324_state_dependent_teacher_trust_pdppo_dev_20260831/`;
+  raw per-seed artifacts are stored in the two V324 seed directories.
+
 ## 2026-08-31 - V323 on-policy forecast-value transfer diagnostic
 
 - Completed the corrected-scene V323 diagnostic for seeds `6811--6812`.
