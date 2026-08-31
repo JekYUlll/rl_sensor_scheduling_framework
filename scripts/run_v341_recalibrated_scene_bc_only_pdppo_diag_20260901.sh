@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# V341 evaluates the hard forecast-value initialization before any PPO update.
+# It is a transfer diagnostic, not a new primary method: the scene, evaluator,
+# teacher, and observation/action geometry match V339 exactly.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+SEEDS=(6871 6872)
+POLICY_SEEDS=(${POLICY_SEEDS_OVERRIDE:-7341 7342})
+GPU_OFFSET="${GPU_OFFSET:-0}"
+
+run_one() {
+  local idx="$1" seed="${SEEDS[$1]}" policy_seed="${POLICY_SEEDS[$1]}"
+  (
+    export CUDA_VISIBLE_DEVICES="$((idx + GPU_OFFSET))"
+    export RUN_PREFIX="v341_recalibrated_scene_bc_only_pdppo_diag"
+    export LOG_PREFIX="v341_recalibrated_scene_bc_only_pdppo"
+    export TOTAL_TIMESTEPS=0 POLICY_SEED="$policy_seed"
+    export CONTROL_SOURCE_RUN_DIR="reports/v338_recalibrated_scene_control_seed${seed}_b1p75_20260822"
+    export EVENT_COVERAGE=0.70 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12 LEAD_STEPS=8
+    export EVENT_SUBTYPE_ASSIGNMENT=stratified
+    export EVENT_SUBTYPE_PARTICLE_PROB=0.3333333333 EVENT_SUBTYPE_FLUX_PROB=0.3333333333 EVENT_SUBTYPE_THERMAL_PROB=0.3333333334
+    export SENSOR_CFG="configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml"
+    export BUDGET=1.75 STARTUP_BUDGET=2.15 BUDGET_LABEL=b1p75
+    export REWARD_PROXY_MODE=forecast REWARD_LOSS_NORMALIZATION=staticnorm_subtype EVENT_START_PROB=1.0
+    export GREEDY_LOOKAHEAD_STEPS=6 ORACLE_SUBTYPE_TEACHER_LOOKAHEAD_STEPS=6
+    export DECISION_ONLY_POLICY_UPDATES=1 DECISION_BLOCK_CREDIT=0 DECISION_BLOCK_REWARD_MODE=sum
+    export CHECKPOINT_SELECTION_INTERVAL_UPDATES=1 CHECKPOINT_SELECTION_MIN_UPDATE=0 CHECKPOINT_SELECTION_SCORE=oracle_loss_mean CHECKPOINT_REQUIRE_VALID_BEHAVIOR=1
+    export BC_PRETRAIN_STEPS=16384 BC_PRETRAIN_EPOCHS=20 BC_PRETRAIN_LOSS_COEF=1
+    export BC_PRETRAIN_TARGET_MODE=hard_forecast_value BC_SOFT_TEMPERATURE=1.0
+    export FORECAST_VALUE_AUX_COEF=0 FORECAST_VALUE_RANKING_COEF=0 CANDIDATE_INTERACTION_SCORE=0 FACTORIZED_ACTION_POLICY=0
+    export AGENT_CONTEXT_COLUMNS="agent_context_particle_alert agent_context_flux_alert agent_context_thermal_alert" CONTEXT_FEATURE_DIM=20
+    export ENT_COEF=0.02
+    export EXCLUDE_SUBTYPE_LATENTS_FROM_STATE=1 NONLINEAR_ACTION_EMBEDDING=1
+    export CHANNEL_QUALITY_ENABLED=1 CHANNEL_QUALITY_MODE=condition_dependent_crossover_balanced
+    export CHANNEL_QUALITY_SENSOR_IDS="met_station_core radiometer_basic shielded_thermo_hygro surface_temp_ir laser_disdrometer fc4_flux"
+    export SENSOR_QUALITY_COLUMNS="agent_context_quality_met_station_core agent_context_quality_radiometer_basic agent_context_quality_shielded_thermo_hygro agent_context_quality_surface_temp_ir agent_context_quality_laser_disdrometer agent_context_quality_fc4_flux"
+    bash scripts/run_v267_block_gain_pdppo_sixch_dev_20260830.sh "$seed"
+  ) >"logs/v341_recalibrated_scene_bc_only_pdppo_seed${seed}.log" 2>&1
+}
+
+mkdir -p logs
+run_one 0 & p1=$!
+run_one 1 & p2=$!
+wait "$p1" "$p2"
