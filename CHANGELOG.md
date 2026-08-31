@@ -6729,12 +6729,11 @@ Evidence is stored in
 
 ### V341 action-alignment audit correction
 
-- Compared V341 rollout masks with the V338 six-step receding trace only after
-  mapping bitmasks through `action_geometry.json` to candidate indices and
-  joining on `truth_step_idx`. The corrected action agreement was `7.51%` for
-  seed `6871` and `7.77%` for seed `6872`; mean oracle-loss gaps were `+0.146`
-  and `+0.104`. Earlier direct bitmask/index comparisons (`5.2%` and `2.9%`)
-  were invalid and are superseded.
-- The corrected audit confirms that the BC-only mapping is not approximating
-  the dynamic receding reference. This is a diagnostic result only and does
-  not promote V341 to primary evidence.
+- An attempted comparison between V341 rollout masks and the V338 six-step
+  receding trace is withdrawn. The two rollouts used different sampled starts
+  and prior action histories, so shared `truth_step_idx` values did not denote
+  identical environment states. Candidate-index mapping corrected the initial
+  implementation error, but the remaining state mismatch makes the comparison
+  inconclusive. No teacher-quality claim is based on it.
+- A valid action-value audit requires identical serialized states or an
+  evaluator that scores all candidates from the same state.
