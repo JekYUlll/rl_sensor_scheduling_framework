@@ -6450,3 +6450,21 @@ Evidence is stored in
   transfer and failed the behavior gate in one seed. Do not promote V326.
   Evidence is archived at
   `reports/aggregate/v326_macro_checkpoint_pdppo_dev_20260831/`.
+
+## 2026-08-31 - V327 quality-context action PD-PPO diagnostic
+
+- Disabled the V325 candidate-interaction head and enabled the existing
+  online quality-context candidate utility head. Forecast reward,
+  feasibility masking, teacher scaffold, scene, and training budget were
+  unchanged.
+- Both seeds had zero invalid actions, power violations, startup-peak
+  violations, and warm-up aborts. Seed6811 had six mid-duty channels; seed6812
+  had five mid-duty and one always-off channel.
+- Against static, ordinary and macro wins were both `1/2`, with mean margins
+  `-0.004218` and `-0.023905`. Against original dynamic references, ordinary
+  and macro wins were both `1/2`, with mean margins `+0.018849` and
+  `+0.010040`. Against full-open, ordinary and macro wins were both `1/2`.
+- Decision: the online quality-context head improves mean dynamic margins but
+  does not clear the static or behavior gate. Do not promote V327. Evidence is
+  archived at
+  `reports/aggregate/v327_quality_context_action_pdppo_dev_20260831/`.
