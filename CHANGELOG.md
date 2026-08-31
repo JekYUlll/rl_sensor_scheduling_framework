@@ -1,5 +1,31 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V322 temporal hard-pretraining diagnostic
+
+- Completed the corrected-scene V322 diagnostic for seeds `6811--6812`.
+- V322 combined the existing hard forecast-value teacher initialization with
+  the temporal observation encoder; the forecast-loss objective, feasibility
+  mask, evaluation protocol, and PPO budget were otherwise retained.
+- Both seeds satisfied the operational behavior and feasibility checks: no
+  always-on or always-off channels, 4--5 mid-duty channels, zero warm-up
+  aborts, zero invalid actions, zero power violations, and 11--14 unique
+  executed actions.
+- Predictive performance remained insufficient. Against the best static
+  reference, ordinary-loss and static-normalized macro wins were both `1/2`,
+  with mean margins `-0.034538` and `-0.063906`, respectively. Against the
+  original dynamic references, the corresponding wins were also `1/2`, with
+  mean margins `-0.011471` and `-0.029961`.
+- PD-PPO remained below the unconstrained full-open reference in both seeds
+  and both endpoints; this reference is diagnostic rather than deployable.
+- Aggregate evidence is stored in
+  `reports/aggregate/v322_temporal_hardpretrain_pdppo_dev_20260831/`, with
+  raw per-seed artifacts under the two `v322_temporal_hardpretrain_pdppo_dev_`
+  directories.
+- Decision: reject temporal encoding plus hard teacher pretraining as a
+  sufficient transfer repair. The next experiment must change the
+  representation/teacher transfer mechanism, not add another scalar loss
+  weight or repeat this configuration.
+
 ## 2026-08-31 - V321 rejects weighted forced-dwell supervision
 
 - Completed the corrected remote V321 retry for scene seeds `6811--6812`.
