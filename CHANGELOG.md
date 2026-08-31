@@ -6650,3 +6650,17 @@ Evidence is stored in
   threshold is retained as an explicit reproducibility control, but the next
   experiment must address the closed-loop target or transfer interface rather
   than checkpoint-stage selection.
+## 2026-09-01 - V338 recalibrated-scene control screen
+
+- Added parameterized scene controls and generated matched six-channel control
+  assets for seeds `6871/6872` with target event coverage `0.70` and balanced
+  stratified subtype probabilities `(1/3, 1/3, 1/3)`.
+- The actual event coverage was `0.5284` and `0.5269`; particle, flux, and
+  thermal subtype rates were approximately `0.18` each. Physical costs,
+  arbitrary feasible subsets, budget `1.75`, startup budget `2.15`, minimum
+  dwell `6`, and online observables were unchanged.
+- This scene-only screen is not PPO evidence. Best original dynamic rules did
+  not beat best static on either ordinary loss (`0/2`, mean margin `-0.044814`)
+  or macro loss (`0/2`, mean margin `-0.123104`). A privileged receding-horizon
+  gate is required before any trained run is interpreted.
+- Aggregate: `reports/aggregate/v338_recalibrated_scene_control_20260901/`.
