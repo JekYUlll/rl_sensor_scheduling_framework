@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-01 - V337 policy-seed variance screen completed
+
+- Screened four fresh policy seeds `7261--7264` on corrected scenes 6811/6812
+  under the fixed clean V319 configuration. Each run used an isolated output
+  prefix and valid same-scene validation checkpoint selection.
+- Ordinary-loss wins were `0/4` against validation-selected static, feasible
+  static, AoI, and full-open; `1/4` against round-robin and random. Macro wins
+  were `0/4`, `0/4`, `0/4`, `0/4`, `1/4`, and `0/4` in the same order.
+- Mean baseline-minus-PD-PPO margins were `-0.081477`, `-0.057341`,
+  `-0.058410`, `-0.035579`, `-0.040923`, and `-0.071111` for ordinary loss;
+  macro margins were `-0.167606`, `-0.081690`, `-0.133661`, `-0.085185`,
+  `-0.059339`, and `-0.157917`.
+- Warm-up aborts and constant-on channels were zero. One run had a constant-
+  off channel; mid-duty counts were 6, 5, 4, and 4.
+- Decision: V337 confirms policy-seed sensitivity but finds no stable positive
+  configuration. It is excluded from primary evidence. Aggregate:
+  `reports/aggregate/v337_policy_seed_variance_screen_20260831/`.
+
 ## 2026-08-31 - V336 clean V319 repeat completed
 
 - Repeated the strongest prior transfer configuration V319 on corrected scenes
