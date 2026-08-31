@@ -6468,3 +6468,23 @@ Evidence is stored in
   does not clear the static or behavior gate. Do not promote V327. Evidence is
   archived at
   `reports/aggregate/v327_quality_context_action_pdppo_dev_20260831/`.
+
+## 2026-08-31 - V328 joint action utility PD-PPO diagnostic
+
+- Enabled the existing candidate-interaction and online quality-context action
+  utility heads together, while retaining the prediction-loss reward, hard
+  feasibility mask, teacher scaffold, corrected scene, and 50,000-step budget.
+- No bandit-dependent reward, residual action, bandit prior, imitation target,
+  or final-test event label was introduced.
+- Both development seeds passed the behavior and feasibility gates: zero
+  invalid actions, power violations, startup-peak violations, warm-up aborts,
+  always-on channels, and always-off channels; both had six mid-duty channels.
+- Against static, ordinary and macro wins were both `1/2`, with mean margins
+  `-0.026332` and `-0.063097`. Against original dynamic references, ordinary
+  and macro wins were both `1/2`, with mean margins `-0.003264` and `-0.029152`.
+  Against full-open, both endpoints were `0/2` with mean margins `-0.015965`
+  and `-0.053408`.
+- Decision: the combined action representation does not repair predictive
+  transfer and is rejected as a primary improvement. The additive action-head
+  family (V325--V328) should be closed before testing a different transfer
+  structure. Aggregate: `reports/aggregate/v328_joint_action_utility_pdppo_dev_20260831/`.
