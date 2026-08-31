@@ -6412,3 +6412,24 @@ Evidence is stored in
   seed6812 had `0/1/4`; warm-up aborts were zero.
 - Decision: reject decision-block credit as a sufficient primary repair.
 - Aggregate: `reports/aggregate/v317_decision_block_credit_pdppo_dev_20260831/`.
+
+## 2026-08-31 - V325 candidate-interaction PD-PPO diagnostic
+
+- Enabled the existing candidate-interaction state-action head in the
+  context-aware masked PPO actor and disabled the V324 forecast-value trust
+  gate. The forecast-loss objective, feasibility mask, temporal/context
+  encoders, teacher scaffold, and 50,000-step budget were retained.
+- No bandit-dependent reward, residual action, bandit prior, or final-test
+  event label was introduced.
+- Both development seeds completed with zero invalid actions, power
+  violations, startup-peak violations, warm-up aborts, always-on channels,
+  and always-off channels; each had six mid-duty channels.
+- Against the static family, ordinary wins were `0/2` and macro wins `1/2`,
+  with mean margins `-0.033257` and `-0.019057`. Against original dynamic
+  references, ordinary wins were `1/2` and macro wins `2/2`, with mean
+  margins `-0.010190` and `+0.014887`. Against full-open, ordinary wins were
+  `0/2` and macro wins `1/2`.
+- Decision: candidate interaction improves dynamic macro transfer but does
+  not repair the static shortcut or the ordinary-loss endpoint. Do not launch
+  final evaluation from V325. Evidence is archived at
+  `reports/aggregate/v325_candidate_interaction_pdppo_dev_20260831/`.
