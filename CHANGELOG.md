@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-01 - V348 stronger MSE auxiliary diagnostic completed
+
+- Completed V348 on the paired V338 physical six-channel scenes `6871/6872`.
+  The only changed factor from V346 was increasing the on-policy candidate
+  forecast-value masked-MSE coefficient from `0.10` to `0.30`; reward,
+  feasible-subset geometry, hard feasibility masking, six-step dwell target,
+  online information, and partitions were unchanged.
+- Against validation-selected static, ordinary and macro wins were both
+  `0/2`; mean baseline-minus-PD-PPO margins were `-0.048779` and `-0.120794`.
+  Against the original dynamic family, ordinary and macro wins were `1/2`,
+  with mean margins `-0.003965` and `+0.002310`.
+- Behavior gates passed in both scenes: warm-up aborts `0/2`, always-on
+  channels `0/2`, always-off channels `0/2`, and mid-duty channel counts `5`
+  and `6`. Switching rates were `0.055869` and `0.051238`; peak powers were
+  `1.90` and `1.92`.
+- Decision: increasing the auxiliary weight overshoots the useful transfer
+  range and is rejected as a primary-method repair. Aggregate:
+  `reports/aggregate/v348_mse_aux03_onpolicy_direct_mask_dev_20260901/`.
+
 ## 2026-09-01 - V347 soft-target auxiliary diagnostic completed
 
 - Completed V347 on V338 physical six-channel scenes `6871/6872` with the
