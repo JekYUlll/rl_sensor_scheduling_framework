@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-01 - V347 soft-target auxiliary diagnostic completed
+
+- Completed V347 on V338 physical six-channel scenes `6871/6872` with the
+  unchanged forecast-loss reward, feasible-subset action geometry, hard
+  feasibility masking, and online information boundary. The only change from
+  V346 was replacing the on-policy candidate forecast-value auxiliary loss
+  from masked MSE with masked soft cross-entropy at temperature `1.0`.
+- Against the validation-selected static reference, ordinary and macro wins
+  were both `0/2`; mean baseline-minus-PD-PPO margins were `-0.042098` and
+  `-0.107621`. Against the original dynamic reference, ordinary and macro
+  wins were `1/2`, with mean margins `+0.002716` and `+0.015483`.
+- Behavior gates passed in both scenes: warm-up aborts `0/2`, always-on
+  channels `0/2`, always-off channels `0/2`, and mid-duty channel count `6/2`.
+  Switching rates were `0.036329` and `0.054277`; peak power was `1.92` in
+  both runs.
+- Decision: soft-target auxiliary training preserves feasible, non-degenerate
+  behavior and some dynamic-reference advantage, but does not improve the
+  static-shortcut result. V347 is not promoted. Aggregate:
+  `reports/aggregate/v347_softce_onpolicy_forecast_aux_direct_mask_dev_20260901/`.
+
 ## 2026-09-01 - V346 on-policy forecast-value auxiliary diagnostic completed
 
 - Completed V346 on V338 physical six-channel scenes `6871/6872` with the
