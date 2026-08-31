@@ -1,5 +1,25 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V321 rejects weighted forced-dwell supervision
+
+- Completed the corrected remote V321 retry for scene seeds `6811--6812`.
+  The earlier launch that silently used weight `1.0` was stopped and excluded;
+  the valid command used `--bc-pretrain-forced-action-weight 0.25`.
+- V321 retained all teacher states and 50,000 PPO timesteps, reducing only the
+  hard forecast-value action-loss weight on forced dwell rows. It added no
+  bandit-dependent signal or test-time privileged label.
+- Against validation-selected static, ordinary wins were `0/2` with mean
+  baseline-minus-PD-PPO margin `-0.043538`. Static-normalized macro wins were
+  `1/2` with mean margin `+0.000477`; this does not satisfy the primary
+  predictive gate.
+- Feasible-static ordinary wins were `0/2` and macro wins `2/2`. AoI and random
+  were beaten on macro loss `2/2`, but ordinary-loss transfer remained weak.
+- Behavior had zero warm-up aborts and no always-on channels; seed 6812 still
+  had one always-off channel. Mid-duty counts were five and three.
+- Decision: reject weight `0.25` as a sufficient transfer repair. Evidence is
+  stored in `reports/aggregate/v321_weighted_dwell_teacher_w025_pdppo_dev_20260831/`
+  and the two `v321_weighted_dwell_teacher_w025_retry_...` raw directories.
+
 ## 2026-08-31 - V320 rejects decision-only hard pretraining
 
 - Completed the corrected V320 retry on remote seeds `6811--6812`. The first
