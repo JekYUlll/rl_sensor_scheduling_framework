@@ -1,0 +1,3 @@
+seed,policy,oracle_loss_mean,macro_score,warmup_abort_count,switches_per_step,always_on_sensor_count,always_off_sensor_count,mid_duty_sensor_count
+6811,custom_ppo,0.408422960292,0.860122150391,0,0.032783326096,0,0,6
+6812,custom_ppo,0.527524255891,1.074299235470,0,0.009263279780,0,2,4

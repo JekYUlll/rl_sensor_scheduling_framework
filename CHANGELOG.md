@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-08-31 - V335 matched forecast-objective repeat completed
+
+- Repeated the valid V334 protocol on corrected scenes 6811/6812 with fresh
+  policy seeds 7231/7232, restoring the original `forecast` reward as the only
+  intended change. Both runs selected update 49 from non-empty validation
+  scenes.
+- PD-PPO won ordinary loss against round-robin and random in `2/2` seeds, but
+  won `0/2` against validation-selected static, feasible static, AoI, and
+  full-open. Macro wins were `1/2`, `2/2`, `0/2`, `2/2`, `2/2`, and `0/2` in
+  that comparator order.
+- Mean baseline-minus-PD-PPO margins were `-0.035151`, `-0.011015`,
+  `-0.012084`, `+0.010747`, `+0.005403`, and `-0.024785` for ordinary loss;
+  macro margins were `-0.064737`, `+0.021180`, `-0.030792`, `+0.017685`,
+  `+0.043530`, and `-0.055048`.
+- Operational checks had zero warm-up aborts and zero constant-on channels;
+  constant-off counts were 0 and 2, with 6 and 4 mid-duty channels.
+- Decision: reject V335 as a primary improvement and do not launch final
+  evaluation from it. Aggregate: `reports/aggregate/v335_forecast_matched_repeat_pdppo_dev_20260831/`.
+
 ## 2026-08-31 - V334 matched forecast-gain guard diagnostic completed
 
 - Re-ran the guarded one-step `forecast_gain` objective with valid matched
