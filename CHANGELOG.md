@@ -6488,3 +6488,64 @@ Evidence is stored in
   transfer and is rejected as a primary improvement. The additive action-head
   family (V325--V328) should be closed before testing a different transfer
   structure. Aggregate: `reports/aggregate/v328_joint_action_utility_pdppo_dev_20260831/`.
+
+## 2026-08-31 - V329 decaying forecast AWBC diagnostic
+
+- Retained the V328 actor and forecast-loss reward, and added only a small
+  forecast-greedy advantage-weighted behavior-cloning term during PPO,
+  linearly decayed to zero by 30,000 timesteps. No bandit-dependent signal was
+  used.
+- Static ordinary and macro wins were both `0/2`, with mean margins
+  `-0.026713` and `-0.059096`. Original dynamic wins were `1/2` on both
+  endpoints, with mean margins `-0.003646` and `-0.025151`.
+- Both seeds had zero invalid, power, startup, and warm-up violations, but each
+  had one always-off channel and five mid-duty channels.
+- Decision: continuing forecast-greedy supervision during PPO does not repair
+  static transfer and is rejected. The teacher-intervention family should be
+  closed; further work must address the closed-loop target/environment
+  interface rather than add more teacher weight. Aggregate:
+  `reports/aggregate/v329_decaying_forecast_awbc_pdppo_dev_20260831/`.
+
+## 2026-08-31 - V330 plain forecast reward PD-PPO diagnostic
+
+- Retained the V328 joint actor, teacher initialization, context features,
+  feasibility mask, and 50,000-step protocol, changing only the training
+  reward from static subtype normalization to the unnormalised forecast-loss
+  reward.
+- Static ordinary/macro wins were both `1/2`, with mean margins `-0.031024`
+  and `-0.016650`. Original dynamic ordinary/macro wins were both `1/2`, with
+  mean margins `-0.007957` and `+0.017295`.
+- Both seeds passed feasibility and rollout behavior checks with zero invalid,
+  power, startup, and warm-up violations; both had six non-constant channels.
+- Decision: reward normalization is not the sole cause of static-transfer
+  failure. V330 is rejected as a primary improvement and the next step is a
+  quantitative closed-loop target/execution audit. Aggregate:
+  `reports/aggregate/v330_plain_forecast_reward_pdppo_dev_20260831/`.
+
+## 2026-08-31 - V331 post-pretraining checkpoint-selection diagnostic
+
+- Added an explicit minimum PPO-update threshold to validation checkpoint
+  selection. The default remains zero; V331 uses five, excluding the
+  pretraining-only checkpoint while retaining the V330 method and protocol.
+- V331 was launched remotely for scene seeds `6811/6812` with policy seeds
+  `7101/7102` in tmux session `pdppo_v331`. Results are pending.
+## 2026-08-31 - V331 post-pretraining checkpoint-selection diagnostic completed
+
+- Completed the remote V331 development pair for scene seeds `6811/6812` with
+  fresh policy seeds `7101/7102`. Validation selection excluded checkpoints
+  before PPO update 5; the selected updates were 10 and 15, respectively.
+- The intervention did not restore predictive transfer. Against the best
+  static reference, ordinary-loss and static-normalized macro wins were both
+  `1/2`, with mean margins `-0.022988` and `+0.000728`. Against the original
+  dynamic references, the corresponding wins were `1/2` and `2/2`, with mean
+  margins `+0.000079` and `+0.034673`. Full-open remained an upper reference,
+  with ordinary/macro wins `1/2` and `1/2` and mean margins `-0.012622` and
+  `+0.010417`.
+- Both seeds passed feasibility and behavior checks: zero invalid actions,
+  power violations, startup-peak violations, and warm-up aborts. Each policy
+  used multiple actions; seed 6812 had one always-off channel, while seed 6811
+  had six mid-duty channels and seed 6812 had three.
+- V331 is rejected as a sufficient repair. The post-pretraining checkpoint
+  threshold is retained as an explicit reproducibility control, but the next
+  experiment must address the closed-loop target or transfer interface rather
+  than checkpoint-stage selection.
