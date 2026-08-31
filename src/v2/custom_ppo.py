@@ -278,6 +278,7 @@ class CustomPPOConfig:
     onpolicy_action_value_coef: float = 0.0
     onpolicy_action_value_scale: float = 1.0
     candidate_interaction_score: bool = False
+    direct_mask_action_score: bool = False
     temporal_encoder_enabled: bool = False
     temporal_history_steps: int = 0
     temporal_state_dim: int = 0
@@ -366,6 +367,7 @@ class MaskedActor:
         onpolicy_action_value_enabled: bool = False,
         onpolicy_action_value_scale: float = 1.0,
         candidate_interaction_score: bool = False,
+        direct_mask_action_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -451,6 +453,15 @@ class MaskedActor:
                         nn.Linear(int(hidden_dim), 1),
                     )
                     if bool(candidate_interaction_score)
+                    else None
+                )
+                self.direct_mask_action_head = (
+                    nn.Sequential(
+                        nn.Linear(int(embed_dim) + int(n_sensors), int(hidden_dim)),
+                        nn.GELU(),
+                        nn.Linear(int(hidden_dim), 1),
+                    )
+                    if bool(direct_mask_action_score)
                     else None
                 )
                 self.onpolicy_action_value_head = (
@@ -798,6 +809,13 @@ class MaskedActor:
                         torch_concat([state_actions, candidate_actions], dim=2)
                     ).squeeze(-1)
                     logits = logits + interaction
+                if self.factorized_action_head is None and self.direct_mask_action_head is not None:
+                    state_actions = context.unsqueeze(1).expand(-1, candidate_masks.shape[0], -1)
+                    raw_candidates = candidate_masks.float().unsqueeze(0).expand(context.shape[0], -1, -1)
+                    direct_score = self.direct_mask_action_head(
+                        torch_concat([state_actions, raw_candidates], dim=2)
+                    ).squeeze(-1)
+                    logits = logits + direct_score
                 if self.factorized_action_head is None and self.quality_action_scale_raw is not None:
                     _, context_obs = self._split_obs(obs)
                     quality = context_obs[:, : int(n_sensors)]
@@ -971,6 +989,7 @@ class ActorCritic:
         onpolicy_action_value_enabled: bool = False,
         onpolicy_action_value_scale: float = 1.0,
         candidate_interaction_score: bool = False,
+        direct_mask_action_score: bool = False,
         temporal_encoder_enabled: bool = False,
         temporal_history_steps: int = 0,
         temporal_state_dim: int = 0,
@@ -1013,6 +1032,7 @@ class ActorCritic:
                     onpolicy_action_value_enabled=bool(onpolicy_action_value_enabled),
                     onpolicy_action_value_scale=float(onpolicy_action_value_scale),
                     candidate_interaction_score=bool(candidate_interaction_score),
+                    direct_mask_action_score=bool(direct_mask_action_score),
                     temporal_encoder_enabled=bool(temporal_encoder_enabled),
                     temporal_history_steps=int(temporal_history_steps),
                     temporal_state_dim=int(temporal_state_dim),
@@ -1160,6 +1180,7 @@ class CustomPPO:
             onpolicy_action_value_enabled=float(cfg.onpolicy_action_value_coef) > 0.0,
             onpolicy_action_value_scale=float(cfg.onpolicy_action_value_scale),
             candidate_interaction_score=bool(cfg.candidate_interaction_score),
+            direct_mask_action_score=bool(cfg.direct_mask_action_score),
             temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
             temporal_history_steps=int(self.env_cfg.lookback),
             temporal_state_dim=len(self.env_cfg.state_columns),

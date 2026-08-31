@@ -6780,3 +6780,22 @@ Evidence is stored in
   forecast-reward, feasibility-masked PD-PPO design and be evaluated as a new
   bounded diagnostic.
 - Aggregate: `reports/aggregate/v343_policy_alignment_audit_20260901/`.
+
+## 2026-09-01 - V344 direct mask-action utility diagnostic
+
+- Added an optional direct state--raw-candidate-mask utility head to the
+  masked PPO actor. The V344 pair kept the V338 scenes, physical six-channel
+  22-mask geometry, forecast-loss reward, hard feasibility mask, dwell
+  protocol, and training-only forecast-value initialization unchanged. No
+  bandit signal, comparator action, or final-test label was used.
+- Hard forecast-value BC accuracy increased to `0.83099/0.83028`, compared
+  with `0.14318/0.10762` for V342. Both runs passed behavior checks: zero
+  warm-up aborts, zero always-on/off channels, six intermediate-duty channels,
+  and switching rates `0.060501/0.032494`.
+- Closed-loop transfer did not improve. PD-PPO ordinary loss was
+  `0.512627/0.355076` versus best static `0.420823/0.276648`; macro loss was
+  `1.142025/0.628645` versus `0.914900/0.426915` on scenes `6871/6872`.
+- Decision: reject the direct mask head as a primary repair. It fixes local
+  supervised candidate fitting but not long-horizon executed-return
+  optimization. Aggregate:
+  `reports/aggregate/v344_direct_mask_action_pdppo_dev_20260901/`.
