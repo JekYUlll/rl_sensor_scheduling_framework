@@ -1,5 +1,27 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-01 - V346 on-policy forecast-value auxiliary diagnostic completed
+
+- Completed V346 on V338 physical six-channel scenes `6871/6872` with the
+  direct raw-candidate-mask representation and an on-policy candidate
+  forecast-value auxiliary (`coef=0.10`, stride `4`, lookahead `6`). The
+  forecast-loss reward, arbitrary feasible-subset action geometry, hard
+  feasibility masking, and online information boundary were unchanged. No
+  bandit signal, comparator action, or final-test event label was used.
+- PD-PPO ordinary losses were `0.462433` and `0.267175`. Against the
+  validation-selected static reference, ordinary wins were `1/2` and macro
+  wins `0/2`; against the best original dynamic reference, ordinary and macro
+  wins were both `2/2`. Full-open reference margins were positive in both
+  scenes but are not a fair constrained baseline.
+- Behavior gates passed in both scenes: warm-up aborts `0/2`, always-on
+  channels `0/2`, always-off channels `0/2`, and mid-duty channel counts `6`
+  and `5`. Switching rates were `0.031987` and `0.040093`; peak powers were
+  `1.92` and `2.00`.
+- Decision: the on-policy auxiliary improves dynamic-reference performance
+  and preserves valid behavior, but does not pass the static-shortcut gate.
+  It is therefore a bounded diagnostic, not a primary-method promotion.
+  Aggregate: `reports/aggregate/v346_onpolicy_forecast_aux_direct_mask_dev_20260901/`.
+
 ## 2026-09-01 - V337 policy-seed variance screen completed
 
 - Screened four fresh policy seeds `7261--7264` on corrected scenes 6811/6812
