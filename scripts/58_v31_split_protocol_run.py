@@ -871,6 +871,12 @@ def main() -> None:
     parser.add_argument("--onpolicy-action-value-scale", type=float, default=1.0)
     parser.add_argument("--candidate-interaction-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--direct-mask-action-score", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument(
+        "--direct-mask-action-primary",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use the state-conditioned raw-mask score as the primary candidate logit.",
+    )
     parser.add_argument("--temporal-encoder", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument(
         "--decision-only-policy-updates",
@@ -1342,6 +1348,7 @@ def main() -> None:
             "onpolicy_action_value_scale": float(args.onpolicy_action_value_scale),
             "candidate_interaction_score": bool(args.candidate_interaction_score),
             "direct_mask_action_score": bool(args.direct_mask_action_score),
+            "direct_mask_action_primary": bool(args.direct_mask_action_primary),
             "factorized_action_policy": bool(args.factorized_action_policy),
             "soc_aux_horizon": int(args.soc_aux_horizon),
             "soc_aux_coef": float(args.soc_aux_coef),
@@ -1826,6 +1833,11 @@ def main() -> None:
         "--direct-mask-action-score"
         if bool(args.direct_mask_action_score)
         else "--no-direct-mask-action-score"
+    )
+    cmd.append(
+        "--direct-mask-action-primary"
+        if bool(args.direct_mask_action_primary)
+        else "--no-direct-mask-action-primary"
     )
     if bool(args.eval_duty_constrained_baselines):
         cmd.append("--eval-duty-constrained-baselines")

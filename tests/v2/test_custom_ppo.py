@@ -875,6 +875,33 @@ def test_candidate_interaction_score_is_trainable_and_respects_action_mask() -> 
     assert any(parameter.grad is not None for parameter in actor.candidate_interaction_head.parameters())
 
 
+def test_direct_mask_action_primary_uses_state_conditioned_mask_score() -> None:
+    actor = MaskedActor(
+        obs_dim=5,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        direct_mask_action_score=True,
+        direct_mask_action_primary=True,
+    )
+    masks = torch.tensor([[1, 0, 0], [0, 1, 1]], dtype=torch.float32)
+    obs = torch.randn((2, 5), dtype=torch.float32)
+    logits = actor.logits(obs, masks)
+    context = actor.encode_context(obs, None)
+    expected = actor.direct_mask_action_head(
+        torch.cat(
+            [
+                context.unsqueeze(1).expand(-1, masks.shape[0], -1),
+                masks.unsqueeze(0).expand(obs.shape[0], -1, -1),
+            ],
+            dim=2,
+        )
+    ).squeeze(-1)
+
+    assert actor.direct_mask_action_primary is True
+    assert torch.allclose(logits, expected)
+
+
 def test_onpolicy_action_value_head_is_trainable_and_keeps_action_mask() -> None:
     actor = MaskedActor(
         obs_dim=5,
