@@ -137,6 +137,8 @@ def write_policy_candidate_alignment_audit(
     import torch
 
     rows: list[dict[str, float | int]] = []
+    skipped_no_valid_cost = 0
+    skipped_selected_cost = 0
     candidate_masks = np.asarray(trainer.candidate_masks_np, dtype=bool)
     subtype_ids = (
         truth["event_subtype_id"].to_numpy(dtype=int)
@@ -176,12 +178,20 @@ def write_policy_candidate_alignment_audit(
             selected_action_idx = int(selected_matches[0])
             valid = np.asarray(action_mask, dtype=bool) & np.isfinite(candidate_costs)
             if not np.any(valid):
-                raise RuntimeError("No finite feasible candidate cost during policy audit")
+                skipped_no_valid_cost += 1
+                _, _, done, _ = env.step_mask(selected_mask)
+                if done:
+                    break
+                continue
             best_action_idx = int(np.argmin(np.where(valid, candidate_costs, np.inf)))
             selected_cost = float(candidate_costs[selected_action_idx])
             best_cost = float(candidate_costs[best_action_idx])
             if not np.isfinite(selected_cost):
-                raise RuntimeError("Selected policy action has no finite candidate cost")
+                skipped_selected_cost += 1
+                _, _, done, _ = env.step_mask(selected_mask)
+                if done:
+                    break
+                continue
             with torch.no_grad():
                 obs_t = torch.as_tensor(state.reshape(1, -1), dtype=torch.float32, device=trainer.device)
                 mask_t = torch.as_tensor(action_mask.reshape(1, -1), dtype=torch.bool, device=trainer.device)
@@ -233,6 +243,8 @@ def write_policy_candidate_alignment_audit(
     audit.to_csv(output_path, index=False)
     summary = {
         "rows": int(len(audit)),
+        "skipped_no_valid_cost": int(skipped_no_valid_cost),
+        "skipped_selected_cost": int(skipped_selected_cost),
         "mean_candidate_cost_regret": finite_mean(audit["candidate_cost_regret"]),
         "median_candidate_cost_regret": float(audit["candidate_cost_regret"].median()),
         "best_action_match_rate": float(np.mean(audit["selected_action_idx"] == audit["best_action_idx"])),
