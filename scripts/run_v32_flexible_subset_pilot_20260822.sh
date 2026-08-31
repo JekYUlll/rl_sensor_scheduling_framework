@@ -95,6 +95,9 @@ PARTICLE_LATENT_VELOCITY_SCALE="${PARTICLE_LATENT_VELOCITY_SCALE:-2.4}"
 FLUX_LATENT_SIGMA="${FLUX_LATENT_SIGMA:-1.2}"
 THERMAL_LATENT_SURFACE_SCALE="${THERMAL_LATENT_SURFACE_SCALE:-2.4}"
 EVENT_SUBTYPE_ASSIGNMENT="${EVENT_SUBTYPE_ASSIGNMENT:-random}"
+EVENT_SUBTYPE_PARTICLE_PROB="${EVENT_SUBTYPE_PARTICLE_PROB:-0.36}"
+EVENT_SUBTYPE_FLUX_PROB="${EVENT_SUBTYPE_FLUX_PROB:-0.36}"
+EVENT_SUBTYPE_THERMAL_PROB="${EVENT_SUBTYPE_THERMAL_PROB:-0.28}"
 read -r -a TARGET_WEIGHT_ARGS <<< "${TARGET_WEIGHTS:-0.25 0.35 0.30 0.10 0.10 0.20 18.0 8.0 8.0}"
 read -r -a PARTICLE_TARGET_WEIGHT_ARGS <<< "${PARTICLE_TARGET_WEIGHTS:-0.10 0.10 0.20 0.05 0.05 0.10 4.0 14.0 14.0}"
 read -r -a FLUX_TARGET_WEIGHT_ARGS <<< "${FLUX_TARGET_WEIGHTS:-0.10 0.10 0.30 0.05 0.05 0.10 24.0 4.0 4.0}"
@@ -345,9 +348,9 @@ for seed in "${SEEDS[@]}"; do
     --event-subtypes-enabled \
     --event-subtype-assignment "$EVENT_SUBTYPE_ASSIGNMENT" \
     --event-subtype-particle-min-parsivel-availability "$EVENT_SUBTYPE_PARTICLE_MIN_PARSIVEL_AVAILABILITY" \
-    --event-subtype-particle-prob 0.36 \
-    --event-subtype-flux-prob 0.36 \
-    --event-subtype-thermal-prob 0.28 \
+    --event-subtype-particle-prob "$EVENT_SUBTYPE_PARTICLE_PROB" \
+    --event-subtype-flux-prob "$EVENT_SUBTYPE_FLUX_PROB" \
+    --event-subtype-thermal-prob "$EVENT_SUBTYPE_THERMAL_PROB" \
     --event-subtype-particle-flux-multiplier 0.75 \
     --event-subtype-flux-multiplier 3.5 \
     --event-subtype-thermal-flux-multiplier 0.65 \
