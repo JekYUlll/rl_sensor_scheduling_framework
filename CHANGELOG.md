@@ -6759,3 +6759,24 @@ Evidence is stored in
   show that neither hard pretraining, its removal, teacher-only evaluation,
   nor forced-row exclusion provides stable learner transfer on V338.
 - Aggregate: `reports/aggregate/v342_decision_only_bc_diag_20260901/`.
+## 2026-09-01 - V343 frozen policy-alignment audit
+
+- Audited the frozen V342 decision-only BC checkpoints on the exact V342
+  final-test starts for V338 scenes `6871/6872`. At each comparable state,
+  all 22 feasible candidate masks were rescored from the same environment
+  state with snapshot/restore and the frozen forecast evaluator. Candidate
+  costs were not exposed to the policy and did not affect training or rewards.
+- Across `4,606` rows, `4,604` had finite comparable candidate costs. The
+  selected action matched the lowest-cost candidate in only `10.66%` of rows;
+  mean selected rank was `12.50/22`, mean candidate-cost regret was `0.213200`,
+  and mean relative regret was `0.992397`. Per-scene best-action match was
+  `13.07%` (6871) and `8.25%` (6872), with mean ranks `11.47` and `13.54`.
+- Combined with the valid V338 same-state separability audit, this identifies
+  observation-to-action mapping / long-horizon credit assignment as the
+  immediate learner bottleneck. It does not support the claim that the
+  recalibrated scene lacks state-dependent action value.
+- Decision: do not add bandit-dependent reward, imitation, residual action,
+  or final-test labels. Any next learner modification must remain a clean
+  forecast-reward, feasibility-masked PD-PPO design and be evaluated as a new
+  bounded diagnostic.
+- Aggregate: `reports/aggregate/v343_policy_alignment_audit_20260901/`.

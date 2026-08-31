@@ -1,0 +1,14 @@
+{
+  "rows": 2303,
+  "skipped_no_valid_cost": 1,
+  "skipped_selected_cost": 0,
+  "mean_candidate_cost_regret": 0.0890734893016281,
+  "median_candidate_cost_regret": 0.05857484042644501,
+  "best_action_match_rate": 0.13069908814589665,
+  "mean_selected_action_rank": 11.468953538862353,
+  "mean_selected_action_probability": 0.23139376016645083,
+  "mean_policy_entropy": 2.603816760399007,
+  "q_head_enabled": false,
+  "mean_q_oracle_best_rank": NaN,
+  "q_top_matches_oracle_best_rate": NaN
+}
