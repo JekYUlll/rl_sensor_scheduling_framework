@@ -12,7 +12,8 @@
   `-0.107621`. Against the original dynamic reference, ordinary and macro
   wins were `1/2`, with mean margins `+0.002716` and `+0.015483`.
 - Behavior gates passed in both scenes: warm-up aborts `0/2`, always-on
-  channels `0/2`, always-off channels `0/2`, and mid-duty channel count `6/2`.
+  channels `0/2`, always-off channels `0/2`, and mid-duty channel counts `6`
+  and `6`.
   Switching rates were `0.036329` and `0.054277`; peak power was `1.92` in
   both runs.
 - Decision: soft-target auxiliary training preserves feasible, non-degenerate
