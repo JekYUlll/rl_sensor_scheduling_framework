@@ -6664,3 +6664,9 @@ Evidence is stored in
   or macro loss (`0/2`, mean margin `-0.123104`). A privileged receding-horizon
   gate is required before any trained run is interpreted.
 - Aggregate: `reports/aggregate/v338_recalibrated_scene_control_20260901/`.
+- The matched six-step privileged receding gate then passed on both scenes:
+  ordinary margins were `+0.062504` and `+0.068498`, and static-normalized
+  macro margins were `+0.152368` and `+0.057904`. Each used 22 actions, all
+  six channels at intermediate duty, zero always-on/always-off channels, and
+  zero warm-up aborts. This authorizes a matched trained wave, but does not
+  itself constitute deployable PD-PPO evidence.

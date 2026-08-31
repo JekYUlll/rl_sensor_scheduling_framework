@@ -30,6 +30,16 @@ def main() -> None:
         metadata = json.loads(metadata_path.read_text())
         static = metrics[metrics.policy.isin(STATIC)]
         dynamic = metrics[metrics.policy.isin(DYNAMIC)]
+        static_best = static.iloc[static[MACRO].argmin()]
+        receding_path = run_dir / "receding_oracle_l6_scene_gate" / "oracle_lift_candidate_table.csv"
+        receding = pd.read_csv(receding_path)
+        receding = receding[receding["sensor_ids"].astype(str).str.contains("receding_oracle")].iloc[0]
+        receding_macro = sum(
+            float(receding[f"oracle_loss_subtype_{subtype}"])
+            / (float(static_best[f"oracle_loss_subtype_{subtype}"])
+               / float(static_best[f"oracle_loss_subtype_{subtype}_staticnorm"]))
+            for subtype in ("particle", "flux", "thermal")
+        ) / 3.0
         rows.append(
             {
                 "seed": int(metadata["seed"]),
@@ -46,16 +56,26 @@ def main() -> None:
                 "dynamic_best_macro": float(dynamic[MACRO].min()),
                 "dynamic_minus_static_ordinary": float(static[ORDINARY].min() - dynamic[ORDINARY].min()),
                 "dynamic_minus_static_macro": float(static[MACRO].min() - dynamic[MACRO].min()),
+                "receding_ordinary": float(receding[ORDINARY]),
+                "receding_macro": receding_macro,
+                "receding_minus_static_ordinary": float(static[ORDINARY].min() - receding[ORDINARY]),
+                "receding_minus_static_macro": float(static[MACRO].min() - receding_macro),
+                "receding_action_coverage": int(receding["receding_action_coverage"]),
+                "receding_always_on": int(receding["always_on_sensor_count"]),
+                "receding_always_off": int(receding["always_off_sensor_count"]),
+                "receding_mid_duty": int(receding["mid_duty_sensor_count"]),
+                "receding_switches_per_step": float(receding["switches_per_step"]),
+                "receding_warmup_abort": int(receding["warmup_abort_count"]),
                 "custom_ppo_is_trained": False,
             }
         )
 
     table = pd.DataFrame(rows).sort_values("seed")
     table.to_csv(args.out_dir / "scene_control_seed_metrics.csv", index=False)
-    mean_ordinary = float(table["dynamic_minus_static_ordinary"].mean())
-    mean_macro = float(table["dynamic_minus_static_macro"].mean())
-    ordinary_wins = int((table["dynamic_minus_static_ordinary"] > 0).sum())
-    macro_wins = int((table["dynamic_minus_static_macro"] > 0).sum())
+    mean_ordinary = float(table["receding_minus_static_ordinary"].mean())
+    mean_macro = float(table["receding_minus_static_macro"].mean())
+    ordinary_wins = int((table["receding_minus_static_ordinary"] > 0).sum())
+    macro_wins = int((table["receding_minus_static_macro"] > 0).sum())
     lines = [
         "# V338 recalibrated-scene control",
         "",
@@ -67,7 +87,7 @@ def main() -> None:
         "(1/3, 1/3, 1/3).",
         "- Physical channel configuration, effective costs, budget 1.75, startup budget 2.15, "
         "minimum dwell 6, and online observables are unchanged.",
-        f"- Best original dynamic versus best static: ordinary {ordinary_wins}/{len(table)} "
+        f"- Privileged six-step receding oracle versus best static: ordinary {ordinary_wins}/{len(table)} "
         f"wins, mean margin {mean_ordinary:+.6f}; macro {macro_wins}/{len(table)} wins, "
         f"mean margin {mean_macro:+.6f}.",
         "- Decision: retain this scene for a matched trained wave only if the event and "
