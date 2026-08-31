@@ -17,7 +17,7 @@ run_one() {
     export CUDA_VISIBLE_DEVICES="$((idx + GPU_OFFSET))"
     export RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v344_direct_mask_action_pdppo_dev}"
     export LOG_PREFIX="${LOG_PREFIX_OVERRIDE:-v344_direct_mask_action_pdppo}"
-    export TOTAL_TIMESTEPS=50000 POLICY_SEED="$policy_seed"
+    export TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS_OVERRIDE:-50000}" POLICY_SEED="$policy_seed"
     export CONTROL_SOURCE_RUN_DIR="reports/v338_recalibrated_scene_control_seed${seed}_b1p75_20260822"
     export EVENT_COVERAGE=0.70 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12 LEAD_STEPS=8
     export EVENT_SUBTYPE_ASSIGNMENT=stratified
