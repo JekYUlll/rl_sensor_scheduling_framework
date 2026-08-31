@@ -17,6 +17,16 @@
   when no new decision was executable. V333 adds the matching decision-available
   guard while retaining the same forecast-gain objective and protocol.
 
+## 2026-08-31 - V333 guard diagnostic protocol audit
+
+- V333 repeated the guarded `forecast_gain` implementation on fresh scene seeds
+  `6851/6852`, but its nested launcher had no control-source run directory.
+  Consequently all checkpoint-selection rows had `validation_scene_count=0`
+  and no selected validation score.
+- The runs are retained only as an implementation smoke test and are excluded
+  from the predictive evidence aggregate. A valid matched rerun using existing
+  same-scene control assets is launched as V334.
+
 ## 2026-08-31 - V324 state-dependent teacher-trust diagnostic
 
 - Completed the corrected six-channel V324 development run for seeds `6811--6812`.
