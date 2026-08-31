@@ -221,6 +221,8 @@ class CustomPPOConfig:
     forecast_value_head_hidden_dim: int = 128
     forecast_value_head_mode: str = "factorized"
     forecast_value_head_ignore_quality: bool = False
+    forecast_value_trust_gate: bool = False
+    forecast_value_trust_hidden_dim: int = 64
     subtype_aux_coef: float = 0.0
     subtype_aux_classes: int = 4
     subtype_aux_lookahead_steps: int = 0
@@ -373,6 +375,8 @@ class MaskedActor:
         forecast_value_head_hidden_dim: int = 128,
         forecast_value_head_mode: str = "factorized",
         forecast_value_head_ignore_quality: bool = False,
+        forecast_value_trust_gate: bool = False,
+        forecast_value_trust_hidden_dim: int = 64,
         candidate_cost_features: np.ndarray | None = None,
     ) -> Any:
         torch, nn = _torch_modules()
@@ -392,6 +396,7 @@ class MaskedActor:
                 self.forecast_value_head_ignore_quality = bool(
                     forecast_value_head_ignore_quality
                 )
+                self.forecast_value_trust_gate_enabled = bool(forecast_value_trust_gate)
                 if self.forecast_value_head_mode not in {"factorized", "independent", "mask_structured"}:
                     raise ValueError(
                         "forecast_value_head_mode must be factorized, independent, or mask_structured"
@@ -671,6 +676,16 @@ class MaskedActor:
                         "forecast_candidate_cost_features",
                         torch.empty((0, 2), dtype=torch.float32),
                     )
+                self.forecast_value_trust_gate = (
+                    nn.Sequential(
+                        nn.Linear(int(embed_dim), max(1, int(forecast_value_trust_hidden_dim))),
+                        nn.GELU(),
+                        nn.Linear(max(1, int(forecast_value_trust_hidden_dim)), 1),
+                        nn.Sigmoid(),
+                    )
+                    if self.forecast_value_head_enabled and self.forecast_value_trust_gate_enabled
+                    else None
+                )
                 prior_len = int(n_actions or 0)
                 if candidate_prior_logits is not None:
                     prior = torch.as_tensor(np.asarray(candidate_prior_logits, dtype=np.float32).reshape(-1))
@@ -811,7 +826,11 @@ class MaskedActor:
                         candidate_masks,
                         action_mask,
                     )
-                    logits = logits + self.forecast_value_head_scale * forecast_logits.detach()
+                    if self.forecast_value_trust_gate is not None:
+                        trust = self.forecast_value_trust_gate(context)
+                        logits = logits + self.forecast_value_head_scale * trust * forecast_logits.detach()
+                    else:
+                        logits = logits + self.forecast_value_head_scale * forecast_logits.detach()
                 if self.factorized_action_head is None and self.onpolicy_action_value_head is not None:
                     # Returns have a different scale from policy logits.  Normalize the
                     # candidate values per state before using them as a detached scorer.
@@ -961,6 +980,8 @@ class ActorCritic:
         forecast_value_head_hidden_dim: int = 128,
         forecast_value_head_mode: str = "factorized",
         forecast_value_head_ignore_quality: bool = False,
+        forecast_value_trust_gate: bool = False,
+        forecast_value_trust_hidden_dim: int = 64,
         candidate_cost_features: np.ndarray | None = None,
     ) -> Any:
         _, nn = _torch_modules()
@@ -1003,6 +1024,8 @@ class ActorCritic:
                     forecast_value_head_ignore_quality=bool(
                         forecast_value_head_ignore_quality
                     ),
+                    forecast_value_trust_gate=bool(forecast_value_trust_gate),
+                    forecast_value_trust_hidden_dim=int(forecast_value_trust_hidden_dim),
                     candidate_cost_features=candidate_cost_features,
                 )
                 self.critic = EventAwareCritic(int(obs_dim), int(hidden_dim), event_aware=bool(event_aware_critic))
@@ -1148,6 +1171,8 @@ class CustomPPO:
             forecast_value_head_ignore_quality=bool(
                 cfg.forecast_value_head_ignore_quality
             ),
+            forecast_value_trust_gate=bool(cfg.forecast_value_trust_gate),
+            forecast_value_trust_hidden_dim=int(cfg.forecast_value_trust_hidden_dim),
             candidate_cost_features=candidate_cost_features,
         ).to(self.device)
         self.candidate_masks_t = torch_tensor(self.candidate_masks_np.astype(np.float32), device=self.device)

@@ -772,6 +772,8 @@ def main() -> None:
         default="factorized",
     )
     parser.add_argument("--forecast-value-head-ignore-quality", action="store_true")
+    parser.add_argument("--forecast-value-trust-gate", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-trust-hidden-dim", type=int, default=64)
     parser.add_argument("--subtype-aux-coef", type=float, default=0.0)
     parser.add_argument("--subtype-aux-classes", type=int, default=4)
     parser.add_argument("--subtype-aux-lookahead-steps", type=int, default=0)
@@ -1652,6 +1654,8 @@ def main() -> None:
             forecast_value_head_ignore_quality=bool(
                 args.forecast_value_head_ignore_quality
             ),
+            forecast_value_trust_gate=bool(args.forecast_value_trust_gate),
+            forecast_value_trust_hidden_dim=max(1, int(args.forecast_value_trust_hidden_dim)),
             subtype_aux_coef=float(args.subtype_aux_coef),
             subtype_aux_classes=max(2, int(args.subtype_aux_classes)),
             subtype_aux_lookahead_steps=max(0, int(args.subtype_aux_lookahead_steps)),
@@ -2783,6 +2787,8 @@ def as_serializable_config(
         "forecast_value_head_ignore_quality": bool(
             cfg.forecast_value_head_ignore_quality
         ),
+        "forecast_value_trust_gate": bool(cfg.forecast_value_trust_gate),
+        "forecast_value_trust_hidden_dim": int(cfg.forecast_value_trust_hidden_dim),
         "awbc_event_only": bool(cfg.awbc_event_only),
         "bc_pretrain_steps": int(cfg.bc_pretrain_steps),
         "bc_pretrain_epochs": int(cfg.bc_pretrain_epochs),
