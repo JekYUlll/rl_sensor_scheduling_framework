@@ -208,6 +208,7 @@ class CustomPPOConfig:
     bc_pretrain_loss_coef: float = 1.0
     bc_pretrain_target_mode: str = "hard"
     bc_pretrain_decision_only: bool = False
+    bc_pretrain_forced_action_weight: float = 1.0
     bc_soft_temperature: float = 1.0
     forecast_value_aux_coef: float = 0.0
     forecast_value_aux_stride: int = 64
@@ -1610,8 +1611,15 @@ class CustomPPO:
                 mb_subtype_labels = subtype_labels[idx]
                 mb_subtype_valid = subtype_valid[idx]
                 dist = self.model.dist(mb_obs, self.candidate_masks_t, mb_masks, mb_events)
+                decision_weight = float(np.clip(self.cfg.bc_pretrain_forced_action_weight, 0.0, 1.0))
+                row_weights = torch.where(
+                    torch.as_tensor(batch["decision_rows"], device=self.device, dtype=torch.float32)[idx] > 0.5,
+                    torch.ones_like(mb_teacher, dtype=torch.float32),
+                    torch.full_like(mb_teacher, decision_weight, dtype=torch.float32),
+                )
                 if str(self.cfg.bc_pretrain_target_mode) == "soft_forecast_value":
-                    bc_loss = -(mb_teacher_distribution * torch.log(dist.probs.clamp_min(1.0e-12))).sum(dim=1).mean()
+                    per_row_bc_loss = -(mb_teacher_distribution * torch.log(dist.probs.clamp_min(1.0e-12))).sum(dim=1)
+                    bc_loss = (per_row_bc_loss * row_weights).sum() / row_weights.sum().clamp_min(1.0e-6)
                 elif str(self.cfg.bc_pretrain_target_mode) == "forecast_value_regression":
                     actor_logits = (
                         self.model.actor.forecast_value_logits(
@@ -1629,27 +1637,31 @@ class CustomPPO:
                     )
                     valid_logits = torch.where(mb_masks, actor_logits, mb_teacher_cost_targets)
                     if str(self.cfg.forecast_value_aux_loss).strip().lower() == "smooth_l1":
-                        regression_loss = nn.functional.smooth_l1_loss(
+                        per_row_regression_loss = nn.functional.smooth_l1_loss(
                             valid_logits[mb_masks],
                             mb_teacher_cost_targets[mb_masks],
+                            reduction="none",
                         )
+                        per_row_regression_loss = torch.zeros_like(valid_logits).masked_scatter(
+                            mb_masks, per_row_regression_loss
+                        ).sum(dim=1)
                     else:
                         squared_error = (valid_logits - mb_teacher_cost_targets).square()
-                        regression_loss = squared_error[mb_masks].mean()
+                        per_row_regression_loss = squared_error.masked_fill(~mb_masks, 0.0).sum(dim=1)
                     best_actions = torch.argmax(
                         mb_teacher_cost_targets.masked_fill(~mb_masks, -1.0e9),
                         dim=1,
                     )
-                    ranking_loss = nn.functional.cross_entropy(
+                    per_row_ranking_loss = nn.functional.cross_entropy(
                         actor_logits.masked_fill(~mb_masks, -1.0e9),
                         best_actions,
+                        reduction="none",
                     )
-                    bc_loss = (
-                        regression_loss
-                        + float(self.cfg.forecast_value_ranking_coef) * ranking_loss
-                    )
+                    per_row_bc_loss = per_row_regression_loss + float(self.cfg.forecast_value_ranking_coef) * per_row_ranking_loss
+                    bc_loss = (per_row_bc_loss * row_weights).sum() / row_weights.sum().clamp_min(1.0e-6)
                 else:
-                    bc_loss = -dist.log_prob(mb_teacher).mean()
+                    per_row_bc_loss = -dist.log_prob(mb_teacher)
+                    bc_loss = (per_row_bc_loss * row_weights).sum() / row_weights.sum().clamp_min(1.0e-6)
                 subtype_aux_loss, subtype_aux_acc = self._subtype_aux_loss(
                     mb_obs,
                     mb_events,
