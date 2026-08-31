@@ -1,0 +1,4 @@
+baseline_family,seed_count,ordinary_wins,macro_wins,ordinary_mean_margin,macro_mean_margin
+static,2,0,0,-0.1432439221430746,-0.2394334470614226
+dynamic,2,0,0,-0.09842996355882169,-0.11632907179255869
+full_open,2,0,1,-0.0867683846670107,-0.10477778566562279

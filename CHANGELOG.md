@@ -6737,3 +6737,25 @@ Evidence is stored in
   inconclusive. No teacher-quality claim is based on it.
 - A valid action-value audit requires identical serialized states or an
   evaluator that scores all candidates from the same state.
+
+## 2026-09-01 - V342 decision-only BC transfer diagnostic
+
+- Restricted hard forecast-value behavior-cloning pretraining to rows where a
+  new executable mask could actually be selected. The frozen V338 scene,
+  evaluator, action geometry, forecast reward, and zero-PPO protocol were
+  unchanged; policy seeds were `7351/7352` on scenes `6871/6872`.
+- The restriction did not recover transfer. PD-PPO won `0/2` ordinary and
+  macro endpoints against the static family, and `0/2` against the original
+  dynamic family. Mean margins were `-0.143244` ordinary and `-0.239433`
+  macro versus static, and `-0.098430` ordinary and `-0.116329` macro versus
+  dynamic. The unconstrained full-open reference was not beaten on ordinary
+  loss (`0/2`) and was beaten on macro loss in `1/2`; it remains a diagnostic,
+  not a fair constrained baseline.
+- Behavior also failed: seed `6871` had one always-off channel and seed
+  `6872` had one always-on plus two always-off channels. Warm-up aborts were
+  zero; intermediate-duty counts were `3` and `2`, with switches per step
+  `0.006803` and `0.005500`.
+- Decision: reject decision-only BC as a primary repair. V339--V342 jointly
+  show that neither hard pretraining, its removal, teacher-only evaluation,
+  nor forced-row exclusion provides stable learner transfer on V338.
+- Aggregate: `reports/aggregate/v342_decision_only_bc_diag_20260901/`.
