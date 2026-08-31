@@ -20,6 +20,21 @@
   stored in `reports/aggregate/v321_weighted_dwell_teacher_w025_pdppo_dev_20260831/`
   and the two `v321_weighted_dwell_teacher_w025_retry_...` raw directories.
 
+## 2026-08-31 - V321 weight-0.10 follow-up closes weight search
+
+- Completed the bounded weight-0.10 follow-up on remote seeds `6811--6812`.
+  All teacher states were retained and only forced-dwell action loss was
+  downweighted.
+- Validation-selected static ordinary-loss wins were `0/2`, with mean margin
+  `-0.043407`. Macro wins were `1/2`, with mean margin `-0.042695`.
+- Feasible-static macro wins were `2/2`, but ordinary wins were only `1/2`.
+  AoI ordinary and macro wins were both `0/2` and `1/2`, respectively.
+- Behavior failed the intended gate: both seeds had one always-off channel;
+  warm-up aborts were zero and mid-duty counts were five and three.
+- Decision: close the scalar forced-row action-weight search. Aggregate
+  evidence is stored in
+  `reports/aggregate/v321_weighted_dwell_teacher_w010_pdppo_dev_20260831/`.
+
 ## 2026-08-31 - V320 rejects decision-only hard pretraining
 
 - Completed the corrected V320 retry on remote seeds `6811--6812`. The first
