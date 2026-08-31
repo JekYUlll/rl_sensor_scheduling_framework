@@ -33,7 +33,7 @@ def main() -> None:
             {
                 "seed": int(metadata.get("seed", run_dir.name.split("seed", 1)[1].split("_", 1)[0])),
                 "policy_seed": int(metadata.get("policy_seed", -1)),
-                "selected_checkpoint_update": metadata.get("selected_checkpoint_update"),
+                "selected_checkpoint_update": (metadata.get("checkpoint_selection") or {}).get("selected_update"),
                 "pdppo_ordinary": float(custom[ORDINARY]),
                 "pdppo_macro": float(custom[MACRO]),
                 "static_ordinary_margin": float(static[ORDINARY].min() - custom[ORDINARY]),

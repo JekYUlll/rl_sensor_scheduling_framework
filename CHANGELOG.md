@@ -6670,3 +6670,24 @@ Evidence is stored in
   six channels at intermediate duty, zero always-on/always-off channels, and
   zero warm-up aborts. This authorizes a matched trained wave, but does not
   itself constitute deployable PD-PPO evidence.
+
+## 2026-09-01 - V339 recalibrated-scene PD-PPO development wave
+
+- Trained the unchanged clean PD-PPO configuration on the V338 six-channel
+  scene for seeds `6871/6872` with policy seeds `7311/7312`. The protocol used
+  static-normalized forecast loss, hard forecast-value pretraining, decision-
+  only PPO updates, online context features, and validation-only checkpoint
+  selection.
+- The scene-side opportunity did not transfer to the learner. PD-PPO ordinary
+  loss wins were `0/2` against the best static family and `0/2` against the
+  original dynamic family; macro wins were also `0/2` for both. The full-open
+  reference was beaten in `1/2` seeds on each endpoint and remains an
+  unconstrained reference, not a fair baseline.
+- The operational gate passed in `2/2` runs: zero warm-up aborts, zero
+  always-on channels, zero always-off channels, and four or six intermediate-
+  duty channels. The rollouts used 16 and 20 distinct feasible masks.
+- Training diagnostics show worsening rollout returns after pretraining,
+  high decision entropy, and low agreement with the greedy action. V339 is
+  excluded from positive evidence and identifies teacher-to-PPO transfer as
+  the next bounded diagnostic target.
+- Aggregate: `reports/aggregate/v339_recalibrated_scene_pdppo_dev_20260901/`.
