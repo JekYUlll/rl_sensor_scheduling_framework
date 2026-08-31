@@ -77,7 +77,7 @@ def main() -> None:
     summary_df = pd.DataFrame(summary)
     summary_df.to_csv(args.out_dir / "family_summary.csv", index=False)
     lines = [
-        "# V339 recalibrated-scene PD-PPO development aggregate",
+        f"# {args.out_dir.name} recalibrated-scene PD-PPO development aggregate",
         "",
         "All completed seeds are included. Positive margins mean lower PD-PPO loss.",
         "",

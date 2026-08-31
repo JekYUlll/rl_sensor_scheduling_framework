@@ -6691,3 +6691,19 @@ Evidence is stored in
   excluded from positive evidence and identifies teacher-to-PPO transfer as
   the next bounded diagnostic target.
 - Aggregate: `reports/aggregate/v339_recalibrated_scene_pdppo_dev_20260901/`.
+
+## 2026-09-01 - V340 teacher-free transfer diagnostic
+
+- Removed only the hard forecast-value pretraining stage from V339 and kept
+  the V338 scene, forecast-loss reward, arbitrary feasible-mask action space,
+  online context, temporal encoder, and decision-only PPO protocol unchanged.
+  Fresh policy seeds were `7331/7332` on scenes `6871/6872`.
+- Teacher-free PPO did not recover the scene's dynamic headroom. Ordinary-loss
+  wins were `0/2` against both the static and original dynamic families, and
+  macro wins were also `0/2`. The unconstrained full-open reference was not
+  beaten in either seed on either endpoint.
+- Both runs passed the operational behavior gate: zero warm-up aborts, zero
+  always-on channels, zero always-off channels, and four or six intermediate-
+  duty channels. V340 therefore rejects the hypothesis that hard pretraining
+  alone caused the V339 transfer failure.
+- Aggregate: `reports/aggregate/v340_recalibrated_scene_teacherfree_pdppo_dev_20260901/`.
