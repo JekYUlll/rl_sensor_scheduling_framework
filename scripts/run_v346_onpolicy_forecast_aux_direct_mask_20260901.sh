@@ -18,9 +18,10 @@ run_one() {
     export RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v346_onpolicy_forecast_aux_direct_mask}"
     export LOG_PREFIX="${LOG_PREFIX_OVERRIDE:-v346_onpolicy_forecast_aux_direct_mask}"
     export TOTAL_TIMESTEPS="${TOTAL_TIMESTEPS_OVERRIDE:-50000}" POLICY_SEED="$policy_seed"
-    export CONTROL_SOURCE_RUN_DIR="reports/v338_recalibrated_scene_control_seed${seed}_b1p75_20260822"
+    export CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR_PREFIX:-reports/v338_recalibrated_scene_control}_seed${seed}_b1p75_20260822"
     export EVENT_COVERAGE=0.70 MIN_DURATION=20 MAX_DURATION=64 MIN_GAP=12 LEAD_STEPS=8
-    export EVENT_SUBTYPE_ASSIGNMENT=stratified
+    export EVENT_SUBTYPE_ASSIGNMENT="${EVENT_SUBTYPE_ASSIGNMENT_OVERRIDE:-stratified}"
+    export EVENT_SUBTYPE_CYCLE_STEPS="${EVENT_SUBTYPE_CYCLE_STEPS_OVERRIDE:-0}"
     export EVENT_SUBTYPE_PARTICLE_PROB=0.3333333333 EVENT_SUBTYPE_FLUX_PROB=0.3333333333 EVENT_SUBTYPE_THERMAL_PROB=0.3333333334
     export SENSOR_CFG="configs/sensors/windblown_sensors_flexible_subset_v6_physical_channels.yaml"
     export BUDGET=1.75 STARTUP_BUDGET=2.15 BUDGET_LABEL=b1p75
