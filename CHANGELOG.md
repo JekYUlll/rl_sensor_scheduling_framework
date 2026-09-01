@@ -7064,6 +7064,27 @@ Evidence is stored in
   is made; the next intervention must target policy learning/state-action
   alignment rather than further scene-strengthening.
 - Aggregate: `reports/aggregate/v358_receding_oracle_diagnostic_20260901/`.
+
+## 2026-09-01 - V360 terminal block-credit diagnostic completed
+
+- Completed the frozen V360 four-seed diagnostic on cycling scenes 6901--6904
+  with terminal semi-Markov decision-block credit. The intervention retained
+  V359's no-pretraining configuration and changed only decision-block reward
+  aggregation; no bandit signal, final-test label, or scene change was used.
+- Against the best feasible-static family, PD-PPO won `0/4` ordinary and macro
+  endpoints, with mean margins `-0.044177/-0.115956`. Against the original
+  dynamic family it won `3/4` ordinary and macro endpoints, with mean margins
+  `+0.010918/+0.025783`. Against the full-open reference it won `1/4` on both
+  endpoints, with mean margins `-0.010876/-0.031362`.
+- All four seeds had zero warm-up aborts. Only `1/4` had zero constant
+  channels; the other runs retained one or two always-off channels, with
+  `2--6` intermediate-duty channels. Switching rates were `0.030685--0.061659`
+  per step and peak powers remained within the configured startup budget.
+- **Decision:** terminal block-credit does not recover the dynamic value found
+  by the receding oracle and is not promoted. The result supports continuing
+  with state/action representation or learning-stability interventions while
+  keeping the cycling scene and feasible-subset geometry fixed.
+- Aggregate: `reports/aggregate/v360_terminal_block_credit_pdppo_20260901/`.
 ## 2026-09-01: V359 no-pretraining cycling diagnostic
 
 - Completed the four-seed V359 diagnostic on the frozen V357 cycling scenes
