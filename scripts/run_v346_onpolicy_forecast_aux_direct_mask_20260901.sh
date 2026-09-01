@@ -47,6 +47,10 @@ run_one() {
 }
 
 mkdir -p logs
+if (( ${#SEEDS[@]} != ${#POLICY_SEEDS[@]} )); then
+  echo "SEEDS and POLICY_SEEDS must have the same length" >&2
+  exit 2
+fi
 pids=()
-for i in 0 1; do run_one "$i" & pids+=("$!"); done
+for i in "${!SEEDS[@]}"; do run_one "$i" & pids+=("$!"); done
 for pid in "${pids[@]}"; do wait "$pid"; done
