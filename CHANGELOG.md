@@ -6948,3 +6948,22 @@ Evidence is stored in
   made from this structural screen.
 - **Artifacts:**
   `reports/aggregate/v352_cycling_scene_control_20260901/`.
+## 2026-09-01 - V353 cycling-scene PD-PPO development wave completed
+
+- Ran the matched V346 on-policy forecast-auxiliary PD-PPO configuration on
+  the V352 within-event cycling scenes (scene seeds 6891/6892; policy seeds
+  7411/7412; budget 1.75; cycle length 12; minimum dwell 6).
+- The policy used forecast-loss reward, hard feasible-mask actions, online
+  context features, and no test labels or bandit-dependent training signal.
+- Against the best supplied static family, ordinary and macro wins were both
+  1/2, with mean margins `+0.001043` and `+0.013663`. Against the original
+  dynamic family, both endpoints were won in 2/2, with mean margins
+  `+0.021783` and `+0.052003`.
+- Deployment behavior was valid in both runs: zero warm-up aborts, zero
+  always-on/off channels, 5/6 mid-duty channels, switching rates
+  `0.053553/0.034593`, and peak powers `2.00/2.06`.
+- Decision: the cycling scene remains structurally suitable and dynamic
+  scheduling has clear value, but the current two-seed PD-PPO wave does not
+  pass a stable static-shortcut gate. No final claim or fresh confirmatory
+  launch is promoted from this wave.
+- Aggregate: `reports/aggregate/v353_cycling_scene_pdppo_dev_20260901/`.
