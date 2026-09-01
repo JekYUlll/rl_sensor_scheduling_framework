@@ -7046,3 +7046,21 @@ Evidence is stored in
   complete behavior promotion gate. The result is retained as a complete,
   non-selected confirmation record; no final positive claim is promoted.
 - Aggregate: `reports/aggregate/v357_macro_checkpoint_cycling_pdppo_confirm_20260901/`.
+
+## 2026-09-01 - V358 receding-oracle structural diagnostic completed
+
+- Replayed the four independent V357 final-test scenes with an 8-step
+  receding forecast oracle over the unchanged six-channel feasible-subset
+  geometry. The oracle is a privileged structural diagnostic, not a deployable
+  policy and not a training source.
+- The receding oracle beat the best static policy in ordinary forecast loss in
+  `4/4` scenes: mean loss `0.312713` versus `0.374566` for the best static
+  family. It also beat PD-PPO in `4/4` scenes, whose mean loss was `0.415231`.
+- Oracle action coverage was `22` distinct actions per scene, with switching
+  rates `0.054398--0.056930`; all reported oracle rollouts were feasible and
+  had zero warm-up aborts.
+- **Decision:** V357 contains genuine state-dependent scheduling value, but
+  PD-PPO did not learn or transfer that value. No positive PPO promotion claim
+  is made; the next intervention must target policy learning/state-action
+  alignment rather than further scene-strengthening.
+- Aggregate: `reports/aggregate/v358_receding_oracle_diagnostic_20260901/`.
