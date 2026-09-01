@@ -1,0 +1,14 @@
+{
+  "experiment": "V357 independent macro-checkpoint cycling-scene confirmation",
+  "control_generator": "scripts/run_v357_confirmation_scene_control_20260901.sh",
+  "trained_generator": "scripts/run_v357_macro_checkpoint_cycling_pdppo_confirm_20260901.sh",
+  "scene_seeds": [6901, 6902, 6903, 6904],
+  "policy_seeds": [7441, 7442, 7443, 7444],
+  "control_truth_sha256": {
+    "6901": "d4d96f26eca67d1f91ce21efe22c0c88a8a871bf76bab7be2da859f300fc9ba1",
+    "6902": "35e0083448379f9c8f34d04618a1501aca195201a0b2ad22c095f24a1c5dbc",
+    "6903": "776f36b831aa0b065fbc8325a2e6eb16de4bb048b5a02b7bd493ed8f2e125133",
+    "6904": "2133432011e1f7978e8e2763798b86711728103fa0b3957abdde0e52365ac207"
+  },
+  "note": "The trained runs reference the control truth through split_protocol_manifest.json. Full truth CSV files are retained under the corresponding reports/v357_confirmation_scene_control_seed* directories and are intentionally not committed as large generated artifacts."
+}

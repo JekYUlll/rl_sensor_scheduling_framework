@@ -7027,3 +7027,22 @@ Evidence is stored in
   not justify a final multi-seed claim without an independently frozen
   confirmation wave.
 - Aggregate: `reports/aggregate/v356_macro_checkpoint_cycling_pdppo_dev_20260901/`.
+
+## 2026-09-01 - V357 independent cycling-scene confirmation completed
+
+- Completed the frozen V356 macro-checkpoint configuration on independent
+  cycling scenes 6901--6904 with policy seeds 7441--7444, budget 1.75,
+  startup budget 2.15, and minimum dwell 12.
+- PD-PPO beat the best supplied static family in ordinary and macro loss in
+  `0/4` seeds, with mean margins `-0.040665/-0.105301`. It beat the original
+  dynamic family in ordinary loss `2/4` and macro loss `3/4`, with mean margins
+  `+0.014430/+0.036437`. Against the full-open reference it won `2/4` on both
+  endpoints, with mean margins `-0.007364/-0.020708`.
+- The deployment behavior gate passed in `3/4` seeds: all warm-up abort counts
+  were zero, while seed 6904 retained one always-off channel. The other three
+  seeds had six intermediate-duty channels; switching rates remained in the
+  range `0.030106--0.065856` per step.
+- Independent confirmation therefore **did not pass** the static-shortcut or
+  complete behavior promotion gate. The result is retained as a complete,
+  non-selected confirmation record; no final positive claim is promoted.
+- Aggregate: `reports/aggregate/v357_macro_checkpoint_cycling_pdppo_confirm_20260901/`.
