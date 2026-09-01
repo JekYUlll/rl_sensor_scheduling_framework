@@ -1,0 +1,2 @@
+seed,policy_seed,selected_checkpoint_update,pdppo_ordinary,pdppo_macro,static_ordinary_margin,static_macro_margin,dynamic_ordinary_margin,dynamic_macro_margin,full_open_ordinary_margin,full_open_macro_margin,warmup_abort_count,always_on_sensor_count,always_off_sensor_count,mid_duty_sensor_count,switches_per_step,power_mean,peak_power_max
+6892,7413,45,0.4176049503956973,1.1485968908563102,-0.012623569724382777,-0.029587633667360613,0.01636950484114802,0.01957759546548865,-0.012110191741764198,-0.017117725344335977,0,0,0,5,0.0386452453321754,1.4456944444444444,1.92

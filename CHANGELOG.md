@@ -6967,3 +6967,23 @@ Evidence is stored in
   pass a stable static-shortcut gate. No final claim or fresh confirmatory
   launch is promoted from this wave.
 - Aggregate: `reports/aggregate/v353_cycling_scene_pdppo_dev_20260901/`.
+
+## 2026-09-01 - V354 cycling-scene policy-seed variance diagnostic completed
+
+- Repeated the V353 cycling-scene PD-PPO run on scene seed 6892 with policy
+  seed 7413. The scene, arbitrary-subset action geometry, forecast-loss reward,
+  online context boundary, budget 1.75, and minimum dwell 6 were unchanged.
+- The run completed normally and retained valid execution behavior: zero
+  warm-up aborts, zero always-on/off channels, five intermediate-duty
+  channels, and switching rate `0.038645` per step.
+- Against the best static family, ordinary and macro wins were both `0/1`,
+  with margins `-0.012624` and `-0.029588`. Against the original dynamic
+  family, both endpoints were won, with margins `+0.016370` and `+0.019578`.
+  The full-open reference remained stronger on both endpoints.
+- Relative to V353's same-scene policy seed 7412, the new initialization
+  worsened ordinary loss by `0.004120` and macro loss by `0.016525`.
+- **Decision:** the policy-seed variance diagnostic confirms a repeatable
+  dynamic advantage and clean behavior, but does not repair static transfer.
+  It is retained as development evidence only; no static-dominance or final
+  confirmation claim is promoted.
+- Aggregate: `reports/aggregate/v354_cycling_scene_pdppo_seedvariance_dev_20260901/`.
