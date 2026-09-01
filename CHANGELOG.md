@@ -6987,3 +6987,22 @@ Evidence is stored in
   It is retained as development evidence only; no static-dominance or final
   confirmation claim is promoted.
 - Aggregate: `reports/aggregate/v354_cycling_scene_pdppo_seedvariance_dev_20260901/`.
+
+## 2026-09-01 - V355 raw forecast-reward cycling-scene diagnostic completed
+
+- Re-ran the unchanged V353 arbitrary-subset PD-PPO configuration on cycling
+  scenes 6891/6892 with policy seeds 7421/7422. The sole intervention was
+  `reward_loss_normalization=none`; forecast-loss reward, hard feasibility
+  masking, online information, budget 1.75, and minimum dwell 6 were unchanged.
+- Against the best static family, ordinary and macro wins were both `1/2`, with
+  mean margins `+0.002428` and `+0.015828`. Against the original dynamic
+  family, ordinary wins were `2/2` and macro wins `1/2`, with mean margins
+  `+0.023168` and `+0.054168`. Against the full-open reference, wins were
+  `1/2` on both endpoints, with mean margins `+0.011063` and `+0.040587`.
+- Both runs passed the deployment behavior checks: zero warm-up aborts, zero
+  always-on/off channels, 5/6 and 6/6 intermediate-duty channels, switching
+  rates `0.040237/0.044145`, and peak powers `1.84/2.00`.
+- **Decision:** raw reward normalization improves the 6891 transfer but does
+  not produce stable static or full-open dominance; the V355 intervention is
+  retained as development evidence and does not pass the final promotion gate.
+- Aggregate: `reports/aggregate/v355_plain_reward_cycling_pdppo_dev_20260901/`.
