@@ -7006,3 +7006,24 @@ Evidence is stored in
   not produce stable static or full-open dominance; the V355 intervention is
   retained as development evidence and does not pass the final promotion gate.
 - Aggregate: `reports/aggregate/v355_plain_reward_cycling_pdppo_dev_20260901/`.
+
+## 2026-09-01 - V356 macro-checkpoint cycling-scene diagnostic completed
+
+- Restored the V353 normalized forecast-loss reward and unchanged arbitrary-
+  subset action geometry, then changed only validation checkpoint selection to
+  the subtype-event macro score. Development scene seeds were 6891/6892 and
+  policy seeds were 7431/7432; budget was 1.75 and minimum dwell was 6.
+- PD-PPO beat the supplied static family on ordinary loss and macro loss in
+  `2/2` seeds, with mean margins `+0.017981/+0.066650`. It beat the original
+  dynamic family in `2/2` seeds, with mean margins `+0.038721/+0.104990`, and
+  beat the full-open reference in `2/2` seeds, with mean margins
+  `+0.026616/+0.091409`.
+- Both runs passed the deployment behavior checks: zero warm-up aborts, zero
+  always-on/off channels, six intermediate-duty channels, switching rates
+  `0.034303/0.024461`, and peak powers `2.06`.
+- **Decision:** The macro-based validation checkpoint selection is the first
+  development intervention to pass the paired static and dynamic gates on
+  both screened scenes. This remains two-seed development evidence; it does
+  not justify a final multi-seed claim without an independently frozen
+  confirmation wave.
+- Aggregate: `reports/aggregate/v356_macro_checkpoint_cycling_pdppo_dev_20260901/`.
