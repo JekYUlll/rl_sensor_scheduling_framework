@@ -1,5 +1,15 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-01 - V350 synchronization audit
+
+- V350 completed, but it is not valid evidence for `direct_mask_action_primary`.
+  The initial remote copy placed files at the repository root rather than their
+  source directories, so the run used the previous implementation and exactly
+  duplicated V346 metrics.
+- The artifacts are retained only for provenance; no scientific conclusion is
+  drawn from V350. The source tree was corrected and checksum-verified before
+  launching the valid V351 rerun.
+
 ## 2026-09-01 - V349 lower MSE auxiliary diagnostic completed
 
 - Completed V349 on paired V338 physical six-channel scenes `6871/6872`.
