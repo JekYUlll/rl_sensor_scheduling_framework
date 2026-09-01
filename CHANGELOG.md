@@ -7085,6 +7085,28 @@ Evidence is stored in
   with state/action representation or learning-stability interventions while
   keeping the cycling scene and feasible-subset geometry fixed.
 - Aggregate: `reports/aggregate/v360_terminal_block_credit_pdppo_20260901/`.
+
+## 2026-09-01 - V361 multi-scene cycling training completed
+
+- Completed multi-scene training on the frozen cycling scene family. Each
+  policy interleaved the other three scenes during training while retaining its
+  primary scene for final evaluation; all reward, action, constraint, and
+  checkpoint-selection settings were unchanged from V357.
+- Against the best feasible-static family, PD-PPO won `0/4` ordinary and macro
+  endpoints, with mean margins `-0.046976/-0.116356`. Against the original
+  dynamic family it won `3/4` on both endpoints, with mean margins
+  `+0.008118/+0.025382`. Against full-open it won `1/4`, with mean margins
+  `-0.013675/-0.031763`.
+- Warm-up aborts were zero in all seeds. The no-constant-channel behavior gate
+  passed `3/4` seeds; the remaining seed had one always-off channel. Switching
+  rates were `0.012592--0.054422` per step and peak powers stayed within the
+  configured startup budget.
+- **Decision:** multi-scene exposure improves behavior consistency relative to
+  V360 but does not recover the static comparison. It is not promoted as a
+  positive mainline result. The next bounded test targets action-level
+  candidate scoring while retaining the same forecast reward and feasibility
+  mask.
+- Aggregate: `reports/aggregate/v361_multiscene_cycling_pdppo_20260901/`.
 ## 2026-09-01: V359 no-pretraining cycling diagnostic
 
 - Completed the four-seed V359 diagnostic on the frozen V357 cycling scenes
