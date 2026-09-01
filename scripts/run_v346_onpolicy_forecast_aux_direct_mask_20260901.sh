@@ -7,7 +7,7 @@ set -euo pipefail
 # No bandit signal, comparator action, or final-test label is used.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SEEDS=(6871 6872)
+SEEDS=(${SCENE_SEEDS_OVERRIDE:-6871 6872})
 POLICY_SEEDS=(${POLICY_SEEDS_OVERRIDE:-7381 7382})
 GPU_OFFSET="${GPU_OFFSET:-0}"
 
