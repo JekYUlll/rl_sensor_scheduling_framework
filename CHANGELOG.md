@@ -7088,3 +7088,8 @@ Evidence is stored in
   intervention should target temporal credit/state-action alignment, not add
   further scene calibration or report V359 as a positive result.
 - Aggregate artifacts: `reports/aggregate/v359_no_pretrain_cycling_pdppo_20260901/`.
+- Supplementary V357/V359 state-action alignment audit: on rows where the
+  receding oracle could change its action, exact action agreement was only
+  `3.7%--9.6%` for V357 and `2.8%--5.7%` for V359 across scenes 6901--6904.
+  This is a diagnostic of policy-to-action mismatch, not a required oracle
+  imitation target; the oracle uses future information unavailable to PD-PPO.
