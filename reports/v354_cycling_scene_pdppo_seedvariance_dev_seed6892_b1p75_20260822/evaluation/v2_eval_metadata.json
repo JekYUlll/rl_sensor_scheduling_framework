@@ -56,5 +56,10 @@
     "snow_particle_mean_diameter_mm",
     "snow_particle_mean_velocity_ms"
   ],
-  "primary_metric": "forecast_weighted_mae_overall"
+  "primary_metric": "oracle_loss_mean",
+  "secondary_forecast_metric": "forecast_weighted_mae_overall",
+  "metric_contract": {
+    "primary": "environment oracle loss with configured normalization, clipping, and context weights",
+    "secondary": "independent frozen-oracle forecast weighted MAE without the environment reward contract"
+  }
 }
