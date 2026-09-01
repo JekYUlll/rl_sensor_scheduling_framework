@@ -6928,3 +6928,23 @@ Evidence is stored in
   closed-loop failure. Local action fitting is adequate, while long-horizon
   executed-return alignment remains unresolved. Aggregate:
   `reports/aggregate/v345_direct_mask_action_bc_only_diag_20260901/`.
+## V352: Within-event cycling scene structural gate (2026-09-01)
+
+- **Change:** Added an explicit `event_subtype_assignment=cycling` mode with
+  `event_subtype_cycle_steps=12`. Existing generator modes and defaults are
+  unchanged.
+- **Reason:** The V338 stratified scene assigned one subtype per event run,
+  so specialist value changed only at event boundaries. The new mode creates
+  contiguous within-event changes while preserving the six physical channel
+  groups, costs, budget, and online information boundary.
+- **Evidence:** On development scene seeds 6891 and 6892, the privileged
+  six-step receding reference beat the best static schedule on ordinary loss
+  in 2/2 scenes (mean margin `+0.069595`) and on the subtype-macro endpoint in
+  2/2 scenes (mean margin `+0.183206`). It used 22 distinct feasible actions,
+  had six mid-duty channels, zero always-on/off channels, and zero warm-up
+  aborts in both scenes.
+- **Decision:** Scene readiness gate passed. A matched PPO training wave is
+  authorized on these frozen cycling-scene assets; no trained-policy claim is
+  made from this structural screen.
+- **Artifacts:**
+  `reports/aggregate/v352_cycling_scene_control_20260901/`.
