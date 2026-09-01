@@ -7107,6 +7107,32 @@ Evidence is stored in
   candidate scoring while retaining the same forecast reward and feasibility
   mask.
 - Aggregate: `reports/aggregate/v361_multiscene_cycling_pdppo_20260901/`.
+
+## 2026-09-01 - V362 direct-mask-primary diagnostic completed
+
+- Completed the four-seed V362 diagnostic on the frozen cycling scenes
+  (6901--6904; policy seeds 7491--7494). The only policy-side intervention
+  promoted direct candidate-mask action scores to the primary masked PPO
+  logits; forecast-loss reward, online information, feasibility masking,
+  multi-scene training, and action geometry were unchanged.
+- Against the best feasible-static family, ordinary and macro wins were
+  `0/4`, with mean margins `-0.038161/-0.122810`. Against the original
+  dynamic family, wins were `3/4` on both endpoints, with mean margins
+  `+0.016934/+0.018928`. Against full-open, wins were `1/4` on both
+  endpoints, with mean margins `-0.004860/-0.038217`.
+- All seeds had zero warm-up aborts and remained within the per-step and
+  startup peak budgets. Independent inspection of each 384-step rollout
+  segment found no interior action block shorter than the configured
+  six-step dwell. Short terminal runs in the concatenated arrays are segment
+  truncations. Three of four seeds had no constant channel; seed 6904
+  retained one always-off channel.
+- **Decision:** direct candidate-mask action scoring does not repair static
+  transfer and is not promoted. The result preserves evidence that the
+  cycling scenes contain dynamic value, but the learned policy still has a
+  state-to-action alignment problem. Further work should target that
+  alignment without strengthening the scene or using oracle/bandit signals.
+- Aggregate artifacts:
+  `reports/aggregate/v362_multiscene_action_primary_pdppo_20260901/`.
 ## 2026-09-01: V359 no-pretraining cycling diagnostic
 
 - Completed the four-seed V359 diagnostic on the frozen V357 cycling scenes
