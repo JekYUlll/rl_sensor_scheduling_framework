@@ -799,12 +799,10 @@ class MaskedActor:
                 if self.factorized_action_head is not None:
                     channel_logits = self.factorized_action_head(context)
                     masks = candidate_masks.float()
-                    log_active = torch.nn.functional.logsigmoid(channel_logits)
-                    log_inactive = torch.nn.functional.logsigmoid(-channel_logits)
-                    logits = (
-                        masks.unsqueeze(0) * log_active.unsqueeze(1)
-                        + (1.0 - masks.unsqueeze(0)) * log_inactive.unsqueeze(1)
-                    ).sum(dim=2)
+                    # Candidate masks form a categorical feasible-action set.
+                    # Aggregate activation utilities only; including Bernoulli
+                    # inactive terms creates a systematic empty-mask bias.
+                    logits = channel_logits @ masks.transpose(0, 1)
                 else:
                     action_emb = self._action_embeddings(candidate_masks)
                     logits = context @ action_emb.transpose(0, 1) / max(float(action_emb.shape[-1]) ** 0.5, 1.0)

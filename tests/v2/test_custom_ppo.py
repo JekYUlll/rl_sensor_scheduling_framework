@@ -230,6 +230,34 @@ def test_factorized_action_policy_composes_channel_logits_and_masks_invalid_acti
     assert actor.factorized_action_head.weight.grad is not None
 
 
+def test_factorized_action_policy_aggregates_active_utilities_without_empty_mask_bias() -> None:
+    actor = MaskedActor(
+        obs_dim=5,
+        n_sensors=3,
+        embed_dim=8,
+        hidden_dim=16,
+        n_actions=4,
+        factorized_action_policy=True,
+        trainable_action_prior=False,
+    )
+    obs = torch.zeros((1, 5), dtype=torch.float32)
+    candidate_masks = torch.tensor(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [1.0, 1.0, 0.0],
+        ]
+    )
+    with torch.no_grad():
+        actor.factorized_action_head.weight.zero_()
+        actor.factorized_action_head.bias.copy_(torch.tensor([1.0, -2.0, 0.5]))
+
+    logits = actor.logits(obs, candidate_masks)
+    expected = torch.tensor([[0.0, 1.0, -2.0, -1.0]])
+    assert torch.allclose(logits, expected, atol=1e-6)
+
+
 def test_masked_actor_can_disable_state_independent_action_prior() -> None:
     actor = MaskedActor(
         obs_dim=5,

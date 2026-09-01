@@ -7133,6 +7133,26 @@ Evidence is stored in
   alignment without strengthening the scene or using oracle/bandit signals.
 - Aggregate artifacts:
   `reports/aggregate/v362_multiscene_action_primary_pdppo_20260901/`.
+
+## 2026-09-01 - V363 factorized-action diagnostic completed and rejected
+
+- Completed the four-seed V363 diagnostic on frozen cycling scenes 6901--6904
+  with policy seeds 7511--7514. The intervention used factorized channel
+  logits composed over exact feasible subset masks; reward, constraints,
+  online information, and multi-scene training were unchanged.
+- The run is invalid as performance evidence: every selected PD-PPO rollout
+  executed the empty subset on all 2304 evaluation rows. All four seeds thus
+  had six always-off channels, zero intermediate-duty channels, zero
+  switches, and zero mean power. The checkpoint-selection ledger reports a
+  behavior failure at every tested update.
+- BC pretraining still reported 22 unique actions on seed 6901, so the
+  collapse occurred after pretraining in the factorized PPO/checkpoint path;
+  the feasible-mask geometry itself remained valid.
+- **Decision:** reject V363 and exclude its aggregate from scientific claims.
+  The next work unit is a minimal fixed-scene post-BC logit-collapse
+  diagnostic before any further multi-seed factorized run.
+- Diagnostic aggregate:
+  `reports/aggregate/v363_multiscene_factorized_action_pdppo_20260901/`.
 ## 2026-09-01: V359 no-pretraining cycling diagnostic
 
 - Completed the four-seed V359 diagnostic on the frozen V357 cycling scenes
