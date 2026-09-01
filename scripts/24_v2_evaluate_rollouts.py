@@ -93,6 +93,15 @@ def plot_main_summary(overall: pd.DataFrame, out_dir: Path) -> None:
     plt.close(fig)
 
 
+def select_primary_metric(overall: pd.DataFrame) -> str:
+    """Select the metric used for the environment-level comparison contract."""
+    if "oracle_loss_mean" in overall.columns and overall["oracle_loss_mean"].notna().any():
+        return "oracle_loss_mean"
+    if "obs_reconstruction_mae" in overall.columns:
+        return "obs_reconstruction_mae"
+    return "weighted_normalized_mae"
+
+
 def plot_sensor_diagnostics(usage: pd.DataFrame, action_scores: pd.DataFrame, out_dir: Path) -> None:
     if usage.empty:
         return
@@ -251,6 +260,7 @@ def main() -> None:
     action_scores.to_csv(out_dir / "v2_eval_action_scores.csv", index=False)
     plot_main_summary(overall, out_dir)
     plot_sensor_diagnostics(usage, action_scores, out_dir)
+    primary_metric = select_primary_metric(overall)
     metadata = {
         "run_dir": str(run_dir),
         "rollout_files": [str(path) for path in rollout_paths],
@@ -261,9 +271,16 @@ def main() -> None:
         "target_weights": list(target_weights),
         "target_scales": list(target_scales),
         "forecast_target_columns": [str(name) for name in forecast_target_columns],
-        "primary_metric": "forecast_weighted_mae_overall"
-        if "forecast_weighted_mae_overall" in overall.columns
-        else "obs_reconstruction_mae",
+        "primary_metric": primary_metric,
+        "secondary_forecast_metric": (
+            "forecast_weighted_mae_overall"
+            if "forecast_weighted_mae_overall" in overall.columns
+            else None
+        ),
+        "metric_contract": {
+            "primary": "environment oracle loss with configured normalization, clipping, and context weights",
+            "secondary": "independent frozen-oracle forecast weighted MAE without the environment reward contract",
+        },
     }
     (out_dir / "v2_eval_metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     print(out_dir / "v2_eval_overall.csv")

@@ -15,6 +15,23 @@ from v2.evaluation import (
 )
 
 
+def test_evaluation_primary_metric_prefers_environment_oracle_loss() -> None:
+    import importlib.util
+
+    source = Path(__file__).parents[2] / "scripts" / "24_v2_evaluate_rollouts.py"
+    spec = importlib.util.spec_from_file_location("evaluate_rollouts", source)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    import pandas as pd
+
+    assert module.select_primary_metric(
+        pd.DataFrame({"oracle_loss_mean": [0.4], "forecast_weighted_mae_overall": [0.3]})
+    ) == "oracle_loss_mean"
+    assert module.select_primary_metric(pd.DataFrame({"obs_reconstruction_mae": [0.2]})) == "obs_reconstruction_mae"
+
+
 def test_evaluation_suite_reads_rollout_and_computes_tables(tmp_path: Path) -> None:
     path = tmp_path / "rollout_demo.npz"
     truth = np.asarray([[1.0, 2.0], [2.0, 4.0], [3.0, 6.0], [4.0, 8.0]])
