@@ -7064,3 +7064,27 @@ Evidence is stored in
   is made; the next intervention must target policy learning/state-action
   alignment rather than further scene-strengthening.
 - Aggregate: `reports/aggregate/v358_receding_oracle_diagnostic_20260901/`.
+## 2026-09-01: V359 no-pretraining cycling diagnostic
+
+- Completed the four-seed V359 diagnostic on the frozen V357 cycling scenes
+  (scene seeds 6901--6904; policy seeds 7461--7464; budget 1.75; startup
+  peak budget 2.15; minimum dwell 6).
+- The sole intervention removed hard forecast-value pretraining; the reward,
+  online information boundary, context/temporal encoders, action geometry,
+  and macro checkpoint selection were unchanged.
+- PD-PPO versus the best feasible static family: ordinary and macro wins
+  `0/4`, with mean margins `-0.042464/-0.113831`.
+- PD-PPO versus the original dynamic family: ordinary wins `3/4`, macro wins
+  `2/4`, with mean margins `+0.012631/+0.027907`.
+- PD-PPO versus full-open reference: ordinary and macro wins `1/4`, with mean
+  margins `-0.009163/-0.029238`.
+- All four seeds had zero warm-up aborts and zero power/peak violations.
+  The policies used 9--14 unique masks, with 4--5 intermediate-duty sensors;
+  no interior action block was shorter than the six-step dwell. Short blocks
+  in the raw concatenated arrays occurred only at independent rollout
+  boundaries.
+- Interpretation: removing hard pretraining did not recover the dynamic
+  value identified by V358 and degraded the static comparison. The next
+  intervention should target temporal credit/state-action alignment, not add
+  further scene calibration or report V359 as a positive result.
+- Aggregate artifacts: `reports/aggregate/v359_no_pretrain_cycling_pdppo_20260901/`.
