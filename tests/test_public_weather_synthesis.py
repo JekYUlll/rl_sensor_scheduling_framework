@@ -63,6 +63,40 @@ def test_duration_stratified_event_subtypes_control_occupied_time() -> None:
     assert int(np.max(occupied) - np.min(occupied)) <= 5
 
 
+def test_cycling_event_subtypes_change_only_at_configured_boundaries() -> None:
+    active = np.asarray([False] + [True] * 10 + [False] + [True] * 7 + [False])
+    subtype = _assign_event_subtypes(
+        active,
+        rng=np.random.default_rng(7),
+        particle_prob=1.0 / 3.0,
+        flux_prob=1.0 / 3.0,
+        thermal_prob=1.0 / 3.0,
+        assignment="cycling",
+        cycle_steps=3,
+    )
+    assert subtype[0] == 0
+    assert subtype[11] == 0
+    assert subtype[-1] == 0
+    for start, end in ((1, 11), (12, 19)):
+        for segment_start in range(start, end, 3):
+            segment_end = min(segment_start + 3, end)
+            assert np.unique(subtype[segment_start:segment_end]).size == 1
+    assert np.unique(subtype[1:11]).size >= 2
+
+
+def test_cycling_event_subtypes_requires_positive_cycle_length() -> None:
+    with np.testing.assert_raises(ValueError):
+        _assign_event_subtypes(
+            np.asarray([True, True]),
+            rng=np.random.default_rng(7),
+            particle_prob=1.0,
+            flux_prob=0.0,
+            thermal_prob=0.0,
+            assignment="cycling",
+            cycle_steps=0,
+        )
+
+
 def test_particle_subtype_respects_run_level_sensor_availability() -> None:
     active = np.tile(np.asarray([True, True, False]), 12)
     eligible = np.tile(np.asarray([False, False, True]), 12)

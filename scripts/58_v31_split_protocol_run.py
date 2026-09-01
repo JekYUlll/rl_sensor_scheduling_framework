@@ -106,6 +106,8 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(float(args.event_particle_microstructure_correlation)),
         "--event-subtype-assignment",
         str(args.event_subtype_assignment),
+        "--event-subtype-cycle-steps",
+        str(int(args.event_subtype_cycle_steps)),
         "--event-subtype-particle-min-parsivel-availability",
         str(float(args.event_subtype_particle_min_parsivel_availability)),
         "--event-subtype-particle-prob",
@@ -635,9 +637,10 @@ def main() -> None:
     parser.add_argument("--event-subtypes-enabled", action="store_true")
     parser.add_argument(
         "--event-subtype-assignment",
-        choices=["random", "stratified", "stratified_duration"],
+        choices=["random", "stratified", "stratified_duration", "cycling"],
         default="random",
     )
+    parser.add_argument("--event-subtype-cycle-steps", type=int, default=0)
     parser.add_argument("--event-subtype-particle-min-parsivel-availability", type=float, default=0.0)
     parser.add_argument("--event-subtype-particle-prob", type=float, default=0.34)
     parser.add_argument("--event-subtype-flux-prob", type=float, default=0.33)
@@ -1160,6 +1163,7 @@ def main() -> None:
             "event_subtype_particle_min_parsivel_availability": float(
                 args.event_subtype_particle_min_parsivel_availability
             ),
+            "event_subtype_cycle_steps": int(args.event_subtype_cycle_steps),
             "event_subtype_particle_prob": float(args.event_subtype_particle_prob),
             "event_subtype_flux_prob": float(args.event_subtype_flux_prob),
             "event_subtype_thermal_prob": float(args.event_subtype_thermal_prob),
@@ -1431,6 +1435,8 @@ def main() -> None:
         str(float(args.event_particle_microstructure_correlation)),
         "--event-subtype-assignment",
         str(args.event_subtype_assignment),
+        "--event-subtype-cycle-steps",
+        str(int(args.event_subtype_cycle_steps)),
         "--event-subtype-particle-min-parsivel-availability",
         str(float(args.event_subtype_particle_min_parsivel_availability)),
         "--event-subtype-particle-prob",

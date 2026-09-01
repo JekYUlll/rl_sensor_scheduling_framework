@@ -319,9 +319,10 @@ def main() -> None:
     parser.add_argument("--event-subtypes-enabled", action="store_true")
     parser.add_argument(
         "--event-subtype-assignment",
-        choices=["random", "stratified", "stratified_duration"],
+        choices=["random", "stratified", "stratified_duration", "cycling"],
         default="random",
     )
+    parser.add_argument("--event-subtype-cycle-steps", type=int, default=0)
     parser.add_argument("--event-subtype-particle-min-parsivel-availability", type=float, default=0.0)
     parser.add_argument("--event-subtype-particle-prob", type=float, default=0.34)
     parser.add_argument("--event-subtype-flux-prob", type=float, default=0.33)
@@ -400,6 +401,7 @@ def main() -> None:
         event_particle_microstructure_correlation=float(args.event_particle_microstructure_correlation),
         event_subtypes_enabled=bool(args.event_subtypes_enabled),
         event_subtype_assignment=str(args.event_subtype_assignment),
+        event_subtype_cycle_steps=int(args.event_subtype_cycle_steps),
         event_subtype_particle_min_parsivel_availability=float(
             args.event_subtype_particle_min_parsivel_availability
         ),
