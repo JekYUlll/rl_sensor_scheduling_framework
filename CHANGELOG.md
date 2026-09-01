@@ -1,5 +1,23 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-01 - V351 primary raw-mask scoring diagnostic completed
+
+- Completed the checksum-verified V351 rerun on paired V338 physical
+  six-channel scenes `6871/6872`; metadata confirms
+  `direct_mask_action_primary=1`.
+- The state-conditioned raw-mask head supplied the candidate logits directly,
+  while retaining the forecast-loss reward, feasible-subset geometry, hard
+  masking, auxiliary target, and online information boundary.
+- Static ordinary/macro wins were `0/2`, with mean margins `-0.031644` and
+  `-0.101427`. Original dynamic ordinary/macro wins were `1/2`, with mean
+  margins `+0.013170` and `+0.021678`.
+- Behavior gates passed in both scenes: warm-up aborts `0/2`, always-on/off
+  channels `0/2`, six mid-duty channels in both runs, switching rates
+  `0.030685/0.031264`, and peak powers `2.06/2.00`.
+- Decision: replacing the combined action score with the raw-mask score as the
+  primary logits worsens transfer and is rejected. Aggregate:
+  `reports/aggregate/v351_direct_mask_primary_synced_dev_20260901/`.
+
 ## 2026-09-01 - V350 synchronization audit
 
 - V350 completed, but it is not valid evidence for `direct_mask_action_primary`.
