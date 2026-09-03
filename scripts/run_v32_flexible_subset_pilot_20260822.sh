@@ -86,9 +86,32 @@ NOWCAST_WIND_NOISE_STD="${NOWCAST_WIND_NOISE_STD:-1.0}"
 NOWCAST_HUMIDITY_NOISE_STD="${NOWCAST_HUMIDITY_NOISE_STD:-3.0}"
 NOWCAST_TEMPERATURE_NOISE_STD="${NOWCAST_TEMPERATURE_NOISE_STD:-0.7}"
 NOWCAST_SOLAR_NOISE_STD="${NOWCAST_SOLAR_NOISE_STD:-35.0}"
+CONTINUOUS_OPERATING_STATE="${CONTINUOUS_OPERATING_STATE:-0}"
+EXPOSURE_RECOVERY_STATE="${EXPOSURE_RECOVERY_STATE:-0}"
+BALANCED_EXPOSURE_RECOVERY_STATE="${BALANCED_EXPOSURE_RECOVERY_STATE:-0}"
+DECOUPLED_EXPOSURE_RECOVERY_STATE="${DECOUPLED_EXPOSURE_RECOVERY_STATE:-0}"
+EXPOSURE_TARGET_GAIN="${EXPOSURE_TARGET_GAIN:-1.0}"
+EXPOSURE_LOW_FREQUENCY_TARGETS="${EXPOSURE_LOW_FREQUENCY_TARGETS:-0}"
+EXPOSURE_RESIDUAL_FRACTION="${EXPOSURE_RESIDUAL_FRACTION:-0.35}"
+EXPOSURE_CAUSAL_ANOMALY_DRIVERS="${EXPOSURE_CAUSAL_ANOMALY_DRIVERS:-0}"
+EXPOSURE_ABSOLUTE_STATE_TARGETS="${EXPOSURE_ABSOLUTE_STATE_TARGETS:-0}"
+THREE_FACTOR_EXPOSURE_STATE="${THREE_FACTOR_EXPOSURE_STATE:-0}"
+THREE_FACTOR_FASTER_THERMAL_RESPONSE="${THREE_FACTOR_FASTER_THERMAL_RESPONSE:-0}"
+THREE_FACTOR_DUAL_TIMESCALE_THERMAL_TARGET="${THREE_FACTOR_DUAL_TIMESCALE_THERMAL_TARGET:-0}"
+FORECAST_VALUE_STATE="${FORECAST_VALUE_STATE:-0}"
+FORECAST_VALUE_STATIONARY_LOCAL_STATE="${FORECAST_VALUE_STATIONARY_LOCAL_STATE:-0}"
+FORECAST_VALUE_RESIDENCE_LOCAL_STATE="${FORECAST_VALUE_RESIDENCE_LOCAL_STATE:-0}"
+FORECAST_VALUE_HORIZON_PERSISTENT_LATENT="${FORECAST_VALUE_HORIZON_PERSISTENT_LATENT:-0}"
+FORECAST_VALUE_SPECIALIST_RESILIENT_QUALITY="${FORECAST_VALUE_SPECIALIST_RESILIENT_QUALITY:-0}"
+FORECAST_VALUE_ACTIVITY_ALIGNED_TRANSPORT_DEMAND="${FORECAST_VALUE_ACTIVITY_ALIGNED_TRANSPORT_DEMAND:-0}"
+OPERATING_TRANSPORT_RHO="${OPERATING_TRANSPORT_RHO:-0.90}"
+OPERATING_THERMAL_RHO="${OPERATING_THERMAL_RHO:-0.94}"
+OPERATING_TARGET_SCALE="${OPERATING_TARGET_SCALE:-1.0}"
+OPERATING_QUALITY_SCALE="${OPERATING_QUALITY_SCALE:-1.0}"
 EVENT_START_PROB="${EVENT_START_PROB:-0.70}"
 read -r -a AGENT_CONTEXT_COLUMN_ARGS <<< "${AGENT_CONTEXT_COLUMNS:-}"
 INCLUDE_ALERT_CONTEXT_FEATURES="${INCLUDE_ALERT_CONTEXT_FEATURES:-1}"
+EVENT_AWARE_CRITIC="${EVENT_AWARE_CRITIC:-1}"
 read -r -a ALERT_CONTEXT_COLUMN_ARGS <<< "${ALERT_CONTEXT_COLUMNS:-agent_context_particle_alert agent_context_flux_alert agent_context_thermal_alert}"
 PARTICLE_HUMIDITY_BOOST="${PARTICLE_HUMIDITY_BOOST:-1.0}"
 FLUX_WIND_BOOST="${FLUX_WIND_BOOST:-1.0}"
@@ -102,6 +125,14 @@ EVENT_SUBTYPE_CYCLE_STEPS="${EVENT_SUBTYPE_CYCLE_STEPS:-0}"
 EVENT_SUBTYPE_PARTICLE_PROB="${EVENT_SUBTYPE_PARTICLE_PROB:-0.36}"
 EVENT_SUBTYPE_FLUX_PROB="${EVENT_SUBTYPE_FLUX_PROB:-0.36}"
 EVENT_SUBTYPE_THERMAL_PROB="${EVENT_SUBTYPE_THERMAL_PROB:-0.28}"
+EVENT_SUBTYPE_PARTICLE_FLUX_MULTIPLIER="${EVENT_SUBTYPE_PARTICLE_FLUX_MULTIPLIER:-0.75}"
+EVENT_SUBTYPE_FLUX_MULTIPLIER="${EVENT_SUBTYPE_FLUX_MULTIPLIER:-3.5}"
+EVENT_SUBTYPE_THERMAL_FLUX_MULTIPLIER="${EVENT_SUBTYPE_THERMAL_FLUX_MULTIPLIER:-0.65}"
+EVENT_SUBTYPE_PARTICLE_DIAMETER_SHIFT_MM="${EVENT_SUBTYPE_PARTICLE_DIAMETER_SHIFT_MM:-0.12}"
+EVENT_SUBTYPE_PARTICLE_VELOCITY_BOOST_MS="${EVENT_SUBTYPE_PARTICLE_VELOCITY_BOOST_MS:-1.8}"
+EVENT_SUBTYPE_FLUX_DIAMETER_SHIFT_MM="${EVENT_SUBTYPE_FLUX_DIAMETER_SHIFT_MM:--0.05}"
+EVENT_SUBTYPE_FLUX_VELOCITY_BOOST_MS="${EVENT_SUBTYPE_FLUX_VELOCITY_BOOST_MS:-0.8}"
+EVENT_SUBTYPE_THERMAL_SURFACE_DROP_C="${EVENT_SUBTYPE_THERMAL_SURFACE_DROP_C:-2.4}"
 read -r -a TARGET_WEIGHT_ARGS <<< "${TARGET_WEIGHTS:-0.25 0.35 0.30 0.10 0.10 0.20 18.0 8.0 8.0}"
 read -r -a PARTICLE_TARGET_WEIGHT_ARGS <<< "${PARTICLE_TARGET_WEIGHTS:-0.10 0.10 0.20 0.05 0.05 0.10 4.0 14.0 14.0}"
 read -r -a FLUX_TARGET_WEIGHT_ARGS <<< "${FLUX_TARGET_WEIGHTS:-0.10 0.10 0.30 0.05 0.05 0.10 24.0 4.0 4.0}"
@@ -127,6 +158,8 @@ CONTEXT_FEATURE_DIM="${CONTEXT_FEATURE_DIM:-10}"
 CONTEXT_FUSION_MODE="${CONTEXT_FUSION_MODE:-gated_add}"
 ALIGNED_QUALITY_ACTION_SCORE="${ALIGNED_QUALITY_ACTION_SCORE:-0}"
 CANDIDATE_INTERACTION_SCORE="${CANDIDATE_INTERACTION_SCORE:-0}"
+CANDIDATE_INTERACTION_SCALE="${CANDIDATE_INTERACTION_SCALE:-1.0}"
+CANDIDATE_INTERACTION_PRIMARY="${CANDIDATE_INTERACTION_PRIMARY:-0}"
 DIRECT_MASK_ACTION_SCORE="${DIRECT_MASK_ACTION_SCORE:-0}"
 DIRECT_MASK_ACTION_PRIMARY="${DIRECT_MASK_ACTION_PRIMARY:-0}"
 QUALITY_CONTEXT_POOLING="${QUALITY_CONTEXT_POOLING:-mean}"
@@ -154,6 +187,9 @@ read -r -a SENSOR_QUALITY_COLUMN_ARGS <<< "${SENSOR_QUALITY_COLUMNS:-agent_conte
 EXCLUDE_SUBTYPE_LATENTS_FROM_STATE="${EXCLUDE_SUBTYPE_LATENTS_FROM_STATE:-0}"
 SEPARATE_ACTOR_CRITIC_GRAD_CLIP="${SEPARATE_ACTOR_CRITIC_GRAD_CLIP:-1}"
 CONTROL_SOURCE_RUN_DIR="${CONTROL_SOURCE_RUN_DIR:-}"
+TRUTH_CSV="${TRUTH_CSV:-}"
+PREPARE_TRUTH_ONLY="${PREPARE_TRUTH_ONLY:-0}"
+PREPARE_ASSETS_ONLY="${PREPARE_ASSETS_ONLY:-0}"
 VALIDATE_CONTROL_SOURCE_ONLY="${VALIDATE_CONTROL_SOURCE_ONLY:-0}"
 POLICY_SEED="${POLICY_SEED:-}"
 
@@ -201,12 +237,71 @@ CONTEXT_INPUT_ARGS=()
 if [[ "${#AGENT_CONTEXT_COLUMN_ARGS[@]}" -gt 0 ]]; then
   CONTEXT_INPUT_ARGS+=(--agent-context-columns "${AGENT_CONTEXT_COLUMN_ARGS[@]}")
 fi
+OPERATING_STATE_ARGS=()
+if [[ "$CONTINUOUS_OPERATING_STATE" == "1" ]]; then
+  OPERATING_STATE_ARGS=(
+    --continuous-operating-state
+    --operating-transport-rho "$OPERATING_TRANSPORT_RHO"
+    --operating-thermal-rho "$OPERATING_THERMAL_RHO"
+    --operating-target-scale "$OPERATING_TARGET_SCALE"
+    --operating-quality-scale "$OPERATING_QUALITY_SCALE"
+  )
+fi
+if [[ "$EXPOSURE_RECOVERY_STATE" == "1" ]]; then
+  OPERATING_STATE_ARGS+=(--exposure-recovery-state)
+fi
+if [[ "$BALANCED_EXPOSURE_RECOVERY_STATE" == "1" ]]; then
+  OPERATING_STATE_ARGS+=(--balanced-exposure-recovery-state)
+fi
+if [[ "$DECOUPLED_EXPOSURE_RECOVERY_STATE" == "1" ]]; then
+  OPERATING_STATE_ARGS+=(--decoupled-exposure-recovery-state --exposure-target-gain "$EXPOSURE_TARGET_GAIN" --exposure-residual-fraction "$EXPOSURE_RESIDUAL_FRACTION")
+  if [[ "$EXPOSURE_LOW_FREQUENCY_TARGETS" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--exposure-low-frequency-targets)
+  fi
+  if [[ "$EXPOSURE_CAUSAL_ANOMALY_DRIVERS" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--exposure-causal-anomaly-drivers)
+  fi
+  if [[ "$EXPOSURE_ABSOLUTE_STATE_TARGETS" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--exposure-absolute-state-targets)
+  fi
+fi
+if [[ "$THREE_FACTOR_EXPOSURE_STATE" == "1" ]]; then
+  OPERATING_STATE_ARGS+=(--three-factor-exposure-state)
+  if [[ "$THREE_FACTOR_FASTER_THERMAL_RESPONSE" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--three-factor-faster-thermal-response)
+  fi
+  if [[ "$THREE_FACTOR_DUAL_TIMESCALE_THERMAL_TARGET" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--three-factor-dual-timescale-thermal-target)
+  fi
+fi
+if [[ "$FORECAST_VALUE_STATE" == "1" ]]; then
+  OPERATING_STATE_ARGS+=(--forecast-value-state)
+  if [[ "$FORECAST_VALUE_STATIONARY_LOCAL_STATE" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--forecast-value-stationary-local-state)
+  fi
+  if [[ "$FORECAST_VALUE_RESIDENCE_LOCAL_STATE" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--forecast-value-residence-local-state)
+  fi
+  if [[ "$FORECAST_VALUE_HORIZON_PERSISTENT_LATENT" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--forecast-value-horizon-persistent-latent)
+  fi
+  if [[ "$FORECAST_VALUE_SPECIALIST_RESILIENT_QUALITY" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--forecast-value-specialist-resilient-quality)
+  fi
+  if [[ "$FORECAST_VALUE_ACTIVITY_ALIGNED_TRANSPORT_DEMAND" == "1" ]]; then
+    OPERATING_STATE_ARGS+=(--forecast-value-activity-aligned-transport-demand)
+  fi
+fi
 if [[ "$INCLUDE_ALERT_CONTEXT_FEATURES" == "1" ]]; then
   CONTEXT_INPUT_ARGS+=(--include-alert-context-features --alert-context-columns "${ALERT_CONTEXT_COLUMN_ARGS[@]}")
 fi
 CONTEXT_ENCODER_ARGS=(--no-context-encoder)
 if [[ "${#CONTEXT_INPUT_ARGS[@]}" -gt 0 ]]; then
   CONTEXT_ENCODER_ARGS=(--context-encoder --context-feature-dim "$CONTEXT_FEATURE_DIM")
+fi
+EVENT_AWARE_CRITIC_ARGS=(--no-event-aware-critic)
+if [[ "$EVENT_AWARE_CRITIC" == "1" ]]; then
+  EVENT_AWARE_CRITIC_ARGS=(--event-aware-critic)
 fi
 QUALITY_SCORE_ARGS=(--no-aligned-quality-action-score)
 if [[ "$ALIGNED_QUALITY_ACTION_SCORE" == "1" ]]; then
@@ -219,6 +314,10 @@ fi
 CANDIDATE_INTERACTION_SCORE_ARGS=(--no-candidate-interaction-score)
 if [[ "$CANDIDATE_INTERACTION_SCORE" == "1" ]]; then
   CANDIDATE_INTERACTION_SCORE_ARGS=(--candidate-interaction-score)
+fi
+CANDIDATE_INTERACTION_PRIMARY_ARGS=(--no-candidate-interaction-primary)
+if [[ "$CANDIDATE_INTERACTION_PRIMARY" == "1" ]]; then
+  CANDIDATE_INTERACTION_PRIMARY_ARGS=(--candidate-interaction-primary)
 fi
 DIRECT_MASK_ACTION_SCORE_ARGS=(--no-direct-mask-action-score)
 if [[ "$DIRECT_MASK_ACTION_SCORE" == "1" ]]; then
@@ -252,11 +351,20 @@ for seed in "${SEEDS[@]}"; do
     > "${out_dir}/action_geometry.stdout.json"
 
   control_args=()
+  if [[ -n "$TRUTH_CSV" ]]; then
+    control_args+=(--truth-csv "$TRUTH_CSV")
+  fi
   if [[ -n "$CONTROL_SOURCE_RUN_DIR" ]]; then
     control_args+=(--control-source-run-dir "$CONTROL_SOURCE_RUN_DIR")
   fi
   if [[ "$VALIDATE_CONTROL_SOURCE_ONLY" == "1" ]]; then
     control_args+=(--validate-control-source-only)
+  fi
+  if [[ "$PREPARE_TRUTH_ONLY" == "1" ]]; then
+    control_args+=(--prepare-truth-only)
+  fi
+  if [[ "$PREPARE_ASSETS_ONLY" == "1" ]]; then
+    control_args+=(--prepare-assets-only)
   fi
   if [[ -n "$POLICY_SEED" ]]; then
     control_args+=(--policy-seed "$POLICY_SEED")
@@ -372,14 +480,14 @@ for seed in "${SEEDS[@]}"; do
     --event-subtype-particle-prob "$EVENT_SUBTYPE_PARTICLE_PROB" \
     --event-subtype-flux-prob "$EVENT_SUBTYPE_FLUX_PROB" \
     --event-subtype-thermal-prob "$EVENT_SUBTYPE_THERMAL_PROB" \
-    --event-subtype-particle-flux-multiplier 0.75 \
-    --event-subtype-flux-multiplier 3.5 \
-    --event-subtype-thermal-flux-multiplier 0.65 \
-    --event-subtype-particle-diameter-shift-mm 0.12 \
-    --event-subtype-particle-velocity-boost-ms 1.8 \
-    --event-subtype-flux-diameter-shift-mm -0.05 \
-    --event-subtype-flux-velocity-boost-ms 0.8 \
-    --event-subtype-thermal-surface-drop-c 2.4 \
+    --event-subtype-particle-flux-multiplier "$EVENT_SUBTYPE_PARTICLE_FLUX_MULTIPLIER" \
+    --event-subtype-flux-multiplier "$EVENT_SUBTYPE_FLUX_MULTIPLIER" \
+    --event-subtype-thermal-flux-multiplier "$EVENT_SUBTYPE_THERMAL_FLUX_MULTIPLIER" \
+    --event-subtype-particle-diameter-shift-mm "$EVENT_SUBTYPE_PARTICLE_DIAMETER_SHIFT_MM" \
+    --event-subtype-particle-velocity-boost-ms "$EVENT_SUBTYPE_PARTICLE_VELOCITY_BOOST_MS" \
+    --event-subtype-flux-diameter-shift-mm "$EVENT_SUBTYPE_FLUX_DIAMETER_SHIFT_MM" \
+    --event-subtype-flux-velocity-boost-ms "$EVENT_SUBTYPE_FLUX_VELOCITY_BOOST_MS" \
+    --event-subtype-thermal-surface-drop-c "$EVENT_SUBTYPE_THERMAL_SURFACE_DROP_C" \
     --event-subtype-particle-humidity-boost-pct "$PARTICLE_HUMIDITY_BOOST" \
     --event-subtype-flux-wind-boost-ms "$FLUX_WIND_BOOST" \
     --event-subtype-thermal-air-temp-drop-c "$THERMAL_AIR_TEMP_DROP" \
@@ -397,6 +505,7 @@ for seed in "${SEEDS[@]}"; do
     --nowcast-humidity-noise-std "$NOWCAST_HUMIDITY_NOISE_STD" \
     --nowcast-temperature-noise-std "$NOWCAST_TEMPERATURE_NOISE_STD" \
     --nowcast-solar-noise-std "$NOWCAST_SOLAR_NOISE_STD" \
+    "${OPERATING_STATE_ARGS[@]}" \
     "${CONTEXT_INPUT_ARGS[@]}" \
     "${QUALITY_ARGS[@]}" \
     --oracle-rollout-steps 2048 \
@@ -424,6 +533,7 @@ for seed in "${SEEDS[@]}"; do
     --gamma "$GAMMA" \
     --gae-lambda "$GAE_LAMBDA" \
     --ent-coef "$ENT_COEF" \
+    --candidate-interaction-scale "$CANDIDATE_INTERACTION_SCALE" \
     --channel-marginal-entropy-coef "$CHANNEL_MARGINAL_ENTROPY_COEF" \
     --awbc-coef "$AWBC_COEF" \
     --awbc-decay-timesteps "$AWBC_DECAY_TIMESTEPS" \
@@ -464,7 +574,7 @@ for seed in "${SEEDS[@]}"; do
     --prior-kl-coef 0.0 \
     --greedy-lookahead-steps "$GREEDY_LOOKAHEAD_STEPS" \
     --event-start-prob "$EVENT_START_PROB" \
-    --event-aware-critic \
+    "${EVENT_AWARE_CRITIC_ARGS[@]}" \
     --no-event-gated-actor \
     "${CONTEXT_ENCODER_ARGS[@]}" \
     --measurement-update-mode "$MEASUREMENT_UPDATE_MODE" \
@@ -478,6 +588,7 @@ for seed in "${SEEDS[@]}"; do
     --onpolicy-action-value-coef "$ONPOLICY_ACTION_VALUE_COEF" \
     --onpolicy-action-value-scale "$ONPOLICY_ACTION_VALUE_SCALE" \
     "${CANDIDATE_INTERACTION_SCORE_ARGS[@]}" \
+    "${CANDIDATE_INTERACTION_PRIMARY_ARGS[@]}" \
     "${DIRECT_MASK_ACTION_SCORE_ARGS[@]}" \
     "${DIRECT_MASK_ACTION_PRIMARY_ARGS[@]}" \
     "${TEMPORAL_ARGS[@]}" \

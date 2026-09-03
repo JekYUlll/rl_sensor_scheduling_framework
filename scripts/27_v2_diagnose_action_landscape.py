@@ -80,6 +80,8 @@ def _coverage_groups_from_metadata(meta: dict[str, object]) -> tuple[tuple[str, 
     constraints = meta.get("constraints", {})
     if not isinstance(constraints, dict):
         return DEFAULT_COVERAGE_GROUPS
+    if "coverage_groups" in constraints and not constraints.get("coverage_groups"):
+        return ()
     groups = constraints.get("coverage_groups")
     if not isinstance(groups, list) or not groups:
         return DEFAULT_COVERAGE_GROUPS
@@ -161,8 +163,10 @@ def main() -> None:
     oracle_type = str(meta.get("oracle_type", "tcn"))
     oracle = _load_oracle(Path(meta["oracle_path"]), oracle_type=oracle_type, device=str(args.oracle_device))
     constraints_meta = meta.get("constraints", {})
+    max_active_value = constraints_meta.get("max_active")
+    max_active = len(sensors) if max_active_value is None else int(max_active_value)
     constraints = PowerConstraintsV2(
-        max_active=int(constraints_meta.get("max_active", 4)),
+        max_active=max_active,
         per_step_budget=float(constraints_meta.get("per_step_budget", 1.7)),
         startup_peak_budget=float(constraints_meta.get("startup_peak_budget", 3.2)),
         required_sensor_ids=tuple(str(x) for x in constraints_meta.get("required_sensor_ids", [])),

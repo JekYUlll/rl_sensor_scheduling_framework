@@ -689,6 +689,14 @@ def main() -> None:
         action="store_true",
         help="Validate matched-control assets and exit before loading models or training.",
     )
+    parser.add_argument(
+        "--prepare-assets-only",
+        action="store_true",
+        help=(
+            "Fit the frozen evaluator and validation static artifacts, then exit "
+            "without creating, training, or evaluating a policy."
+        ),
+    )
     parser.add_argument("--oracle-loss-clip", type=float, default=10.0)
     parser.add_argument("--oracle-candidate-mask-repeat", type=int, default=0)
     parser.add_argument("--oracle-candidate-mask-limit", type=int, default=0)
@@ -910,6 +918,13 @@ def main() -> None:
     parser.add_argument("--onpolicy-action-value-coef", type=float, default=0.0)
     parser.add_argument("--onpolicy-action-value-scale", type=float, default=1.0)
     parser.add_argument("--candidate-interaction-score", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--candidate-interaction-scale", type=float, default=1.0)
+    parser.add_argument(
+        "--candidate-interaction-primary",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use the state-conditioned candidate-interaction score as the primary candidate logit.",
+    )
     parser.add_argument("--direct-mask-action-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument(
         "--direct-mask-action-primary",
@@ -1483,6 +1498,106 @@ def main() -> None:
             oracle_loss_reward_normalizers=reward_loss_normalizers,
             oracle_loss_reward_default_normalizer=float(reward_loss_default_normalizer),
         )
+    if bool(args.prepare_assets_only):
+        if not args.static_selection_start_indices:
+            raise ValueError("--prepare-assets-only requires --static-selection-start-indices")
+        static_cfg = (
+            train_cfg
+            if bool(args.primary_eval_duty_guard)
+            else replace(train_cfg, duty_score_feedback=0.0, duty_hard_guard=False)
+        )
+        _, static_table = build_oracle_candidate_prior(
+            truth=truth,
+            sensors=sensors,
+            constraints=constraints,
+            cfg=static_cfg,
+            oracle=oracle,
+            candidate_masks=candidate_masks,
+            start_indices=tuple(int(x) for x in args.static_selection_start_indices),
+            steps=int(args.static_selection_steps),
+            scale=0.0,
+        )
+        if reward_loss_normalizer_map:
+            static_table = add_staticnorm_macro(static_table, reward_loss_normalizer_map)
+        static_table = sort_table_by_score(static_table, str(args.static_selection_score))
+        static_path = out_dir / "validation_static_candidates.csv"
+        static_table.to_csv(static_path, index=False)
+        metadata = {
+            "asset_preparation_only": True,
+            "truth_csv": str(truth_path),
+            "truth_sha256": sha256_file(truth_path),
+            "sensor_cfg": str(sensor_cfg_path),
+            "sensor_ids": [str(sensor.sensor_id) for sensor in sensors],
+            "candidate_mask_count": int(candidate_masks.shape[0]),
+            "constraints": {
+                "max_active": None if args.max_active is None else int(args.max_active),
+                "per_step_budget": float(args.per_step_budget),
+                "startup_peak_budget": float(args.startup_peak_budget),
+                "required_sensor_ids": [str(sensor_id) for sensor_id in args.required_sensors],
+                "coverage_groups": [
+                    {"name": str(name), "sensor_ids": [str(sensor_id) for sensor_id in sensor_ids]}
+                    for name, sensor_ids in coverage_groups
+                ],
+            },
+            "oracle_type": str(args.oracle_type),
+            "oracle_path": str(oracle_path),
+            "oracle_sha256": sha256_file(oracle_path),
+            "seed": int(args.seed),
+            "freq_s": int(args.freq_s),
+            "lookback": int(args.lookback),
+            "horizon": int(args.horizon),
+            "train_start_min": int(args.train_start_min),
+            "train_start_max": int(args.train_start_max),
+            "eval_start_indices": [int(x) for x in (args.eval_start_indices or ())],
+            "eval_steps": int(args.eval_steps),
+            "reward_shaping": {
+                "lambda_warmup_abort": float(args.lambda_warmup_abort),
+                "lambda_switch": float(args.lambda_switch),
+                "min_dwell_steps": int(max(1, int(args.min_dwell_steps))),
+            },
+            "agent_context_columns": [str(x) for x in (args.agent_context_columns or ())],
+            "agent_context_normalization": {
+                "mean": None if agent_context_normalization_mean is None else [float(x) for x in agent_context_normalization_mean],
+                "std": None if agent_context_normalization_std is None else [float(x) for x in agent_context_normalization_std],
+            },
+            "agent_alert_context": {
+                "include_event_flag_in_state": bool(args.include_event_flag_in_state),
+                "include_alert_context_features": bool(args.include_alert_context_features),
+                "columns": [str(x) for x in (args.alert_context_columns or WarmupEnvConfig.alert_context_columns)],
+                "threshold": float(args.alert_context_threshold),
+                "trend_lookback": max(1, int(args.alert_context_trend_lookback)),
+            },
+            "sensor_quality": {
+                "columns": [str(x) for x in (args.sensor_quality_columns or ())],
+                "max_noise_multiplier": float(args.sensor_quality_max_noise_multiplier),
+                "availability_floor": float(args.sensor_quality_availability_floor),
+            },
+            "uncertainty_proxy": {
+                "process_variance": [float(x) for x in uncertainty_process_variance],
+                "initial_variance": float(train_cfg.uncertainty_initial_variance),
+                "max_variance": float(train_cfg.uncertainty_max_variance),
+                "measurement_update_mode": str(train_cfg.measurement_update_mode),
+            },
+            "partition_protocol": {
+                "oracle_start_idx": args.oracle_start_idx,
+                "oracle_end_idx": args.oracle_end_idx,
+                "normalization_start_idx": args.normalization_start_idx,
+                "normalization_end_idx": args.normalization_end_idx,
+                "static_selection_start_indices": [int(x) for x in args.static_selection_start_indices],
+                "static_selection_steps": int(args.static_selection_steps),
+                "static_selection_score": str(args.static_selection_score),
+            },
+            "artifacts": {
+                "validation_static_candidates": str(static_path),
+                "reward_staticnorm_candidates": "" if reward_staticnorm_table is None else str(out_dir / "reward_staticnorm_candidates.csv"),
+                "policy_created": False,
+            },
+        }
+        asset_path = out_dir / "asset_preparation_manifest.json"
+        asset_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+        (out_dir / "v2_ppo_metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+        print(asset_path)
+        return
     awbc_teacher_auto_selection: dict[str, object] = {}
     if str(args.awbc_teacher_mode) == "subtype_static_auto":
         if not args.static_selection_start_indices:
@@ -1744,6 +1859,8 @@ def main() -> None:
             onpolicy_action_value_coef=max(0.0, float(args.onpolicy_action_value_coef)),
             onpolicy_action_value_scale=float(args.onpolicy_action_value_scale),
             candidate_interaction_score=bool(args.candidate_interaction_score),
+            candidate_interaction_scale=float(args.candidate_interaction_scale),
+            candidate_interaction_primary=bool(args.candidate_interaction_primary),
             direct_mask_action_score=bool(args.direct_mask_action_score),
             direct_mask_action_primary=bool(args.direct_mask_action_primary),
             temporal_encoder_enabled=bool(args.temporal_encoder),
@@ -1795,6 +1912,21 @@ def main() -> None:
                         errors="coerce",
                     ).min()
                 )
+    elif (checkpoint_interval > 0 or args.evaluation_temperature_candidates) and reward_staticnorm_table is not None:
+        # A self-contained run has no legacy control source.  Its validation
+        # static table is already computed from the current truth above and
+        # must also anchor checkpoint selection on the same partition.
+        checkpoint_static_table = reward_staticnorm_table
+        checkpoint_normalizers = subtype_static_normalizers(checkpoint_static_table)
+        checkpoint_static_ordinary = float(
+            pd.to_numeric(checkpoint_static_table["oracle_loss_mean"], errors="coerce").min()
+        )
+        checkpoint_static_macro = float(
+            pd.to_numeric(
+                checkpoint_static_table[STATICNORM_MACRO_SUBTYPE_LOSS_COLUMN],
+                errors="coerce",
+            ).min()
+        )
     if (
         checkpoint_interval > 0 or args.evaluation_temperature_candidates
     ) and checkpoint_score_name in {
@@ -2885,8 +3017,10 @@ def as_serializable_config(
         "quality_context_pooling": str(cfg.quality_context_pooling),
         "onpolicy_action_value_coef": float(cfg.onpolicy_action_value_coef),
         "onpolicy_action_value_scale": float(cfg.onpolicy_action_value_scale),
-            "candidate_interaction_score": int(bool(cfg.candidate_interaction_score)),
-        "direct_mask_action_score": int(bool(cfg.direct_mask_action_score)),
+        "candidate_interaction_scale": float(cfg.candidate_interaction_scale),
+        "candidate_interaction_score": int(bool(cfg.candidate_interaction_score)),
+            "candidate_interaction_primary": int(bool(cfg.candidate_interaction_primary)),
+            "direct_mask_action_score": int(bool(cfg.direct_mask_action_score)),
         "direct_mask_action_primary": int(bool(cfg.direct_mask_action_primary)),
             "temporal_encoder_enabled": int(bool(cfg.temporal_encoder_enabled)),
             "decision_only_policy_updates": int(bool(cfg.decision_only_policy_updates)),

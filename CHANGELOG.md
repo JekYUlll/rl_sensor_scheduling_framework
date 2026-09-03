@@ -1,5 +1,453 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-03 - V461 budget-consistent asset correction
+
+- Fixed a nested V267 launcher override that forced B=1.75 after V361 accepted
+  B=1.58. The failed partial V461 asset is excluded and the same frozen truth is
+  rerun as V461r1 with the intended 19-action geometry.
+
+## 2026-09-03 - V452/V453 Stage-P4 diagnosis
+
+- V452 failed the all-seed common-dwell gate (`-0.017989`, `+0.071703`), so no
+  observability or PPO run was started.
+- V453 confirmed material specialist-family gains and showed that the six-step
+  receding-greedy diagnostic is not a trajectory-optimal opportunity bound.
+- Added a frozen 12/24-step V454 sensitivity audit before changing the scene.
+- V454 shows the common-dwell controller beats static in both fresh seeds at a
+  24-step diagnostic horizon (`+0.014374/+0.065641`) with zero warm-up aborts.
+  Added V455 to test chronological online identifiability at that same value
+  horizon before any PPO training.
+- V455 rejected Stage P4 at the online-identifiability gate. All shared
+  probe/view configurations have positive regret relative to the
+  training-selected static action in both chronological test seeds; the closest
+  row is `+0.001279/+0.020567`. No PPO run was launched.
+- Predeclared Stage P5 specialist resilience after identifying a non-monotonic
+  generator path in which high demand both amplifies a specialist target and
+  degrades that specialist's quality. Stage P5 will remove only the own-demand
+  quality penalty and restart from fresh truth seeds 7081/7082.
+- Implemented Stage P5 as a default-off generator option with CLI/protocol
+  plumbing, metadata, exact quality-equation tests, and fresh V456/V457
+  truth-only launchers. No policy code or training configuration changed.
+- V456/V457 fresh seeds 7081/7082 pass all truth gates. Added explicit Stage-P5
+  flag passthrough to the generic serial asset launcher; V458 remains
+  forecaster/static-selection preparation only.
+- V458 completed frozen forecaster/static-selection assets for both fresh seeds
+  with no policy. Added V459 complete-subset and 24-step common-dwell audit.
+- V459 passes 24-step executable opportunity in both fresh seeds
+  (`+0.029968/+0.045459`) with zero aborts. Added V460 chronological expected-
+  cost observability; PPO remains blocked until it passes.
+- V460 passes online identifiability for the common candidate-conditioned
+  compact-context probe (`-0.019762/-0.002650`). PPO remains blocked because
+  V458's B=1.75 static ledger is incompatible with the accepted B=1.58
+  19-action geometry. Parameterized budget and output labels for a clean
+  B=1.58 asset freeze.
+
+## 2026-09-03 - V448--V451 Stage-P4 horizon alignment
+
+- Added a target-family attribution audit over all exact feasible fixed subsets.
+  Specialists reduce loss in their intended target families, while the broad
+  weather pair remains strong because it covers most forecast-target mass.
+- Added a predeclared persistent-residence truth mode that changes only the
+  specialist unresolved-latent correlation from 0.92 to 0.97 and preserves its
+  stationary variance. Fresh V449/V450 seeds 7071/7072 pass every truth gate.
+- Adopted the `09-02-01` evidence order: complete-subset forecast-loss
+  crossover, common-dwell executable opportunity, chronological online
+  observability, then decision-only categorical PPO. Per-channel quality
+  crossover no longer authorizes training.
+- The first V451 seed7071 asset process terminated before forecaster fitting
+  and produced no exit record. Its partial manifest and action geometry are
+  classified as an infrastructure-only incomplete run and are not evidence.
+- Fixed the generic residence-asset launcher to preserve the explicitly supplied
+  horizon-persistent-latent flag. V451 acceptance now requires this flag in the
+  run manifest so its frozen forecaster matches the V449/V450 truth mechanism.
+- Added a dedicated V451 serial launcher with explicit start/finish and exit
+  records after two inline tmux wrappers terminated without preserving status.
+  This changes orchestration only and leaves the frozen scientific inputs intact.
+- V451r2 successfully produced frozen forecaster/static-selection assets for
+  seeds 7071/7072 with no policy checkpoint. Parameterized the downstream
+  geometry launcher so V452 cannot silently reuse the older 7061/7062 assets.
+
+## 2026-09-03 - V444--V447 Stage-P3 residence-demand screen
+
+- Replaced the threshold-sensitive stationary AR demand process with three
+  independent local-exposure episode processes frozen before fresh seeds
+  7061/7062. Episodes retain continuous intensity and weather loading while
+  enforcing physical residence times of 18--54 epochs.
+- V445 passes every truth-only gate in both seeds: all joint-state cells exceed
+  5% support, median runs are `24--41` steps, eight-step forecast correlations
+  are `0.955--0.962`, residual-scale ratios are `3.51--6.06`, and physical
+  bounds pass.
+- The first parallel V446 asset attempt terminated before oracle fitting with
+  empty logs. Sequential fresh V446r1 runs completed with exit code 0 and
+  produced frozen TCN/static manifests without policy artifacts.
+- Corrected the complete-subset audit to recognize the new
+  `generator_*_demand_state` columns. V447r2 confirms state-dependent best masks
+  and empty 1%-near-optimal intersections, but the operating condition-wise
+  opportunity is only `+0.00337/+0.00691`.
+- Common-dwell hindsight changes static loss by `-0.01190/+0.07476`; therefore
+  the executable-opportunity gate fails seed7061. Decision: do not run the
+  online probe or PPO. The next scene revision must enlarge family-specific
+  downstream value enough to survive warm-up/history costs, not merely create
+  state-rank changes.
+
+## 2026-09-03 - V442/V443 stationary-demand truth screen
+
+- Rebased the flexible-subset route on the complete-subset evidence order from
+  `docs/09-02-01.md`: forecast-loss crossover, executable opportunity, online
+  observability, and only then decision-only categorical PPO.
+- Replaced V440's shared weather-driven demand recurrences with three
+  independent stationary local-exposure states on fresh truth seeds 7051/7052.
+  The mode uses noisy eight-step online forecasts and the frozen convex residual
+  amplitude map `0.10 + 0.90 state^2`.
+- Both truths pass all eight joint-state support checks, forecast correlations
+  (`0.930--0.941`), residual-scale ratios (`3.56--4.71`), and physical bounds.
+  They fail the unchanged six-step persistence gate because median thresholded
+  state runs are generally only `3--5` steps.
+- Decision: reject Stage P2 before asset fitting or PPO. The next structural
+  design will use independent local-exposure episodes with explicit physical
+  residence times; seeds 7051/7052 will not be used for coefficient tuning.
+
+## 2026-09-03 - V437 expected-cost observability fails
+
+- Evaluated four-replica expected candidate costs at the accepted 1.58/2.15
+  resource point, using a pooled chronological probe and a constant action
+  selected only from training-partition expected costs.
+- The best 61-feature compact probe changes mean regret relative to static by
+  `-0.00138/+0.01353` for seeds 7021/7022. The 13-feature context/quality probe
+  is worse by `+0.01389/+0.01835`.
+- Decision: online expected-regret observability is not robustly established, so
+  PPO remains blocked. The next bounded diagnostic tests a shared
+  state-and-candidate-mask cost model against the current independent-output
+  head without changing truth, objective, budget, or labels.
+
+## 2026-09-03 - V435/V436 medium-resource structural gate
+
+- Added an exact 64-subset steady/startup breakpoint ledger from the physical
+  six-channel sensor configuration. The predeclared medium point uses steady
+  budget `1.58` and unchanged startup budget `2.15`; it retains all six
+  singletons and 12/15 pairs without a cardinality rule.
+- Under V426's original frozen objective, V436 has 19 feasible masks and empty
+  epsilon-0.01 near-optimal intersections for both event and operating-state
+  partitions in both development seeds.
+- Common-dwell hindsight beats the recomputed best static subset by
+  `+0.06408/+0.05792`, switches at `0.0568/0.0515` per step, and incurs zero
+  warm-up aborts.
+- Decision: the medium resource point passes complete-subset geometry and
+  executable-opportunity gates. V437 now tests chronological expected-regret
+  observability before any policy training.
+
+## 2026-09-03 - V433/V434 semantic-group objective sensitivity
+
+- Re-fitted the unchanged V424 three-factor truths with fixed target weights
+  `[1,4,1,1,1,4,4,2,2]`, equalizing total weight across five semantic target
+  families. Both V433 checkpoints contain the exact vector, disable subtype
+  loss weighting, and contain no policy artifact.
+- V434 preserves executable hindsight opportunity: static-minus-hindsight loss
+  is `+0.07390/+0.07531`, switching is about `0.062` per step, and warm-up
+  aborts are zero.
+- The objective does not robustly remove the static shortcut. Seed 7022 retains
+  `met_station_core+radiometer_basic` in the event-wise 1%-near-optimal
+  intersection, with only `+0.00101` condition-wise static opportunity.
+- Decision: retain V433/V434 as objective-sensitivity evidence only. Do not use
+  development performance to replace the primary objective and do not train
+  PPO from this branch. The primary path returns to a predeclared physical
+  resource-geometry audit under the original frozen objective.
+
+## 2026-09-03 - V420--V423 three-factor truth diagnostics
+
+- Introduced separate causal bulk-flux, particle-loading, and thermal states.
+  Fresh V420 truths pass state occupancy and persistence; snow-transport target
+  held-out R2 is `0.528--0.865` with lag-1 below `0.972`.
+- The physically relevant surface-air gap is attributable (`R2 0.704--0.711`)
+  but remains over-smoothed (`lag-1 0.9974`). A bounded faster thermal
+  recurrence in V422 lowers it only to `0.9967--0.9969`, so I2 is rejected.
+- Stage J adds a causal fast thermal-loading response alongside slow thermal
+  inertia. No recurrence-rate or coefficient sweep is performed.
+
+## 2026-09-03 - V418/V419 fixed-objective isolation
+
+- Re-fitted the accepted Stage-H truths with one fixed target-weight vector,
+  no subtype-normalized reward, and no subtype auxiliary supervision. This
+  removes dependence on random subtype labels unavailable to the scheduler.
+- Complete-subset epsilon-0.01 intersections remain empty and common-dwell
+  hindsight remains better than static by `+0.02847/+0.03950`, with zero
+  warm-up aborts.
+- Online ranking still fails: held-out top-1 is `0.1023/0.0435`, labels switch
+  at `83.7%/81.1%`, and median label runs remain one decision. No PPO is run.
+- The two-state scene is closed. The next structural design must use distinct
+  persistent online-observable factors for particle, flux, and thermal target
+  families so expected complete-subset value, not future residual noise,
+  determines the adaptive choice.
+
+## 2026-09-03 - V416/V417 frozen Stage-H audit
+
+- V416 produced complete frozen TCN/static assets for seeds 6991/6992 and no
+  policy files.
+- V417 confirms complete-subset opportunity and transition-surviving headroom:
+  conditionwise static gaps are `+0.01444/+0.05008`, epsilon-0.01 intersections
+  are empty, and common-dwell hindsight gains are `+0.04151/+0.08533` with zero
+  warm-up aborts.
+- The full-online 16-start probe nevertheless reaches only `0.0455/0.0543`
+  held-out top-1; optimal labels switch on `81.4%/84.4%` of decisions and have
+  median run length one. No PPO is authorized from V416.
+- Audit identified a remaining information mismatch: random simulator subtype
+  labels unavailable online still select strongly different target-weight
+  vectors. V418 re-freezes the same accepted truths with one fixed target
+  objective and no subtype auxiliary supervision before repeating diagnostics.
+
+## 2026-09-03 - V414/V415 Stage-H truth gate passes
+
+- Replaced the rejected drifting EMA target baseline with absolute physical-unit
+  active snow targets driven by causal transport/frost states plus causal fast
+  innovations. Calm-period values remain unchanged.
+- Fresh seeds 6991/6992 pass all truth-only gates: every state quadrant has
+  `21.8--29.0%` support, median runs are `6--29` epochs, active-event held-out
+  R2 is `0.541--0.744`, and lag-1 autocorrelation is `0.732--0.911`.
+- Frozen asset fitting is authorized as V416. Policy training remains blocked
+  pending complete-subset geometry, online observability, persistence, and
+  common-dwell hindsight audits.
+
+## 2026-09-03 - V412/V413 causal state correction
+
+- Replaced future-dependent full-series quantile normalization in the new
+  exposure-state branch with a causal 168-hour anomaly transform using fixed
+  physical scales. Added a prefix-invariance test for the state recurrence.
+- V413 passes state coverage and dwell persistence on fresh seeds 6981/6982:
+  all four final quadrants have `22.2--28.2%` support and median runs of
+  `9--20` epochs.
+- The unchanged EMA target construction still fails held-out attribution,
+  especially for particle velocity and diameter (negative R2 on both seeds).
+  It is closed before frozen-asset fitting and PPO.
+
+## 2026-09-03 - V410/V411 Stage-F truth-only rejection
+
+- Added a backward-compatible Stage-F truth mode that applies a causal
+  low-frequency exposure-conditioned component to active blowing-snow targets
+  while preserving calm-period values and 35% of fast residual variation.
+- Generated fresh truth-only seeds 6971/6972 as V410; no forecaster, static
+  selector, or policy artifact was created.
+- Rejected Stage F at V411. Seed 6971 misses one exposure quadrant and has
+  active-event held-out R2 `0.1625/-1.9705/-1.4204`; seed 6972 reaches
+  `0.2883/0.4614/0.2332`, but still fails the diameter and state-coverage gates.
+- The next design must improve cross-partition calibration of the observable
+  state-to-target relation. No EMA coefficient sweep or PPO run is authorized.
+
+## 2026-09-02 - V380--V383 structural diagnostics close learner tuning
+
+- V380 replayed all 22 power/startup-feasible subsets against each robust
+  development truth using the matching frozen forecaster. All four scenes have
+  distinct condition-wise subset optima, empty epsilon-`0.01` near-optimal-set
+  intersections, and positive best-static-to-conditionwise opportunity gaps
+  of `0.018625`, `0.020830`, `0.021636`, and `0.041058` (mean `0.025537`).
+  The three-specialist union is infeasible at the actual `1.75/2.15` budget.
+- Valid V381 reconstructs the V379 scheduler's full 536-dimensional online
+  state. It fits all 178/179 policy-training labels but reaches only `0.04396`
+  and `0.04545` held-out top-1 accuracy on seeds6901/6902. Earlier 508-state
+  V381 outputs are retained solely as an implementation audit and are not
+  evidence.
+- V382 appended six deployable nowcast-derived forecast-quality values. Test
+  top-1 changed to `0.06593` and `0.03409`, so the added tail is not promoted.
+  V383 used a 24-step frozen-forecaster label and remained at `0.06593` top-1
+  on seed6901. Neither feature addition nor longer horizon repairs the
+  time-held-out candidate ranking.
+- Decision: close action-head, reward-target, dwell-mask, and nowcast-tail
+  tuning for this scene. The next development-only stage is a persistent,
+  online-observable operating-state design that couples channel reliability to
+  future target dynamics. It must pass subset-geometry and observability
+  screens before any further PPO training.
+
+## 2026-09-02 - V379 soft-target auxiliary-loss probe completed
+
+- V379 changed only the existing candidate-value auxiliary from MSE to masked
+  soft-target cross-entropy at temperature `0.75`; the robust-quality truth,
+  forecast-loss reward, arbitrary feasible-subset action space, operating
+  rules, and validation protocol were unchanged. The V377 quality-action head
+  was disabled.
+- Aggregate:
+  `reports/aggregate/v379_robust_quality_softce_pdppo_20260902_final_r1/`.
+  PD-PPO won the strongest static family on ordinary and macro endpoints in
+  `1/4` seeds each, with mean margins `-0.031552` and `-0.124117`. It won the
+  conventional dynamic family in `2/4` seeds each, with mean margins
+  `+0.023394` and `+0.035495`.
+- The behavior gate passed `4/4`: warm-up aborts and constant channels were
+  zero in every seed, mid-duty channel counts were `4, 6, 6, 6`, and switching
+  rates were `0.0329--0.0619` per step.
+- Decision: soft-target CE preserves valid flexible, state-dependent channel
+  use but does not repair transfer to the strongest static shortcut. V379 is
+  closed as a learner intervention. The next work unit is a task-level
+  downstream subset-loss geometry audit before any further PPO training.
+
+## 2026-09-02 - V378 action-landscape diagnosis completed
+
+- The offline same-scene action-landscape scan was run remotely on all four
+  V377 robust-quality scenes. The initial launches were excluded because the
+  legacy diagnostic did not accept arbitrary-subset metadata; the diagnostic
+  was repaired to interpret `max_active=null` as the six-channel subset space
+  and to honor explicitly empty `coverage_groups`.
+- Each scene exposed 22 feasible subsets. The per-window best action covered
+  20, 18, 19, and 21 unique subsets in the four scenes, with best-action
+  switching rates `0.573`, `0.446`, `0.418`, and `0.449`.
+- V377 policy loss exceeded the best fixed candidate's short-window mean by
+  `0.1759`, `0.1876`, `0.1525`, and `0.0249` for seeds6901--6904. These are
+  diagnostic gaps from a short offline scan, not replacements for the primary
+  final-test metrics.
+- Decision: the scene contains substantial dynamic action value and the
+  learner fails to recover it. The next intervention must target candidate
+  action-value transfer or checkpoint/objective alignment; no further scene
+  recalibration or additive action-score patch is justified from V378.
+
+## 2026-09-02 - V377 completed; quality-context score rejected as sufficient repair
+
+- All four robust-quality runs completed on `remote-gpu` with policy seeds
+  `8601--8604`. Aggregate:
+  `reports/aggregate/v377_robust_quality_context_action_pdppo_20260902_final_r1/`.
+- Against the static family, PD-PPO won ordinary loss in `1/4` seeds and the
+  static-normalized macro endpoint in `0/4`; mean margins were `-0.035919` and
+  `-0.112407`.
+- Against the original dynamic family, PD-PPO won ordinary and macro loss in
+  `3/4` seeds; mean margins were `+0.021830` and `+0.033394`.
+- The complete behavior gate passed in `3/4` seeds. All seeds had zero
+  warm-up aborts; seed6903 had one always-off channel, while the other three
+  had no constant channels. The independent behavior audit found 22, 18, 11,
+  and 14 unique masks respectively; state-dependence passed in three seeds.
+- Decision: enabling the existing online quality-context action score did not
+  repair static transfer and introduced one behavior failure. Do not promote
+  V377 or stack another action-score branch; retain it as a negative
+  method-consistent diagnostic and investigate the remaining learner-to-static
+  transfer gap before selecting the next intervention.
+
+## 2026-09-02 - V377 partial completion: quality-context action score
+
+- Two of four robust-quality runs (`seed6903`, `seed6904`) completed and were
+  synchronized from `remote-gpu`; seeds `6901` and `6902` remain active.
+- The existing online quality-context action-score branch was enabled while
+  candidate-interaction scoring remained disabled. Forecast-loss reward,
+  feasible-subset masking, and final-test information boundaries were unchanged.
+- Both completed runs have a valid validation scene and zero warm-up aborts.
+  Seed6903 has one always-off channel; seed6904 has five mid-duty channels and
+  no constant channel.
+- This is partial diagnostic evidence only. Seed6903 remains below the
+  validation-selected static reference on both reported endpoints; seed6904
+  is slightly better on ordinary loss but below static on the macro endpoint.
+  No V377 promotion or paper claim follows until all four seeds are aggregated.
+
+## 2026-09-02 - V376 robust-quality PPO probe completed; static gate still fails
+
+- V376 completed four self-contained `50,176`-step runs on the fixed
+  `condition_dependent_crossover_robust` quality calibration, using policy
+  seeds `8501--8504` and scene seeds `6901--6904`. The synchronized raw
+  outputs are the four `v376_robust_quality_selfcontained_checkpoint_pdppo_...`
+  directories under `reports/`.
+- Aggregate:
+  `reports/aggregate/v376_robust_quality_selfcontained_checkpoint_pdppo_20260902_final_r1/`.
+  Against the best validation-selected/feasible static family, PD-PPO won
+  ordinary loss in `0/4` seeds and macro loss in `1/4`, with mean margins
+  `-0.029963` and `-0.115110` (positive means lower PD-PPO loss).
+- Against the best original dynamic family, PD-PPO won ordinary and macro loss
+  in `4/4` seeds, with mean margins `+0.036175` and `+0.070893`. Against the
+  full-open reference, wins were `2/4` on both endpoints, with mean margins
+  `+0.008616` and `+0.006616`; this is a diagnostic comparison, not a fair
+  constrained baseline.
+- Behavior passed `4/4`: zero warm-up aborts, zero always-on channels, zero
+  always-off channels, and five or six mid-duty channels per seed. Switching
+  rates were `0.0298--0.0520` per step.
+- Decision: robust calibration improves dynamic-scheduling evidence and
+  preserves valid state-dependent channel use, but the strongest-static gate
+  remains failed. V376 is retained as a development diagnostic; no positive
+  arbitrary-subset mainline claim is promoted from it.
+
+## 2026-09-02 - V376 robust-quality structural screen passed; PPO probe launched
+
+- Registered `condition_dependent_crossover_robust` in the truth builder and
+  parameterized the quality recalibration helper with an explicit mode.
+- Added `scripts/100_audit_quality_crossover.py` for pre-training scene audits.
+- Remote structural screen at
+  `reports/v376_robust_quality_truth_20260902/quality_crossover_audit.json`
+  covered four matching truth files and 144,000 rows. All six channels were
+  rowwise best at least once; best-channel fractions were 8.3%--29.4%, and
+  event-conditioned rankings remained heterogeneous.
+- V376 launched remotely with the repaired self-contained checkpoint protocol,
+  robust quality mode, unchanged budget/action constraints, and fresh policy
+  seeds `8501--8504`. No PPO result is promoted until terminal artifacts and
+  behavior gates are audited.
+
+## 2026-09-02 - V375 validated-checkpoint rerun completed; scene shortcut persists
+
+- V375 reran the V374 calibrated-quality scene with fresh policy seeds
+  `8401--8404` and the self-contained validation checkpoint correction.
+  All four runs completed `50,176` PPO steps; each checkpoint ledger reports
+  `validation_scene_count=1` and selected checkpoints at updates `15, 20, 30,
+  15` respectively.
+- Static ordinary/macro wins remained `0/4` with mean PD-PPO margins
+  `-0.031724/-0.104599`. Original dynamic ordinary/macro wins were `3/4`
+  with mean margins `+0.015630/+0.028645`; full-open wins were `1/4` on both
+  endpoints with mean margins `-0.019190/-0.056895`.
+- Behavior gates passed in all four seeds: warm-up aborts `0/4`, constant-on
+  channels `0/4`, constant-off channels `0/4`, and five or six mid-duty
+  channels per seed. Switching rates were `0.0331--0.0551` per step.
+- Decision: the checkpoint-selection defect is resolved, but the calibrated
+  scene still contains a static quality shortcut. V375 is not promoted as
+  positive arbitrary-subset evidence; the next step is structural quality
+  calibration and a pre-training crossover screen.
+
+## 2026-09-02 - V374 calibrated-quality probe completed; checkpoint-selection defect found
+
+- V374 completed four self-contained 50,176-step runs on the calibrated
+  condition-dependent channel-quality scene, with matching truth and oracle
+  assets and no legacy control-source reuse.
+- The probe produced valid terminal metrics and rollouts, but its checkpoint
+  selection table had `validation_scene_count=0` for every seed because the
+  self-contained path did not construct a validation scene. All policies were
+  therefore evaluated from the default update-0 checkpoint; this result is
+  retained as a diagnostic, not promoted as final evidence.
+- Aggregate diagnostic: static ordinary/macro wins `0/4`; original dynamic
+  ordinary/macro wins `2/4`; full-open ordinary/macro wins `1/4` and `0/4`.
+  Behavior gates passed in `3/4` seeds; seed6902 had one always-off channel.
+- Root cause fixed in `scripts/25_v2_train_custom_ppo.py`: self-contained runs
+  now anchor checkpoint evaluation to their own validation static table. V375
+  reruns the same scene and protocol with fresh policy seeds.
+
+## 2026-09-02 - V373 calibrated-quality launch correction
+
+- **Failed attempt:** four V373 workers generated calibrated quality truth but
+  stopped before training because V357 control-source truth was not byte
+  identical to the requested calibrated truth.
+- **Interpretation:** no predictive or behavioral result was produced; the
+  partial V373 directories are explicitly non-evidence.
+- **Correction:** added an explicit launcher switch to disable stale
+  control-source and interleaved-training reuse. The corrected probe will
+  regenerate evaluator and training assets from the calibrated truth itself.
+
+## 2026-09-02 - V374 self-contained calibrated-quality probe launched
+
+- V374 reruns the calibrated-quality scene with fresh policy seeds `8301--8304`.
+- Legacy V357 control-source and interleaved-training assets are disabled;
+  evaluator and training assets are generated from the matching calibrated
+  truth files.
+- Checkpoint selection uses ordinary forecast loss because the old validation
+  static ledger is not reused. The static-normalized forecast reward and final
+  baseline/behavior evaluation remain enabled.
+- Status: running remotely; no result is promoted before complete terminal
+  artifacts are synchronized and audited.
+
+## 2026-09-01 - V364 corrected factorized-action evaluation completed
+
+- Completed the four-seed rerun after fixing the factorized feasible-action
+  logit composition in `src/v2/custom_ppo.py`; the candidate-mask geometry and
+  forecast-loss objective were otherwise unchanged.
+- Against the best feasible static family, PD-PPO won ordinary and macro loss
+  in `0/4` seeds, with mean margins `-0.037232/-0.120802`.
+- Against the original dynamic family, PD-PPO won ordinary and macro loss in
+  `3/4` seeds, with mean margins `+0.017862/+0.020936`.
+- Against full-open, ordinary wins were `2/4` and macro wins `1/4`, with mean
+  margins `-0.003931/-0.036209`.
+- The corrected policy no longer collapsed to the empty subset. Warm-up aborts
+  were zero in all four seeds; however, seeds 6903 and 6904 each retained one
+  always-off channel, so the full behavior gate did not pass.
+- Decision: retain V364 as a valid implementation diagnostic, but do not use it
+  as positive evidence for arbitrary-subset PD-PPO. Aggregate:
+  `reports/aggregate/v364_multiscene_factorized_action_fixed_pdppo_20260901/`.
+
 ## 2026-09-01 - V351 primary raw-mask scoring diagnostic completed
 
 - Completed the checksum-verified V351 rerun on paired V338 physical
@@ -7182,3 +7630,592 @@ Evidence is stored in
   `3.7%--9.6%` for V357 and `2.8%--5.7%` for V359 across scenes 6901--6904.
   This is a diagnostic of policy-to-action mismatch, not a required oracle
   imitation target; the oracle uses future information unavailable to PD-PPO.
+
+## 2026-09-01 - V365 candidate-interaction action head completed
+
+- Completed and synchronized the four-seed V365 run on frozen cycling scenes
+  6901--6904 (policy seeds 7531--7534). The intervention enabled the existing
+  state-conditioned candidate-interaction score while retaining the forecast
+  reward, arbitrary feasible-subset geometry, hard constraints, online
+  observables, and checkpoint protocol.
+- Against the best feasible-static family, ordinary and macro wins were
+  `0/4`, with mean margins `-0.025056/-0.077964`. Against the original dynamic
+  family, wins were `4/4` on both endpoints, with mean margins
+  `+0.030038/+0.063775`. Against full-open, wins were `2/4` ordinary and
+  `1/4` macro, with mean margins `+0.008245/+0.006630`.
+- Behavior was valid in `3/4` seeds: all warm-up abort counts were zero, and
+  the selected policies used four to six mid-duty channels. Seed 6902 had one
+  always-off channel; the other three seeds had zero always-on/off channels.
+  Independent rollout inspection confirmed six-step dwell was respected for
+  non-terminal blocks; raw switch rates were `0.0834--0.1355` per step.
+- **Decision:** candidate-level interaction improves dynamic-reference
+  separation and behavior relative to V364, but does not recover static
+  transfer. It is not promoted as a passing primary configuration. The
+  aggregate remains diagnostic only.
+- Aggregate artifacts:
+  `reports/aggregate/v365_multiscene_candidate_interaction_pdppo_20260901/`.
+
+## 2026-09-01 - V366 candidate-interaction-primary completed
+
+- Completed and synchronized the corrected four-seed V366 run on frozen
+  cycling scenes 6901--6904 (policy seeds 7541--7544). Candidate interaction
+  was the primary categorical action score and direct-mask action scoring was
+  disabled; forecast reward, arbitrary feasible subsets, hard constraints and
+  online-only evaluation were unchanged.
+- Against the static family, ordinary and macro wins were `0/4`, with mean
+  margins `-0.036336/-0.101579`. Against the original dynamic family, wins
+  were `3/4` on both endpoints, with mean margins `+0.018758/+0.040159`.
+  Against full-open, wins were `3/4` on both endpoints, with mean margins
+  `-0.003035/-0.016986`.
+- All four seeds had zero warm-up aborts. The official behavior summary passed
+  in `2/4` seeds; seeds 6901 and 6902 each had one near-constant off channel,
+  while seeds 6903 and 6904 had no constant channels. Raw rollout inspection
+  found six mid-duty channels in seed 6902/6903/6904 and five in seed 6901.
+- **Decision:** making candidate interaction the sole primary action score did
+  not recover transfer against the static shortcut and reduced the behavior
+  gate to `2/4`. V366 is diagnostic only and is not promoted as primary
+  evidence.
+- Aggregate artifacts:
+  `reports/aggregate/v366_multiscene_candidate_interaction_primary_pdppo_20260901/`.
+
+## 2026-09-01 - V367 candidate-interaction low-entropy diagnostic
+
+- Completed four seeds (scene `6901--6904`, policy `7601--7604`) on the
+  physical six-channel cycling scene. Candidate interaction, forecast reward,
+  arbitrary feasible-subset actions, and the evaluation protocol were
+  unchanged; only `ent_coef` changed from `0.02` to `0.002`.
+- Static wins were `0/4` on both ordinary and macro endpoints. Original
+  dynamic wins were `3/4`; full-open wins were `2/4` ordinary and `1/4` macro.
+  Mean margins were `-0.034559/-0.107948` vs static,
+  `+0.020536/+0.033790` vs dynamic, and `-0.001258/-0.023355` vs full-open.
+- Warm-up aborts and energy-guard drops were zero in every seed. The behavior
+  gate passed `2/4`; raw rollouts contained one exact always-off channel in
+  seeds `6901` and `6903`, while the other two seeds had six mid-duty
+  channels.
+- **Status:** rejected as a primary configuration. Lower entropy did not
+  recover static transfer and weakened behavior relative to V365. Aggregate:
+  `reports/aggregate/v367_candidate_interaction_low_entropy_pdppo_20260901/`.
+
+## 2026-09-01 - V368 candidate-interaction half-scale completed
+
+- Completed and synchronized four V368 runs (scene seeds `6901--6904`, policy
+  seeds `7701--7704`) on the same physical six-channel cycling scene. The
+  only intervention was scaling the candidate-interaction score from `1.0` to
+  `0.5`; forecast reward, arbitrary feasible-subset actions, hard constraints,
+  and online-only evaluation were unchanged.
+- Static wins were `0/4` on both ordinary and macro endpoints. Original
+  dynamic wins were `2/4` on both endpoints, with mean margins
+  `+0.002010/-0.001850`. Full-open wins were `1/4` on both endpoints, with
+  mean margins `-0.019783/-0.058995`.
+- All four seeds had zero warm-up aborts, zero constant-on channels, zero
+  constant-off channels, and five or six mid-duty channels. The behavior gate
+  therefore passed `4/4`, but predictive performance did not improve.
+- **Status:** rejected as a primary configuration. Half-scaling the candidate
+  interaction weakened static and dynamic transfer relative to V365 and does
+  not support further scale-only tuning.
+- Aggregate artifacts:
+  `reports/aggregate/v368_candidate_interaction_half_scale_pdppo_20260901_rerun/`.
+
+## 2026-09-02 - V369 decision-block credit completed
+
+- Completed four runs (scene seeds `6901--6904`, policy seeds `7801--7804`)
+  with the V368 candidate-interaction configuration. The only learning change
+  was discounted block-sum credit over each executable six-step dwell block.
+- Static wins remained `0/4` on ordinary and macro endpoints, with mean
+  margins `-0.043551/-0.135104`. Original dynamic wins were `3/4` ordinary and
+  `4/4` macro, with mean margins `+0.011544/+0.006634`. Full-open wins were
+  `1/4` on both endpoints, with mean margins `-0.010250/-0.050511`.
+- All seeds had zero warm-up aborts and zero energy-guard drops. The behavior
+  summary passed `2/4`: seeds 6902 and 6903 each had one constant-off channel,
+  while all seeds had five or six mid-duty channels.
+- **Status:** block credit improves alignment with the dynamic baseline but
+  does not recover static transfer and introduces behavior-gate failures. It
+  is not promoted as the primary configuration.
+- Aggregate artifacts:
+  `reports/aggregate/v369_candidate_interaction_block_credit_pdppo_20260902/`.
+
+## 2026-09-02 - V370 cycle-24 scenario probe completed
+
+- Completed and synchronized four runs (scene seeds `6901--6904`, policy
+  seeds `7901--7904`) using the V365/V368 candidate-interaction configuration
+  with event-subtype cycle length increased from 12 to 24. Forecast reward,
+  arbitrary feasible-subset actions, hard constraints, and online-only
+  evaluation were unchanged; this was a scenario-persistence intervention.
+- Static wins were `0/4` on both ordinary and macro endpoints. Original
+  dynamic wins were `2/4` ordinary and `1/4` macro, with mean margins
+  `-0.0047588/-0.0328451`. Full-open wins were `1/4` on both endpoints, with
+  mean margins `-0.0265524/-0.0899901`.
+- All seeds had zero warm-up aborts, zero always-on channels, and zero
+  always-off channels. Five or six channels were mid-duty in every seed;
+  therefore the operational behavior gate passed `4/4` even though predictive
+  transfer failed.
+- **Status:** rejected as a primary scenario configuration. Extending the
+  subtype persistence alone does not break the compact static shortcut and
+  substantially weakens the dynamic comparison. The intervention is retained
+  as a negative scenario diagnostic.
+- Aggregate artifacts:
+  `reports/aggregate/v370_cycle24_candidate_interaction_pdppo_20260902/`.
+
+## 2026-09-02 - V371 per-step credit completed
+
+- Completed and synchronized four runs (scene seeds `6901--6904`, policy
+  seeds `8001--8004`) on the V365 candidate-interaction configuration with
+  cycle length 12. The sole learning intervention was disabling
+  `decision_only_policy_updates`; dwell-aware actions remained unchanged and
+  every per-step forecast reward was eligible for PPO credit.
+- Static wins were `0/4` on ordinary and macro endpoints, with mean margins
+  `-0.0301213/-0.105472`. Original dynamic wins were `4/4` ordinary and `3/4`
+  macro, with mean margins `+0.0249733/+0.0362666`. Full-open wins were `2/4`
+  on both endpoints, with mean margins `+0.0031797/-0.0208784`.
+- Warm-up aborts were zero in every seed. The behavior gate passed `3/4`:
+  seed6901 had one constant-off channel, while all seeds had three to five
+  mid-duty channels and no constant-on channels.
+- **Status:** per-step credit improves dynamic separation over V365/V369 but
+  does not break the static shortcut and does not produce a clean behavior
+  gate. It is rejected as the primary configuration. The result supports
+  retaining V365 as the current reference and moving to a structural
+  action-value or scene-value intervention.
+- Aggregate artifacts:
+  `reports/aggregate/v371_step_credit_candidate_interaction_pdppo_20260902_final/`.
+
+## 2026-09-02 - V384 cycling-label persistence audit completed
+
+- Completed the read-only full-state chronological subset-label audit on the
+  V379 robust-quality cycling scene (seeds `6901` and `6902`). The probe used
+  the complete deployed observation, feasible candidate masks, and a frozen
+  forecast-value label; it did not train or evaluate a policy.
+- The held-out top-1 label accuracy was `0.04396` and `0.04545`, with mean
+  predicted-action regret `0.05151` and `0.05904`, respectively. Test labels
+  switched on `81/89` and `72/86` decision transitions. Median label runs were
+  one decision, and only `7.23%` and `14.86%` of runs reached the six-step
+  dwell horizon.
+- **Status:** rejected as an online-observable scene for PPO training. The
+  result confirms that the cycling scene's complete-subset optimum is too
+  transient for the deployed state. It motivates the V385 Stage-A
+  `stratified_duration` truth screen; it is not a policy-performance result.
+- Aggregate artifacts:
+  `reports/analysis/v384_label_persistence_20260902/`.
+
+## 2026-09-02 - V385--V387 persistent-subtype Stage-A screen rejected
+
+- V385 generated two matched `stratified_duration` semi-Markov truth files
+  (scene seeds `6901`, `6902`) without evaluator or policy work. V386 then
+  fitted a frozen TCN evaluator and validation-static assets for each truth in
+  `asset_preparation_only` mode. Both manifests record
+  `train_start_min=12600`, `train_start_max=30081`, and
+  `policy_created=false`; no `custom_ppo.pt` exists.
+- V387's complete-subset geometry audit retained 22 feasible masks, infeasible
+  three-specialist union, empty epsilon-0.01 intersections, and positive
+  best-static-to-conditionwise gaps (`0.02695`, `0.01970`). This preserves
+  objective-level opportunity, but seed6902's final windows contain only calm
+  and thermal samples, not all three event subtypes.
+- The required online screen failed. Held-out full-state top-1 ranking was
+  `0.04396` (seed6901) and `0.11364` (seed6902), below the preregistered
+  `0.15` threshold. Frozen labels still switch on `77/89` and `67/86`
+  decision transitions; median runs remain one decision and only `10.13%` and
+  `18.84%` reach the six-step dwell scale.
+- **Status:** Stage A is rejected. One persistent subtype per observed event
+  run does not create a sufficiently persistent, online-identifiable subset
+  value mapping. No PPO was trained. The next permitted intervention is the
+  predeclared Stage-B continuous operating-state generator, driven only by
+  noisy meteorological nowcasts and coupled to both target dynamics and
+  channel reliability.
+- Aggregate artifacts:
+  `reports/analysis/v387_storm_duration_screen_20260902/`.
+
+## 2026-09-02 - V388 continuous operating-state truth gate passed
+
+- Generated two new Stage-B truth-only scenes (seeds `6911`, `6912`) with the
+  original six-channel arbitrary feasible-subset geometry unchanged. Two
+  persistent operating factors are deterministic recurrences of noisy wind,
+  humidity, air-temperature, and solar nowcasts; they jointly affect target
+  dynamics and reportable channel reliability. No evaluator or policy was
+  fitted in this stage.
+- Both test partitions cover particle, flux, and thermal samples: seed6911 has
+  `261/177/366` subtype epochs and seed6912 has `555/474/267`; their event
+  fractions are `0.2978` and `0.4800`. Transport/thermal state standard
+  deviations are approximately `0.18/0.15`, so neither factor collapsed to a
+  constant sequence.
+- The launcher freezes the online information boundary for the follow-up
+  screen: only four noisy nowcast columns enter the context encoder; subtype
+  alert columns and the event-aware critic are disabled. V389 is now fitting
+  frozen evaluator/static assets before any geometry or policy decision.
+- Artifacts:
+  `reports/v388_continuous_operating_scene_seed6911_b1p75_20260822/` and
+  `reports/v388_continuous_operating_scene_seed6912_b1p75_20260822/`.
+
+## 2026-09-02 - V389--V390 continuous operating-state screen rejected
+
+- V389 froze TCN/static assets for both V388 scenes in asset-only mode. The
+  saved agent input contains only the four noisy nowcasts; alert features,
+  event flag input, and the event-aware critic are disabled. No PPO policy was
+  constructed.
+- V390 retained the required complete-subset geometry. Both scenes have 22
+  feasible masks, no epsilon-0.01 or epsilon-0.05 common near-optimal static
+  mask, and best-static-to-conditionwise opportunity gaps of `0.03958`
+  (seed6911) and `0.03247` (seed6912).
+- The deployable online screen nevertheless failed: held-out top-1 subset
+  ranking was `0.06593` and `0.10000`, below the preregistered `0.15` gate,
+  with mean predicted-action regret `0.05596` and `0.09335`. Frozen labels
+  still switch on `67/89` and `65/88` decision transitions; median label runs
+  are one decision and only `15.94%` and `25.37%` reach the six-step dwell
+  horizon.
+- **Status:** rejected before PPO. Continuous nowcast-driven factors preserve
+  task-level opportunity but remain too weak relative to fast event/quality
+  variation to create a persistent, online-identifiable subset-value mapping.
+  The next action is a read-only attribution audit of label switches against
+  operating-state, event-subtype, and reliability changes before any generator
+  parameter is changed.
+- Aggregate artifacts:
+  `reports/analysis/v390_continuous_operating_screen_20260902/`.
+
+## 2026-09-02 - V391 switch attribution and V394 operating-dominant screen rejected
+
+- V391 attributed the Stage-B V390 label switches to event/subtype boundaries,
+  continuous operating-state movement, report-quality movement, and target
+  movement. The result did not identify a single removable fast driver: the
+  event/subtype-change fraction was low at label switches (`0.1343/0.1846`),
+  and transport/thermal changes at switches were comparable to or smaller than
+  those at non-switch transitions. The Stage-B label instability is therefore
+  a forecast-value-ranking issue, not simply an unattenuated subtype boundary.
+- V392--V394 then tested a predeclared operating-dominant generator on fresh
+  scene seeds `6921` and `6922`. It retained the six-channel physical costs,
+  22 feasible arbitrary subsets, budget `B=1.75`, startup/dwell rules,
+  forecast objective, and nowcast-only execution boundary. Random subtype
+  pulses were attenuated while the persistent nowcast-driven target state was
+  strengthened; no PPO policy was created.
+- V394 retained different condition-optimal subsets and empty epsilon-0.01
+  common near-optimal intersections, but the best-static-to-conditionwise
+  opportunity gap fell to `0.014849` and `0.014835`. At epsilon `0.05`, five
+  near-optimal static candidates intersect for seed6921 and one for seed6922,
+  so the scene has weaker usable dynamic headroom than V390.
+- The required online observability and persistence gates both failed. Held-out
+  top-1 candidate-ranking accuracy was `0.05618/0.03333`, mean predicted
+  action regret was `0.04496/0.05191`, and label switches occurred on
+  `75/87` and `69/88` decision transitions. Both median label runs remained
+  one decision; only `12.99%/25.35%` reached the six-step dwell scale.
+- **Status:** reject Stage C before PPO. Amplifying the continuous operating
+  state did not make the frozen forecast-value ranking online-identifiable and
+  also weakened the static-regret geometry. Do not tune its scale further. The
+  next design must first establish a causal, dwell-consistent observable-to-
+  forecast-value mechanism before any new truth or policy wave.
+- Aggregate artifacts:
+  `reports/analysis/v391_continuous_operating_switch_attribution_20260902/`
+  and `reports/analysis/v394_operating_dominant_screen_20260902/`.
+
+## 2026-09-02 - V395 horizon-alignment sweep closes the V392/V393 scene family
+
+- V395 reused the frozen V393 truth/evaluator/static assets and ran no policy.
+  It evaluated chronological online subset-ranking probes at `6`, `12`, `24`,
+  and `48` future steps for the same two development scenes.
+- Held-out top-1 accuracy remained far below the predeclared `0.15` gate at
+  every horizon: `0.08989/0.05556` (6), `0.05618/0.03333` (12),
+  `0.08989/0.04444` (24), and `0.07865/0.01111` (48) for seeds 6921/6922.
+  Thus no dwell-consistent long-horizon candidate ranking transfers from the
+  deployed 517-dimensional online state.
+- Longer horizons reduce label switching but do not create an identifiable
+  value map. At 48 steps, `36.54%/41.30%` of label runs reach the six-step
+  dwell scale, while their median run remains one decision and top-1 remains
+  near chance. Label persistence alone is therefore not a sufficient scene
+  criterion.
+- **Status:** close the V392/V393 operating-dominant scene family. Do not run
+  PPO, retune its operating-state scale, or select a reward horizon from this
+  sweep. The next generator must be redesigned around a causal physical
+  exposure/recovery process whose observable state produces a stable complete-
+  subset forecast-value ordering before assets or policy training are created.
+- Aggregate artifacts:
+  `reports/analysis/v395_operating_horizon_alignment_20260902/`.
+
+## 2026-09-03 - V398 invalidated; corrected V399/V400 reject Stage D before PPO
+
+- V398 is invalid because its diagnostic environment omitted the frozen
+  metadata-defined channel-quality model, its online probe used the wrong
+  normalization interval, and its switch-attribution path did not support the
+  Stage-D exposure/recovery state columns. None of its partial metrics are used
+  as evidence, and no policy was trained from this screen.
+- V399 reconstructs the complete frozen environment consistently across the
+  geometry, online-observability, switch-attribution, and dwell-hindsight
+  diagnostics. The actual geometry contains 22 feasible masks under the
+  `1.75` steady and `2.15` startup budgets; the three-specialist union remains
+  infeasible.
+- Event-conditioned complete-subset geometry retains some opportunity. The
+  best-static-minus-conditionwise loss gaps are `0.014798` and `0.008923` for
+  seeds 6931/6932, with empty epsilon-`0.01` common near-optimal intersections.
+- The deployable online and persistence gates fail. Held-out top-1 accuracies
+  are `0.05618/0.11957`; median label runs are one decision, and only
+  `10.26%/14.29%` of runs reach the six-step dwell horizon. Labels switch on
+  `76/87` and `75/90` decision transitions.
+- A privileged six-step dwell-consistent hindsight controller confirms that
+  dynamic headroom survives execution costs: static-minus-hindsight loss is
+  `+0.037630/+0.040473`, switching is about `0.0506/0.0502` per step, and both
+  runs have zero warm-up aborts. This is a diagnostic ceiling, not a deployable
+  baseline or policy-training signal.
+- V400 adds the causal operating-state geometry omitted from the earlier
+  event-subtype audit. The final windows are dominated by the
+  `combined_exposure` state (`10142/11264` and `10208/11264` samples), and the
+  best-static-minus-operating-conditionwise gaps are only
+  `0.000999/0.006431`. The current recurrence therefore creates a persistent
+  but poorly recovering state, not repeated dwell-scale operating transitions.
+- **Status:** reject Stage D before PPO. The next development-only change must
+  rebalance physical loading and recovery and verify repeated operating-state
+  coverage, complete-subset geometry, chronological online observability,
+  label persistence, and transition-surviving hindsight opportunity in that
+  order. Learner or PPO tuning remains prohibited until all gates pass.
+- Aggregate artifacts:
+  `reports/analysis/v399_exposure_recovery_screen_corrected_20260903/` and
+  `reports/analysis/v400_exposure_operating_geometry_20260903/`.
+
+## 2026-09-03 - V401/V404 pass the Stage-E truth-only state gate
+
+- Added a separate balanced exposure/recovery mode so the frozen V396 legacy
+  recurrence remains reproducible. Loading decays near saturation and recovery
+  is proportional to the accumulated physical state; policy, reward, cost,
+  action geometry, channel response curves, and target coupling are unchanged.
+- V401 showed substantially longer recovered and exposed runs, but transport
+  and frost states remained highly correlated (`0.935--0.953`) and the
+  transport-only evaluation quadrant had only `0.74%/1.11%` support. It was
+  rejected before asset fitting under the predeclared four-quadrant coverage
+  gate.
+- The bounded Stage-E2 correction separates the physical drivers: transport
+  exposure is wind-dominant, while frost exposure remains driven by humidity,
+  low temperature, and low solar radiation. The same balanced recurrence and
+  downstream response curves are retained.
+- V403/V404 pass the truth-only gate on fresh seeds 6951/6952. Every evaluation
+  quadrant has at least `6.13%/6.24%` support, median runs are `10--42` steps,
+  and transport/frost evaluation correlations fall to `0.2571/0.2551`.
+- **Status:** authorize asset-only fitting for V405; PPO remains prohibited
+  until complete-subset geometry, chronological online observability, optimal-
+  label persistence, and dwell-consistent hindsight opportunity all pass.
+- Truth-screen artifact:
+  `reports/analysis/v404_decoupled_exposure_truth_screen_20260903/`.
+
+## 2026-09-03 - V405/V406 retain headroom but fail the small-sample online gate
+
+- V405 froze TCN and validation-static assets for Stage-E2 seeds 6951/6952.
+  Both manifests report asset-only execution, 22 feasible masks, and no policy
+  artifact.
+- Corrected V406 complete-subset geometry has empty epsilon-`0.01` common
+  near-optimal intersections. Event-conditionwise static-regret gaps are
+  `0.009243/0.022218`; operating-conditionwise gaps are
+  `0.002027/0.004564`.
+- The six-step dwell-consistent hindsight controller retains positive
+  static-minus-dynamic loss (`+0.016901/+0.025373`) with zero warm-up aborts,
+  so execution costs do not eliminate all adaptive headroom.
+- The initial chronological probe fails: held-out top-1 is
+  `0.05435/0.04545`, labels switch on about 85% of decision transitions, and
+  their median run is one decision. However, this probe was trained on only
+  `183/182` decisions for 22 candidate classes and memorized its training set.
+- **Status:** no PPO. V407 reruns the same locked test with 16 deterministic
+  policy-training starts per scene to distinguish structural non-observability
+  from an underpowered diagnostic. No scene or asset parameter changes are
+  permitted during this check.
+- Aggregate artifact:
+  `reports/analysis/v406_decoupled_exposure_screen_20260903/`.
+
+## 2026-09-03 - V407 rejects diagnostic underpower; V409 rejects scalar target gain
+
+- V407 increased chronological probe training coverage from four to sixteen
+  deterministic policy-partition starts per scene while keeping V405 assets and
+  test windows unchanged. Training decisions rose to `711/714`, yet held-out
+  top-1 fell to `0.03261/0.10227`; training top-1 remained approximately one.
+  The V406 failure is therefore not explained by the original small probe set.
+- A direct target audit found that exposure states explain temperature targets
+  well but only `0.08--0.21` of held-out snow mass-flux, particle-diameter, and
+  particle-velocity variance. This supports a target-generation bottleneck.
+- V408/V409 tested one bounded truth-only intervention: a `2.2` multiplier on
+  the existing exposure-to-snow-target offsets, with all quality, event, cost,
+  constraint, and policy settings unchanged. The intervention did not produce
+  stable target-state alignment and one seed failed the predeclared four-state
+  coverage gate (`1.52%` transport-only support).
+- **Status:** reject V405 and the scalar-gain Stage-E3 branch before PPO. Do not
+  fit assets for V408 or tune the gain. The next generator revision must change
+  the causal snow-target hierarchy so persistent exposure sets a bounded
+  low-frequency target component; it must not be another additive-scale sweep.
+- Artifacts:
+  `reports/analysis/v407_decoupled_exposure_observability_power_20260903/` and
+  `reports/analysis/v409_decoupled_target_gain_truth_screen_20260903/`.
+# 2026-09-03: V427 three-factor frozen structural screen
+
+- Added three-state support to the complete-subset geometry and switch-
+  attribution audits and screened frozen V426 assets for seeds 7021/7022.
+- Confirmed state-dependent complete-subset value: the 1% near-optimal
+  intersection is empty in both seeds and the three-specialist union is not
+  feasible.
+- Confirmed executable adaptive opportunity: common-dwell hindsight improves
+  frozen forecast loss over the best static subset by `+0.059657/+0.056911`,
+  with `0` warm-up aborts.
+- Rejected PPO launch because held-out online top-1 is only
+  `0.0889/0.0455`; exact best-subset labels switch on `83--86%` of decisions
+  and have median runs of one decision.
+- Next step is a bounded regret-tolerant and compact-feature observability
+  audit on the unchanged frozen scene, not additional policy or scene tuning.
+
+# 2026-09-03: V428 regret-tolerant observability audit
+
+- Replaced exact 22-class argmin prediction with masked candidate-cost
+  regression and reported low-regret action rates on chronological holdout.
+- Compared the full 517-dimensional state, a 61-dimensional compact runtime
+  view, and a 13-dimensional context/quality tail without changing frozen data.
+- Held-out mean regret remains `0.042--0.069`; only `20--34%` of decisions are
+  within `0.02` of the best candidate. Compact features reduce overfitting but
+  do not pass the online learnability gate.
+- PPO remains blocked. A pooled-scene, lower-capacity diagnostic is the final
+  bounded representation test before revisiting the observation design.
+
+# 2026-09-03: V429 pooled-scene regret observability
+
+- Pooled 1,429 training decisions from both three-factor development scenes and
+  compared regularized linear and shallow cost models.
+- The best pooled compact model still has held-out mean regret
+  `0.04695/0.05427` and only `29.7%/26.7%` of actions within 0.02 of optimum.
+- Cross-scene pooling at this sample size does not pass the learnability gate.
+  PPO remains blocked; one final larger-sample full-history audit is authorized.
+
+# 2026-09-03: V430 large-sample pooled regret observability
+
+- Increased pooled chronological training data to 5,737 decisions and restored
+  the complete 517-dimensional history as an explicit comparator.
+- The best shallow compact model still has mean regret `0.04492/0.04257`; the
+  full-history model has `0.04913/0.05362`. Neither materially beats the fixed
+  subset reference.
+- Closed the sample-count and ordinary representation-capacity hypotheses.
+  PPO remains blocked. The next diagnostic averages candidate costs across
+  future observation-noise replicas to estimate expected, learnable value.
+
+# 2026-09-03: V431 expected future-noise value audit
+
+- Averaged every candidate over eight independent future observation-noise
+  replicas with common random numbers inside each replica.
+- Single-realization and expected argmins match only `54.5%/31.8%`, but the
+  single argmin's expected regret is only `0.00394/0.00938`; noise changes exact
+  rank more than practical value.
+- Expected static regret remains material at `0.05180/0.04607`, so adaptive
+  opportunity survives noise averaging.
+- Corrected the persistence gate: dwell constrains epochs after switches, not
+  the number of consecutive decision labels. Next audit predicts expected cost
+  and checks execution-time switch spacing.
+
+# 2026-09-03: V432 expected-cost observability
+
+- Trained pooled compact probes against four-replica expected candidate costs.
+- The best probe improves mean regret over fixed candidate 003 by only
+  `0.00138` on seed 7021 and is worse by `0.00815` on seed 7022; context/quality
+  features are effectively tied with the fixed reference.
+- Closed the current observability-probe line. The next correction audits fixed
+  semantic-group target weights because candidate 003 covers six of nine target
+  dimensions and the current objective structurally favors that coverage.
+
+# 2026-09-03: V438 candidate-conditioned expected-cost probe
+
+- Tested a shared cost model conditioned on the online state and each six-bit
+  candidate subset, while retaining V437's frozen truth, objective, resource
+  budgets, partitions, expected-cost labels, and training-selected static
+  comparator.
+- The candidate-conditioned model was worse than static in both seeds. For the
+  compact runtime view, probe-minus-static mean regret was
+  `+0.011680/+0.011921`; for the context/quality view it was
+  `+0.018315/+0.021279` on seeds 7021/7022.
+- Candidate-mask representation is therefore not the missing cause of the
+  observability failure. PPO remains blocked. V439 tests the final clean
+  information-boundary hypothesis by adding six online forecast-quality state
+  summaries already present in the frozen truth.
+
+# 2026-09-03: V439 forecast-state observability probe
+
+- Added the six frozen `agent_context_quality_forecast_*` summaries to the
+  deployed online state used by the expected-cost probe. These summaries are
+  forward recurrences over noisy synthetic meteorological forecasts; no event
+  label, test outcome, policy result, target weight, or resource rule changed.
+- Every tested model/view remains worse than the training-selected static
+  action on both chronological test seeds. The closest configuration,
+  candidate-conditioned compact runtime context, has probe-minus-static mean
+  regret `+0.004744/+0.021599`; the multi-output compact model has
+  `+0.013046/+0.012577`.
+- **Decision:** close feature and probe-representation repair for the V426
+  scene. Its frozen objective and medium-resource geometry contain executable
+  adaptive opportunity, but that value is not stably recoverable from the
+  deployable online information. No PPO is authorized. The next development
+  stage must redesign and predeclare the generator's observable
+  state-to-future-target and state-to-reliability mapping, then repeat the
+  complete gate sequence on fresh truth seeds.
+
+# 2026-09-03: V440/V441 forecast-value truth gate
+
+- Added a default-off Stage-P generator in which three persistent physical
+  demand states modulate unresolved AR(1) components of flux, particle, and
+  thermal targets. The online state receives noisy meteorological forecast
+  recurrences, not the unresolved realization or an action label.
+- Fresh truth seeds 7041/7042 pass forecast alignment (all factor correlations
+  `0.967--0.997`) and six-step persistence. Flux residual scale ratios are
+  `2.229/1.720`; thermal ratios are `1.625/1.632`.
+- Both seeds fail the predeclared truth gate. Several joint three-factor states
+  have less than 5% final-partition support, and particle velocity/diameter
+  residual scale ratios are only `1.192/1.201`, below the frozen 1.5 threshold.
+- Corrected one audit boundary after termination: calm rows may legitimately
+  contain zero particle diameter, so particle physical bounds apply only while
+  blowing snow is active. This correction does not affect the two scientific
+  failures or authorize asset fitting.
+- **Decision:** reject V440 before frozen-forecaster fitting and PPO. Do not tune
+  its coefficients on seeds 7041/7042.
+# 2026-09-03 - Stage-P5 budget-consistent asset freeze
+
+- Rebased the flexible-subset route on the complete-subset acceptance sequence
+  in `docs/09-02-01.md`; channel-quality crossover alone no longer authorizes a
+  learner run.
+- Completed V461r1 seed7081 frozen assets at `B=1.58`, `B_peak=2.15`: the run
+  produced the TCN evaluator and 19-row static-candidate ledger, with no policy
+  artifact.
+- Classified the earlier V459/V460 results as diagnostic because their source
+  assets were selected at `B=1.75`; V462/V463 will repeat the opportunity and
+  observability gates from the budget-consistent V461r1 bundle before PPO.
+- Completed V461r1 seed7082 and V462. Under the fully consistent `B=1.58`
+  freeze, the 24-step common-dwell diagnostic beats the selected static subset
+  by `+0.089511/+0.059933` in seeds 7081/7082, with zero warm-up aborts and
+  switching rates `0.03849/0.04697` per step.
+- Corrected the expected-cost observability audit to distinguish its historical
+  probe-training static selection from the frozen validation-selected static
+  comparator. V463r1 uses the latter and passes seed7081 but fails seed7082
+  (`-0.006940/+0.009338` probe-minus-static regret), so no PPO was launched.
+- Added a dataset-export option and V465 diagnostic launcher to localize whether
+  the remaining failure is caused by non-transferable state-conditioned action
+  values or by the bounded neural probe.
+
+# 2026-09-03 - Stage-P5 closeout and Stage-P6 truth gate
+
+- V468 increased chronological observability coverage to 12 training rollouts,
+  all six test rollouts, eight Monte Carlo replicas, and a 24-step lookahead.
+  The context/quality candidate-conditioned neural probe beat validation static
+  in both seeds (`-0.016472/-0.001523` probe-minus-static mean regret).
+- V469 showed that this mean improvement was not state-dependent scheduling:
+  all eight training demand bins selected action 003, which remained held-out
+  bin-optimal in only `2/8` and `0/8` bins. Stage P5 was closed without PPO.
+- Added a default-off Stage-P6 mode that aligns effective flux and particle
+  demand with transport activity before producing their noisy online forecasts.
+  Raw residence states remain available for diagnostics; exact activity labels
+  remain unavailable to the scheduler.
+- Corrected the Stage-P6 truth audit so transport thresholds are frozen from
+  active policy-training samples and joint-state support is measured within
+  active samples. This prevents inactive zero demand from being misclassified
+  as a high transport state.
+- Fresh truths 7091/7092 pass all predeclared V471 gates. Validation/test
+  activity support is `0.532--0.608`, every active joint-demand state exceeds
+  5% support, all median high/low runs exceed six steps, forecast correlations
+  are `0.961--0.977`, and physical/residual-scale checks pass.
+- **Decision:** authorize only the frozen `B=1.58`, 19-action asset build.
+  Complete-subset crossover, common-dwell opportunity, online transfer, and
+  transparent state dependence must still pass before PPO.
+- V472 completed the budget-consistent asset freeze for both seeds. Each bundle
+  contains a frozen TCN, a 19-row validation-static ledger, `max_active=null`,
+  and no policy checkpoint.
+- Corrected two activity-domain audit boundaries before accepting V473. Demand
+  thresholds are estimated from active calibration samples, and the best static
+  comparator is selected on the same active sample domain as the condition-wise
+  controller. V473/V473r1 are retained as superseded diagnostics; V473r2 is the
+  authoritative complete-subset result.
+- V473r2 has empty epsilon-0.01 intersections for event and eight-state demand
+  partitions in both seeds. Activity-domain static-minus-conditionwise gaps are
+  `+0.019983/+0.017846`, with four distinct condition-optimal actions per seed.
+- The independent 24-step common-dwell audit beats the validation static by
+  `+0.068194/+0.066315`, switches at `0.03196/0.04110` per step, and records no
+  warm-up aborts. **Decision:** authorize the high-precision online observability
+  and transparent state-transfer audits; PPO remains blocked.

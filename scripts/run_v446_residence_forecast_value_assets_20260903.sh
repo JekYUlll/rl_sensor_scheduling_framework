@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+RUN_PREFIX="${RUN_PREFIX_OVERRIDE:-v446_residence_forecast_value_assets}"
+SCENE_SEEDS="${SCENE_SEEDS_OVERRIDE:-7061 7062}"
+POLICY_SEEDS="${POLICY_SEEDS_OVERRIDE:-9081 9082}"
+SOURCE_TRUTH_PREFIX="${SOURCE_TRUTH_PREFIX_OVERRIDE:-v444_residence_forecast_value_truth}"
+BUDGET_LABEL="${BUDGET_LABEL_OVERRIDE:-b1p75}"
+TRUTH_ROOT="reports/analysis/${RUN_PREFIX}_20260903/truths"
+mkdir -p "$TRUTH_ROOT"
+for seed in $SCENE_SEEDS; do
+  source_truth="reports/${SOURCE_TRUTH_PREFIX}_seed${seed}_b1p75_20260822/truth_v31_split.csv"
+  test -s "$source_truth"
+  ln -sfn "$(realpath "$source_truth")" "$TRUTH_ROOT/truth_seed${seed}.csv"
+done
+export RUN_PREFIX_OVERRIDE="$RUN_PREFIX" LOG_PREFIX_OVERRIDE="$RUN_PREFIX"
+export GPU_OFFSET="${GPU_OFFSET:-1}" SCENE_SEEDS_OVERRIDE="$SCENE_SEEDS" POLICY_SEEDS_OVERRIDE="$POLICY_SEEDS"
+export TRUTH_CSV_ROOT="$TRUTH_ROOT" USE_CONTROL_SOURCE_OVERRIDE=0 PREPARE_ASSETS_ONLY=1
+export EVENT_COVERAGE_OVERRIDE=0.45 EVENT_SUBTYPE_ASSIGNMENT_OVERRIDE=random
+export CHANNEL_QUALITY_MODE_OVERRIDE=condition_dependent_crossover_robust
+export CONTINUOUS_OPERATING_STATE=0 EXPOSURE_RECOVERY_STATE=0 BALANCED_EXPOSURE_RECOVERY_STATE=0 DECOUPLED_EXPOSURE_RECOVERY_STATE=0
+export THREE_FACTOR_EXPOSURE_STATE=0 FORECAST_VALUE_STATE=1 FORECAST_VALUE_STATIONARY_LOCAL_STATE=0 FORECAST_VALUE_RESIDENCE_LOCAL_STATE=1
+export FORECAST_VALUE_HORIZON_PERSISTENT_LATENT="${FORECAST_VALUE_HORIZON_PERSISTENT_LATENT:-0}"
+export FORECAST_VALUE_SPECIALIST_RESILIENT_QUALITY="${FORECAST_VALUE_SPECIALIST_RESILIENT_QUALITY:-0}"
+export FORECAST_VALUE_ACTIVITY_ALIGNED_TRANSPORT_DEMAND="${FORECAST_VALUE_ACTIVITY_ALIGNED_TRANSPORT_DEMAND:-0}"
+export AGENT_CONTEXT_COLUMNS_OVERRIDE="agent_context_nowcast_wind_speed_ms agent_context_nowcast_relative_humidity agent_context_nowcast_air_temperature_c agent_context_nowcast_solar_radiation_wm2 agent_context_forecast_flux_demand agent_context_forecast_particle_demand agent_context_forecast_thermal_demand"
+export INCLUDE_ALERT_CONTEXT_FEATURES_OVERRIDE=0 EVENT_AWARE_CRITIC_OVERRIDE=0
+export SUBTYPE_LOSS_WEIGHTING_OVERRIDE=0 SUBTYPE_AUX_COEF_OVERRIDE=0 REWARD_LOSS_NORMALIZATION_OVERRIDE=none CHECKPOINT_SELECTION_SCORE_OVERRIDE=oracle_loss_mean
+bash scripts/run_v361_multiscene_cycling_pdppo_20260901.sh
+for seed in $SCENE_SEEDS; do
+  run_dir="reports/${RUN_PREFIX}_seed${seed}_${BUDGET_LABEL}_20260822"
+  ln -sfn "$(realpath "$TRUTH_ROOT/truth_seed${seed}.csv")" "${run_dir}/truth_v31_split.csv"
+done

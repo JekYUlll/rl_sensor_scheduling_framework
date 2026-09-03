@@ -188,6 +188,18 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         str(int(args.channel_quality_transition_steps)),
         "--channel-quality-report-noise-std",
         str(float(args.channel_quality_report_noise_std)),
+        "--operating-transport-rho",
+        str(float(args.operating_transport_rho)),
+        "--operating-thermal-rho",
+        str(float(args.operating_thermal_rho)),
+        "--operating-target-scale",
+        str(float(args.operating_target_scale)),
+        "--operating-quality-scale",
+        str(float(args.operating_quality_scale)),
+        "--exposure-target-gain",
+        str(float(args.exposure_target_gain)),
+        "--exposure-residual-fraction",
+        str(float(args.exposure_residual_fraction)),
         "--out",
         str(truth_path),
         "--report-dir",
@@ -199,6 +211,38 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         cmd.append("--channel-quality-enabled")
         if args.channel_quality_sensor_ids:
             cmd.extend(["--channel-quality-sensor-ids", *[str(x) for x in args.channel_quality_sensor_ids]])
+    if bool(args.continuous_operating_state):
+        cmd.append("--continuous-operating-state")
+    if bool(args.exposure_recovery_state):
+        cmd.append("--exposure-recovery-state")
+    if bool(args.balanced_exposure_recovery_state):
+        cmd.append("--balanced-exposure-recovery-state")
+    if bool(args.decoupled_exposure_recovery_state):
+        cmd.append("--decoupled-exposure-recovery-state")
+    if bool(args.exposure_low_frequency_targets):
+        cmd.append("--exposure-low-frequency-targets")
+    if bool(args.exposure_causal_anomaly_drivers):
+        cmd.append("--exposure-causal-anomaly-drivers")
+    if bool(args.exposure_absolute_state_targets):
+        cmd.append("--exposure-absolute-state-targets")
+    if bool(args.three_factor_exposure_state):
+        cmd.append("--three-factor-exposure-state")
+    if bool(args.three_factor_faster_thermal_response):
+        cmd.append("--three-factor-faster-thermal-response")
+    if bool(args.three_factor_dual_timescale_thermal_target):
+        cmd.append("--three-factor-dual-timescale-thermal-target")
+    if bool(args.forecast_value_state):
+        cmd.append("--forecast-value-state")
+    if bool(args.forecast_value_stationary_local_state):
+        cmd.append("--forecast-value-stationary-local-state")
+    if bool(args.forecast_value_residence_local_state):
+        cmd.append("--forecast-value-residence-local-state")
+    if bool(args.forecast_value_horizon_persistent_latent):
+        cmd.append("--forecast-value-horizon-persistent-latent")
+    if bool(args.forecast_value_specialist_resilient_quality):
+        cmd.append("--forecast-value-specialist-resilient-quality")
+    if bool(args.forecast_value_activity_aligned_transport_demand):
+        cmd.append("--forecast-value-activity-aligned-transport-demand")
     subprocess.run(cmd, check=True)
     return truth_path
 
@@ -680,6 +724,8 @@ def main() -> None:
             "independent", "condition_dependent", "condition_dependent_crossover",
             "condition_dependent_crossover_strong",
             "condition_dependent_crossover_balanced",
+            "condition_dependent_crossover_calibrated",
+            "condition_dependent_crossover_robust",
         ],
         default="independent",
     )
@@ -691,6 +737,28 @@ def main() -> None:
     parser.add_argument("--channel-quality-degraded-value", type=float, default=0.2)
     parser.add_argument("--channel-quality-transition-steps", type=int, default=0)
     parser.add_argument("--channel-quality-report-noise-std", type=float, default=0.02)
+    parser.add_argument("--continuous-operating-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--exposure-recovery-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--balanced-exposure-recovery-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--decoupled-exposure-recovery-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--operating-transport-rho", type=float, default=0.90)
+    parser.add_argument("--operating-thermal-rho", type=float, default=0.94)
+    parser.add_argument("--operating-target-scale", type=float, default=1.0)
+    parser.add_argument("--operating-quality-scale", type=float, default=1.0)
+    parser.add_argument("--exposure-target-gain", type=float, default=1.0)
+    parser.add_argument("--exposure-low-frequency-targets", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--exposure-residual-fraction", type=float, default=0.35)
+    parser.add_argument("--exposure-causal-anomaly-drivers", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--exposure-absolute-state-targets", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--three-factor-exposure-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--three-factor-faster-thermal-response", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--three-factor-dual-timescale-thermal-target", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-stationary-local-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-residence-local-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-horizon-persistent-latent", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-specialist-resilient-quality", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-activity-aligned-transport-demand", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--exclude-subtype-latents-from-state", action="store_true")
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
@@ -873,6 +941,13 @@ def main() -> None:
     parser.add_argument("--onpolicy-action-value-coef", type=float, default=0.0)
     parser.add_argument("--onpolicy-action-value-scale", type=float, default=1.0)
     parser.add_argument("--candidate-interaction-score", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--candidate-interaction-scale", type=float, default=1.0)
+    parser.add_argument(
+        "--candidate-interaction-primary",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use the state-conditioned candidate interaction score as the primary categorical logit.",
+    )
     parser.add_argument("--direct-mask-action-score", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument(
         "--direct-mask-action-primary",
@@ -1014,6 +1089,16 @@ def main() -> None:
     parser.add_argument("--max-active", type=int, default=None)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--skip-rollout-evaluation", action="store_true")
+    parser.add_argument(
+        "--prepare-truth-only",
+        action="store_true",
+        help="Generate or validate the split truth CSV, then exit before oracle or policy work.",
+    )
+    parser.add_argument(
+        "--prepare-assets-only",
+        action="store_true",
+        help="Generate frozen-evaluator and validation-static assets, then exit before PPO.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -1028,6 +1113,10 @@ def main() -> None:
     )
     ratios = tuple(float(value) for value in args.split_ratios)
     bounds = partition_bounds(int(args.truth_steps), ratios)
+    if bool(args.prepare_truth_only):
+        truth_path = ensure_truth(args, truth_path)
+        print(truth_path)
+        return
     horizon = int(args.forecast_horizon)
     if horizon < 1:
         raise ValueError("forecast horizon must be positive")
@@ -1350,7 +1439,9 @@ def main() -> None:
             "quality_context_pooling": str(args.quality_context_pooling),
             "onpolicy_action_value_coef": float(args.onpolicy_action_value_coef),
             "onpolicy_action_value_scale": float(args.onpolicy_action_value_scale),
+            "candidate_interaction_scale": float(args.candidate_interaction_scale),
             "candidate_interaction_score": bool(args.candidate_interaction_score),
+            "candidate_interaction_primary": bool(args.candidate_interaction_primary),
             "direct_mask_action_score": bool(args.direct_mask_action_score),
             "direct_mask_action_primary": bool(args.direct_mask_action_primary),
             "factorized_action_policy": bool(args.factorized_action_policy),
@@ -1753,6 +1844,8 @@ def main() -> None:
         cmd.extend(["--control-source-run-dir", str(control_source_dir)])
     if bool(args.validate_control_source_only):
         cmd.append("--validate-control-source-only")
+    if bool(args.prepare_assets_only):
+        cmd.append("--prepare-assets-only")
     if bool(args.event_subtypes_enabled):
         cmd.append("--event-subtypes-enabled")
     cmd.append("--event-aware-critic" if bool(args.event_aware_critic) else "--no-event-aware-critic")
@@ -1834,6 +1927,12 @@ def main() -> None:
         "--candidate-interaction-score"
         if bool(args.candidate_interaction_score)
         else "--no-candidate-interaction-score"
+    )
+    cmd.extend(["--candidate-interaction-scale", str(float(args.candidate_interaction_scale))])
+    cmd.append(
+        "--candidate-interaction-primary"
+        if bool(args.candidate_interaction_primary)
+        else "--no-candidate-interaction-primary"
     )
     cmd.append(
         "--direct-mask-action-score"

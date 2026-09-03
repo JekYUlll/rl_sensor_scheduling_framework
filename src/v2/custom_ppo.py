@@ -278,6 +278,8 @@ class CustomPPOConfig:
     onpolicy_action_value_coef: float = 0.0
     onpolicy_action_value_scale: float = 1.0
     candidate_interaction_score: bool = False
+    candidate_interaction_scale: float = 1.0
+    candidate_interaction_primary: bool = False
     direct_mask_action_score: bool = False
     direct_mask_action_primary: bool = False
     temporal_encoder_enabled: bool = False
@@ -368,6 +370,8 @@ class MaskedActor:
         onpolicy_action_value_enabled: bool = False,
         onpolicy_action_value_scale: float = 1.0,
         candidate_interaction_score: bool = False,
+        candidate_interaction_scale: float = 1.0,
+        candidate_interaction_primary: bool = False,
         direct_mask_action_score: bool = False,
         direct_mask_action_primary: bool = False,
         temporal_encoder_enabled: bool = False,
@@ -457,6 +461,14 @@ class MaskedActor:
                     if bool(candidate_interaction_score)
                     else None
                 )
+                self.candidate_interaction_primary = bool(candidate_interaction_primary)
+                self.candidate_interaction_scale = float(candidate_interaction_scale)
+                if self.candidate_interaction_scale < 0.0:
+                    raise ValueError("candidate_interaction_scale must be non-negative")
+                if self.candidate_interaction_primary and self.candidate_interaction_head is None:
+                    raise ValueError(
+                        "candidate_interaction_primary requires candidate_interaction_score"
+                    )
                 self.direct_mask_action_head = (
                     nn.Sequential(
                         nn.Linear(int(embed_dim) + int(n_sensors), int(hidden_dim)),
@@ -813,7 +825,11 @@ class MaskedActor:
                     interaction = self.candidate_interaction_head(
                         torch_concat([state_actions, candidate_actions], dim=2)
                     ).squeeze(-1)
-                    logits = logits + interaction
+                    logits = (
+                        self.candidate_interaction_scale * interaction
+                        if self.candidate_interaction_primary
+                        else logits + self.candidate_interaction_scale * interaction
+                    )
                 if self.factorized_action_head is None and self.direct_mask_action_head is not None:
                     state_actions = context.unsqueeze(1).expand(-1, candidate_masks.shape[0], -1)
                     raw_candidates = candidate_masks.float().unsqueeze(0).expand(context.shape[0], -1, -1)
@@ -994,6 +1010,8 @@ class ActorCritic:
         onpolicy_action_value_enabled: bool = False,
         onpolicy_action_value_scale: float = 1.0,
         candidate_interaction_score: bool = False,
+        candidate_interaction_scale: float = 1.0,
+        candidate_interaction_primary: bool = False,
         direct_mask_action_score: bool = False,
         direct_mask_action_primary: bool = False,
         temporal_encoder_enabled: bool = False,
@@ -1038,6 +1056,8 @@ class ActorCritic:
                     onpolicy_action_value_enabled=bool(onpolicy_action_value_enabled),
                     onpolicy_action_value_scale=float(onpolicy_action_value_scale),
                     candidate_interaction_score=bool(candidate_interaction_score),
+                    candidate_interaction_scale=float(candidate_interaction_scale),
+                    candidate_interaction_primary=bool(candidate_interaction_primary),
                     direct_mask_action_score=bool(direct_mask_action_score),
                     direct_mask_action_primary=bool(direct_mask_action_primary),
                     temporal_encoder_enabled=bool(temporal_encoder_enabled),
@@ -1187,6 +1207,8 @@ class CustomPPO:
             onpolicy_action_value_enabled=float(cfg.onpolicy_action_value_coef) > 0.0,
             onpolicy_action_value_scale=float(cfg.onpolicy_action_value_scale),
             candidate_interaction_score=bool(cfg.candidate_interaction_score),
+            candidate_interaction_scale=float(cfg.candidate_interaction_scale),
+            candidate_interaction_primary=bool(cfg.candidate_interaction_primary),
             direct_mask_action_score=bool(cfg.direct_mask_action_score),
             direct_mask_action_primary=bool(cfg.direct_mask_action_primary),
             temporal_encoder_enabled=bool(cfg.temporal_encoder_enabled),
