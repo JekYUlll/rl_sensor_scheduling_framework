@@ -8963,3 +8963,18 @@ Evidence is stored in
   all four seeds, with one epsilon-0.01 near-optimal subset per seed. Stage O
   is closed before transfer and PPO; the isolated target relation did not
   break the static shortcut.
+
+## 2026-09-09 - V607 constraint-audit correction
+
+- Added `scripts/138_audit_v607_dynamic_constraints.py` and the corresponding
+  `dynamic_constraint_audit.csv/.md` artifacts for the corrected four-seed
+  dynamic-resource probe.
+- The audit separates the mandatory `cr1000xe_backbone` from the five
+  selectable channels. All rollout selections were within the `2.15 W`
+  optional effective-resource budget, with zero dynamic-cost violations and
+  8--28 feasible optional masks across evaluated rows.
+- The earlier “one always-on sensor in every PD-PPO seed” statement was a
+  metric-labeling error: it counted the mandatory backbone. Optional
+  always-on count is `0/4`; optional always-off occurs in two seeds, and
+  optional mid-duty count is `3--4` per seed. The seed-7184 warm-up abort and
+  the weak PPO performance result remain unchanged.

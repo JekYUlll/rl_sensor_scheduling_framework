@@ -1,5 +1,5 @@
-seed,custom_macro,static_macro,best_dynamic_macro,custom_loss,static_loss,custom_abort,custom_always_on,custom_always_off,custom_mid_duty,custom_switch_rate
-7181,1.021492,1.010002,1.010064,0.826036,0.794887,0,1,1,4,0.008221
-7182,0.981067,0.878199,0.884994,0.792615,0.705135,0,1,1,3,0.018639
-7183,1.221515,1.282053,1.288550,0.897517,0.948511,0,1,0,4,0.009442
-7184,0.981435,0.967277,0.969294,0.664487,0.627293,1,1,0,3,0.025069
+seed,custom_macro,static_macro,best_dynamic_macro,custom_loss,static_loss,custom_abort,custom_mandatory_always_on,custom_optional_always_on,custom_optional_always_off,custom_optional_mid_duty,custom_switch_rate
+7181,1.021492,1.010002,1.010064,0.826036,0.794887,0,1,0,1,4,0.008221
+7182,0.981067,0.878199,0.884994,0.792615,0.705135,0,1,0,2,3,0.018639
+7183,1.221515,1.282053,1.288550,0.897517,0.948511,0,1,0,0,4,0.009442
+7184,0.981435,0.967277,0.969294,0.664487,0.627293,1,1,0,0,3,0.025069
