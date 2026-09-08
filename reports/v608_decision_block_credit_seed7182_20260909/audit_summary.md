@@ -24,7 +24,12 @@ The saved `v2_custom_ppo_metrics.csv` reports:
 Relative to the feasible static policy, PD-PPO has mean forecast-loss margin
 `-0.053768` and macro margin `-0.066219`; negative means that PD-PPO is worse.
 The full-open and feasible-static rows are identical in this rollout, so the
-full-open row is not an independent performance advantage here.
+full-open row is not an independent performance advantage here. The
+`full_open_unconstrained` policy bypasses the fixed-cost projector, but the
+environment-level dynamic-resource guard still projects every requested mask
+to a dynamically feasible action. It must therefore be described as a
+dynamic-resource-projected full-open request, not as a true unconstrained
+upper bound.
 
 ## Operational audit
 

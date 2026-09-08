@@ -9021,3 +9021,8 @@ Evidence is stored in
   action collapse.
 - Audit details are in
   `reports/v608_decision_block_credit_seed7182_20260909/audit_summary.md`.
+- Audit correction: in this dynamic-resource run, the saved
+  `full_open_unconstrained` rollout is exactly identical to the feasible-static
+  rollout because the environment-level dynamic-resource guard still projects
+  both requests. It is not an independent unconstrained upper bound and must
+  not be interpreted as one.
