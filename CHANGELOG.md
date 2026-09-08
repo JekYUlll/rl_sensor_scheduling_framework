@@ -9037,7 +9037,11 @@ Evidence is stored in
   `2.40--2.87` bits in populated groups. Resource state alone therefore does
   not identify the forecast-optimal subset.
 - This closes the case for adding more resource-state features or another
-  PPO-only credit patch. Any next intervention must establish a predeclared
+  PPO-only credit patch based on resource flags alone. A correction to the
+  evidence boundary is recorded: rollout `observations` are raw measurements,
+  whereas the PPO `_state()` appends dynamic-resource features when enabled.
+  V609 therefore does not establish that the complete online state is
+  uninformative. Any next intervention must establish a predeclared
   deployable relation between resource state and forecast-relevant value
   before training. Details are in
   `reports/analysis/v609_resource_state_value_transfer_20260909/README.md`.

@@ -30,12 +30,20 @@ observed resource state therefore does not determine the forecast-optimal
 subset. Conditioning additionally on the event subtype still leaves high
 best-action entropy, approximately `2.40--2.87` bits in the populated groups.
 
+The saved rollout `observations` array is the environment's raw measurement
+observation and is not the complete PPO input. The environment policy-state
+builder appends dynamic-resource features when `include_dynamic_resource_state`
+is enabled, and the V608 metadata records that option as enabled. Therefore
+this diagnostic does not establish that the complete V608 online observation
+was uninformative; it isolates the resource-state component itself.
+
 ## Decision
 
 The dynamic resource model changes feasibility, but the current resource
 observables do not provide a sufficient standalone predictor of downstream
-subset value. This explains why adding the same resource-state features to
-V607/V608 did not resolve the static shortcut. A further PPO-only intervention
-is not authorized. Any next scene intervention must create a predeclared,
-deployable relation between observed resource state and forecast-relevant
-measurement value, then pass the same no-RL transfer gate before training.
+subset value. This does not by itself diagnose the complete online state.
+Before any new PPO intervention, the policy-input path should be audited with
+an artifact that explicitly stores `_state()` and tests its chronological
+transfer. Any next scene intervention must create a predeclared, deployable
+relation between observed resource state and forecast-relevant measurement
+value, then pass the same no-RL transfer gate before training.
