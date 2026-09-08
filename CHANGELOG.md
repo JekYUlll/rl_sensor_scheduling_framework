@@ -9045,3 +9045,17 @@ Evidence is stored in
   deployable relation between resource state and forecast-relevant value
   before training. Details are in
   `reports/analysis/v609_resource_state_value_transfer_20260909/README.md`.
+
+## 2026-09-09 - V610 complete policy-state transfer audit
+
+- Extended rollout artifacts with `agent_observations`, the exact pre-action
+  `_state()` consumed by the policy. V610 confirms raw measurements are
+  `(6144, 12)` while the actual policy input is `(6144, 515)` and includes the
+  dynamic-resource tail.
+- A chronological ExtraTrees probe for forecast-optimal candidate actions
+  achieved only `7.62--11.08%` accuracy across block holdouts; a random row
+  split reached `41.03%` and is retained only as a capacity diagnostic.
+- The dynamic-resource features were therefore present, but their complete
+  online state has weak time-transfer to candidate value. No new PPO module or
+  confirmation wave is justified. Details are in
+  `reports/analysis/v610_policy_state_transfer_20260909/README.md`.
