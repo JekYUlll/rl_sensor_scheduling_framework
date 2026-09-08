@@ -18,6 +18,7 @@ ALWAYS_ON_DUTY = 0.99
 class RolloutResult:
     policy_name: str
     observations: np.ndarray
+    agent_observations: np.ndarray
     masks: np.ndarray
     truth: np.ndarray
     rewards: np.ndarray
@@ -47,6 +48,7 @@ def run_policy_rollout(
     policy.reset()
     env.reset(start_idx=int(start_idx))
     observations: list[np.ndarray] = []
+    agent_observations: list[np.ndarray] = []
     masks: list[np.ndarray] = []
     truth: list[np.ndarray] = []
     rewards: list[float] = []
@@ -71,6 +73,9 @@ def run_policy_rollout(
     for _ in range(int(steps)):
         step_idx = int(env.current_idx)
         truth_at_step = np.array(env.truth_values[env.current_idx], dtype=float, copy=True)
+        # Raw observations omit runtime policy features such as dynamic costs.
+        # Save the exact pre-action state presented to the policy separately.
+        agent_observations.append(np.array(env._state(), dtype=float, copy=True))
         act_mask = getattr(policy, "act_mask", None)
         desired = act_mask(env) if callable(act_mask) else None
         if desired is not None:
@@ -127,6 +132,7 @@ def run_policy_rollout(
     return RolloutResult(
         policy_name=policy.name,
         observations=np.asarray(observations, dtype=float),
+        agent_observations=np.asarray(agent_observations, dtype=float),
         masks=np.asarray(masks, dtype=float),
         truth=np.asarray(truth, dtype=float),
         rewards=np.asarray(rewards, dtype=float),
@@ -152,6 +158,7 @@ def concat_rollout_results(results: list[RolloutResult], *, policy_name: str | N
     return RolloutResult(
         policy_name=name,
         observations=np.concatenate([result.observations for result in results], axis=0),
+        agent_observations=np.concatenate([result.agent_observations for result in results], axis=0),
         masks=np.concatenate([result.masks for result in results], axis=0),
         truth=np.concatenate([result.truth for result in results], axis=0),
         rewards=np.concatenate([result.rewards for result in results], axis=0),
@@ -237,6 +244,7 @@ def save_rollout_npz(
     np.savez(
         path,
         observations=result.observations,
+        agent_observations=result.agent_observations,
         masks=result.masks,
         truth=result.truth,
         rewards=result.rewards,

@@ -98,6 +98,7 @@ def test_dynamic_resource_envelope_filters_candidate_masks() -> None:
     candidates = np.asarray([[True, True, False], [True, False, True]], dtype=bool)
     assert feasible_candidate_mask(env, candidates).tolist() == [False, True]
     assert env._dynamic_resource_features().shape == (4,)
+    assert env._state().shape[0] > len(STATE_COLUMNS) * 2
 
 
 def test_dynamic_resource_guard_can_break_dwell_when_locked_action_expires() -> None:
@@ -509,6 +510,8 @@ def test_rollout_truth_is_aligned_with_observation_step() -> None:
 
     assert np.allclose(result.truth[0], truth[list(STATE_COLUMNS)].iloc[0].to_numpy(dtype=float))
     assert np.allclose(result.truth[1], truth[list(STATE_COLUMNS)].iloc[1].to_numpy(dtype=float))
+    assert result.agent_observations.shape[0] == 3
+    assert result.agent_observations.shape[1] == env._state().shape[0]
 
 
 def test_oracle_greedy_bc_dataset_collects_valid_discrete_actions() -> None:
