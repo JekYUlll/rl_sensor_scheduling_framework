@@ -8978,3 +8978,16 @@ Evidence is stored in
   always-on count is `0/4`; optional always-off occurs in two seeds, and
   optional mid-duty count is `3--4` per seed. The seed-7184 warm-up abort and
   the weak PPO performance result remain unchanged.
+
+## 2026-09-09 - V607 action-occupancy diagnostic
+
+- Rechecked the corrected rollout NPZ files against the dynamic-resource audit.
+  PD-PPO selects fewer optional channels than the validation static policy:
+  mean optional selections are approximately `1.07--2.20` for PD-PPO versus
+  `3.13` for static across seeds 7181--7184.
+- The policy is not action-collapsed: it uses `14--16` unique masks and has
+  zero optional always-on channels. The current failure is therefore better
+  described as conservative subset selection or weak long-horizon value
+  estimation, not a static-output collapse.
+- This is a diagnostic result only. No new PPO claim or confirmation wave is
+  authorized; the remote candidate-alignment audit remains in progress.
