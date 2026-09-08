@@ -9005,3 +9005,19 @@ Evidence is stored in
 - This supports a clean value/credit-assignment diagnosis. The oracle ranking
   was not used for training or evaluation, and no confirmation wave is
   authorized yet.
+
+## 2026-09-09 - V608 decision-block-credit pilot closeout
+
+- Completed the seed-7182 pilot with `decision_only_policy_updates` and
+  `decision_block_credit`, while retaining the forecast-loss reward, masked
+  categorical PPO, dynamic effective-resource trace, and six-step dwell.
+- PD-PPO forecast loss was `0.797708` versus `0.743940` for the feasible
+  static policy; the mean margin was `-0.053768`. The corresponding macro
+  margin was `-0.066219`. This intervention did not overcome the static
+  shortcut and does not authorize a confirmation wave.
+- The operational gate passed: zero warm-up aborts, zero dynamic-budget
+  violations, optional duty counts `0` always-on, `1` always-off, and `4`
+  mid-duty. The failure is performance/value alignment, not executable
+  action collapse.
+- Audit details are in
+  `reports/v608_decision_block_credit_seed7182_20260909/audit_summary.md`.
