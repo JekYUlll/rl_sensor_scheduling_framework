@@ -9026,3 +9026,18 @@ Evidence is stored in
   rollout because the environment-level dynamic-resource guard still projects
   both requests. It is not an independent unconstrained upper bound and must
   not be interpreted as one.
+
+## 2026-09-09 - V609 resource-state value-transfer diagnostic
+
+- Joined the V607 candidate-alignment artifact with the heater-state trace to
+  test whether observed resource state predicts the downstream forecast-optimal
+  feasible subset. Only three resource-state combinations were observed.
+- Best-action entropy remained `2.790--3.549` bits across the three states;
+  conditioning additionally on event subtype still left approximately
+  `2.40--2.87` bits in populated groups. Resource state alone therefore does
+  not identify the forecast-optimal subset.
+- This closes the case for adding more resource-state features or another
+  PPO-only credit patch. Any next intervention must establish a predeclared
+  deployable relation between resource state and forecast-relevant value
+  before training. Details are in
+  `reports/analysis/v609_resource_state_value_transfer_20260909/README.md`.
