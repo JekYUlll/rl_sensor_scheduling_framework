@@ -1,0 +1,19 @@
+{
+  "seed_count": 4,
+  "seeds": [
+    7181,
+    7182,
+    7183,
+    7184
+  ],
+  "mean_dynamic_opportunity_gap": 0.1433376869372296,
+  "min_dynamic_opportunity_gap": 0.06487780783209018,
+  "positive_gap_count": 4,
+  "candidate_count": [
+    32
+  ],
+  "common_static_candidate_count": [
+    8
+  ],
+  "diagnostic_status": "fixed_mask_replay_filtered_by_dynamic_resource; not_executable_policy_evidence"
+}

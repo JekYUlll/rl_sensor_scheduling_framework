@@ -407,7 +407,8 @@ def audit_run(
         operating_condition = operating_labels[result.step_indices]
         sensor_ids = ";".join(spec.sensor_id for spec, selected in zip(sensors, mask, strict=True) if bool(selected))
         steady_cost = float(sum(spec.power_cost for spec, selected in zip(sensors, mask, strict=True) if bool(selected)))
-        for loss, subtype_id, operating_label in zip(
+        for time_idx, loss, subtype_id, operating_label in zip(
+            result.step_indices,
             result.oracle_losses,
             subtype,
             operating_condition,
@@ -415,6 +416,7 @@ def audit_run(
         ):
             records.append({
                 "seed": int(meta.get("seed", -1)),
+                "time_idx": int(time_idx),
                 "candidate": policy.name,
                 "selected_sensor_ids": sensor_ids,
                 "steady_cost": steady_cost,

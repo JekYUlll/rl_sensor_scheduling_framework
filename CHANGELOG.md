@@ -19,6 +19,22 @@
   development-only until installed current/duty data calibrate the scaling.
   Complete-subset forecast geometry, online transfer, and PPO remain closed.
 
+## 2026-09-09 - V603 dynamic resource/forecast geometry diagnostic
+
+- **Status:** completed frozen-forecaster replay diagnostic; no PPO trained.
+- **Protocol:** evaluated all 32 masks with the existing V527 frozen
+  forecaster, preserved `time_idx`, then filtered losses by the V602 effective
+  resource trace. Resource state was not supplied to the forecaster.
+- **Result:** dynamic replay opportunity gaps were positive for all four seeds:
+  `0.192819`, `0.064878`, `0.226531`, and `0.089142`; mean `0.143338`.
+  Each seed had 32 candidates and 8 masks feasible throughout the sampled
+  window.
+- **Interpretation:** the development effective-resource model is aligned with
+  forecast-loss variation at the replay level. This is not an executable
+  policy result and cannot be used as PPO supervision.
+- **Next gate:** deployable chronological transfer with observed resource
+  state, dwell/startup execution, and a validation-selected static comparator.
+
 ## 2026-09-04 - V505 forecast-quality observability diagnostic
 
 - **Status:** completed, diagnostic only; no PPO trained.

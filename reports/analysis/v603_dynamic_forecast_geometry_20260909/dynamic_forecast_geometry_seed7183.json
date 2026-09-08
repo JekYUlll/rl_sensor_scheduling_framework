@@ -1,0 +1,13 @@
+{
+  "seed": 7183,
+  "loss_rows": 32768,
+  "matched_rows": 32768,
+  "candidate_count": 32,
+  "dynamic_feasible_row_fraction": 0.2861328125,
+  "dynamic_feasible_candidate_count": 28,
+  "common_static_candidate_count": 8,
+  "best_common_static_loss": 0.9639501343772281,
+  "dynamic_rowwise_best_loss": 0.737439050222747,
+  "dynamic_opportunity_gap": 0.22651108415448107,
+  "diagnostic_status": "fixed_mask_replay_filtered_by_dynamic_resource; not_executable_policy_evidence"
+}
