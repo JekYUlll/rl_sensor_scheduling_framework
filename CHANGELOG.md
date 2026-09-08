@@ -22,6 +22,16 @@
   seed 7184 has one warm-up abort. The partial corrected probe is not positive
   claim evidence and remains incomplete until seed 7181 is rerun.
 
+## 2026-09-09 - Corrected V607 closeout
+
+- **Four-seed result:** PD-PPO wins validation static on the macro endpoint in
+  `1/4` seeds and the best original dynamic heuristic in `1/4` seeds.
+- **Aggregate:** mean macro loss is `1.051377` for PD-PPO versus `1.034383`
+  for validation static.
+- **Behavior:** seed 7184 has one warm-up abort; every PD-PPO seed has one
+  always-on sensor. The positive-PPO and deployment behavior gates fail, so no
+  confirmation wave was launched.
+
 ## 2026-09-09 - V606/V607 dynamic-resource PPO interface and probe launch
 
 - **V606 assets:** rebuilt four frozen bundles with the complete `32` subset
