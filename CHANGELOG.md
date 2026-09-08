@@ -8991,3 +8991,17 @@ Evidence is stored in
   estimation, not a static-output collapse.
 - This is a diagnostic result only. No new PPO claim or confirmation wave is
   authorized; the remote candidate-alignment audit remains in progress.
+
+## 2026-09-09 - V607 seed-7182 candidate alignment
+
+- The trained seed-7182 policy was replayed on 6,144 rows with the frozen
+  forecast-loss candidate ranking. It selected the lowest-loss candidate in
+  `39.8%` of rows; the mean selected-action rank was `4.197` and mean
+  candidate-loss regret was `0.07787`.
+- When eight feasible candidates were available, rank-1 selection fell to
+  `10.5%`; with 16 candidates it was `5.7%`. The policy is therefore not
+  action-collapsed, but its choices are poorly aligned with immediate
+  forecast value as the dynamic frontier expands.
+- This supports a clean value/credit-assignment diagnosis. The oracle ranking
+  was not used for training or evaluation, and no confirmation wave is
+  authorized yet.
