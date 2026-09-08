@@ -80,6 +80,15 @@ class WarmupEnvConfig:
     sensor_quality_columns: tuple[str, ...] = ()
     sensor_quality_max_noise_multiplier: float = 1.0
     sensor_quality_availability_floor: float = 1.0
+    # Optional runtime resource envelope.  Each configured sensor id maps to a
+    # truth column containing its current effective steady-state cost.  The
+    # mapping is deliberately opt-in so historical fixed-cost experiments are
+    # unchanged.
+    dynamic_resource_power_columns: tuple[tuple[str, str], ...] = ()
+    dynamic_resource_fixed_power_w: float = 0.0
+    dynamic_resource_unmapped_power_w: float | None = None
+    dynamic_resource_budget_w: float | None = None
+    include_dynamic_resource_state: bool = False
 
 
 class WarmupSchedulingEnv:
@@ -123,6 +132,17 @@ class WarmupSchedulingEnv:
             external_values = truth_df[cfg.fixed_external_power_column].to_numpy(dtype=float)
             if np.any(~np.isfinite(external_values)) or np.any(external_values < 0.0):
                 raise ValueError("fixed external power column must contain finite non-negative values")
+        if cfg.dynamic_resource_fixed_power_w < 0.0 or not np.isfinite(float(cfg.dynamic_resource_fixed_power_w)):
+            raise ValueError("dynamic_resource_fixed_power_w must be finite and non-negative")
+        if cfg.dynamic_resource_unmapped_power_w is not None and (
+            cfg.dynamic_resource_unmapped_power_w < 0.0
+            or not np.isfinite(float(cfg.dynamic_resource_unmapped_power_w))
+        ):
+            raise ValueError("dynamic_resource_unmapped_power_w must be finite and non-negative")
+        if cfg.dynamic_resource_budget_w is not None and (
+            cfg.dynamic_resource_budget_w < 0.0 or not np.isfinite(float(cfg.dynamic_resource_budget_w))
+        ):
+            raise ValueError("dynamic_resource_budget_w must be finite and non-negative")
         self.truth_df = truth_df.reset_index(drop=True)
         self.sensor_specs = list(sensor_specs)
         self.sensor_ids = tuple(spec.sensor_id for spec in self.sensor_specs)
@@ -192,6 +212,32 @@ class WarmupSchedulingEnv:
             if cfg.fixed_external_power_column is not None
             else np.zeros(len(self.truth_df), dtype=float)
         )
+        dynamic_columns = {str(sensor_id): str(column) for sensor_id, column in cfg.dynamic_resource_power_columns}
+        unknown_dynamic = sorted(set(dynamic_columns) - set(self.sensor_ids))
+        if unknown_dynamic:
+            raise ValueError(f"dynamic resource mapping contains unknown sensors: {unknown_dynamic}")
+        missing_dynamic_columns = sorted(set(dynamic_columns.values()) - set(self.truth_df.columns))
+        if missing_dynamic_columns:
+            raise ValueError(f"truth_df is missing dynamic resource columns: {missing_dynamic_columns}")
+        if len(dynamic_columns) != len(cfg.dynamic_resource_power_columns):
+            raise ValueError("dynamic_resource_power_columns must contain at most one column per sensor")
+        self.dynamic_resource_power_columns = dynamic_columns
+        self.dynamic_resource_budget_w = (
+            None if cfg.dynamic_resource_budget_w is None else float(cfg.dynamic_resource_budget_w)
+        )
+        self.dynamic_resource_fixed_power_w = float(cfg.dynamic_resource_fixed_power_w)
+        self.dynamic_resource_unmapped_power_w = (
+            None
+            if cfg.dynamic_resource_unmapped_power_w is None
+            else float(cfg.dynamic_resource_unmapped_power_w)
+        )
+        self.dynamic_resource_values = {
+            sensor_id: self.truth_df[column].to_numpy(dtype=float)
+            for sensor_id, column in dynamic_columns.items()
+        }
+        for sensor_id, values in self.dynamic_resource_values.items():
+            if np.any(~np.isfinite(values)) or np.any(values < 0.0):
+                raise ValueError(f"dynamic resource column for {sensor_id!r} must be finite and non-negative")
         # scores, binary flags, calm/particle/flux/thermal one-hot, max confidence,
         # elapsed alert age, rolling trends, previous specialist one-hot, dwell remainder.
         self.alert_context_feature_dim = 20 if bool(cfg.include_alert_context_features) else 0
@@ -294,8 +340,28 @@ class WarmupSchedulingEnv:
         return self._state(), dict(self.last_info)
 
     def step_scores(self, scores: np.ndarray) -> tuple[np.ndarray, float, bool, dict[str, object]]:
-        projection = self.projector.project_scores(self._duty_adjusted_scores(scores), self.runtimes)
-        return self._step_projection(projection.selected_mask)
+        adjusted_scores = self._duty_adjusted_scores(scores)
+        if self.dynamic_resource_budget_w is None:
+            projection = self.projector.project_scores(adjusted_scores, self.runtimes)
+            return self._step_projection(projection.selected_mask)
+
+        # In the dynamic-resource mode, fixed-cost projection followed by a
+        # post-hoc resource fallback can erase the policy's score ordering.
+        # Enumerate the already-frozen candidate family and select the
+        # highest-scoring executable subset directly.
+        candidates: list[tuple[float, float, tuple[int, ...], np.ndarray]] = []
+        for candidate in self.action_to_sensor_mask.values():
+            mask = np.asarray(candidate, dtype=bool).reshape(-1)
+            if not self.is_mask_executable(mask):
+                continue
+            selected = tuple(int(idx) for idx in np.flatnonzero(mask))
+            score = float(np.sum(np.asarray(adjusted_scores, dtype=float)[mask]))
+            cost = float(self.dynamic_resource_cost(mask))
+            candidates.append((score, -cost, selected, mask))
+        if not candidates:
+            raise ValueError("no dynamically resource-feasible candidate subset exists")
+        _, _, _, selected_mask = max(candidates, key=lambda item: (item[0], item[1], item[2]))
+        return self._step_projection(selected_mask)
 
     def step_mask(self, desired_mask: np.ndarray) -> tuple[np.ndarray, float, bool, dict[str, object]]:
         mask = np.asarray(desired_mask, dtype=bool).reshape(-1)
@@ -325,14 +391,23 @@ class WarmupSchedulingEnv:
         mask = np.asarray(desired_mask, dtype=bool).reshape(-1)
         if mask.shape != (len(self.sensor_specs),):
             raise ValueError("desired_mask must contain one entry per sensor")
-        if (
+        dwell_locked = (
             int(self.dwell_hold_remaining) > 0
             and int(self.elapsed_steps) > 0
-            and not np.array_equal(mask, np.asarray(self.previous_action_mask, dtype=bool))
-        ):
-            return False
+        )
+        previous = np.asarray(self.previous_action_mask, dtype=bool)
+        if dwell_locked and not np.array_equal(mask, previous):
+            # A hard resource transition may invalidate the locked subset. In
+            # that case the action mask exposes feasible escape actions; the
+            # execution path records the resulting resource guard override.
+            if self.is_dynamic_resource_feasible(previous):
+                return False
         result = self.projector.project_mask(mask, self.runtimes)
-        return bool(result.feasible and np.array_equal(result.selected_mask.astype(bool), mask))
+        return bool(
+            result.feasible
+            and np.array_equal(result.selected_mask.astype(bool), mask)
+            and self.is_dynamic_resource_feasible(mask)
+        )
 
     def _step_projection(self, selected_mask: np.ndarray) -> tuple[np.ndarray, float, bool, dict[str, object]]:
         history_before_step = np.asarray(self.history, dtype=float).copy()
@@ -343,6 +418,10 @@ class WarmupSchedulingEnv:
         )
         selected_mask = np.asarray(selected_mask, dtype=bool).reshape(-1)
         selected_mask, dwell_hold_applied = self._apply_min_dwell_guard(selected_mask)
+        resource_guard_forced = 0
+        if not self.is_dynamic_resource_feasible(selected_mask):
+            selected_mask = self._project_dynamic_resource_mask(selected_mask)
+            resource_guard_forced = 1
         selected_mask, energy_guard_dropped = self._apply_energy_guard(selected_mask)
         previous_action_mask = np.asarray(self.previous_action_mask, dtype=float).reshape(-1)
         self._update_min_dwell_state(selected_mask, previous_action_mask)
@@ -571,6 +650,13 @@ class WarmupSchedulingEnv:
             "energy_deficit_total": float(self.energy_deficit_total),
             "soc_soft_penalty": float(soc_soft_penalty),
             "energy_guard_dropped": int(energy_guard_dropped),
+            "dynamic_resource_cost": float(self.dynamic_resource_cost(selected_mask)),
+            "dynamic_resource_budget": (
+                float(self.dynamic_resource_budget_w)
+                if self.dynamic_resource_budget_w is not None
+                else float("inf")
+            ),
+            "dynamic_resource_guard_forced": int(resource_guard_forced),
             "event": is_event,
             "event_subtype_id": int(event_subtype_id),
             "event_loss_multiplier": float(event_multiplier),
@@ -600,6 +686,59 @@ class WarmupSchedulingEnv:
         if not done:
             self.current_idx += 1
         return self._state(), reward, done, info
+
+    def dynamic_resource_cost(self, mask: np.ndarray, *, idx: int | None = None) -> float:
+        """Return the configured effective resource cost for a sensor subset."""
+        if self.dynamic_resource_budget_w is None:
+            return 0.0
+        row_idx = int(self.current_idx if idx is None else idx)
+        row_idx = int(np.clip(row_idx, 0, len(self.truth_df) - 1))
+        selected = np.asarray(mask, dtype=bool).reshape(-1)
+        if selected.shape != (len(self.sensor_specs),):
+            raise ValueError("mask must contain one entry per sensor")
+        cost = float(self.dynamic_resource_fixed_power_w)
+        for sensor_idx in np.flatnonzero(selected):
+            sensor_id = self.sensor_ids[int(sensor_idx)]
+            if sensor_id in self.dynamic_resource_values:
+                cost += float(self.dynamic_resource_values[sensor_id][row_idx])
+            elif self.dynamic_resource_unmapped_power_w is not None:
+                cost += float(self.dynamic_resource_unmapped_power_w)
+            else:
+                cost += float(self.sensor_specs[int(sensor_idx)].power_cost)
+        return cost
+
+    def is_dynamic_resource_feasible(self, mask: np.ndarray, *, idx: int | None = None) -> bool:
+        if self.dynamic_resource_budget_w is None:
+            return True
+        return self.dynamic_resource_cost(mask, idx=idx) <= float(self.dynamic_resource_budget_w) + 1.0e-12
+
+    def _project_dynamic_resource_mask(self, desired_mask: np.ndarray) -> np.ndarray:
+        """Choose the highest-overlap dynamically feasible subset.
+
+        This is an execution guard for an externally changing hard resource
+        envelope. Normal PPO actions are filtered by ``is_mask_executable``;
+        this fallback is only used when a previously executable action becomes
+        infeasible between decision epochs.
+        """
+        desired = np.asarray(desired_mask, dtype=bool).reshape(-1)
+        required = np.asarray([idx in self.projector.required_indices for idx in range(len(self.sensor_specs))])
+        best: tuple[float, float, np.ndarray] | None = None
+        for candidate in self.action_to_sensor_mask.values():
+            if np.any(required & ~candidate):
+                continue
+            if not self.is_dynamic_resource_feasible(candidate):
+                continue
+            projected = self.projector.project_mask(candidate, self.runtimes)
+            if not projected.feasible or not np.array_equal(projected.selected_mask, candidate):
+                continue
+            overlap = float(np.sum(candidate & desired))
+            cost = float(self.dynamic_resource_cost(candidate))
+            score = (overlap, -cost, candidate.copy())
+            if best is None or score[:2] > best[:2]:
+                best = score
+        if best is None:
+            raise ValueError("no dynamically resource-feasible executable subset exists")
+        return np.asarray(best[2], dtype=bool)
 
     def _training_reward_loss(
         self,
@@ -1121,6 +1260,11 @@ class WarmupSchedulingEnv:
             if bool(self.cfg.include_alert_context_features)
             else []
         )
+        dynamic_resource_tail = (
+            self._dynamic_resource_features().tolist()
+            if bool(self.cfg.include_dynamic_resource_state)
+            else []
+        )
         tail = np.asarray(
             [
                 power_ratio,
@@ -1133,6 +1277,7 @@ class WarmupSchedulingEnv:
                 *event_tail,
                 *([self._soc_ratio()] if self._energy_enabled() else []),
                 *alert_context_tail,
+                *dynamic_resource_tail,
             ],
             dtype=float,
         )
@@ -1148,6 +1293,26 @@ class WarmupSchedulingEnv:
                 tail,
             ]
         ).astype(float)
+
+    def _dynamic_resource_features(self) -> np.ndarray:
+        """Expose only the configured runtime resource state to the policy."""
+        if self.dynamic_resource_budget_w is None:
+            return np.zeros(len(self.sensor_specs) + 1, dtype=float)
+        denom = max(float(self.dynamic_resource_budget_w), 1.0e-6)
+        idx = int(np.clip(self.current_idx, 0, len(self.truth_df) - 1))
+        per_sensor = []
+        for sensor_id, spec in zip(self.sensor_ids, self.sensor_specs, strict=True):
+            if sensor_id in self.dynamic_resource_values:
+                value = float(self.dynamic_resource_values[sensor_id][idx])
+            elif self.dynamic_resource_unmapped_power_w is not None:
+                value = float(self.dynamic_resource_unmapped_power_w)
+            else:
+                value = float(spec.power_cost)
+            per_sensor.append(float(np.clip(value / denom, 0.0, 2.0)))
+        return np.asarray(
+            [*per_sensor, float(np.clip(self.dynamic_resource_cost(self.previous_action_mask) / denom, 0.0, 2.0))],
+            dtype=float,
+        )
 
     def _alert_context_scores(self, idx: int) -> np.ndarray:
         if self.alert_context_values.shape[1] == 0:

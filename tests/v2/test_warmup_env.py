@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from v2.env import WarmupEnvConfig, WarmupSchedulingEnv
+from v2.custom_ppo import feasible_candidate_mask
 from v2.oracle import LinearFrozenForecastOracle, OracleConfig, build_supervised_windows
 from v2.power_projector import PowerConstraintsV2, PowerProjector
 from v2.rollout import run_policy_rollout
@@ -69,6 +70,91 @@ def test_power_projector_respects_steady_and_peak_constraints() -> None:
     assert result.steady_power <= 1.7
     assert result.peak_power <= 2.0
     assert "met" in result.selected_sensor_ids
+
+
+def test_dynamic_resource_envelope_filters_candidate_masks() -> None:
+    truth = _truth(4).assign(
+        resource_met=[0.5, 0.5, 0.5, 0.5],
+        resource_snow=[1.2, 1.2, 1.2, 1.2],
+        resource_rad=[0.4, 0.4, 0.4, 0.4],
+    )
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=10.0, startup_peak_budget=10.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            episode_len=4,
+            dynamic_resource_power_columns=(
+                ("met", "resource_met"),
+                ("snow", "resource_snow"),
+                ("rad", "resource_rad"),
+            ),
+            dynamic_resource_budget_w=1.0,
+            include_dynamic_resource_state=True,
+        ),
+    )
+    env.reset()
+    candidates = np.asarray([[True, True, False], [True, False, True]], dtype=bool)
+    assert feasible_candidate_mask(env, candidates).tolist() == [False, True]
+    assert env._dynamic_resource_features().shape == (4,)
+
+
+def test_dynamic_resource_guard_can_break_dwell_when_locked_action_expires() -> None:
+    truth = _truth(4).assign(
+        resource_met=[0.5, 2.0, 2.0, 2.0],
+        resource_snow=[0.2, 0.2, 0.2, 0.2],
+        resource_rad=[0.4, 0.4, 0.4, 0.4],
+    )
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=10.0, startup_peak_budget=10.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            episode_len=4,
+            min_dwell_steps=3,
+            dynamic_resource_power_columns=(
+                ("met", "resource_met"),
+                ("snow", "resource_snow"),
+                ("rad", "resource_rad"),
+            ),
+            dynamic_resource_budget_w=1.0,
+        ),
+    )
+    env.reset()
+    _, _, _, first = env.step_mask(np.asarray([True, False, True]))
+    assert first["dynamic_resource_guard_forced"] == 0
+    _, _, _, second = env.step_mask(np.asarray([True, False, True]))
+    assert second["dynamic_resource_guard_forced"] == 1
+    assert second["dynamic_resource_cost"] <= 1.0 + 1.0e-12
+
+
+def test_dynamic_step_scores_preserve_baseline_ordering() -> None:
+    truth = _truth(4).assign(
+        resource_met=[0.5, 0.5, 0.5, 0.5],
+        resource_snow=[1.2, 1.2, 1.2, 1.2],
+        resource_rad=[0.4, 0.4, 0.4, 0.4],
+    )
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=10.0, startup_peak_budget=10.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            episode_len=4,
+            dynamic_resource_power_columns=(
+                ("met", "resource_met"),
+                ("snow", "resource_snow"),
+                ("rad", "resource_rad"),
+            ),
+            dynamic_resource_budget_w=1.0,
+        ),
+    )
+    env.reset()
+    _, _, _, info = env.step_scores(np.asarray([10.0, 9.0, 10.0]))
+    assert info["selected_mask"] == [True, False, True]
+    assert info["dynamic_resource_guard_forced"] == 0
 
 
 def test_power_projector_always_keeps_required_sensors() -> None:

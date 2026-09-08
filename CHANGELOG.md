@@ -1,5 +1,47 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-09 - V607 baseline audit and correction
+
+- **Finding:** the first dynamic-resource probe produced identical trajectories
+  for several baselines because fixed-cost projection was followed by a
+  max-overlap dynamic fallback.
+- **Decision:** reject those metrics for comparison; they are retained only as
+  an implementation diagnostic.
+- **Correction:** dynamic-resource `step_scores` now ranks the frozen
+  candidate subset family after feasibility filtering, preserving each
+  baseline's score ordering. Regression coverage was added and the focused
+  warmup tests pass (`20 passed`).
+- **Next:** rerun the frozen probe with the corrected baseline execution path.
+
+## 2026-09-09 - Corrected V607 partial result
+
+- **Baseline validity:** corrected seeds 7182--7184 now produce distinct
+  full-open, static, AoI, random, and round-robin trajectories; the prior
+  collapse was removed.
+- **PPO result:** PD-PPO beats validation static in only one of three seeds;
+  seed 7184 has one warm-up abort. The partial corrected probe is not positive
+  claim evidence and remains incomplete until seed 7181 is rerun.
+
+## 2026-09-09 - V606/V607 dynamic-resource PPO interface and probe launch
+
+- **V606 assets:** rebuilt four frozen bundles with the complete `32` subset
+  action surface and the existing V527 frozen TCN; no policy artifact was
+  copied into the bundles.
+- **V607 interface:** added an opt-in online effective-resource envelope to
+  `WarmupSchedulingEnv` and connected it to the existing masked-PPO action
+  feasibility path. The resource state is an observation feature only; the
+  forecast-loss reward and categorical PPO objective are unchanged.
+- **Execution semantics:** a resource transition may interrupt dwell only when
+  the locked subset becomes hard-infeasible. Such an event is recorded as
+  `dynamic_resource_guard_forced` and is included in the operational audit.
+- **Validation:** focused warmup/custom-PPO tests pass (`73 passed`). A short
+  7181 smoke reached a complete rollout; it exposed one warm-up abort at a
+  resource transition, so no positive operational claim is made from it.
+- **Probe:** the predeclared 4-seed, 100k-step PPO probe for seeds `7181--7184`
+  is running remotely. It uses the V602 effective budget `2.15`, six-step
+  dwell, online resource-state features, no lookup/teacher/bandit prior, and
+  no final-test feedback. Per-seed eval starts remain frozen from each asset.
+
 ## 2026-09-09 - V600-V602 heater/resource frontier screen
 
 - **Status:** completed physics-only diagnostic; no forecaster or PPO trained.
@@ -34,6 +76,23 @@
   policy result and cannot be used as PPO supervision.
 - **Next gate:** deployable chronological transfer with observed resource
   state, dwell/startup execution, and a validation-selected static comparator.
+
+## 2026-09-09 - V605 executable resource-state transfer
+
+- **Status:** completed development transfer diagnostic; no PPO trained.
+- **Protocol:** a heater-state lookup was fitted on validation fixed-mask
+  replay, then executed through `WarmupSchedulingEnv` on six independent
+  evaluation starts per seed. Dwell and warm-up accounting remained active.
+- **Result:** executed-minus-static forecast-loss margins were
+  `-0.117168/-0.002335/-0.066649/-0.041350` for seeds `7181--7184`;
+  all four improved over static. Warm-up aborts and dynamic-resource
+  violations were zero in every seed; switching was `0.0111--0.0137` per
+  hour with two or three unique masks.
+- **Interpretation:** the effective resource model passes the development
+  executable-transfer gate. This remains a lookup diagnostic, not PPO evidence,
+  and the scaling still requires installed current/duty calibration.
+- **Next gate:** freeze this interface and run a predeclared decision-only
+  PD-PPO pilot without lookup labels, event labels, or evaluation feedback.
 
 ## 2026-09-04 - V505 forecast-quality observability diagnostic
 
