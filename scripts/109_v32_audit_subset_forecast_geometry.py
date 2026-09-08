@@ -44,6 +44,7 @@ REWARD_TARGET_COLUMNS = (
 )
 SUBTYPE_NAMES = {0: "calm", 1: "particle", 2: "flux", 3: "thermal"}
 OPERATING_STATE_GROUPS = (
+    ("generator_persistent_mode_id",),
     (
         "generator_flux_demand_state",
         "generator_particle_demand_state",
@@ -232,6 +233,19 @@ def operating_condition_labels(
     )
     if state_columns is None:
         return np.full(len(truth), "unavailable", dtype=object), None, {}
+    if state_columns == ("generator_persistent_mode_id",):
+        mode_names = {0: "transport", 1: "particle", 2: "thermal"}
+        mode_values = truth[state_columns[0]].to_numpy(dtype=int)
+        labels = np.asarray(
+            [mode_names.get(int(value), "unclassified") for value in mode_values],
+            dtype=object,
+        )
+        if activity_aligned_transport_demand:
+            active_column = (
+                "blowing_snow_active" if "blowing_snow_active" in truth else "event_flag"
+            )
+            labels[~truth[active_column].to_numpy(dtype=bool)] = "unavailable"
+        return labels, state_columns, {state_columns[0]: 0.0}
     partition = dict(meta.get("partition_protocol", {}))
     start = int(partition.get("normalization_start_idx", 0))
     end = int(partition.get("normalization_end_idx", len(truth)))

@@ -1,5 +1,69 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-04 - V505 forecast-quality observability diagnostic
+
+- **Status:** completed, diagnostic only; no PPO trained.
+- **Scope:** read-only chronological expected-cost probe on frozen Stage-L
+  assets using six runtime-available forecast-quality columns, a validation
+  static comparator, a 24-step value horizon, eight replicas, and six-step
+  execution scale.
+- **Result:** compact runtime multi-output probe-minus-static mean regret was
+  `-0.069526` (7155) and `-0.009903` (7156); candidate-conditioned values
+  were `-0.065205` and `-0.012901`. Context-quality-tail values were
+  `-0.071459/-0.021518` for multi-output and `-0.070309/-0.018687` for
+  candidate-conditioned.
+- **Interpretation:** forecast-quality observables recover useful
+  chronological value information, but exact top-1 recovery remains low
+  (`0.096--0.209`) and V504's cross-seed complete-subset geometry remains
+  failed. Stage-L stays closed before PPO.
+- **Next direction:** run the predeclared persistent single-mode causal
+  intervention and repeat truth, frozen-asset, geometry, and transfer gates.
+
+## 2026-09-04 - V506 persistent-mode truth gate
+
+- **Status:** completed truth-only screen; no evaluator or PPO trained.
+- **Scene:** one persistent categorical mode cycles through transport,
+  particle, and thermal states with 18--36 step residence, six-step-ahead
+  noisy mode scores, bounded event-time target effects, and mode-specific
+  specialist quality degradation.
+- **Result:** fresh seeds `7157--7160` each contain 90,000 rows and all three
+  modes. Event coverage was `0.4220--0.4491`; six-step mode persistence was
+  `0.7757--0.7789`; all forecast and target columns were finite. The matching
+  specialist quality was lower in each corresponding mode for every seed.
+- **Decision:** truth gate passed. V507 frozen-asset construction was started
+  with the unchanged B=1.75/startup B=2.15 geometry and no subtype labels in
+  the policy state.
+
+## 2026-09-04 - V504 Stage-L lead-aligned geometry closed
+
+- Added and ran a truth-only Stage-L intervention with six-decision-step
+  forecast context lead, preserving Stage-K costs, arbitrary feasible
+  subsets, B=1.75, startup B=2.15, and six-step dwell.
+- V502 truth gates passed on fresh seeds 7155 and 7156, including lead-6
+  forecast correlations `0.977954/0.976762` (flux), `0.977027/0.979884`
+  (particle), and `0.960579/0.960078` (thermal).
+- V504 complete-subset geometry did not pass: operating gaps were
+  `0.014426` and `0.006273`; seed7156 had overall gap `0.000000` and a
+  single epsilon-0.01 near-optimal static candidate.
+- Decision: close Stage-L before online transfer and PPO. Lead alignment
+  alone does not provide cross-seed dynamic subset-value opportunity.
+
+## 2026-09-04 - V501 Stage K online-transfer gate closed
+
+- V501 completed remotely with exit code `0` on independent Stage-K frozen
+  assets for seeds `7153` and `7154` at `B=1.75` and startup budget `2.15`.
+- The compact runtime-context probe was worse than the validation static
+  comparator: probe-minus-static mean regret was `+0.019848` and `+0.018785`.
+  The candidate-conditioned view was also worse (`+0.037208` and `+0.022214`),
+  as was the context/quality-tail view (`+0.017509` and `+0.016040`).
+- Transparent chronological state-bin transfer selected one action in every
+  bin for both seeds (`lookup_unique_actions=1`); static-minus-lookup costs
+  were `-0.003780` and `-0.016895`.
+- Decision: Stage K passes truth and complete-subset geometry but fails the
+  deployable online observability gate. No PPO training is authorized from
+  this scene. The next intervention must target identifiable online
+  state-to-subset value or use a new predeclared causal relation.
+
 ## 2026-09-03 - V461 budget-consistent asset correction
 
 - Fixed a nested V267 launcher override that forced B=1.75 after V361 accepted
@@ -8219,3 +8283,579 @@ Evidence is stored in
   `+0.068194/+0.066315`, switches at `0.03196/0.04110` per step, and records no
   warm-up aborts. **Decision:** authorize the high-precision online observability
   and transparent state-transfer audits; PPO remains blocked.
+
+# 2026-09-03 - Stage-P6 online observability closeout
+
+- V474 completed the high-precision chronological expected-cost probe on the
+  two fresh activity-aligned truths, using 12 training rollouts, six test
+  rollouts, eight replicas, 100 epochs, 24-step lookahead, and the frozen
+  19-action `B=1.58` geometry.
+- None of the eight probe configurations improved on the validation-selected
+  static comparator in either seed. The best probe-minus-static mean regret was
+  `+0.005703` for seed7092 and `+0.008379` for seed7091; positive values mean
+  higher expected forecast loss. The compact runtime view was also positive
+  (`+0.006458/+0.010638` for multi-output and `+0.011766/+0.008627` for the
+  candidate-conditioned model).
+- V475 independently applied the transparent demand-bin lookup to the held-out
+  chronological data. Both seeds selected only one lookup action, and the
+  lookup was worse than validation static by `0.008407` and `0.006332` in mean
+  expected cost. No state-dependent action transfer was demonstrated.
+- **Decision:** close Stage P6 as a failed online-observability gate. The
+  activity-aligned truth is forecastable and has privileged adaptive headroom,
+  but the deployable state does not identify a transferable winning subset.
+  Do not launch exact categorical PPO, change the scene again, or add
+  bandit/action-prior/soft-penalty patches from this evidence.
+
+# 2026-09-03 - Specialist-quality restoration and balanced-screen follow-up
+
+- V478/V479 restored the original state-dependent specialist quality response
+  while retaining activity-aligned demand. The complete-subset audit found
+  operating-domain opportunity gaps of `+0.025427` and `+0.008104` for seeds
+  7111/7112; the latter was too small for the predeclared `0.01` screening
+  threshold, so no learner was launched.
+- V480/V481 tested fresh seeds 7121/7122 with stratified event subtype
+  assignment. Seed7121 passed all truth gates, but seed7122 failed only the
+  partition-support gate because one calibration state had `0.045807` support.
+  The wave was rejected without relaxing the gate or selecting a passing seed.
+- **Decision:** run the next screening as a fixed four-seed cohort with the
+  same restored quality relation and a predeclared support requirement. The
+  cohort must pass truth support and downstream-subset opportunity together;
+  PPO remains blocked.
+
+# 2026-09-03 - Restored-quality cohort truth gate
+
+- V482/V483 generated and screened four fresh seeds (`7131--7134`) with the
+  non-resilient state-dependent specialist quality relation and stratified
+  event assignment. All four seeds passed partition support, six-step
+  persistence, forecast correlation, residual-scale, and physical-bound gates.
+- This cohort is retained as a fixed screening set; no seed was selected after
+  inspecting downstream results. V484 is authorized only to build matched
+  frozen assets for all four seeds, followed by the complete-subset geometry
+  audit in V485. PPO remains blocked.
+
+# 2026-09-03 - Restored-quality cohort geometry at B=1.58
+
+- V484/V485 evaluated all 19 feasible subsets on the fixed four-seed cohort.
+  Every seed had four to six distinct operating-condition optimal actions and
+  an infeasible union of the three specialist channels, confirming genuine
+  subset crossover.
+- Operating opportunity gaps were `+0.013107`, `+0.006747`, `+0.014830`, and
+  `+0.017214` for seeds 7131--7134. Three seeds exceeded the predeclared
+  `0.01` materiality threshold, but seed7132 did not; the cohort was not
+  admitted to online observability or PPO.
+- **Decision:** test the predeclared lower resource regime `B=1.45` using the
+  same truth cohort and unchanged sensor costs, target, forecaster, and
+  observable state. This is a geometry test, not performance-based scene
+  tuning.
+
+# 2026-09-04 - Restored-quality online-observability closeout
+
+- V486/V487 tested `B=1.45` on the fixed four-seed cohort. The operating
+  opportunity gaps were `+0.011212`, `+0.005071`, `+0.018748`, and `+0.003799`;
+  the lower budget did not improve cross-seed materiality and was rejected.
+- V488 tested the restored-quality `B=1.58` assets with 16 chronological
+  probe combinations. Only three combinations had negative probe-minus-static
+  regret; no view improved consistently across all four seeds.
+- V489's transparent state-bin transfer selected one action in every seed and
+  exactly matched the validation static, with `lookup_unique_actions=1` and
+  `static_minus_lookup_cost=0.0` for all seeds.
+- **Decision:** close the restored-quality route before PPO. The scene has
+  physical and privileged subset crossover, but its deployable observations do
+  not yield a stable transferable action ranking. No PPO training is
+  authorized on this route; a future attempt requires a predeclared causal
+  redesign, not additional PPO tuning.
+
+# 2026-09-04 - V490 resource-geometry phase diagram
+
+- Ran the read-only resource audit on the remote GPU worktree using the actual
+  six-channel effective costs and startup budget `B_peak=2.15`; no policy or
+  scene parameter was selected from performance.
+- At steady budgets `B=1.30/1.45/1.58/1.75`, the exact feasible-action counts
+  are `7/11/19/22`, with cardinality distributions respectively `1+6`,
+  `1+6+4`, `1+6+12`, and `1+6+15` for empty/singleton/pair subsets. No tested
+  budget admits a triple subset.
+- The lowest pair cost is `1.38` (radiometer plus shielded thermohygrometer).
+  Thus `B=1.30` is a singleton-only regime, while `B=1.45`, `B=1.58`, and
+  `B=1.75` represent progressively richer pair geometries.
+- Synchronized outputs are stored under
+  `reports/analysis/v490_resource_geometry_phase_diagram_20260904/`.
+- **Decision:** treat the budget values as predeclared geometry regimes only;
+  do not infer adaptive value from this audit. Build budget-consistent frozen
+  assets and evaluate complete-subset forecast-loss crossover before any PPO.
+
+# 2026-09-04 - V491 budget-consistent asset freeze launched
+
+- Added `scripts/run_v491_budget_consistent_phase_assets_20260904.sh` to build
+  frozen forecaster/static assets for the predeclared B=1.45 and B=1.75 regimes
+  using the fixed truth cohort 7131--7134. The launcher is diagnostic-only and
+  cannot train a policy.
+- Verified the shared asset builder's effective subtype argument is `random`;
+  the launcher now records that actual setting rather than an ineffective
+  environment override.
+- The remote run is active in `tmux pdppo_v491`; asset results and subsequent
+  geometry audits will be appended after completion.
+
+# 2026-09-04 - V492 budget-phase subset audit launched
+
+- Added `scripts/run_v492_budget_phase_subset_audit_20260904.sh` and launched
+  it remotely in `tmux pdppo_v492`.
+- The read-only audit evaluates complete feasible-subset forecast-loss geometry
+  and common six-step-dwell hindsight opportunity at B=1.45 and B=1.75 using
+  all four fixed fresh truths and the matching V491 asset families.
+- No policy is trained. Results will determine whether either resource regime
+  has enough task-level adaptive headroom to justify the later online-value
+  transfer audit.
+
+# 2026-09-04 - V492 budget-phase subset audit closeout
+
+- V492 completed the complete-subset frozen forecast-loss and common six-step
+  dwell audit for all four seeds at B=1.45 and B=1.75, using budget-consistent
+  V491 assets. No policy was trained and no errors occurred.
+- Operating-state static-minus-conditionwise gaps at B=1.45 were
+  `0.000000/0.002295/0.000322/0.000746` for seeds 7131--7134; at B=1.75 they
+  were `0.005521/0.001409/0.002979/0.000000`. These do not provide a stable
+  material deployable opportunity across the cohort.
+- Privileged common-dwell hindsight still reduced loss for every seed: the
+  gains were `0.036360/0.049530/0.058162/0.027200` at B=1.45 and
+  `0.051184/0.032630/0.108677/0.062040` at B=1.75. Hindsight switching was
+  approximately `0.048--0.063` per step and warm-up aborts were zero.
+- **Decision:** close the current resource-phase route before online probing or
+  PPO. The remaining gap is the transfer from privileged future realization to
+  deployable state-conditioned subset value; the next intervention must change
+  that causal relation on fresh truths.
+
+# 2026-09-04 - V492 geometry correction and V493 relaunch
+
+- The V492 common-dwell hindsight results remain valid, but its operating-state
+  geometry was computed without `--activity-aligned-transport-demand`. That
+  omitted active-period threshold calibration and invalidated the reported
+  operating-gap values.
+- Added `scripts/run_v493_budget_phase_activity_geometry_20260904.sh` and
+  relaunched the geometry-only audit on the unchanged V491 assets for B=1.45
+  and B=1.75 across seeds 7131--7134. No policy is trained.
+- V492 operating-gap claims are superseded pending V493; no PPO admission
+  decision is made from the invalidated values.
+
+# 2026-09-04 - V493 corrected geometry closeout and V494 launch
+
+- V493 recomputed operating-state thresholds from active samples. At B=1.45,
+  operating gaps were `0.009293/0.007955/0.019740/0.001166`; at B=1.75,
+  they were `0.021988/0.005522/0.030706/0.006699` for seeds 7131--7134.
+- All B=1.75 seeds have eight populated operating-state combinations, empty
+  epsilon-0.01 near-optimal intersections, and changing condition-optimal
+  actions. B=1.45 has weaker and less consistent task-level opportunity.
+- Added `scripts/run_v494_b1p75_online_transfer_20260904.sh` and launched the
+  chronological expected-cost probe plus transparent state-bin transfer in
+  remote `tmux pdppo_v494`, using only V491 B=1.75 assets and runtime state.
+- V494 is diagnostic only; PPO remains blocked until chronological transfer
+  passes on all four fixed development truths.
+
+# 2026-09-04 - V494 online observability closeout
+
+- V494 completed normally on the budget-consistent B=1.75 assets for fresh
+  truth seeds 7131--7134. The probe used only chronological runtime state,
+  12 training rollouts, 6 test rollouts, 128 steps, 24-step lookahead, eight
+  Monte-Carlo replicas, and a validation-ledger static comparator. No event
+  labels, bandit prior, or PPO training was used.
+- The candidate-conditioned probe was worse than the validation static in all
+  four seeds for both tested online views: probe-minus-static mean regret was
+  `+0.029625/+0.011864/+0.002270/+0.014087` for the compact runtime view and
+  `+0.010119/+0.006335/+0.003536/+0.007613` for the context-quality tail.
+  The multi-output probe also failed to improve consistently; its compact-view
+  values were all positive and its quality-tail values were negative in only
+  two of four seeds.
+- Transparent state-bin transfer was degenerate in every seed. The training
+  lookup selected action 3 for all eight bins, `lookup_unique_actions=1`, and
+  `static_minus_lookup_cost=0.0` for seeds 7131--7134. Test-bin rankings were
+  nonconstant, but the pooled training state did not identify a transferable
+  action choice.
+- **Decision:** B=1.75 passes resource geometry and privileged common-dwell
+  opportunity but fails the deployable online observability/state-transfer
+  gate. No PPO pilot is authorized on this scene. The next intervention must
+  create a new predeclared causal relation in which an online-observable,
+  persistent state changes complete-subset downstream forecast value; learner,
+  target, budget, and cost tuning are not justified by V494.
+
+# 2026-09-04 - V495 Stage K specialist-resolved target innovation launch
+
+- Added the default-off `--forecast-value-specialist-target-innovations`
+  generator option. It adds bounded persistent unresolved innovations to the
+  active flux, particle, and surface-temperature targets, scaled by their
+  corresponding causal exposure states. Costs, action geometry, objective,
+  operating rules, and policy code are unchanged.
+- The option is documented as Stage K and is being screened on fresh truth-only
+  seeds 7141 and 7142. The remote launcher is `scripts/run_v495_stage_k_specialist_innovation_truth_20260904.sh` in `tmux pdppo_v495`.
+- V495 must first pass physical bounds, causal/no-future checks, state support,
+  and six-step persistence. It will then require frozen complete-subset
+  geometry and deployable online transfer before any PPO is considered.
+- The first V495 launch exited with code 2 because the new option had not yet
+  been threaded through `58_v31_split_protocol_run.py`. This was an entrypoint
+  propagation error, not a scientific result; its partial seed directories and
+  log are retained. The corrected rerun is recorded separately as V495r1.
+
+# 2026-09-04 - V495r1 Stage K truth-only relaunch
+
+- Registered the specialist-innovation option in the split-protocol parser and
+  truth-generation command, then relaunched the same predeclared Stage K
+  screen under `tmux pdppo_v495` using fresh output prefix `v495r1` and seeds
+  7141/7142. No scientific parameter was changed.
+
+# 2026-09-04 - V495r2 Stage K truth-only relaunch
+
+- V495r1 passed state support, persistence, forecast correlation, and active
+  physical bounds, but failed the flux residual-scale gate because the first
+  implementation used an additive perturbation for a logarithmically evaluated
+  flux variable.
+- Corrected only the representation of that same causal innovation to a fixed
+  multiplicative log-space response (`0.80` coefficient); particle, thermal,
+  costs, action geometry, objective, and information boundary are unchanged.
+- Launched the corrected truth-only screen on new seeds 7151/7152 under
+  `tmux pdppo_v495` with output prefix `v495r2`. No policy training is allowed
+  from this launch.
+
+# 2026-09-04 - V495r2 truth-only gate closeout
+
+- V495r2 completed normally for fresh seeds 7151 and 7152. Both seeds passed
+  all truth gates: partition support, six-step state persistence, forecast
+  correlation, state-conditioned residual scale, and finite active physical
+  bounds.
+- Forecast-state correlations were `0.9773/0.9775/0.9625` for seed 7151 and
+  `0.9779/0.9782/0.9613` for seed 7152 (flux/particle/thermal). Residual
+  high-to-low scale ratios were `3.703/4.701/5.022/5.592` and
+  `3.343/3.806/4.437/4.776` (flux/particle velocity/particle diameter/
+  thermal), respectively.
+- **Decision:** admit the Stage K scene to frozen-asset construction. This is
+  a truth-screen decision only; complete-subset geometry, online transfer, and
+  PPO remain pending.
+
+# 2026-09-04 - V496 Stage K frozen assets launch
+
+- Added `scripts/run_v496_stage_k_assets_20260904.sh` to freeze the TCN
+  evaluator and validation static ledger at B=1.75 for V495r2 truth seeds
+  7151/7152. It preserves the specialist innovation mode and does not create a
+  policy artifact.
+- V496 is running remotely in `tmux pdppo_v496`; complete-subset geometry and
+  online transfer remain gated on successful asset construction.
+
+# 2026-09-04 - V496 closeout and V497 Stage K geometry launch
+
+- V496 completed normally with exit code 0 for Stage K truth seeds 7151/7152 at
+  `B=1.75`. The two frozen assets contain the truth, frozen TCN evaluator,
+  validation static ledger, and manifests; neither contains `custom_ppo.pt`.
+- Added `scripts/run_v497_stage_k_geometry_20260904.sh` and launched a
+  read-only complete feasible-subset geometry audit in remote `tmux
+  pdppo_v497`. The audit uses active-period operating-state calibration,
+  common startup budget `2.15`, two evaluation rollouts per seed, and no PPO.
+- The next gate is material condition-wise subset crossover followed by
+  deployable chronological online transfer. PPO remains blocked until both
+  gates pass.
+
+# 2026-09-04 - V497 Stage K complete-subset geometry closeout
+
+- V497 completed normally on Stage K frozen assets for seeds 7151/7152 at
+  `B=1.75`. Both seeds have 22 feasible subsets, eight populated operating
+  combinations, and changing condition-optimal subset actions.
+- Operating condition-wise static-minus-conditionwise gaps were `0.011255`
+  for seed 7151 and `0.001918` for seed 7152. Stage K is structurally
+  promising, but the second seed is below the predeclared cross-seed
+  materiality gate; online transfer and PPO remain blocked.
+- The next action is a same-parameter replication on fresh seeds 7153/7154.
+  No seed selection or coefficient retuning is used.
+
+# 2026-09-04 - V498 Stage K same-parameter truth replication launch
+
+- Added `scripts/run_v498_stage_k_replication_truth_20260904.sh` and launched
+  truth-only replication on fresh seeds 7153/7154. All Stage K causal,
+  coverage, quality, context, and target-innovation settings are unchanged.
+- V498 produces no evaluator, static ledger, or policy artifact. Its truth
+  gates must pass before the frozen-asset and complete-subset geometry stages
+  are repeated.
+
+# 2026-09-04 - V498 truth closeout and V499 asset launch
+
+- V498 completed normally for fresh seeds 7153/7154. Both truths passed all
+  Stage K gates: partition support, six-step persistence, forecast correlation,
+  residual-scale separation, and finite active physical bounds.
+- Added `scripts/run_v499_stage_k_replication_assets_20260904.sh` and launched
+  frozen evaluator/static asset preparation in remote `tmux pdppo_v499` at
+  `B=1.75` using the unchanged Stage K parameters. No policy is trained.
+
+# 2026-09-04 - V499 closeout and V500 Stage K geometry launch
+
+- V499 completed normally with exit code 0 for seeds 7153/7154. Frozen TCN,
+  validation static, truth, and split manifests are present; no policy artifact
+  was produced.
+- Added `scripts/run_v500_stage_k_replication_geometry_20260904.sh` and
+  launched the read-only complete-subset geometry audit in remote `tmux
+  pdppo_v500` at B=1.75. It uses the same active-period calibration and
+  startup budget `2.15`; PPO remains blocked pending this gate and online
+  transfer.
+
+# 2026-09-04 - V500 geometry closeout and V501 online-transfer launch
+
+- V500 completed normally on the Stage K replication cohort. Operating
+  condition-wise gaps were `0.007986` and `0.024186` for seeds 7153/7154;
+  each seed had multiple condition-optimal subsets and no epsilon-0.01 common
+  static action.
+- Added `scripts/run_v501_stage_k_replication_online_transfer_20260904.sh`
+  and launched the runtime-state-only transfer audit in remote `tmux
+  pdppo_v501`. It uses 12 training rollouts, six test rollouts, 24-step
+  lookahead, eight frozen replicas, and the validation static ledger. No PPO
+  training or event-label action input is used.
+## 2026-09-04
+
+### V508 persistent-mode geometry audit
+
+- **Result:** Closed before PPO. The corrected auditor recognized transport,
+  particle, and thermal modes, but complete-subset forecast-loss geometry was
+  not state-dependent across the four seeds: operating gaps were `0`,
+  `0.001896`, `0`, and `0` for seeds `7157--7160`.
+- **Interpretation:** The persistent-mode intervention did not create a
+  robust downstream subset opportunity; no learner result is associated with
+  this scene.
+
+### V506 semantic correction
+
+- **Finding:** V506 multiplied mode-matched quality scores below one. Since
+  the environment maps lower quality scores to larger noise multipliers, this
+  improved rather than degraded the matched specialists.
+- **Disposition:** V506 truth/assets/geometry are retained for provenance but
+  excluded from scientific evidence.
+- **Replacement:** V509 preserves the predeclared target and mode dynamics,
+  corrects the quality direction, uses fresh seeds `7161--7164`, and remains
+  truth-only until all structural gates pass.
+
+### V509 corrected persistent-mode truth gate
+
+- **Result:** Passed on fresh seeds `7161--7164`, with 90,000 rows per seed,
+  balanced mode counts, event coverage `0.4354--0.4660`, and six-step mode
+  persistence `0.7762--0.7803`.
+- **Quality-direction check:** Matching specialist quality was lower than the
+  corresponding non-matching condition for transport/FC4, particle/laser,
+  and thermal/IR in every seed.
+- **Scope:** Truth-only validation; no evaluator selection or PPO result is
+  implied.
+
+### V511 quality-path audit
+
+- **Result:** Closed before PPO. The geometry run completed on four seeds but
+  produced zero operating opportunity because the asset configuration used a
+  quality-to-noise multiplier ceiling of `1.0`.
+- **Interpretation:** The quality columns were present but inactive in the
+  environment. V511 is excluded from scientific evidence.
+- **Replacement:** V512/V513 rerun the same corrected truth with the quality
+  path active at a ceiling of `3.0`, followed by a new geometry audit.
+
+### V513 quality-active geometry audit
+
+- **Result:** Closed before PPO. After activating the quality-to-noise path,
+  operating gaps for seeds `7161--7164` were `0`, `0.001873`, `0.001834`, and
+  `0`; a common near-optimal static action remained in every seed.
+- **Decision:** The persistent-mode degradation route does not provide robust
+  downstream dynamic subset value and is excluded from learner evidence.
+
+### V514 persistent-mode affinity route
+
+- **Design:** A predeclared persistent transport/particle/thermal mode raises
+  the effective quality of its corresponding FC4/laser/IR specialist while
+  retaining the same target dynamics, power geometry, six-step lead, and
+  arbitrary-subset action surface.
+- **Status:** Truth-only generation is running on fresh seeds `7165--7168`;
+  no evaluator or PPO result exists yet.
+
+### V514/V515/V516 affinity route launch
+
+- V514 truth generation completed remotely with exit code `0` for seeds
+  `7165--7168`.
+- V515 asset freezing and V516 geometry auditing were chained remotely. The
+  quality-to-noise path is active at multiplier ceiling `3.0`; no PPO starts
+  before complete-subset geometry passes.
+
+## 2026-09-08 V517 truth closeout and V518 asset launch
+
+- The first V517 output was rejected as an implementation diagnostic because
+  it inherited V516 affinity quality gains and failed the intended
+  quality-direction check. It is not scientific evidence.
+- The corrected V517 output uses the V509 quality-degradation semantics plus
+  the predeclared target-dominance relation. All four fresh seeds passed the
+  truth-only checks: 90,000 rows, event coverage `0.430--0.467`, six-step
+  persistence about `0.777`, online mode-score correlations about
+  `0.656--0.659`, finite values, active-period physical bounds, and lower
+  matching-specialist quality.
+- V518 frozen asset construction is active remotely for seeds `7169--7172`
+  under the unchanged `B=1.75`/startup `2.15`, 22-subset, six-step-dwell,
+  forecast-horizon-24 protocol. No PPO is being trained.
+
+### V519 target-dominance geometry closeout
+
+- V518 frozen assets completed and V519 evaluated all 22 feasible subsets with
+  common startup budget `2.15` and six-step dwell. No policy was trained.
+- Operating opportunity gaps for seeds `7169--7172` were `0`, `0`,
+  `0.000762`, and `0.004863`. The epsilon-`0.01` operating near-optimal
+  intersection retained `candidate_008` in every seed.
+- The target-dominance intervention changed some ordinary condition-wise
+  optima but did not remove the deployable static shortcut. The four-seed
+  structural gate therefore failed; chronological transfer and PPO remain
+  unauthorized on this branch.
+- V506/V509/V513/V516/V517 scene interventions are closed. Further
+  unpredeclared scene tuning would be post hoc rather than a continuation of
+  the frozen experimental plan.
+
+## 2026-09-08
+
+### V516 affinity geometry closeout and V517 target-dominance route
+
+- V516 completed remotely with exit code `0` for seeds `7165--7168`.
+- Operating opportunity gaps were `0` for all four seeds. The mode-specific
+  specialist affinity did not change the downstream frozen-forecaster subset
+  ranking: `candidate_008` or `candidate_003` remained optimal across modes,
+  and a common near-optimal static subset persisted.
+- V516 is closed before PPO. The result confirms that channel-quality or
+  affinity changes alone do not establish dynamic value under the complete
+  feasible-subset criterion.
+- The next and final predeclared scene intervention is V517. It preserves
+  costs, arbitrary feasible subsets, `B=1.75`, startup budget `2.15`,
+  six-step dwell, and the deployable information boundary while amplifying
+  the target dynamics associated with the persistent operating mode.
+## 2026-09-08
+
+- Stage M: recorded V522 asset-stage failure as an input-schema error, not a
+  scientific result. The launcher requested `agent_context_nowcast_air_temperature`
+  while V521 truth uses the standard `_c` suffix; corrected the launcher before
+  rerunning frozen assets. No truth, budget, cost, or policy-boundary change.
+
+- Stage M: V522r1 frozen assets completed for seeds `7177--7180` after the
+  schema correction. V523 complete-subset downstream geometry at `B=1.45`
+  failed the predeclared operating materiality gate: gaps were
+  `0.003534/0.004733/0.000181/0.000000` (< `0.01`). No transfer or PPO was
+  run. The independent target innovation route is closed; the next authorized
+  route is a physically justified cumulative energy/SOC constraint, subject to
+  validating its correspondence to the sensing system.
+
+- Stage N design checkpoint: the existing energy account is currently an
+  abstract capacity/harvest/reserve balance. Hardware notes confirm integrated
+  220-V AC input but do not yet document finite storage or harvest parameters;
+  no SOC scene will be generated until that correspondence is established.
+
+- Stage N implementation checkpoint: added `src/v2/entity_energy.py`,
+  `scripts/124_build_entity_power_ledger.py`, and a focused test. The ledger
+  uses documented GMX500, FC4, Parsivel2, LPS10, SI-111, and CR1000Xe points;
+  it models five selectable measurement channels plus a mandatory logger
+  backbone and rejects the unmapped legacy `shielded_thermo_hygro` channel.
+  Local smoke output is `2.646 W` steady and `100.71 W` with Parsivel2 heating.
+  This is an implementation/validation checkpoint, not yet a scheduling
+  experiment or physical integrated-box measurement.
+
+- Stage N direction rebase: local system-design documentation was found to
+  specify a 24 V, 8640 Wh low-temperature battery, 600 W PV module, 400 W
+  wind generator, and 24 V/50 A controller. This passes the resource-evidence
+  existence gate but remains a design envelope rather than an integrated load
+  measurement. Added `src/v2/entity_resource_envelope.py`,
+  `scripts/125_build_entity_resource_envelope_audit.py`, and focused tests.
+  The audit enumerated all 32 physical selectable subsets. The complete
+  documented subset is `2.646 W` steady and `101.326 W` at the conservative
+  Parsivel heater peak, both below the nominal `1200 W` controller ceiling;
+  no truth scene or PPO was launched. The physical resource geometry must be
+  resolved before further scene design.
+
+- Stage N fixed-load closeout: included the documented STM32, RK3568, and
+  camera auxiliary loads (`6.01 W`) in the resource-envelope audit. All 32
+  subsets remain feasible at the nominal controller limit; the complete
+  system is `8.656 W` steady and `107.336 W` at the conservative heater peak,
+  with idealized steady battery duration of about `998.2 h` from `8640 Wh`.
+  This closes the instantaneous-resource route. No SOC truth scene or PPO was
+  launched because heater duty, renewable availability, usable battery
+  derating, reserve, and episode policy are not documented.
+
+- Physical energy-account implementation: added explicit Wh-per-step handling
+  (`energy_step_hours`) and a non-controllable external-load input to the v2
+  environment, preserving legacy defaults. Added the entity-mapped six-row
+  sensor configuration with five selectable devices plus mandatory CR1000Xe,
+  a deterministic 600 W heater profile with -25/-23 C hysteresis, and focused
+  tests. The seed-7177 truth-only profile has 73.36% heater-on time and mean
+  external load 440.147 W; no PPO was run and this profile is not final policy
+  evidence.
+## 2026-09-08 - Stage-N finite-energy trajectory audit
+
+- Added `scripts/127_audit_entity_energy_trajectory.py` for a reproducible,
+  policy-free audit of fixed entity schedules under the documented six-row
+  device configuration. The script samples the available truth at one-hour
+  intervals, reports 24/72/168-hour requests, and marks requests beyond the
+  available truth as truncated rather than treating them as evidence.
+- On V521 seed 7177, the available truth covers 25 hourly samples. With the
+  documented fixed auxiliary load (6.01 W) and no external heater, the full
+  selectable set consumes 2.646 W of sensor power and leaves 8432.256 Wh
+  after 24 hours; no energy guard is triggered. This confirms that the
+  documented installed loads do not create material cumulative subset
+  competition over the available window.
+- A separate 600 W hysteretic heater run is retained only as a design-envelope
+  pressure diagnostic. It drains the 8640 Wh account within the 24-hour
+  window, but the uncontrollable heater dominates the balance and produces
+  sensor drops for every non-backbone schedule. It is not admissible as the
+  main scheduling scene without an independently justified system-load model.
+- Local and remote focused tests pass after the audit implementation. Stage N
+  therefore closes its physical correspondence audit without authorizing
+  frozen-asset geometry or PPO. Any next cumulative-resource scene must use a
+  predeclared fixed effective sensing-cost coefficient tied to the deployment
+  design, not an external-load shortcut selected from policy outcomes.
+
+## 2026-09-08 - V524 effective-cost flexible-subset asset gate
+
+- Added `configs/sensors/windblown_sensors_entity_effective_cost_v1.yaml`.
+  The five selectable rows correspond to GMX500, LPS10, SI-111, Parsivel2,
+  and FC4; CR1000Xe is a mandatory logger/backbone. The fixed effective costs
+  are a declared acquisition-duty/interface operating point, not absolute
+  bench-calibrated watts, and sampling frequency remains outside the action.
+- Prechecked `B=2.15`, startup budget `2.60`: 16 exact feasible masks are
+  available (one empty selectable set, five singleton sets, ten pairs), with
+  no triple and no explicit cardinality restriction.
+- Started remote asset preparation via
+  `scripts/run_v524_entity_effective_cost_assets_20260908.sh` in tmux
+  `pdppo_v524_assets` for seeds `7177--7180`. The run is asset-only; PPO is
+  not authorized until complete-subset forecast-loss geometry passes.
+- The first V524 asset attempt stopped at seed 7177 because the environment
+  requires one quality metadata column per configured row, including the
+  non-sensing logger. This was corrected by the derived-truth adapter
+  `scripts/128_prepare_entity_effective_truth.py`, which adds a constant
+  logger-quality value without changing targets or events. The restarted
+  asset-only run uses output root
+  `reports/v524_entity_effective_cost_assets_20260908_r1/`.
+
+## 2026-09-08 - V525 effective-cost geometry closeout
+
+- V525 evaluated all 16 feasible masks from the V524 configuration with the
+  frozen downstream forecaster on seeds `7177--7180`; no PPO was trained.
+- The specialist union was infeasible in all four seeds, but operating
+  opportunity gaps were only `0.005504`, `0.014878`, `0`, and `0`. The
+  predeclared `0.01` materiality gate failed for the cohort.
+- Seeds `7179` and `7180` retained the same met-station plus surface-
+  temperature pair as the best action across operating conditions. The
+  effective-cost intervention is therefore closed before observability and
+  learner work; another budget or PPO retry is not justified.
+
+## 2026-09-08 - Stage-O specialist-isolated truth screen
+
+- Added `scripts/129_v32_build_specialist_isolated_target_truth.py` and
+  `scripts/run_v526_specialist_isolated_truth_20260908.sh` for a predeclared
+  target-value intervention. Persistent independent innovations are isolated
+  to the matching flux, particle, or surface-temperature target family.
+- Fixed amplitudes and persistence are recorded in each truth metadata file;
+  the intervention does not use V525 losses, change budgets, expose latent
+  labels, or add a policy component.
+- Fresh truth generation for seeds `7181--7184` is running remotely in tmux
+  `pdppo_v526_truth`. The truth gate must pass before any asset construction.
+## 2026-09-08
+
+- **Stage O truth screen:** added the predeclared specialist-isolated target
+  relation and validated fresh seeds `7181--7184`. All four passed finite,
+  physical-bound, mode-support, persistence, and online forecast-mode
+  correlation gates; asset construction is now authorized, while PPO remains
+  gated on complete-subset geometry.
+- **V527 asset preparation:** launched a prepare-assets-only remote run using
+  the documented entity effective-cost configuration and 16 arbitrary
+  feasible subsets at steady budget `2.15` and startup budget `2.60`.
+- **V528 geometry closeout:** scored all 16 subsets on the four V527 frozen
+  assets. The deployable operating-state opportunity gap was `0.000000` in
+  all four seeds, with one epsilon-0.01 near-optimal subset per seed. Stage O
+  is closed before transfer and PPO; the isolated target relation did not
+  break the static shortcut.

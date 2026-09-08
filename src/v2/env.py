@@ -38,6 +38,9 @@ class WarmupEnvConfig:
     initial_energy: float = 0.0
     harvest_per_step: float = 0.0
     reserve_energy: float = 0.0
+    energy_step_hours: float = 1.0
+    fixed_external_power_w: float = 0.0
+    fixed_external_power_column: str | None = None
     lambda_energy_deficit: float = 1.0
     soc_soft_penalty_buffer: float = 0.0
     lambda_soc_soft_penalty: float = 0.0
@@ -108,6 +111,18 @@ class WarmupSchedulingEnv:
         missing_quality = [col for col in cfg.sensor_quality_columns if col not in truth_df.columns]
         if missing_quality:
             raise ValueError(f"truth_df is missing sensor quality columns: {missing_quality}")
+        if cfg.energy_step_hours <= 0.0 or not np.isfinite(float(cfg.energy_step_hours)):
+            raise ValueError("energy_step_hours must be finite and positive")
+        if cfg.fixed_external_power_w < 0.0 or not np.isfinite(float(cfg.fixed_external_power_w)):
+            raise ValueError("fixed_external_power_w must be finite and non-negative")
+        if cfg.fixed_external_power_column is not None:
+            if cfg.fixed_external_power_column not in truth_df.columns:
+                raise ValueError(
+                    f"truth_df is missing fixed external power column: {cfg.fixed_external_power_column}"
+                )
+            external_values = truth_df[cfg.fixed_external_power_column].to_numpy(dtype=float)
+            if np.any(~np.isfinite(external_values)) or np.any(external_values < 0.0):
+                raise ValueError("fixed external power column must contain finite non-negative values")
         self.truth_df = truth_df.reset_index(drop=True)
         self.sensor_specs = list(sensor_specs)
         self.sensor_ids = tuple(spec.sensor_id for spec in self.sensor_specs)
@@ -171,6 +186,11 @@ class WarmupSchedulingEnv:
             self.truth_df[list(self.sensor_quality_columns)].to_numpy(dtype=float)
             if self.sensor_quality_columns
             else np.ones((len(self.truth_df), len(self.sensor_specs)), dtype=float)
+        )
+        self.fixed_external_power_values = (
+            self.truth_df[cfg.fixed_external_power_column].to_numpy(dtype=float)
+            if cfg.fixed_external_power_column is not None
+            else np.zeros(len(self.truth_df), dtype=float)
         )
         # scores, binary flags, calm/particle/flux/thermal one-hot, max confidence,
         # elapsed alert age, rolling trends, previous specialist one-hot, dwell remainder.
@@ -470,7 +490,11 @@ class WarmupSchedulingEnv:
         peak_power = float(sum(float(status["peak_power"]) for status in statuses.values()))
         energy_before = float(self.current_energy)
         energy_harvest = self._energy_harvest()
-        energy_after_unclipped = energy_before + energy_harvest - steady_power
+        external_power_w = self._fixed_external_power_w()
+        energy_consumption_wh = (
+            (steady_power + external_power_w) * float(self.cfg.energy_step_hours)
+        )
+        energy_after_unclipped = energy_before + energy_harvest - energy_consumption_wh
         energy_deficit = max(0.0, float(self.cfg.reserve_energy) - energy_after_unclipped) if self._energy_enabled() else 0.0
         if self._energy_enabled():
             self.current_energy = float(np.clip(energy_after_unclipped, 0.0, max(float(self.cfg.energy_capacity), 1e-6)))
@@ -536,6 +560,8 @@ class WarmupSchedulingEnv:
             "mode_ids_after_step": mode_ids_after,
             "power": steady_power,
             "peak_power": peak_power,
+            "fixed_external_power_w": float(external_power_w),
+            "energy_consumption_wh": float(energy_consumption_wh),
             "soc": float(self.current_energy),
             "soc_ratio": self._soc_ratio(),
             "energy_before": float(energy_before),
@@ -749,6 +775,11 @@ class WarmupSchedulingEnv:
     def _energy_harvest(self) -> float:
         return float(max(0.0, float(self.cfg.harvest_per_step))) if self._energy_enabled() else 0.0
 
+    def _fixed_external_power_w(self) -> float:
+        if not self._energy_enabled():
+            return 0.0
+        return float(max(0.0, float(self.cfg.fixed_external_power_w) + self.fixed_external_power_values[self.current_idx]))
+
     def _soc_ratio(self) -> float:
         if not self._energy_enabled():
             return 1.0
@@ -825,11 +856,19 @@ class WarmupSchedulingEnv:
         mask = np.asarray(selected_mask, dtype=bool).reshape(-1).copy()
         if not self._energy_enabled():
             return mask, 0
-        available = float(self.current_energy) + self._energy_harvest() - float(self.cfg.reserve_energy)
+        available = (
+            float(self.current_energy)
+            + self._energy_harvest()
+            - float(self.cfg.reserve_energy)
+            - self._fixed_external_power_w() * float(self.cfg.energy_step_hours)
+        )
         required = {int(idx) for idx in self.projector.required_indices}
 
         def selected_power() -> float:
-            return float(sum(float(self.sensor_specs[idx].power_cost) for idx in np.flatnonzero(mask)))
+            return float(
+                sum(float(self.sensor_specs[idx].power_cost) for idx in np.flatnonzero(mask))
+                * float(self.cfg.energy_step_hours)
+            )
 
         dropped = 0
         while selected_power() > available + 1e-12:

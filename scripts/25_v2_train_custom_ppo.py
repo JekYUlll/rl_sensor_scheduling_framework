@@ -73,6 +73,9 @@ def energy_kwargs(args: argparse.Namespace) -> dict[str, float | bool]:
         "initial_energy": float(args.initial_energy),
         "harvest_per_step": float(args.harvest_per_step),
         "reserve_energy": float(args.reserve_energy),
+        "energy_step_hours": float(args.energy_step_hours),
+        "fixed_external_power_w": float(args.fixed_external_power_w),
+        "fixed_external_power_column": args.fixed_external_power_column,
         "lambda_energy_deficit": float(args.lambda_energy_deficit),
         "soc_soft_penalty_buffer": float(args.soc_soft_penalty_buffer),
         "lambda_soc_soft_penalty": float(args.lambda_soc_soft_penalty),
@@ -997,6 +1000,9 @@ def main() -> None:
     parser.add_argument("--initial-energy", type=float, default=0.0)
     parser.add_argument("--harvest-per-step", type=float, default=0.0)
     parser.add_argument("--reserve-energy", type=float, default=0.0)
+    parser.add_argument("--energy-step-hours", type=float, default=1.0)
+    parser.add_argument("--fixed-external-power-w", type=float, default=0.0)
+    parser.add_argument("--fixed-external-power-column", default=None)
     parser.add_argument("--lambda-energy-deficit", type=float, default=1.0)
     parser.add_argument("--soc-soft-penalty-buffer", type=float, default=0.0)
     parser.add_argument("--lambda-soc-soft-penalty", type=float, default=0.0)
@@ -2704,6 +2710,9 @@ def main() -> None:
             "initial_energy": float(args.initial_energy),
             "harvest_per_step": float(args.harvest_per_step),
             "reserve_energy": float(args.reserve_energy),
+            "energy_step_hours": float(args.energy_step_hours),
+            "fixed_external_power_w": float(args.fixed_external_power_w),
+            "fixed_external_power_column": args.fixed_external_power_column,
             "lambda_energy_deficit": float(args.lambda_energy_deficit),
             "soc_soft_penalty_buffer": float(args.soc_soft_penalty_buffer),
             "lambda_soc_soft_penalty": float(args.lambda_soc_soft_penalty),

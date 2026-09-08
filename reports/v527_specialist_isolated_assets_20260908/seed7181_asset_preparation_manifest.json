@@ -1,0 +1,134 @@
+{
+  "asset_preparation_only": true,
+  "truth_csv": "reports/v527_specialist_isolated_assets_20260908/truth_seed7181_entity_effective.csv",
+  "truth_sha256": "7ecb766d2306ef5dd091ed4eb7c3ec179f5406ef8b6bc9323ad416d465714978",
+  "sensor_cfg": "configs/sensors/windblown_sensors_entity_effective_cost_v1.yaml",
+  "sensor_ids": [
+    "met_station_core",
+    "radiometer_basic",
+    "surface_temp_ir",
+    "laser_disdrometer",
+    "fc4_flux",
+    "cr1000xe_backbone"
+  ],
+  "candidate_mask_count": 16,
+  "constraints": {
+    "max_active": null,
+    "per_step_budget": 2.15,
+    "startup_peak_budget": 2.6,
+    "required_sensor_ids": [
+      "cr1000xe_backbone"
+    ],
+    "coverage_groups": []
+  },
+  "oracle_type": "tcn",
+  "oracle_path": "reports/v527_specialist_isolated_assets_20260908/seed7181_b2p15/v2_tcn_oracle.pt",
+  "oracle_sha256": "c6841a18b8160d35fa4810bb61837b74fe276578e950fc0675e549e109cb18e2",
+  "seed": 7181,
+  "freq_s": 3600,
+  "lookback": 20,
+  "horizon": 8,
+  "train_start_min": 31500,
+  "train_start_max": 75963,
+  "eval_start_indices": [
+    83334,
+    84445,
+    85555,
+    86660,
+    87755,
+    88855
+  ],
+  "eval_steps": 1024,
+  "reward_shaping": {
+    "lambda_warmup_abort": 0.08,
+    "lambda_switch": 0.002,
+    "min_dwell_steps": 1
+  },
+  "agent_context_columns": [
+    "agent_context_nowcast_wind_speed_ms",
+    "agent_context_nowcast_relative_humidity",
+    "agent_context_nowcast_air_temperature_c",
+    "agent_context_forecast_mode_transport",
+    "agent_context_forecast_mode_particle",
+    "agent_context_forecast_mode_thermal"
+  ],
+  "agent_context_normalization": {
+    "mean": [
+      10.590778070235544,
+      68.82408071349545,
+      -32.40080597551407,
+      0.3478976115514779,
+      0.3502352438058317,
+      0.34990788348390595
+    ],
+    "std": [
+      3.297434901127606,
+      6.615738433875971,
+      10.214627108621999,
+      0.43113446699934455,
+      0.4321535013511288,
+      0.4325700541106798
+    ]
+  },
+  "agent_alert_context": {
+    "include_event_flag_in_state": true,
+    "include_alert_context_features": false,
+    "columns": [
+      "agent_context_particle_alert",
+      "agent_context_flux_alert",
+      "agent_context_thermal_alert"
+    ],
+    "threshold": 0.5,
+    "trend_lookback": 6
+  },
+  "sensor_quality": {
+    "columns": [
+      "agent_context_quality_met_station_core",
+      "agent_context_quality_radiometer_basic",
+      "agent_context_quality_surface_temp_ir",
+      "agent_context_quality_laser_disdrometer",
+      "agent_context_quality_fc4_flux",
+      "agent_context_quality_cr1000xe_backbone"
+    ],
+    "max_noise_multiplier": 3.0,
+    "availability_floor": 1.0
+  },
+  "uncertainty_proxy": {
+    "process_variance": [
+      0.1681535566042427,
+      0.18351756440504965,
+      0.025419826243370358,
+      0.025153115019875313,
+      0.0028738051849321327,
+      0.014356416941189002,
+      0.011051772985577517,
+      0.08349170417518129,
+      0.022112837352061137,
+      0.12553585496055242,
+      0.14612663571758158,
+      0.1407633036883596
+    ],
+    "initial_variance": 1.0,
+    "max_variance": 25.0,
+    "measurement_update_mode": "direct"
+  },
+  "partition_protocol": {
+    "oracle_start_idx": 0,
+    "oracle_end_idx": 31500,
+    "normalization_start_idx": 31500,
+    "normalization_end_idx": 76500,
+    "static_selection_start_indices": [
+      77385,
+      78865,
+      80321,
+      81747
+    ],
+    "static_selection_steps": 512,
+    "static_selection_score": "oracle_loss_mean"
+  },
+  "artifacts": {
+    "validation_static_candidates": "reports/v527_specialist_isolated_assets_20260908/seed7181_b2p15/validation_static_candidates.csv",
+    "reward_staticnorm_candidates": "",
+    "policy_created": false
+  }
+}

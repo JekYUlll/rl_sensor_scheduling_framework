@@ -169,6 +169,33 @@ def _sensors() -> list[SensorSpecV2]:
     ]
 
 
+def test_energy_account_converts_power_and_external_load_to_step_wh() -> None:
+    truth = _truth(64)
+    truth["external_load_w"] = np.linspace(4.0, 6.0, len(truth))
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=2.0, startup_peak_budget=3.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            episode_len=8,
+            energy_account_enabled=True,
+            energy_capacity=100.0,
+            initial_energy=100.0,
+            energy_step_hours=0.5,
+            fixed_external_power_w=2.0,
+            fixed_external_power_column="external_load_w",
+        ),
+    )
+    env.reset()
+    _, _, _, info = env.step_mask(np.asarray([True, False, False]))
+    # 0.5 W selected sensor + 2 W fixed base + 4 W time-varying load, for
+    # 0.5 h, equals 3.25 Wh.
+    assert info["energy_consumption_wh"] == pytest.approx(3.25)
+    assert info["fixed_external_power_w"] == pytest.approx(6.0)
+    assert info["soc"] == pytest.approx(96.75)
+
+
 def _oracle(truth: pd.DataFrame) -> LinearFrozenForecastOracle:
     truth_values = truth[list(STATE_COLUMNS)].to_numpy(dtype=float)
     masks = np.ones_like(truth_values)

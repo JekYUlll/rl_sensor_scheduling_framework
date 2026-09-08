@@ -1,0 +1,168 @@
+{
+  "seed": 7183,
+  "steady_budget": 2.15,
+  "startup_budget": 2.6,
+  "candidate_count": 16,
+  "conditions": [
+    "calm",
+    "particle",
+    "thermal"
+  ],
+  "condition_sample_counts": {
+    "calm": 4512,
+    "particle": 2784,
+    "thermal": 896
+  },
+  "best_overall_candidate": "candidate_005",
+  "best_overall_sensors": "met_station_core;surface_temp_ir;cr1000xe_backbone",
+  "best_overall_loss": 0.3823647058743518,
+  "condition_best_candidates": {
+    "calm": "candidate_005",
+    "particle": "candidate_005",
+    "thermal": "candidate_005"
+  },
+  "weighted_condition_best_loss": 0.3823647058743518,
+  "condition_domain_best_static_candidate": "candidate_005",
+  "condition_domain_best_static_loss": 0.3823647058743518,
+  "opportunity_gap_best_static_minus_conditionwise": 0.0,
+  "near_optimal_intersections": {
+    "0.01": [
+      "candidate_005"
+    ],
+    "0.05": [
+      "candidate_005"
+    ]
+  },
+  "operating_state_columns": [
+    "generator_persistent_mode_id"
+  ],
+  "operating_state_thresholds": {
+    "generator_persistent_mode_id": 0.0
+  },
+  "operating_conditions": [
+    "particle",
+    "thermal",
+    "transport"
+  ],
+  "operating_condition_sample_counts": {
+    "particle": 2592,
+    "thermal": 2912,
+    "transport": 2688
+  },
+  "operating_condition_best_candidates": {
+    "particle": "candidate_005",
+    "thermal": "candidate_005",
+    "transport": "candidate_005"
+  },
+  "operating_weighted_condition_best_loss": 0.3823647058743518,
+  "operating_domain_best_static_candidate": "candidate_005",
+  "operating_domain_best_static_loss": 0.3823647058743518,
+  "opportunity_gap_best_static_minus_operating_conditionwise": 0.0,
+  "operating_near_optimal_intersections": {
+    "0.01": [
+      "candidate_005"
+    ],
+    "0.05": [
+      "candidate_005"
+    ]
+  },
+  "specialist_union_feasible": false,
+  "power_rows": [
+    {
+      "candidate": "candidate_000",
+      "selected_sensor_ids": "cr1000xe_backbone",
+      "steady_cost": 0.4104,
+      "startup_cost": 0.4104
+    },
+    {
+      "candidate": "candidate_001",
+      "selected_sensor_ids": "met_station_core;cr1000xe_backbone",
+      "steady_cost": 1.1303999999999998,
+      "startup_cost": 1.2504
+    },
+    {
+      "candidate": "candidate_002",
+      "selected_sensor_ids": "radiometer_basic;cr1000xe_backbone",
+      "steady_cost": 1.0904,
+      "startup_cost": 1.2104
+    },
+    {
+      "candidate": "candidate_003",
+      "selected_sensor_ids": "met_station_core;radiometer_basic;cr1000xe_backbone",
+      "steady_cost": 1.8104,
+      "startup_cost": 2.0504
+    },
+    {
+      "candidate": "candidate_004",
+      "selected_sensor_ids": "surface_temp_ir;cr1000xe_backbone",
+      "steady_cost": 1.1703999999999999,
+      "startup_cost": 1.3304
+    },
+    {
+      "candidate": "candidate_005",
+      "selected_sensor_ids": "met_station_core;surface_temp_ir;cr1000xe_backbone",
+      "steady_cost": 1.8904,
+      "startup_cost": 2.1704
+    },
+    {
+      "candidate": "candidate_006",
+      "selected_sensor_ids": "radiometer_basic;surface_temp_ir;cr1000xe_backbone",
+      "steady_cost": 1.8504,
+      "startup_cost": 2.1304
+    },
+    {
+      "candidate": "candidate_007",
+      "selected_sensor_ids": "laser_disdrometer;cr1000xe_backbone",
+      "steady_cost": 1.2904,
+      "startup_cost": 1.4904000000000002
+    },
+    {
+      "candidate": "candidate_008",
+      "selected_sensor_ids": "met_station_core;laser_disdrometer;cr1000xe_backbone",
+      "steady_cost": 2.0103999999999997,
+      "startup_cost": 2.3304
+    },
+    {
+      "candidate": "candidate_009",
+      "selected_sensor_ids": "radiometer_basic;laser_disdrometer;cr1000xe_backbone",
+      "steady_cost": 1.9704000000000002,
+      "startup_cost": 2.2904
+    },
+    {
+      "candidate": "candidate_010",
+      "selected_sensor_ids": "surface_temp_ir;laser_disdrometer;cr1000xe_backbone",
+      "steady_cost": 2.0504,
+      "startup_cost": 2.4104
+    },
+    {
+      "candidate": "candidate_011",
+      "selected_sensor_ids": "fc4_flux;cr1000xe_backbone",
+      "steady_cost": 1.2304,
+      "startup_cost": 1.3904
+    },
+    {
+      "candidate": "candidate_012",
+      "selected_sensor_ids": "met_station_core;fc4_flux;cr1000xe_backbone",
+      "steady_cost": 1.9504,
+      "startup_cost": 2.2304
+    },
+    {
+      "candidate": "candidate_013",
+      "selected_sensor_ids": "radiometer_basic;fc4_flux;cr1000xe_backbone",
+      "steady_cost": 1.9104,
+      "startup_cost": 2.1904
+    },
+    {
+      "candidate": "candidate_014",
+      "selected_sensor_ids": "surface_temp_ir;fc4_flux;cr1000xe_backbone",
+      "steady_cost": 1.9904,
+      "startup_cost": 2.3104
+    },
+    {
+      "candidate": "candidate_015",
+      "selected_sensor_ids": "laser_disdrometer;fc4_flux;cr1000xe_backbone",
+      "steady_cost": 2.1104,
+      "startup_cost": 2.4704
+    }
+  ]
+}

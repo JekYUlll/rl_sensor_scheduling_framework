@@ -243,6 +243,8 @@ def ensure_truth(args: argparse.Namespace, truth_path: Path) -> Path:
         cmd.append("--forecast-value-specialist-resilient-quality")
     if bool(args.forecast_value_activity_aligned_transport_demand):
         cmd.append("--forecast-value-activity-aligned-transport-demand")
+    if bool(args.forecast_value_specialist_target_innovations):
+        cmd.append("--forecast-value-specialist-target-innovations")
     subprocess.run(cmd, check=True)
     return truth_path
 
@@ -759,6 +761,7 @@ def main() -> None:
     parser.add_argument("--forecast-value-horizon-persistent-latent", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--forecast-value-specialist-resilient-quality", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--forecast-value-activity-aligned-transport-demand", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--forecast-value-specialist-target-innovations", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--exclude-subtype-latents-from-state", action="store_true")
     parser.add_argument("--oracle-rollout-steps", type=int, default=7200)
     parser.add_argument("--oracle-type", choices=["linear", "tcn"], default="tcn")
@@ -1038,6 +1041,9 @@ def main() -> None:
     parser.add_argument("--initial-energy", type=float, default=0.0)
     parser.add_argument("--harvest-per-step", type=float, default=0.0)
     parser.add_argument("--reserve-energy", type=float, default=0.0)
+    parser.add_argument("--energy-step-hours", type=float, default=1.0)
+    parser.add_argument("--fixed-external-power-w", type=float, default=0.0)
+    parser.add_argument("--fixed-external-power-column", default=None)
     parser.add_argument("--lambda-energy-deficit", type=float, default=1.0)
     parser.add_argument("--soc-soft-penalty-buffer", type=float, default=0.0)
     parser.add_argument("--lambda-soc-soft-penalty", type=float, default=0.0)
@@ -1330,6 +1336,9 @@ def main() -> None:
             "initial_energy": float(args.initial_energy),
             "harvest_per_step": float(args.harvest_per_step),
             "reserve_energy": float(args.reserve_energy),
+            "energy_step_hours": float(args.energy_step_hours),
+            "fixed_external_power_w": float(args.fixed_external_power_w),
+            "fixed_external_power_column": args.fixed_external_power_column,
             "lambda_energy_deficit": float(args.lambda_energy_deficit),
             "soc_soft_penalty_buffer": float(args.soc_soft_penalty_buffer),
             "lambda_soc_soft_penalty": float(args.lambda_soc_soft_penalty),
@@ -2091,8 +2100,14 @@ def main() -> None:
                 str(float(args.harvest_per_step)),
                 "--reserve-energy",
                 str(float(args.reserve_energy)),
+                "--energy-step-hours",
+                str(float(args.energy_step_hours)),
+                "--fixed-external-power-w",
+                str(float(args.fixed_external_power_w)),
             ]
         )
+        if args.fixed_external_power_column:
+            cmd.extend(["--fixed-external-power-column", str(args.fixed_external_power_column)])
     cmd.append("--subtype-loss-weighting" if bool(args.subtype_loss_weighting) else "--no-subtype-loss-weighting")
     append_option(cmd, "--target-weights", None if args.target_weights is None else [str(float(x)) for x in args.target_weights])
     append_option(cmd, "--target-scales", None if args.target_scales is None else [str(float(x)) for x in args.target_scales])
