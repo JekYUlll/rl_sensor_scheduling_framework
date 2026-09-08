@@ -1,5 +1,24 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-09 - V600-V602 heater/resource frontier screen
+
+- **Status:** completed physics-only diagnostic; no forecaster or PPO trained.
+- **Input:** existing V527 entity-effective truth, seeds `7181--7184`, with
+  no target, event-label, or policy-observation edits.
+- **Mapping:** GMX500 and Parsivel2 use frozen heater proxy rules; LPS10,
+  SI-111-SS, and FC4 remain fixed; CR1000Xe is mandatory. CNF4 was not mapped
+  to LPS10.
+- **Absolute result:** the documented 1200 W controller envelope is
+  non-binding; all `32/32` optional subsets are feasible at every row in all
+  four seeds.
+- **Effective-screen result:** heater occupancy is GMX `0.6915--0.6933` and
+  Parsivel `0.8495--0.8499`; the effective feasible frontier has `3` forms
+  and `8--28` feasible masks in every seed. Median heater runs are 15 h and
+  13 h, respectively.
+- **Decision:** the effective frontier screen passes for a follow-up, but it is
+  development-only until installed current/duty data calibrate the scaling.
+  Complete-subset forecast geometry, online transfer, and PPO remain closed.
+
 ## 2026-09-04 - V505 forecast-quality observability diagnostic
 
 - **Status:** completed, diagnostic only; no PPO trained.

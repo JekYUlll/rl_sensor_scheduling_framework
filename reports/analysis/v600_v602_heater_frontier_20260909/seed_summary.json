@@ -1,0 +1,17 @@
+{
+  "seeds": [
+    7181,
+    7182,
+    7183,
+    7184
+  ],
+  "seed_count": 4,
+  "all_absolute_frontiers_constant": true,
+  "all_effective_frontiers_change": true,
+  "mean_gmx_heater_fraction": 0.692375,
+  "mean_parsivel_heater_fraction": 0.8497222222222223,
+  "mean_effective_frontier_change_rate": 0.019189102101134458,
+  "mean_effective_feasible_count_min": 8.0,
+  "mean_effective_feasible_count_max": 28.0,
+  "status": "physics_screen_only; no forecast geometry or PPO evidence"
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": "v1",
+  "purpose": "V600-V602 development screen; not installed telemetry",
+  "absolute_controller_budget_w": 1200.0,
+  "development_effective_budget": 2.15,
+  "mandatory_backbone": {
+    "channel_id": "cr1000xe_backbone",
+    "device_id": "cr1000xe",
+    "steady_power_w": 0.4104,
+    "source": "Campbell Scientific CR1000Xe power requirements"
+  },
+  "channels": [
+    {
+      "channel_id": "met_station_core",
+      "device_id": "gmx500",
+      "base_power_w": 0.3,
+      "effective_base": 0.3,
+      "heater_increment_w": 4.5,
+      "heater_increment_effective": 4.5,
+      "evidence_tier": "manufacturer_operating_point",
+      "source": "Gill Instruments GMX500 datasheet: 25 mA standard and 400 mA total with heating at 12 V",
+      "rule_type": "development_proxy_hysteresis",
+      "rule": "on at air temperature <= -25 C or dew-point margin <= 1 C with air temperature <= -5 C; off at air temperature >= -23 C and margin >= 2 C"
+    },
+    {
+      "channel_id": "laser_disdrometer",
+      "device_id": "parsivel2",
+      "base_power_w": 1.5,
+      "effective_base": 1.5,
+      "heater_increment_w": 50.0,
+      "heater_increment_effective": 50.0,
+      "evidence_tier": "manufacturer_heater_capacity",
+      "source": "OTT Parsivel2 documentation: 50 W default sensor-head heating; 100 W adjustable capacity",
+      "rule_type": "development_proxy_hysteresis",
+      "rule": "on at air temperature <= -20 C or dew-point margin <= 1 C with surface temperature <= -5 C; off at air temperature >= -18 C and margin >= 2 C"
+    },
+    {
+      "channel_id": "radiometer_basic",
+      "device_id": "lps10",
+      "base_power_w": 0.36,
+      "effective_base": 0.36,
+      "heater_increment_w": 0.0,
+      "heater_increment_effective": 0.0,
+      "evidence_tier": "device_specific_fixed_only",
+      "source": "Local Senseca LPS10 datasheet; no verified state-dependent heater specification used",
+      "rule_type": "fixed",
+      "rule": "no dynamic load asserted"
+    },
+    {
+      "channel_id": "surface_temp_ir",
+      "device_id": "si111",
+      "base_power_w": 0.0156,
+      "effective_base": 0.0156,
+      "heater_increment_w": 0.0,
+      "heater_increment_effective": 0.0,
+      "evidence_tier": "device_specific_fixed_only",
+      "source": "Local SI-111-SS equipment documentation; no dynamic load asserted",
+      "rule_type": "fixed",
+      "rule": "no dynamic load asserted"
+    },
+    {
+      "channel_id": "fc4_flux",
+      "device_id": "fc4",
+      "base_power_w": 0.06,
+      "effective_base": 0.06,
+      "heater_increment_w": 0.0,
+      "heater_increment_effective": 0.0,
+      "evidence_tier": "device_specific_fixed_only",
+      "source": "Local FC4 equipment documentation; low-power fixed screen",
+      "rule_type": "fixed",
+      "rule": "no dynamic load asserted"
+    }
+  ],
+  "notes": [
+    "The effective screen scales documented base costs by physical heater-to-base ratios; it is not calibrated installed telemetry.",
+    "CNF4 documentation is not assigned to the purchased LPS10.",
+    "Truth targets, event labels, and policy observations are not modified by this manifest."
+  ],
+  "validation": {
+    "required_channels_present": true,
+    "channel_count": 5,
+    "cnf4_mapped_to_lps10": false,
+    "truth_targets_changed": false,
+    "event_labels_changed": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "seed": 7184,
+  "rows": 90000,
+  "optional_channel_count": 5,
+  "mask_count": 32,
+  "absolute_feasible_count_min": 32,
+  "absolute_feasible_count_max": 32,
+  "effective_feasible_count_min": 8,
+  "effective_feasible_count_max": 28,
+  "absolute_frontier_unique": 1,
+  "effective_frontier_unique": 3,
+  "gmx_heater_fraction": 0.6919111111111111,
+  "parsivel_heater_fraction": 0.8497,
+  "absolute_all_optional_feasible_fraction": 1.0,
+  "effective_all_optional_feasible_fraction": 0.0,
+  "absolute_budget_w": 1200.0,
+  "development_effective_budget": 2.15,
+  "screen_status": "diagnostic_only_until_installed_telemetry"
+}
