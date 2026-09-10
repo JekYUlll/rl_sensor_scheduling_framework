@@ -1430,3 +1430,27 @@ chronologically identifiable.
   remains physically supported after the remote reproducibility check.
 - **Status:** active; V669 passes the local occupancy screen, but PPO remains
   blocked pending complete-subset geometry and online transfer.
+
+### Phase 70: V669 complete-subset geometry (2026-09-10)
+- [x] Reproduce the V669 truth/resource screen on `remote-gpu`.
+- [x] Prepare four frozen TCN assets with 32 candidate masks and the declared
+  shared-nowcast context columns.
+- [x] Complete four-seed geometry at the fixed starts
+  `82600, 83000, 84800, 85500`.
+- [x] Close the scene before transfer because final windows lacked operating
+  state support and retained a static intersection.
+- [ ] Close the scene before transfer if any seed retains a material static
+  intersection or fails the operating opportunity threshold.
+- **Status:** complete; V670 operating gaps were zero in all four seeds. The
+  schema-corrected route is closed before transfer and PPO.
+
+### Phase 71: Resource-controller support redesign (2026-09-11)
+- [x] Diagnose that V669 full-sequence heater variation was absent from the
+  fixed final windows.
+- [x] Screen a conditional dew-point/humidity controller without a forced
+  low-temperature heater trigger.
+- [ ] Reject controller variants with negligible occupancy or unsupported
+  hardware semantics.
+- [ ] Define the next physical resource state with full final-window support
+  before rebuilding any forecaster.
+- **Status:** active; no PPO is permitted.

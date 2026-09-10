@@ -93,6 +93,9 @@ def build(frame: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
         affinity = affinities[sensor]
         floor = 0.10 if sensor != "radiometer_basic" else 0.20
         out[column] = np.clip(baseline * (floor + (1.0 - floor) * affinity), 0.05, 1.0)
+    # The mandatory data-logger/backbone channel remains fully reliable and is
+    # part of the simulator schema even though it is not an optional action.
+    out["agent_context_quality_cr1000xe_backbone"] = 1.0
 
     # Truth-side diagnostics make the causal chain auditable without exposing
     # any exact state label to the scheduler.

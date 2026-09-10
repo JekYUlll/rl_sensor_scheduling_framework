@@ -4118,3 +4118,26 @@ next test is a frozen 32-subset forecast geometry audit. No PPO should be
 started unless operating condition gaps are material, the near-optimal static
 intersection is empty, and a train-only deployable observation policy transfers
 through the dwell-aware environment.
+
+## 2026-09-10 V670 schema correction
+
+The first V670 geometry attempt stopped before rollout because the new truth
+generator omitted the mandatory `agent_context_quality_cr1000xe_backbone`
+column. This is an environment schema error, not a geometry result. The
+generator now sets the backbone quality to `1.0`; V670 must be regenerated and
+rerun with the same assets, starts, and budgets.
+## 2026-09-11 V670 final-window support failure
+
+V669's shared nowcast relation produced balanced driver support, but its
+weather-derived heater controller saturated in the final partition. V670's
+four geometry audits all saw only `heater_11000`, with zero deployable
+operating opportunity and a nonempty static intersection. The condition-only
+gaps (`0.00018`, `0.00002`, `0`, `0.00124`) cannot be used because the policy
+cannot observe a condition that is absent from the final windows.
+
+A conditional controller removing the unconditional cold trigger was then
+screened locally. It produced approximately zero heater duty because the
+dew-point risk inputs were too weak in the available truth, so it is rejected
+as a scene candidate rather than threshold-tuned to force occupancy. The next
+route must obtain full final-window support from a traceable physical driver
+before any new assets are built.

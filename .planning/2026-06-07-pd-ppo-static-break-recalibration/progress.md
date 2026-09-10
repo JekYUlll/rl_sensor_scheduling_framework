@@ -9239,3 +9239,21 @@ over the full trace, and a changed feasible-frontier fraction of
 `84.8--85.1%`. The local screen therefore passes occupancy/support only.
 V669 has not yet been given a forecaster or policy; complete-subset geometry
 and executable online transfer remain mandatory.
+
+The first V670 geometry launch failed at environment construction because the
+new truth omitted the mandatory backbone quality column. No rollout or metric
+was produced. The generator was corrected to emit the fixed quality value
+`1.0`; the remote truth/resource assets and geometry run must be regenerated
+before any interpretation.
+## 2026-09-11 V670 shared-nowcast geometry closeout
+
+The regenerated V669 assets passed schema construction and V670 completed all
+four fixed final-window audits. The operating partition in every seed was
+only `heater_11000` (simultaneous core and laser heating). Operating gaps were
+`0`, `0`, `0`, and `0`; the 1% operating intersections contained `7`, `7`,
+`7`, and `3` candidates. V669/V670 are closed before online transfer and PPO.
+
+The full truth sequence had `00`, `01`, and `11` resource states, so this is a
+final-window support failure, not evidence that the controller has no global
+variation. A separate conditional dew-point controller was screened locally,
+but its heater duty was effectively zero on all seeds and it is not promoted.
