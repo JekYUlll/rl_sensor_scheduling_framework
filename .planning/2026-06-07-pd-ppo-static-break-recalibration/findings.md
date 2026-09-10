@@ -4192,3 +4192,13 @@ gate. Seeds7178--7180 had operating gaps `0.0000063937`, `0.0001480981`, and
 is therefore the cross-seed target/quality innovation process, not the
 arbitrary-subset action representation or PPO capacity. No transfer or PPO
 was run.
+
+## V679 audit correction (2026-09-11)
+
+An initial read-only target-quality audit used the stale resource columns still
+present in the V675 truth CSV and therefore reported only `1100` heater state.
+That output is invalid and is not promoted. The corrected audit follows the
+geometry implementation by dropping stale resource columns and merging the
+manifest-declared V672 resource trace. It recovers all four states (`00000`,
+`01000`, `10000`, `11000`) across all four seeds. This was an audit-label
+correction only; it changes no V678 geometry result.

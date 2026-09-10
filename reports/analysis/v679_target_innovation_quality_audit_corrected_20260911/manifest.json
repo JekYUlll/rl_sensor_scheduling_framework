@@ -1,0 +1,20 @@
+{
+  "seeds": [
+    7177,
+    7178,
+    7179,
+    7180
+  ],
+  "starts": [
+    82600,
+    83000,
+    84800,
+    85500
+  ],
+  "window_steps": 256,
+  "block_steps": 64,
+  "resource_trace": "v2_ppo_metadata.dynamic_resource.trace_csv",
+  "stale_truth_resource_columns_dropped": true,
+  "future_targets_used": false,
+  "policy_training": false
+}\n

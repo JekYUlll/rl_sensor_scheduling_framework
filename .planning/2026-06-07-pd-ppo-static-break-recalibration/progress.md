@@ -9342,3 +9342,16 @@ seeds `7177--7180`; only 7177 had an empty 1% operating static intersection.
 The pair-capable budget therefore creates adaptive opportunity in one seed but
 not a stable cross-seed task geometry. Online transfer and PPO remain blocked.
 The next work is a target-innovation/quality audit, not another budget probe.
+
+## 2026-09-11 V680 launch
+
+V680 combines the four-seed V527-r2 observable target truth, which passed its
+truth-only relation gates, with the V672 resource trace and the predeclared
+pair-capable budget `2.50`. Frozen evaluators are being refit from the same
+source asset family. Geometry remains the next gate; no policy is being
+trained.
+
+The first V679 state audit was invalid because it read stale resource columns
+from the truth CSV. A corrected merge with the manifest-declared V672 trace
+recovered all four resource states; the corrected artifacts are stored under
+`reports/analysis/v679_target_innovation_quality_audit_corrected_20260911/`.

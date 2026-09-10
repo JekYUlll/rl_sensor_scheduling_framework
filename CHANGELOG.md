@@ -10947,3 +10947,13 @@ until all four manifests pass independent validation.
   7178--7180 remained below `0.01` and retained nonempty static intersections.
 - Closed budget exploration before transfer/PPO. The next route must repair
   cross-seed target innovation and specialist-quality contrast.
+
+## 2026-09-11 - V679 audit correction and V680 launch
+
+- Invalidated the first V679 target-quality summary because it read stale
+  resource columns embedded in the truth CSV instead of the manifest-declared
+  resource trace.
+- Recomputed the audit with the same merge logic as the geometry evaluator;
+  all four resource states were recovered across all four seeds.
+- Launched V680 asset refitting with the previously truth-gated V527-r2
+  observable target chain, the V672 resource trace, and budget `2.50`.
