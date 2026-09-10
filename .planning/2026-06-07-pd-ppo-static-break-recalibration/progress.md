@@ -9016,3 +9016,30 @@ Decision: close V645 before online transfer and PPO. The cold-availability
 route changes target perturbation magnitude but does not create stable
 downstream subset-value separation across seeds. No V645 policy result is
 promoted.
+
+## 2026-09-10 Unit-interface correction
+
+- Audited `WarmupSchedulingEnv`, `PowerProjector`, the resource manifest, the
+  V645 runners, and the physical trace generator.
+- Confirmed dynamic feasibility is enforced, but found a unit naming drift:
+  old traces used physical watts in `resource_effective_power_*`, whereas the
+  current generator emits normalized values under that prefix and physical
+  values under `resource_power_w_*`.
+- Updated `scripts/25_v2_train_custom_ppo.py` to prefer explicit physical-watt
+  columns and retain the legacy prefix as a compatibility fallback.
+- Updated the focused geometry loader's validation to recognize the same two
+  prefixes and added unit-selection regression tests.
+- Next: run local tests, then regenerate a current physical-unit geometry
+  screen from a current trace before deciding whether the V645 route can be
+  reopened.
+
+## 2026-09-10 V646 unit-reconciled geometry closeout
+
+- Rebuilt all four matched assets on `remote-gpu`; metadata maps the dynamic
+  guard to explicit `resource_power_w_*` columns.
+- Recomputed the 32-subset geometry with the original V645 protocol.
+- Gaps were `0.000000`, `0.017026`, `0.002626`, and `0.005402`; only `1/4`
+  passed the `>=0.01` gate.
+- Decision: retain the physical-unit correction, close V646 before transfer
+  and PPO, and select the next route only after recording this corrected
+  failure. No policy result is promoted.

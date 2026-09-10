@@ -97,9 +97,18 @@ def merge_dynamic_resource_trace(truth: pd.DataFrame, trace_path: str | None) ->
     if not trace_path:
         return truth, ()
     trace = pd.read_csv(trace_path)
-    resource_columns = [column for column in trace.columns if column.startswith("resource_effective_power_")]
+    # Physical resource budgets must consume physical-watt columns.  Older
+    # traces used the `resource_effective_power_*` prefix for physical values;
+    # retain that path for compatibility, but prefer the unambiguous physical
+    # prefix whenever both representations are present.
+    physical_columns = [column for column in trace.columns if column.startswith("resource_power_w_")]
+    normalized_columns = [column for column in trace.columns if column.startswith("resource_effective_power_")]
+    resource_columns = physical_columns or normalized_columns
+    resource_prefix = "resource_power_w_" if physical_columns else "resource_effective_power_"
     if not resource_columns:
-        raise ValueError(f"dynamic resource trace has no resource_effective_power_ columns: {trace_path}")
+        raise ValueError(
+            f"dynamic resource trace has no resource_power_w_* or resource_effective_power_* columns: {trace_path}"
+        )
     if "time_idx" in truth.columns and "time_idx" in trace.columns:
         if trace["time_idx"].duplicated().any():
             raise ValueError("dynamic resource trace contains duplicate time_idx values")
@@ -117,7 +126,7 @@ def merge_dynamic_resource_trace(truth: pd.DataFrame, trace_path: str | None) ->
             merged[column] = trace[column].to_numpy(dtype=float)
     else:
         raise ValueError("dynamic resource trace must share time_idx or row count with truth")
-    mapping = tuple((column.removeprefix("resource_effective_power_"), column) for column in resource_columns)
+    mapping = tuple((column.removeprefix(resource_prefix), column) for column in resource_columns)
     return merged, mapping
 
 
@@ -1036,7 +1045,7 @@ def main() -> None:
     parser.add_argument(
         "--dynamic-resource-trace",
         default=None,
-        help="Optional truth-aligned CSV with resource_effective_power_* columns.",
+        help="Optional truth-aligned CSV with resource_power_w_* columns (legacy resource_effective_power_* is also accepted).",
     )
     parser.add_argument("--dynamic-resource-budget-w", type=float, default=None)
     parser.add_argument("--dynamic-resource-fixed-power-w", type=float, default=0.0)
@@ -1664,7 +1673,7 @@ def main() -> None:
                 "unmapped_power_w": args.dynamic_resource_unmapped_power_w,
                 "budget_w": None if args.dynamic_resource_budget_w is None else float(args.dynamic_resource_budget_w),
                 "state_in_observation": bool(args.include_dynamic_resource_state),
-                "feasibility_source": "online_effective_resource_mask",
+                "feasibility_source": "online_dynamic_resource_mask",
             },
             "uncertainty_proxy": {
                 "process_variance": [float(x) for x in uncertainty_process_variance],
@@ -2843,7 +2852,7 @@ def main() -> None:
             "unmapped_power_w": args.dynamic_resource_unmapped_power_w,
             "budget_w": None if args.dynamic_resource_budget_w is None else float(args.dynamic_resource_budget_w),
             "state_in_observation": bool(args.include_dynamic_resource_state),
-            "feasibility_source": "online_effective_resource_mask",
+            "feasibility_source": "online_dynamic_resource_mask",
         },
         "agent_alert_context": {
             "include_event_flag_in_state": bool(args.include_event_flag_in_state),

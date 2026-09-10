@@ -1248,4 +1248,22 @@ and online-transfer gates pass.
 - [x] Close this route before PPO because the all-seed `>=0.01` opportunity
   gate and the 1% near-optimal-intersection gate failed.
 - **Status:** closed before online transfer/PPO. V645 did not establish a
-  stable task-level adaptive opportunity.
+stable task-level adaptive opportunity.
+
+### Phase 55: Dynamic-resource unit reconciliation (2026-09-10)
+- [x] Inspect the environment, projector, runner arguments, manifest, and
+  current trace generator.
+- [x] Confirm that dynamic-resource feasibility is enforced separately from
+  the normalized interface-cost projector.
+- [x] Identify the historical prefix/unit mismatch and record its impact on
+  reproducibility.
+- [x] Make the training entry point prefer explicit physical-watt columns
+  while retaining legacy compatibility.
+- [ ] Run focused tests and regenerate a current physical-unit geometry screen.
+- [ ] Only reopen downstream forecast geometry if the corrected screen is
+  reproducible and passes the existing all-seed materiality gate.
+- [x] Rebuild matched V646 assets and complete the corrected four-seed
+  downstream geometry screen.
+- [x] Close the route before online transfer/PPO because only `1/4` seeds
+  passed the materiality gate.
+- **Status:** complete; next route selection required

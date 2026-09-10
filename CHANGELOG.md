@@ -10704,3 +10704,16 @@ until all four manifests pass independent validation.
 - Closed V645 before online transfer/PPO. The route increased target variation
   but did not establish stable downstream subset-value separation.
 - Added compact provenance artifacts and scripts; pushed as `e75ff78`.
+## 2026-09-10 - V646 unit-interface reconciliation
+
+- Audited the dynamic-resource path from trace generation through
+  `WarmupSchedulingEnv.is_mask_executable` and the subset geometry loader.
+- Found a reproducibility hazard: historical traces stored physical-watt
+  values under `resource_effective_power_*`, while the current generator uses
+  that prefix for normalized acquisition costs and `resource_power_w_*` for
+  watts.
+- Updated the training entry point to prefer explicit physical-watt columns,
+  with legacy effective-prefix compatibility retained. Added regression tests
+  for both representations.
+- Started a remote V646 matched-asset rebuild; no PPO was launched and no
+  previous V645 result was promoted during this correction.

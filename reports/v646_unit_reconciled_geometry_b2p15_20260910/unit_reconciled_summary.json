@@ -1,0 +1,60 @@
+{
+  "route": "V646 explicit physical-watt resource mapping",
+  "assets": "reports/v646_unit_reconciled_assets_b2p15_20260910",
+  "geometry": "reports/v646_unit_reconciled_geometry_b2p15_20260910",
+  "dynamic_budget_w": 55.0,
+  "normalized_budget": 2.15,
+  "rows": [
+    {
+      "seed": 7401,
+      "gap": 0.0,
+      "best_static": "candidate_003",
+      "condition_winners": {
+        "heater_00000": "candidate_003",
+        "heater_01000": "candidate_003",
+        "heater_10000": "candidate_003",
+        "heater_11000": "candidate_003"
+      },
+      "near_1pct": [
+        "candidate_003"
+      ]
+    },
+    {
+      "seed": 7402,
+      "gap": 0.017026206432708524,
+      "best_static": "candidate_005",
+      "condition_winners": {
+        "heater_00000": "candidate_005",
+        "heater_01000": "candidate_017",
+        "heater_10000": "candidate_003",
+        "heater_11000": "candidate_005"
+      },
+      "near_1pct": []
+    },
+    {
+      "seed": 7403,
+      "gap": 0.0026260811634812864,
+      "best_static": "candidate_005",
+      "condition_winners": {
+        "heater_00000": "candidate_005",
+        "heater_01000": "candidate_005",
+        "heater_10000": "candidate_003",
+        "heater_11000": "candidate_003"
+      },
+      "near_1pct": []
+    },
+    {
+      "seed": 7404,
+      "gap": 0.005402155792848418,
+      "best_static": "candidate_005",
+      "condition_winners": {
+        "heater_00000": "candidate_005",
+        "heater_01000": "candidate_001",
+        "heater_10000": "candidate_005",
+        "heater_11000": "candidate_005"
+      },
+      "near_1pct": []
+    }
+  ],
+  "passes_ge_0.01": 1
+}

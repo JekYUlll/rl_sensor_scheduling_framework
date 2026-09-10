@@ -82,11 +82,16 @@ def merge_dynamic_resource_trace(truth: pd.DataFrame, meta: dict) -> pd.DataFram
         for column in trace.columns
         if str(column).startswith("resource_")
     ]
-    effective_columns = [
-        column for column in resource_columns if column.startswith("resource_effective_power_")
-    ]
-    if not effective_columns:
-        raise ValueError(f"dynamic resource trace has no effective power columns: {trace_path}")
+    # Prefer explicit physical-watt columns for a watt-valued dynamic budget.
+    # The effective-cost prefix is retained only for legacy traces produced
+    # before the unit distinction was made explicit.
+    physical_columns = [column for column in resource_columns if column.startswith("resource_power_w_")]
+    effective_columns = [column for column in resource_columns if column.startswith("resource_effective_power_")]
+    selected_columns = physical_columns or effective_columns
+    if not selected_columns:
+        raise ValueError(
+            f"dynamic resource trace has no resource_power_w_* or resource_effective_power_* columns: {trace_path}"
+        )
     stale_columns = [column for column in resource_columns if column in truth.columns]
     base_truth = truth.drop(columns=stale_columns)
     if "time_idx" in base_truth.columns and "time_idx" in trace.columns:

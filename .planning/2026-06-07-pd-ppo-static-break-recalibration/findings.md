@@ -489,7 +489,43 @@
     for forecast quality on seed 42;
   - score=12 remains the best hard-guard setting tested so far;
   - next check is whether score=12 preserves the original seed-41 positive
-    result.
+result.
+
+## 2026-09-10 Dynamic-resource unit audit
+
+The environment does apply the dynamic resource guard in `is_mask_executable`
+and `dynamic_resource_cost`; it is not merely a logging feature. However, the
+resource interface had a reproducibility ambiguity. The physical trace
+generator writes both `resource_power_w_*` and `resource_effective_power_*`,
+while the training entry point previously selected only the latter. Earlier
+V627--V645 artifacts contain physical-looking values (for example 51.5 W for
+the heated laser) under the `resource_effective_power_*` name. The current
+generator defines that prefix as normalized acquisition cost and reserves the
+`_power_w_` prefix for watts.
+
+The entry point now prefers explicit `resource_power_w_*` columns and keeps
+the old effective-prefix path only for legacy compatibility. The normalized
+steady/startup projector remains a separate declared interface constraint;
+the dynamic resource guard consumes the physical-watt trace and its watt
+budget. Existing V627--V645 scientific conclusions remain provisional until
+the corrected mapping is used to regenerate matched geometry.
+
+## 2026-09-10 V646 corrected geometry result
+
+The matched V646 rebuild uses the same V645 truth, starts, normalized
+interface budgets, dwell, candidate masks, and frozen forecasters, but its
+metadata maps the dynamic 55 W guard to explicit `resource_power_w_*`
+columns. The operating opportunity gaps are `0.000000`, `0.017026`,
+`0.002626`, and `0.005402` for seeds `7401--7404`; only `1/4` meets the
+predeclared `0.01` materiality threshold. Seed7401 keeps candidate_003 as the
+winner in every heater condition and retains a 1% near-optimal intersection;
+seeds7403--7404 retain candidate_005 within 5% across operating conditions.
+
+The unit correction therefore changes the measured geometry but does not
+reopen the route. The physical resource mapping is now reproducible, while
+the downstream adaptive opportunity remains insufficient for online transfer
+or PPO. The compact summary is stored in
+`reports/v646_unit_reconciled_geometry_b2p15_20260910/unit_reconciled_summary.md`.
 - Hard guard score 12 did preserve the seed-41 positive result:
   - PD-PPO `0.14456` beat feasible static `0.15310`, round-robin `0.15560`,
     AoI `0.15580`, random `0.16254`, validation-selected static `0.16887`,
