@@ -9303,3 +9303,7 @@ blocked.
   IR thermal, FC4 transport, and laser particle affinities. Final-window
   best-channel fractions now cover all four specialist channels; a frozen
   geometry audit is being prepared, with PPO still blocked.
+- V675 frozen-asset preparation completed remotely. The four-window geometry
+  audit is running in tmux `v675_geometry`; seeds 7177 and 7178 have produced
+  outputs, and seed7179 is currently computing. No PPO or transfer process has
+  been launched.
