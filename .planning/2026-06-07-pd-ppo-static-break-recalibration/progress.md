@@ -9157,3 +9157,37 @@ resource guard left essentially all 32 candidate masks executable in the
 sampled windows, so it did not form a binding state-dependent feasible
 frontier. V654 is closed before online transfer and PPO. No policy evidence is
 promoted from V651--V654.
+
+## 2026-09-10 V655 physical budget occupancy screen
+
+The resource-only audit on the unchanged V535 traces compared 2, 3, 5, 10,
+and 20 W. At 5 W, the four seeds had 12 always-feasible masks out of 32,
+all-mask feasibility fraction `0.375`, and frontier-change fractions
+`0.856`, `0.844`, `0.849`, and `0.854`. At 10 and 20 W the summaries were
+identical, with 16 always-feasible masks and roughly `0.30--0.35` frontier
+change, indicating that these budgets are too permissive for the sampled
+windows. The 2 and 3 W screens were more restrictive, with only 8 always-
+feasible masks and complete frontier change. The 5 W point is retained as a
+physically traceable breakpoint for a bounded asset-only rerun.
+
+## 2026-09-10 V656 budget-5 asset preparation launched
+
+V656 keeps the V651 truth, sensor quality, partitions, candidate-mask repeat,
+and startup settings unchanged, and changes only the dynamic physical budget
+from 20 W to the V655-selected 5 W breakpoint. It is asset preparation only;
+no policy is created until its downstream 32-mask geometry and chronological
+online-transfer gates pass.
+
+V656 completed all four frozen asset preparations. V657 now evaluates the
+complete 32-mask forecast geometry at the same 5 W dynamic budget, with the
+fixed-threshold multi-factor audit labels. PPO remains blocked.
+
+## 2026-09-10 V657 budget-5 geometry closeout
+
+The 5 W rerun made the physical frontier more restrictive, but it did not
+produce held-out forecast-value transfer. Test conditionwise gaps for seeds
+`7231--7234` were `0.000000`, `0.006171`, `0.002503`, and `0.004514`; the
+operating gaps were `0`, `0`, `0`, and `0.001437`. Training-window gaps were
+larger (`0.014260`, `0.012384`, `0.018159`, and `0.011498`), confirming that
+the failure is chronological transfer rather than absence of fitted
+geometry. V657 is closed before online transfer and PPO.

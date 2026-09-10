@@ -10809,3 +10809,19 @@ until all four manifests pass independent validation.
   executable, so it did not provide binding dynamic feasibility.
 - Closed V651--V654 before online transfer and PPO. No policy result is
   promoted; the next route must correct the physical resource interface.
+
+## 2026-09-10 - V655/V656 binding-budget route
+
+- Screened the unchanged physical resource traces at 2, 3, 5, 10, and 20 W.
+- Selected 5 W as the bounded breakpoint: 12/32 masks remain always feasible
+  and the feasible frontier changes on about 84--86% of rows across seeds.
+- Launched V656 matched asset preparation with only the dynamic physical budget
+  changed to 5 W. PPO remains blocked pending geometry and transfer gates.
+
+## 2026-09-10 - V657 budget-5 geometry closeout
+
+- The 5 W geometry rerun produced larger train-window gaps but no held-out
+  operating transfer: test operating gaps were `0`, `0`, `0`, and `0.001437`.
+- Closed V656/V657 before online transfer and PPO. The budget is binding, but
+  the current persistent-factor target/quality chain is not predictively
+  identifiable across starts.

@@ -1309,7 +1309,22 @@ stable task-level adaptive opportunity.
 - [x] Rebuild forecaster assets with complete candidate-mask coverage.
 - [x] Complete the first four-seed geometry run and identify its operating-label
   priority bug.
-- [ ] Complete corrected four-seed 32-subset forecast geometry.
+- [x] Complete corrected four-seed 32-subset forecast geometry.
 - [ ] Apply the same online-transfer gate before any PPO training.
 - **Status:** complete; V654 failed held-out operating geometry and binding
   resource gates; PPO remains blocked on this route
+
+### Phase 60: Binding budget correction
+- [x] Run a policy-free 2/3/5/10/20 W occupancy screen on the existing
+  physical resource traces.
+- [x] Select 5 W as the bounded breakpoint because it leaves 12/32 masks
+  always feasible while changing the frontier on about 84--86% of rows.
+- [x] Complete matched V656 budget-5 asset preparation.
+- [x] Complete V657 5 W complete-subset geometry and the chronological online-transfer
+  gate on V656 before any PPO.
+- **Status:** complete; V657 failed held-out operating transfer and this route
+  is closed before PPO
+
+V657 test operating gaps were `0`, `0`, `0`, and `0.001437`. The binding
+resource budget alone did not make the persistent-factor opportunity
+chronologically identifiable.
