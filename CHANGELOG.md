@@ -10907,3 +10907,11 @@ until all four manifests pass independent validation.
 - V675 is eligible for one policy-free 32-subset geometry audit only. PPO
   remains blocked pending cross-seed operating gaps and static-intersection
   gates.
+## 2026-09-11 - V675 closeout and V676 budget probe
+
+- Split specialist affinities did not produce stable downstream geometry at
+  budget 2.15: only seed 7177 passed the material operating-gap/static-
+  intersection gate.
+- Resource-only feasibility screening found 5--6 masks at budget 1.45 versus
+  11--16 at 2.15. A four-seed V676 geometry probe is queued with the same
+  frozen assets; no PPO evidence is implied.

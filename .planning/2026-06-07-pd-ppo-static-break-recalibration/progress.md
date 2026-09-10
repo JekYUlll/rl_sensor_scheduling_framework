@@ -9307,3 +9307,10 @@ blocked.
   audit is running in tmux `v675_geometry`; seeds 7177 and 7178 have produced
   outputs, and seed7179 is currently computing. No PPO or transfer process has
   been launched.
+- V675 geometry completed. Operating gaps were `0.03412441`, `0.00000727`,
+  `0.00010035`, and `0.00019756`; 1% near-optimal static intersections were
+  empty only for 7177 and contained 7, 7, and 2 candidates for 7178--7180.
+  The 2.15 route is closed before transfer/PPO.
+- A resource-only budget screen found 5--6 feasible masks at normalized budget
+  1.45 versus 11--16 at 2.15. V676 uses the same frozen V675 assets at 1.45
+  as a binding-budget geometry probe; it does not refit truth or train a policy.

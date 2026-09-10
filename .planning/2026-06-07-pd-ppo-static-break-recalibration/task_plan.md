@@ -1493,3 +1493,22 @@ chronologically identifiable.
   support screen passes.
 - **Status:** active; V675 truth-only split-affinity screen has enough
   specialist crossover for one geometry audit; no PPO is permitted.
+
+### Phase 75: V675 split-affinity geometry (2026-09-11)
+- [x] Build split transport, particle, thermal, and radiative affinities from
+  deployable nowcasts without future targets or event labels.
+- [x] Refit matched frozen assets and complete four-seed geometry at budget
+  2.15.
+- [x] Close the 2.15 route because only one seed has a material operating gap
+  and three retain a 1% near-optimal static intersection.
+- **Status:** complete; the next bounded probe is a predeclared binding-budget
+  geometry audit using the same frozen assets.
+
+### Phase 76: V676 binding-budget geometry (2026-09-11)
+- [x] Screen feasible-mask counts for budgets 1.15, 1.45, 1.75, and 2.15.
+- [x] Select 1.45 as the probe because it retains 5--6 feasible masks while
+  materially reducing the action surface from 11--16 at 2.15.
+- [ ] Complete four-seed frozen geometry at budget 1.45.
+- [ ] Close the route if operating gaps or static-intersection gates fail;
+  do not start transfer/PPO from a single favorable seed.
+- **Status:** active; V676 geometry is queued remotely, PPO remains blocked.
