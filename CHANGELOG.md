@@ -10684,3 +10684,6 @@ until all four manifests pass independent validation.
   the persistent plan/progress/findings. The next admissible route is either a
   data-backed supply/storage trace or a predeclared physical budget phase
   screen followed by subset-level forecast and online-transfer gates.
+- Selectively committed and pushed the reproducibility pipeline as `fe89b59`;
+  raw ignored CSVs, paper files, and unrelated historical worktree changes
+  were deliberately excluded.

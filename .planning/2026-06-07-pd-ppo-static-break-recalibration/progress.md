@@ -8936,3 +8936,13 @@ sensor load. Historical constant harvest/capacity values are therefore not
 valid evidence for the new mainline. SOC is blocked until a real supply trace
 and longer truth window exist. No PPO was launched. See
 `reports/physical_energy_route_admissibility_20260910.md`.
+
+## 2026-09-10 Selective reproducibility commit
+
+The flexible-subset resource/geometry pipeline, physical manifests, V642/V643
+runner scripts, compact geometry summaries, and planning records were
+committed and pushed as `fe89b59` (`Add flexible subset physical resource audit
+pipeline`). Python syntax checks, shell syntax checks, and the targeted test
+selection (`63 passed`) completed before the push. Historical reports, ignored
+raw CSVs, paper worktree changes, and unrelated dirty files remain outside the
+commit by design.
