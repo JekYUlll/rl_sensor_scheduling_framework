@@ -1334,33 +1334,32 @@ chronologically identifiable.
   calibrated nowcasts, with delayed noisy online alert proxies.
 - [x] Verify mode support, alert correlation, and multi-level resource load
   support on all four seeds without exposing mode labels to the scheduler.
-- [ ] Finish matched V659 frozen asset preparation at the 5 W physical budget.
-- [ ] Run V660 complete 32-subset forecast geometry with corrected
+- [x] Finish matched V659 frozen asset preparation at the 5 W physical budget.
+- [x] Run V660 complete 32-subset forecast geometry with corrected
   multi-factor operating labels.
-- [ ] Apply chronological online-transfer gates before any PPO training.
-- [ ] Run a four-seed PPO probe only if geometry and online transfer pass.
-- **Status:** active; V658 truth passed the support screen, V659 asset
-  preparation is running remotely, and PPO remains blocked.
+- [x] Apply chronological online-transfer gates before any PPO training.
+- [x] Reject PPO on this route after unstable transfer evidence.
+- **Status:** complete; V658--V666 closed before PPO.
 
 ### Phase 62: Operating-label correction (2026-09-10)
 - [x] Complete V660 on the unchanged V659 assets and identify the label
   priority failure.
 - [x] Correct the audit to use the persistent truth-only mode id before its
   continuous component scores.
-- [ ] Complete the matched V661 train/test geometry rerun.
-- [ ] Reapply chronological online-transfer gates before any PPO probe.
-- **Status:** active; V660 is invalid as an operating-stratification result,
-  V661 is running remotely, and no policy evidence is promoted.
+- [x] Complete the matched V661 train/test geometry rerun.
+- [x] Reapply chronological online-transfer gates before any PPO probe.
+- **Status:** complete; V660 was invalid as an operating-stratification result,
+  V661 corrected it, and no policy evidence was promoted.
 
 ### Phase 63: Fixed final-window coverage screen (2026-09-10)
 - [x] Audit V661 mode support across a predeclared final-window grid.
-- [ ] Complete V662 geometry at starts `82600, 83900, 85200, 86500, 87800`
+- [x] Complete V662 geometry at starts `82600, 83900, 85200, 86500, 87800`
   for every seed.
-- [ ] Aggregate the grid without selecting a favorable window after seeing
+- [x] Aggregate the grid without selecting a favorable window after seeing
   forecast losses.
-- [ ] Advance to online transfer only if the pooled test geometry and support
-  gates pass; otherwise redesign the causal state/quality link.
-- **Status:** active; V662 is running remotely, with PPO still blocked.
+- [x] Reject online transfer and redesign the causal state/quality link.
+- **Status:** complete; V662 exposed heterogeneous windows, and V664/V666
+  failed stable transfer.
 
 ### Phase 64: Deployable observation transfer (2026-09-10)
 - [x] Complete pooled V662 geometry on the fixed final-window grid.
@@ -1379,15 +1378,14 @@ chronologically identifiable.
   transfer gates before considering any PPO probe.
 - **Status:** active; no PPO has been run on the flexible-subset redesign.
 
-### Phase 61: Observable specialist-mode route (2026-09-10)
-- [x] Build truth-only persistent specialist modes from training-prefix
-  calibrated nowcasts, with delayed noisy online alert proxies.
-- [x] Verify mode support, alert correlation, and multi-level resource load
-  support on all four seeds without exposing mode labels to the scheduler.
-- [ ] Finish matched V659 frozen asset preparation at the 5 W physical budget.
-- [ ] Run V660 complete 32-subset forecast geometry with corrected
-  multi-factor operating labels.
-- [ ] Apply chronological online-transfer gates before any PPO training.
-- [ ] Run a four-seed PPO probe only if geometry and online transfer pass.
-- **Status:** active; V658 truth passed the support screen, V659 asset
-  preparation is running remotely, and PPO remains blocked.
+### Phase 66: Dwell-aware repair of the alert-coupled transfer audit (2026-09-10)
+- [x] Confirm that V601 assets include minimum dwell six and that V602
+  fixed-subset geometry used the same environment-level execution guard.
+- [x] Confirm that V604 selected candidate rows independently and therefore
+  did not execute its selected sequence through the dwell-aware environment.
+- [x] Implement a train-only observation-value policy whose selections are
+  replayed through `WarmupSchedulingEnv`, with event labels excluded.
+- [ ] Complete the four-seed, eight-window executable transfer audit.
+- [ ] Promote the alert-coupled route only if executable transfer is positive
+  and stable across seeds; otherwise close it without PPO.
+- **Status:** active; V667 is running remotely, and PPO remains blocked.

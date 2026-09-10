@@ -1502,3 +1502,59 @@ The only remaining manuscript caveat is metadata, not scientific evidence:
 funding details and a public archival DOI are not yet supplied by the authors.
 The draft now states this explicitly and avoids claiming an archive that does
 not yet exist.
+# 2026-09-09 V536 v4 decision note
+
+V536 v4 is the last truth-only adjustment in the current specialist-separated
+branch. The prior particle drivers made the particle heater nearly persistent.
+The v4 driver separates particle demand from the flux driver and raises the
+particle activation threshold, producing a substantial particle-only regime
+and nonzero none/flux-only regimes across all four seeds. Particle occupancy
+is still high, so this is a screening candidate rather than validated evidence.
+The thermal load is currently a high-occupancy background load and must not be
+described as a dynamic thermal opportunity without a separate occupancy gate.
+
+## V536 gate decision
+
+V536 v4 passes the structural geometry gate but fails the online-transfer gate.
+The operating gap is consistently positive and no single candidate is within
+0.01 of the operating optimum across a seed. However, a model trained on the
+deployment-observable histories fits the training rollouts almost perfectly
+and transfers poorly to held-out starts. This means the current scene creates
+offline state-conditioned value but not a reliable online mapping under the
+present observation/protocol. The branch must not proceed to PPO. The next
+action is a bounded diagnosis of observable feature drift and label persistence;
+if that does not identify a physical/protocol correction, V536 is rejected.
+
+The eight-start coverage check did not repair transfer. Its train accuracy
+remained near-perfect while three of four held-out accuracies stayed below
+0.15. The current evidence therefore supports an offline regime-dependent
+geometry result, but not a deployable state-to-subset mapping.
+
+The failed transfer has a concrete protocol-level cause worth testing: the
+resource trace was generated from the new specialist drivers, but the alert
+columns still came from the predecessor event process. V537 aligns those
+online warning proxies with the same specialist drivers while retaining delay
+and noise. This is an observation-model correction, not privileged-label
+injection or a policy-side patch.
+
+Full replacement of the alert columns was too strong: it restored a coherent
+resource/observation relationship but reduced operating forecast geometry in
+three seeds. A fixed 50/50 blend is being tested once to preserve the original
+forecast statistics while adding usable specialist information. No result
+from that branch is available yet.
+
+## 2026-09-10 V604 protocol audit and V667 repair
+
+V601's manifest declares `min_dwell_steps=6`; V602 evaluates fixed candidates
+through `WarmupSchedulingEnv`, so its geometry is execution-aware. V604 is
+different: `scripts/169_audit_full_observation_transfer.py` merges candidate
+rows, predicts a candidate for every test timestamp independently, and
+averages those rows. It applies instantaneous resource feasibility but does
+not replay the selected candidate sequence through the environment. Therefore
+its transfer values are not deployable scheduling evidence.
+
+V667 corrects this specific audit defect without adding a method component. It
+fits the same train-only candidate-loss regressors, then evaluates their
+choices through the real environment with the six-step dwell guard, dynamic
+resource budget, startup handling, and no event labels. The route remains
+blocked from PPO until seed/window transfer is positive and stable.

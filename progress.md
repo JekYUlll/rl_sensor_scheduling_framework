@@ -3231,3 +3231,18 @@ test grid. The deltas were `-0.012072`, `-0.012050`, `+0.026924`, and
 `-0.031532`, for a mean degradation of `+0.007183`. This bounded stability
 check also failed. The V658--V666 route is closed before PPO; seed7233 is a
 reproducible cross-seed transfer failure, not a reason to tune the policy.
+
+## 2026-09-10 V667 executable alert-coupled transfer repair
+
+Reinspection of the older V601--V604 alert-coupled route found a protocol
+gap. V601 assets declare `min_dwell_steps=6`, and V602 geometry used the
+environment rollout, but V604's ExtraTrees transfer selected candidates
+independently at each time row. Its transfer loss therefore did not represent
+an executed dwell-constrained schedule.
+
+V667 fits the same candidate-loss regressors on training data and executes
+their online choices through `WarmupSchedulingEnv`. The policy holds the
+previous mask while dwell is active, uses no event labels or future targets,
+and is compared with the training-selected static candidate over the
+predeclared eight evaluation starts for seeds 7401--7404. Remote execution is
+active; no PPO has started.
