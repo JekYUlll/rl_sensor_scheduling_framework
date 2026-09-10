@@ -65,6 +65,10 @@ def prepare(
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     target_truth = truth_root / f"truth_seed{seed}.csv"
     truth = pd.read_csv(target_truth)
+    # The mandatory logger/backbone is not a specialist measurement channel.
+    # Older truth generators omit its explicit quality column, but the runtime
+    # environment requires the schema and the backbone has unit quality.
+    truth["agent_context_quality_cr1000xe_backbone"] = 1.0
     truth_path = output / "truth_v608_causal.csv"
     truth.to_csv(truth_path, index=False)
 
