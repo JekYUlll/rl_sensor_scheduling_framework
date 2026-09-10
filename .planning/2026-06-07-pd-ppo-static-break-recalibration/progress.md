@@ -8946,3 +8946,14 @@ pipeline`). Python syntax checks, shell syntax checks, and the targeted test
 selection (`63 passed`) completed before the push. Historical reports, ignored
 raw CSVs, paper worktree changes, and unrelated dirty files remain outside the
 commit by design.
+
+## 2026-09-10 Real acquisition supply-field audit
+
+The local SEUAWS test archive was inspected for a physical energy trace. It
+contains approximately 115 hours of Modbus `Batt_volt_Min` and Parsivel2
+`supply_voltage`, `heating_current`, and `heating_state`. The voltage fields
+are useful hardware validation, but the test has no system-level current/PV
+trace and nonzero Parsivel heating occurs in only 74 of 17,720 rows. It cannot
+parameterize Antarctic SOC. The result is recorded in
+`reports/entity_supply_validation_20260910.md`; SOC remains gated while the
+instantaneous physical-resource route remains active.

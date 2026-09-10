@@ -10687,3 +10687,6 @@ until all four manifests pass independent validation.
 - Selectively committed and pushed the reproducibility pipeline as `fe89b59`;
   raw ignored CSVs, paper files, and unrelated historical worktree changes
   were deliberately excluded.
+- Audited the real SEUAWS supply/heater fields and recorded their limits in
+  `reports/entity_supply_validation_20260910.md`; voltage telemetry is usable
+  for hardware validation, but not for an Antarctic SOC trace.

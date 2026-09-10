@@ -3920,3 +3920,13 @@ and `capacity` constants would be an arbitrary intervention. The SOC route is
 therefore diagnostic-only and closed for the current work unit. Continue with
 hardware-derived budget breakpoints or obtain a traceable supply/storage
 trajectory before any SOC-based PPO experiment.
+
+## 2026-09-10 Real hardware supply-field audit
+
+The SEUAWS room/freezer test archive supplies 115 hours of voltage telemetry:
+Modbus battery voltage averages 12.6829 V and Parsivel2 supply voltage
+averages 12.0328 V. It also records heating current and state, but nonzero
+heating is rare (`74/17,720` rows), and no system-level current or charging
+trace is present. These data validate acquisition fields only. They do not
+justify a synthetic Antarctic battery/SOC process or extrapolated heater duty.
+See `reports/entity_supply_validation_20260910.md`.
