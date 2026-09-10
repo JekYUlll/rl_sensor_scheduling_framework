@@ -1,5 +1,20 @@
 # Progress Log
 
+## 2026-09-09 V559 heater-quality truth regeneration
+
+- Structural audit showed that V541's dynamic resource state was not connected
+  to its channel-quality columns. The first V559 launch exposed relation-schema
+  drift and was corrected without changing the intended experiment.
+- Four corrected 90,000-row truth traces were generated remotely from the V541
+  truth/resource inputs using `heater_quality_relation_v2.json`. The generator
+  reports unchanged targets and event labels for every seed.
+- Heater occupancy was `5.79%--5.93%` for GMX500 and `7.32%--7.53%` for the
+  laser; heated quality was restored to `1.0`, while unheated quality means
+  were approximately `0.54--0.58` and `0.37--0.39`, respectively.
+- The corrected truth is now a valid prerequisite for the next asset rebuild,
+  but no policy or geometry result is claimed yet. Artifact:
+  `reports/analysis/v559_heater_quality_truth_20260909/`.
+
 > Current authoritative progress log:
 > `.planning/2026-06-10-eswa-terminology-rewrite/progress.md`. This root-level
 > file is a historical snapshot retained for continuity; the completed
@@ -3081,3 +3096,123 @@
 - Remaining non-scientific metadata caveat: no grant number or public archival
   DOI has been supplied. The manuscript now states this fact instead of making
   an unsupported archive promise.
+# 2026-09-09 V536 specialist-separated scene (v4)
+
+- Truth-only V536 v4 was generated remotely for seeds 7241--7244 at
+  `reports/v536_specialist_separated_truth_v4_20260909/`.
+- The latest particle driver uses `0.35*wind + 0.65*(1-RH)` with particle
+  hysteresis thresholds 0.62/0.42. The specialist activity rates are:
+  flux active `0.388, 0.404, 0.389, 0.391`; particle active
+  `0.808, 0.843, 0.864, 0.844`; flux-only `0.049, 0.045, 0.052, 0.047`;
+  particle-only `0.469, 0.484, 0.528, 0.500`; both `0.339, 0.358,
+  0.337, 0.344`; neither `0.144, 0.112, 0.083, 0.109`.
+- Thermal heater occupancy remains high and is treated as background load in
+  this screen; it is not yet a claim of a dynamic thermal specialist.
+- Effective-resource traces were generated remotely under
+  `reports/v536_specialist_separated_resource_v4_20260909/`.
+- B=4 W, startup peak=5 W, minimum dwell=6, horizon=8 assets are being
+  prepared remotely. This is still a truth/resource/geometry gate; no PPO
+  training is authorized until the operating geometry and online-transfer
+  gates pass.
+
+## V536 geometry and online-transfer gate
+
+- The four-seed operating geometry completed at
+  `reports/analysis/v536_geometry_v4_20260909/`.
+- Operating opportunity gaps were `0.014206, 0.013346, 0.013124, 0.010792`;
+  the operating near-optimal intersection at epsilon `0.01` was empty for
+  every seed. This establishes forecast headroom and a changing feasible
+  frontier, but not learnability.
+- The deployment-observable probe completed at
+  `reports/analysis/v536_observability_v4_20260909/`.
+- Test top-1 action accuracy was `0.0213, 0.0444, 0.1522, 0.0217` across
+  seeds 7241--7244. Training top-1 was `1.000, 0.971, 1.000, 0.986`, so
+  the dominant failure is train/test transfer, not probe capacity.
+- The online-transfer gate therefore failed (only 1/4 seeds reached the
+  screening threshold 0.15). No V536 PPO run is authorized or reported.
+- A second probe with eight predeclared training starts increased the training
+  decision count to about 184 per seed. Held-out top-1 became
+  `0.2340, 0.1333, 0.0870, 0.0435`; training top-1 remained
+  `1.000, 0.9946, 0.9946, 1.000`. This still fails the four-seed transfer
+  gate and indicates that sparse label coverage alone is not the full cause.
+
+## V537 observable-alert correction
+
+- V536's dynamic resource states were driven by specialist-separated nowcasts,
+  while its alert columns retained the predecessor event process. This was a
+  physically inconsistent observation/resource pairing.
+- Added an optional reproducible alert-observation path to
+  `scripts/158_build_specialist_separated_truth.py`. It creates two-step
+  delayed, noisy proxies of the same observable specialist demand states; it
+  does not expose event labels or future targets and leaves targets, resource
+  traces, and quality rules unchanged.
+- Generated V537 truth-only outputs for seeds 7241--7244 and launched frozen
+  asset preparation at B=4 W, startup=5 W, dwell=6. Geometry and transfer
+  gates will be rerun before any PPO decision.
+
+## V537 geometry disposition and V538 bounded pivot
+
+- V537 full alert replacement completed geometry, but operating gaps were only
+  `0.001021, 0.003587, 0, 0.028834`; three seeds retained a nonempty
+  operating epsilon=`0.01` near-optimal intersection. The branch is rejected
+  before online transfer.
+- The full replacement also changed forecast input statistics too strongly.
+  V538 therefore mixes the predecessor alert with the delayed specialist proxy
+  at a fixed 50/50 ratio. This is the last bounded observation-model pivot in
+  this branch; its asset preparation is running remotely.
+
+## 2026-09-10 V658/V659 observable specialist-mode route
+
+V658 constructs a truth-only persistent specialist mode from training-prefix
+calibrated deployment nowcasts. The mode is used only to generate a causal
+quality/resource trace; its labels are excluded from scheduler observations.
+Delayed noisy alert proxies are exposed as the online context. All four seeds
+retain substantial calm and specialist-mode support, with alert correlations
+of approximately `0.37--0.64` and resource-total quantiles near `2.646 W`,
+`7.146 W`, and `57.146 W`. This passes the truth support screen, but is not
+policy evidence.
+
+V659 is preparing matched frozen evaluator assets from the V658 truth and
+resource traces at the policy-free 5 W physical budget, with the existing
+20 W interface budget, startup 25 W, and minimum dwell 6. The remote tmux
+job is active. V660 geometry and the chronological online-transfer gate must
+pass before any PPO probe is allowed.
+
+## 2026-09-10 V660/V661 operating-label audit
+
+V660 completed on the unchanged V659 assets but was not promoted as operating
+geometry evidence. The audit selected continuous online component scores before
+the persistent mode id, and the persistent thermal baseline therefore collapsed
+most windows into `thermal`. The truth and assets are retained; only the
+stratification output is invalid.
+
+The audit now prioritizes `generator_online_mode_id`, which is generated from
+training-prefix-calibrated nowcasts and remains unavailable to the scheduler.
+V661 reruns the identical train/test windows, budgets, asset paths, and
+forecasters with this evaluation-only correction. PPO remains blocked.
+
+## 2026-09-10 V662 fixed final-window coverage screen
+
+The V661 audit showed that a single 256-step test window can contain only calm
+states for one seed even though the final partition contains specialist modes.
+To avoid favorable-window selection, V662 evaluates the predeclared final
+window grid `82600, 83900, 85200, 86500, 87800` for every seed using the same
+V659 assets, resource budget, and evaluator. The grid will be pooled before
+any online-transfer or PPO decision.
+
+## 2026-09-10 V663 deployable observation generation
+
+V662 pooled the fixed five-window final grid before any policy decision. Its
+operating gaps were positive in `10/20` windows, with per-seed window means
+`0.01450`, `0.00888`, `0.00307`, and `0.02043`; this is heterogeneous
+opportunity, not an all-seed geometry pass. V663 now generates the same
+deployable observations for train and test windows without exact event flags
+or future targets, enabling a train-only candidate-loss transfer diagnostic.
+PPO remains blocked.
+
+V663's first launch failed before producing observations because the probe
+script joined a repository-relative oracle path to the run directory twice.
+This was diagnosed from the remote traceback. The path resolver now first
+checks the repository-relative manifest path and then falls back to the legacy
+run-relative form. The corrected script is ready to resync; remote execution
+is pending recovery of the SSH connection.

@@ -347,6 +347,19 @@ def operating_condition_labels(
         labels = names[winner].astype(object)
         labels[np.max(values, axis=1) < 0.5] = "mixed"
         return labels, factor_columns, {column: 0.5 for column in factor_columns}
+    # Prefer the generator's persistent mode when it is available.  The
+    # continuous component scores can contain a persistent thermal baseline;
+    # thresholding those scores first would then erase the causal specialist
+    # modes that define the frozen scenario.  This column is truth-only and is
+    # used for evaluation stratification, never as a scheduler observation.
+    if "generator_online_mode_id" in truth:
+        mode_names = {-1: "calm", 0: "flux", 1: "particle", 2: "thermal"}
+        mode_values = truth["generator_online_mode_id"].to_numpy(dtype=int)
+        labels = np.asarray(
+            [mode_names.get(int(value), "unclassified") for value in mode_values],
+            dtype=object,
+        )
+        return labels, ("generator_online_mode_id",), {"generator_online_mode_id": 0.0}
     online_factor_columns = tuple(
         column
         for column in (

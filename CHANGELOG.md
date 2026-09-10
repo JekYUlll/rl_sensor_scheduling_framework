@@ -10825,3 +10825,46 @@ until all four manifests pass independent validation.
 - Closed V656/V657 before online transfer and PPO. The budget is binding, but
   the current persistent-factor target/quality chain is not predictively
   identifiable across starts.
+
+## 2026-09-10 - V658/V659 observable specialist-mode route
+
+- Built V658 truth from training-prefix calibrated nowcasts with persistent
+  specialist modes and delayed noisy alert proxies. Mode labels remain
+  truth-only and are not scheduler inputs.
+- All four seeds passed the support screen, retaining calm and multiple
+  specialist modes plus multi-level resource loads. This is scene evidence,
+  not policy evidence.
+- Started V659 matched frozen asset preparation at the selected 5 W physical
+  budget. PPO remains blocked pending V660 geometry and chronological transfer.
+
+## 2026-09-10 - V660/V661 operating-label audit correction
+
+- V660 completed on unchanged V659 assets, but its operating-stratification
+  output was invalid because continuous component scores masked the persistent
+  mode id under a persistent thermal baseline.
+- Corrected the audit to prioritize the truth-only persistent mode id. V661
+  reruns the same assets, starts, budgets, and forecasters; no PPO result is
+  promoted until the corrected geometry and online-transfer gates pass.
+
+## 2026-09-10 - V662 fixed final-window coverage screen
+
+- A single test window was insufficient to represent the mode process for all
+  seeds; one V661 seed was entirely calm.
+- Started a predeclared five-window final-partition grid for all seeds, with no
+  post-hoc favorable-window selection. PPO remains blocked pending pooled
+  geometry and online-transfer gates.
+
+## 2026-09-10 - V663 deployable observation generation
+
+- Generated the fixed-grid online-observation task definition from the same
+  V659 assets, with event labels and future targets excluded.
+- Started V663 train/test observation generation for the transfer diagnostic;
+  PPO remains blocked pending train-only transfer results.
+
+## 2026-09-10 - V663 path-resolution correction
+
+- The first V663 launch stopped before data generation because a
+  repository-relative oracle path was joined to the run directory twice.
+- Corrected the resolver to prefer the existing repository-relative path and
+  retain the legacy run-relative fallback. The corrected remote launch awaits
+  SSH recovery; no partial observation result is promoted.
