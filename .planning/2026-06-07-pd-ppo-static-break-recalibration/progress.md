@@ -9314,3 +9314,22 @@ blocked.
 - A resource-only budget screen found 5--6 feasible masks at normalized budget
   1.45 versus 11--16 at 2.15. V676 uses the same frozen V675 assets at 1.45
   as a binding-budget geometry probe; it does not refit truth or train a policy.
+
+## 2026-09-11 V676 binding-budget geometry closeout
+
+V676 completed all four frozen geometry audits at normalized budget `1.45`.
+The operating gaps were `0.0000377744`, `0`, `0`, and `0.0002088025` for
+seeds `7177--7180`. The 1% operating near-optimal static intersections
+contained `5`, `5`, `5`, and `2` candidates. Although the lower budget reduced
+the feasible action surface to roughly 5--6 masks per operating row, it did
+not produce a material forecast-value crossover. The route is closed before
+online transfer and PPO. The next phase is a read-only audit of static winning
+subsets and condition/block-level subset losses.
+
+## 2026-09-11 V678 launch
+
+V678 is running remotely at normalized budget `2.50` with unchanged V675
+truth/evaluator assets and the same four starts. This budget is selected from
+the frozen startup-cost thresholds so that the three specialist pairs are
+feasible while the specialist union remains infeasible. The job is a
+policy-free geometry audit; no online transfer or PPO process is running.

@@ -4170,3 +4170,14 @@ operating gaps `0`, `0.00009367`, and `0.00010058`, with 7, 7, and 2
 near-optimal static candidates. The next design must alter the shared target,
 quality, and resource persistence/innovation chain; further PPO tuning is not
 justified before that policy-free gate passes.
+
+## V676 binding-budget geometry closeout (2026-09-11)
+
+The predeclared lower-budget probe did not rescue the scene. At normalized
+budget `1.45`, all four operating forecast gaps were below `0.001`, far below
+the `0.01` materiality gate, and every seed retained a nonempty 1% near-optimal
+static intersection. The smaller feasible frontier therefore made the action
+space more constrained without making condition-specific subset value
+separate. Further budget-only sweeps are not justified. The next diagnostic
+must identify the static winning subset and measure its condition/block regret
+before any new truth generation or policy training.

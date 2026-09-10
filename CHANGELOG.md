@@ -1,5 +1,28 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-11 - V676 binding-budget geometry closeout
+
+- Completed the four-seed frozen subset-forecast audit at normalized budget
+  `1.45` using the unchanged V675 assets.
+- Operating gaps were `0.0000377744`, `0`, `0`, and `0.0002088025`; the 1%
+  near-optimal operating intersections contained `5`, `5`, `5`, and `2`
+  candidates.
+- Closed the budget-only route before online transfer and PPO. The lower
+  budget changes mechanical feasibility but does not establish task-level
+  adaptive opportunity.
+- Next work is a read-only static-winner and condition/block subset-loss audit.
+
+## 2026-09-11 - V677 static-winner diagnosis
+
+- Confirmed that budget `1.45` admits no specialist pair under the frozen
+  startup costs; its nominal 32-subset action space is operationally a
+  one-optional-channel problem.
+- The three specialist pairs require startup costs `2.3104`, `2.4104`, and
+  `2.4704`; their three-channel union remains above `4.0`.
+- Queued one predeclared `2.50` four-seed geometry audit using unchanged V675
+  truth/evaluator assets. No PPO is implied until geometry and transfer gates
+  pass.
+
 ## 2026-09-10 - V648 mask-balanced geometry pass
 
 - Rebuilt all four physical-only assets with candidate-mask coverage in

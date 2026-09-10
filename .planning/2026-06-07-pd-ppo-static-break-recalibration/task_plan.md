@@ -1508,7 +1508,30 @@ chronologically identifiable.
 - [x] Screen feasible-mask counts for budgets 1.15, 1.45, 1.75, and 2.15.
 - [x] Select 1.45 as the probe because it retains 5--6 feasible masks while
   materially reducing the action surface from 11--16 at 2.15.
-- [ ] Complete four-seed frozen geometry at budget 1.45.
-- [ ] Close the route if operating gaps or static-intersection gates fail;
-  do not start transfer/PPO from a single favorable seed.
-- **Status:** active; V676 geometry is queued remotely, PPO remains blocked.
+- [x] Complete four-seed frozen geometry at budget 1.45.
+- [x] Close the route because all four seeds retain a material static
+  intersection and operating gaps remain below `0.01`.
+- **Status:** complete; budget restriction alone does not create task-level
+  adaptive opportunity. Online transfer and PPO remain blocked.
+
+### Phase 77: Subset-loss and static-winner diagnosis (2026-09-11)
+- [x] Inventory the winning static subsets, their effective powers, and their
+  specialist coverage across V675/V676 seeds.
+- [x] Confirm from the frozen power rows that budget 1.45 admits no specialist
+  pair and therefore does not test the intended arbitrary-subset geometry.
+- [x] Select the next resource regime from declared startup-cost thresholds,
+  not from policy performance.
+- **Status:** complete; the next probe is a single budget-2.50 geometry audit.
+
+### Phase 78: Binding specialist-pair geometry (2026-09-11)
+- [ ] Reuse V675 truth and frozen evaluator assets without refitting or
+  changing the target/quality process.
+- [ ] Audit all four development seeds at normalized budget `2.50`, where the
+  three specialist pairs are startup-feasible but their three-channel union
+  remains infeasible under the current manifest.
+- [ ] Require operating gaps above `0.01` and empty 1% operating static
+  intersections in all four seeds before online transfer.
+- [ ] If geometry passes, run train-only online transfer; PPO remains blocked
+  until transfer also passes.
+- **Status:** running remotely in tmux `v678_geometry`; geometry only, PPO
+  remains blocked.
