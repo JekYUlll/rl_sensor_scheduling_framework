@@ -9043,3 +9043,14 @@ promoted.
 - Decision: retain the physical-unit correction, close V646 before transfer
   and PPO, and select the next route only after recording this corrected
   failure. No policy result is promoted.
+
+## 2026-09-10 V647 physical-only screen launched
+
+The combinatorial audit found that the legacy normalized interface budget is
+the dominant action-space restriction: physical-only feasibility supports
+`24--32/32` masks in the sampled trace, while the combined V646 constraints
+support only `15--16/32`. V647 therefore keeps the physical `55 W` dynamic
+guard and removes the non-physical action-space truncation by using
+nonbinding normalized budgets `10.0/10.0`. Four matched asset preparations
+were launched on `remote-gpu`; no PPO is allowed before their complete
+32-subset geometry passes the existing gates.

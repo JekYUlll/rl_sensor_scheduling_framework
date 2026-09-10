@@ -1267,3 +1267,16 @@ stable task-level adaptive opportunity.
 - [x] Close the route before online transfer/PPO because only `1/4` seeds
   passed the materiality gate.
 - **Status:** complete; next route selection required
+
+### Phase 56: Physical-only 32-subset geometry screen (2026-09-10)
+- [x] Quantify the action-space effect of the legacy normalized interface
+  budget: physical-only feasibility averages `30.21/32` masks, while the
+  combined V646 constraints average `15.78/32`.
+- [x] Define a matched physical-only screen with normalized steady/startup
+  budgets set to nonbinding `10.0/10.0`, physical dynamic budget fixed at
+  `55 W`, and all other V646 settings frozen.
+- [x] Launch remote four-seed asset preparation.
+- [ ] Complete the 32-subset downstream geometry audit.
+- [ ] Close or advance to online transfer based on the same all-seed
+  opportunity and near-optimal-static gates.
+- **Status:** in_progress
