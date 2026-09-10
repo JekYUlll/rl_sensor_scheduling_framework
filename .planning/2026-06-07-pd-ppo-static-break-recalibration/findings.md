@@ -1,5 +1,22 @@
 # Findings & Decisions
 
+## 2026-09-10 V647 invalid-asset diagnosis
+
+V647's large losses are invalid for scientific interpretation. The physical
+budget change exposed a missing asset-preparation setting: candidate masks
+were not included in forecaster training because `oracle-candidate-mask-repeat`
+was left at its default zero. The stored mask-channel standard deviations were
+`1e-6` for constant dimensions, while sparse-mask evaluation changed those
+dimensions by approximately one unit. The resulting normalized features were
+about `1e6` and the TCN output reached `2.4e5` before the normal `10.0` loss
+clip. This was verified by replaying the same seed with the V647 checkpoint.
+
+V647 is therefore discarded as a geometry result. The corrected V648 asset
+preparation explicitly repeats the candidate-mask policies once per candidate;
+the physical resource chain, truth, budgets, starts, and evaluation code are
+unchanged. No PPO launch is permitted until V648 passes the existing
+all-seed forecast-geometry and online-transfer gates.
+
 ## 2026-09-09 V559 heater-quality truth
 
 - The V541 `entity_effective_with_resource` assets exposed dynamic heater and

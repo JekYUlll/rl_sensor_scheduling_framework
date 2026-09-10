@@ -9054,3 +9054,20 @@ guard and removes the non-physical action-space truncation by using
 nonbinding normalized budgets `10.0/10.0`. Four matched asset preparations
 were launched on `remote-gpu`; no PPO is allowed before their complete
 32-subset geometry passes the existing gates.
+
+## 2026-09-10 V647 invalid-asset diagnosis and V648 correction
+
+V647 cannot be used as scientific geometry evidence. With `--per-step-budget
+10.0`, the default forecaster preparation sampled the full-open policy but did
+not repeat candidate masks (`--oracle-candidate-mask-repeat` defaulted to
+zero). The mask channels were therefore constant in the training windows.
+Several saved mask normalizers collapsed to `1e-6`; evaluating sparse subsets
+then produced approximately `1e6` standardized inputs and raw forecast losses
+of `2.4e5` at a representative step. The asset CSVs clipped these failures at
+`10.0`, explaining the apparently huge V647 geometry values.
+
+This is an asset-preparation protocol bug, not evidence that physical-only
+geometry failed. V647 is retained as an invalid audit. V648 keeps the same
+truth, physical resource trace, budgets, starts, and geometry protocol while
+adding `--oracle-candidate-mask-repeat 1` so the forecaster sees the complete
+candidate-mask surface. PPO remains blocked pending the corrected geometry.

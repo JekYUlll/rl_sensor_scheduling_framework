@@ -10717,3 +10717,16 @@ until all four manifests pass independent validation.
   for both representations.
 - Started a remote V646 matched-asset rebuild; no PPO was launched and no
   previous V645 result was promoted during this correction.
+
+## 2026-09-10 - V647 invalid-asset diagnosis and V648 correction
+
+- Diagnosed V647's apparent `10`-clipped and `10^4`-scale forecast losses.
+  The nonbinding normalized budget made forecaster preparation use only
+  full-open mask examples because `oracle-candidate-mask-repeat` remained at
+  its default zero. Sparse-mask evaluation then encountered `1e-6` mask
+  standard deviations and approximately `1e6` standardized inputs.
+- Rejected V647 as invalid geometry evidence; it does not close the physical
+  resource route and no PPO result is associated with it.
+- Added V648 asset and geometry runners with one explicit training repeat for
+  every candidate mask. Truth, physical resource trace, budgets, starts, and
+  geometry gates remain unchanged.
