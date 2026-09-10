@@ -1575,12 +1575,24 @@ operating near-optimal static intersection. The next route must redesign the
 joint target-quality-resource process; another PPO or budget retry is not
 justified.
 ### Phase 82: Joint target-quality contrast redesign
-- [ ] Define fixed, physically interpretable specialist target-amplitude and
+- [x] Define fixed, physically interpretable specialist target-amplitude and
   observation-quality ranges before using final-window geometry.
-- [ ] Generate a truth-only V682 candidate with the unchanged V681 resource
+- [x] Generate a truth-only V682 candidate with the unchanged V681 resource
   controller and four-seed support.
-- [ ] Refit matched frozen evaluators only if the truth-only support and
+- [x] Refit matched frozen evaluators only if the truth-only support and
   quality-coupling checks pass.
-- [ ] Close the route before transfer/PPO if the four-seed materiality gate
+- [x] Close the route before transfer/PPO because the four-seed materiality gate
   fails again.
-- **Status:** active; V681 shows the need for joint target-quality contrast.
+- **Status:** complete; V682 matched geometry remains below the materiality gate
+  in three of four seeds and retains static near-optimal intersections. No
+  transfer or PPO was run.
+
+### Phase 83: Three-heater resource geometry
+- [x] Add the radiometer heater/ventilator operating load to the matched V681
+  resource controller using a predeclared, moderate-duty causal rule.
+- [x] Reproduce the resource-only screen remotely before refitting any oracle.
+- [x] Audit the matched V683 32-subset forecast geometry across seeds 7177--7180.
+- [x] Keep online transfer and PPO blocked because not every seed clears the material
+  operating-gap and empty-static-intersection gates.
+- **Status:** complete; V683 resource geometry passed, but downstream forecast
+  geometry failed in three of four seeds. No transfer or PPO was run.

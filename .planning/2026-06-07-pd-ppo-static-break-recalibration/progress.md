@@ -9391,3 +9391,44 @@ specialist quality is fixed near `0.95`; unmatched specialist quality is
 degraded by a fixed `0.65 * mode_strength` multiplier. These constants were
 declared before any V682 geometry result. Local generation succeeded for all
 four seeds; remote truth-only screening is the next gate.
+## 2026-09-11 V682 remote launch
+
+The V682 truth-only screen passed on the remote server for all four seeds.
+Matched specialist quality in final windows is approximately 0.95, while
+unmatched specialist quality ranges from about 0.36 to 0.60. The matched
+frozen-asset refit is now running in tmux `v682_assets`; no geometry, transfer,
+or PPO process has started.
+
+## 2026-09-11 V682 closeout
+
+V682 matched assets and 32-subset geometry completed remotely. Operating gaps
+for seeds 7177--7180 were `0.000000588448`, `0`, `0.000324684767`, and
+`0.000005183433`. The 1% operating near-optimal static intersections contained
+11, 11, 0, and 2 candidates respectively. The joint target-quality contrast
+therefore did not produce a material cross-seed forecast-value crossover; the
+route is closed before online transfer and PPO.
+
+## 2026-09-11 V683 three-heater resource screen
+
+V683 adds the radiometer heater/ventilator load (15 W physical reference) to
+the matched V681 causal resource controller. The first radiometer rule would
+have been active about 88% of the final window and was rejected before asset
+generation as too close to a fixed resource state. The retained balanced rule
+uses fixed coefficients `0.12 + 0.30*cold + 0.18*thermal + 0.10*low_radiation`
+with the existing hysteresis thresholds.
+
+The remote resource-only screen passed before oracle refitting: each seed
+shows 7--8 joint core/radiometer/laser heater states, six distinct feasible
+frontiers, and 8--16 feasible masks at normalized budget `2.50`; only eight
+masks remain feasible throughout each final window. Matched V683 asset refitting
+is running in tmux `v683_assets`; geometry, transfer, and PPO remain blocked.
+
+## 2026-09-11 V683 geometry closeout
+
+V683 completed the matched 32-subset forecast geometry audit for seeds
+7177--7180. Operating gaps were `0.0000068711`, `0.0002936796`,
+`0.0003757667`, and `0.0026746816`. The 1% operating near-optimal static
+intersections contained 8, 7, 0, and 2 candidates respectively. The new
+radiometer load changed the resource frontier but did not produce a material
+cross-seed forecast-value separation. V683 is closed before online transfer
+and PPO.

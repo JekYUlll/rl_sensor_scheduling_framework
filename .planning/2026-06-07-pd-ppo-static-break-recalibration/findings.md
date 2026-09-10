@@ -4253,3 +4253,35 @@ controller, but predeclare stronger specialist-specific target innovations and
 measurement-quality contrast within physically plausible ranges. The screen
 must be truth-only first; no PPO or online transfer is allowed until all four
 seeds show material operating gap and empty 1% static intersection.
+
+## V682 geometry closeout (2026-09-11)
+
+V682's stronger specialist target excursions and matched-quality contrast did
+not rescue the downstream geometry. Operating gaps were `0.000000588448`, `0`,
+`0.000324684767`, and `0.000005183433`; the operating near-optimal static
+intersections were nonempty for seeds 7177, 7178, and 7180. The unchanged
+resource controller was therefore not the only missing link: the total forecast
+objective still preferred a stable subset for most seeds. Online transfer and
+PPO remain unjustified.
+
+## V683 resource-screen finding (2026-09-11)
+
+The V683 radiometer load changes the feasibility frontier in a supported way.
+Across the 7400-row final windows, seeds 7177--7180 show 7, 7, 7, and 7
+nonzero joint heater states plus a rare eighth state; each has six distinct
+frontiers, 8--16 feasible masks, and only eight masks feasible at every row.
+This passes the resource-occupancy gate but does not establish adaptive
+forecast value. The matched frozen evaluator geometry is the decisive next
+test.
+
+## V683 geometry closeout (2026-09-11)
+
+The radiometer auxiliary load did not rescue the task geometry. The four
+operating gaps were `0.0000068711`, `0.0002936796`, `0.0003757667`, and
+`0.0026746816`; only seed7179 had an empty 1% static intersection. The
+resource frontier is genuinely state dependent, but the forecast objective
+still admits strong static shortcuts in three seeds. This route is closed
+before transfer/PPO. Further changes should target the joint physical
+observation/value model only if a new, independently justified mechanism is
+available; increasing PPO capacity or tuning training would not address this
+failure.

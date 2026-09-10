@@ -10993,3 +10993,34 @@ until all four manifests pass independent validation.
 - V682 truth generator is implemented locally for the next policy-free screen.
   It preserves the V527-r2 observable mode/nowcast chain and V681 resource
   controller while adding a fixed specialist target/quality contrast.
+- V682 truth-only screening passed across four seeds. The matched specialist
+  quality is approximately 0.95 and unmatched quality is 0.36--0.60 in the
+  final windows. Frozen asset refitting is running remotely; no PPO has run.
+
+## 2026-09-11 - V682 geometry closeout
+
+- Completed matched V682 32-subset geometry for seeds 7177--7180.
+- Operating gaps were `0.000000588448`, `0`, `0.000324684767`, and
+  `0.000005183433`; the 1% static intersections were nonempty in three of
+  four seeds.
+- Closed V682 before transfer/PPO. Stronger target contrast alone did not
+  create a stable cross-seed adaptive-value geometry.
+
+## 2026-09-11 - V683 three-heater resource route
+
+- Added the radiometer heater/ventilator load to the matched resource trace;
+  the first near-fixed-duty rule was rejected before asset generation.
+- The retained balanced causal rule produced 7--8 joint core/radiometer/laser
+  heater states, six feasible-frontier signatures, and 8--16 feasible masks
+  per row across all four final windows at budget `2.50`.
+- Added remote asset and geometry launchers. V683 frozen-asset refitting is
+  running remotely; no PPO or online transfer has started.
+
+## 2026-09-11 - V683 geometry closeout
+
+- Completed matched 32-subset geometry for seeds 7177--7180.
+- Operating gaps were `0.0000068711`, `0.0002936796`, `0.0003757667`, and
+  `0.0026746816`; 1% static intersections contained 8, 7, 0, and 2
+  candidates.
+- Closed the route before transfer/PPO. The radiometer load made feasibility
+  state dependent but did not make forecast value state dependent across seeds.
