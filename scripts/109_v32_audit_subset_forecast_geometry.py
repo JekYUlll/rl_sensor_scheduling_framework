@@ -11,6 +11,7 @@ import argparse
 import importlib.util
 import json
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -35,6 +36,8 @@ STATE_COLUMNS = (
     "solar_radiation_wm2", "snow_surface_temperature_c",
     "snow_particle_mean_diameter_mm", "snow_particle_mean_velocity_ms",
     "snow_mass_flux_kg_m2_s",
+    "event_subtype_particle_latent", "event_subtype_flux_latent",
+    "event_subtype_thermal_latent",
 )
 REWARD_TARGET_COLUMNS = (
     "air_temperature_c", "snow_surface_temperature_c", "wind_speed_ms",
@@ -60,6 +63,53 @@ OPERATING_STATE_GROUPS = (
 )
 
 
+def merge_dynamic_resource_trace(truth: pd.DataFrame, meta: dict) -> pd.DataFrame:
+    """Reconstruct the truth view used by the dynamic-resource environment.
+
+    Asset preparation stores the resource trace in the manifest instead of
+    duplicating its columns in the base truth CSV. Geometry must apply the same
+    truth-aligned merge as the training entry point before constructing the
+    environment; otherwise a dynamic-resource run is silently evaluated as a
+    static-cost run.
+    """
+    resource_meta = dict(meta.get("dynamic_resource", {}))
+    trace_path = str(resource_meta.get("trace_csv", ""))
+    if not trace_path:
+        return truth
+    trace = pd.read_csv(trace_path)
+    resource_columns = [
+        str(column)
+        for column in trace.columns
+        if str(column).startswith("resource_")
+    ]
+    effective_columns = [
+        column for column in resource_columns if column.startswith("resource_effective_power_")
+    ]
+    if not effective_columns:
+        raise ValueError(f"dynamic resource trace has no effective power columns: {trace_path}")
+    stale_columns = [column for column in resource_columns if column in truth.columns]
+    base_truth = truth.drop(columns=stale_columns)
+    if "time_idx" in base_truth.columns and "time_idx" in trace.columns:
+        if trace["time_idx"].duplicated().any():
+            raise ValueError(f"dynamic resource trace has duplicate time_idx values: {trace_path}")
+        merged = base_truth.merge(
+            trace[["time_idx", *resource_columns]],
+            on="time_idx",
+            how="left",
+            sort=False,
+            validate="one_to_one",
+        )
+    elif len(base_truth) == len(trace):
+        merged = base_truth.copy()
+        for column in resource_columns:
+            merged[column] = trace[column].to_numpy(dtype=float)
+    else:
+        raise ValueError("dynamic resource trace must share time_idx or row count with truth")
+    if merged[resource_columns].isna().any().any():
+        raise ValueError(f"dynamic resource trace does not cover every truth row: {trace_path}")
+    return merged
+
+
 def load_diagnostic_module():
     path = Path(__file__).with_name("27_v2_diagnose_action_landscape.py")
     spec = importlib.util.spec_from_file_location("action_landscape_diag", path)
@@ -76,6 +126,34 @@ def load_oracle(path: Path, oracle_type: str):
     if oracle_type == "linear":
         return LinearFrozenForecastOracle.load(str(path))
     raise ValueError(f"unsupported oracle type: {oracle_type}")
+
+
+class FeasibleFixedMaskPolicy:
+    """Keep a fixed target mask and use a feasible execution fallback.
+
+    Geometry scores are recorded only when the requested mask is actually
+    executed.  This prevents the environment's projection guard from attributing
+    another subset's observations to the requested candidate.
+    """
+
+    def __init__(self, target_mask: np.ndarray, candidates: np.ndarray, *, name: str) -> None:
+        self.target_mask = np.asarray(target_mask, dtype=bool).reshape(-1)
+        self.candidates = np.asarray(candidates, dtype=bool)
+        self.name = str(name)
+
+    def reset(self) -> None:
+        pass
+
+    def act_mask(self, env: object) -> np.ndarray:
+        if bool(env.is_mask_executable(self.target_mask)):
+            return self.target_mask.copy()
+        previous = np.asarray(getattr(env, "previous_action_mask"), dtype=bool).reshape(-1)
+        if previous.shape == self.target_mask.shape and bool(env.is_mask_executable(previous)):
+            return previous.copy()
+        for candidate in self.candidates:
+            if bool(env.is_mask_executable(candidate)):
+                return np.asarray(candidate, dtype=bool).copy()
+        raise ValueError("no executable fallback exists for subset geometry rollout")
 
 
 def constraints_from_metadata(
@@ -123,8 +201,20 @@ def env_config_from_metadata(
     cycle = dict(meta.get("agent_cycle_phase", {}))
     regime = dict(meta.get("observable_regime_belief", {}))
     energy = dict(meta.get("energy_account", {}))
+    dynamic_resource = dict(meta.get("dynamic_resource", {}))
+    dynamic_mapping = tuple(
+        (str(sensor_id), str(column))
+        for sensor_id, column in dict(dynamic_resource.get("power_columns", {})).items()
+    )
 
     state_columns = tuple(str(x) for x in meta.get("state_columns", STATE_COLUMNS))
+    # Older asset manifests omit state_columns.  Their uncertainty vector is
+    # the authoritative dimensionality: V541 was trained without the three
+    # latent subtype columns, whereas newer assets may use all 15 columns.
+    if "state_columns" not in meta:
+        variance = meta.get("uncertainty_proxy", {}).get("process_variance")
+        if variance is not None and len(variance) == 12:
+            state_columns = STATE_COLUMNS[:12]
     target_columns = tuple(str(x) for x in meta.get("reward_target_columns", REWARD_TARGET_COLUMNS))
     norm_start = int(partition.get("normalization_start_idx", 0))
     norm_end = int(partition.get("normalization_end_idx", len(truth)))
@@ -217,6 +307,19 @@ def env_config_from_metadata(
         sensor_quality_columns=tuple(str(x) for x in quality.get("columns", ())),
         sensor_quality_max_noise_multiplier=float(quality.get("max_noise_multiplier", 1.0)),
         sensor_quality_availability_floor=float(quality.get("availability_floor", 1.0)),
+        dynamic_resource_power_columns=dynamic_mapping,
+        dynamic_resource_fixed_power_w=float(dynamic_resource.get("fixed_power_w", 0.0)),
+        dynamic_resource_unmapped_power_w=(
+            None
+            if dynamic_resource.get("unmapped_power_w") is None
+            else float(dynamic_resource["unmapped_power_w"])
+        ),
+        dynamic_resource_budget_w=(
+            None
+            if dynamic_resource.get("budget_w") is None
+            else float(dynamic_resource["budget_w"])
+        ),
+        include_dynamic_resource_state=bool(dynamic_resource.get("state_in_observation", False)),
     )
 
 
@@ -227,6 +330,53 @@ def operating_condition_labels(
     activity_aligned_transport_demand: bool = False,
 ) -> tuple[np.ndarray, tuple[str, ...] | None, dict[str, float]]:
     """Return disjoint operating-state bins fixed on the training partition."""
+    factor_columns = tuple(
+        f"agent_context_operating_factor_{name}"
+        for name in ("transport", "particle", "thermal")
+        if f"agent_context_operating_factor_{name}" in truth
+    )
+    if len(factor_columns) == 3:
+        values = truth[list(factor_columns)].to_numpy(dtype=float)
+        names = np.asarray(("transport", "particle", "thermal"), dtype=object)
+        winner = np.argmax(values, axis=1)
+        labels = names[winner].astype(object)
+        labels[np.max(values, axis=1) < 0.5] = "mixed"
+        return labels, factor_columns, {column: 0.5 for column in factor_columns}
+    duty_columns = tuple(
+        column
+        for column in (
+            "resource_heater_duty_met_station_core",
+            "resource_heater_duty_laser_disdrometer",
+        )
+        if column in truth
+    )
+    if len(duty_columns) == 2:
+        # Fixed physical-duty buckets; no test-window quantiles are used.
+        values = truth[list(duty_columns)].to_numpy(dtype=float)
+        bins = np.clip(np.floor(values * 3.0).astype(int), 0, 2)
+        labels = np.asarray(
+            ["duty_" + "_".join(str(int(value)) for value in row) for row in bins],
+            dtype=object,
+        )
+        return labels, duty_columns, {column: 1.0 / 3.0 for column in duty_columns}
+    heater_columns = tuple(
+        column
+        for column in (
+            "resource_heater_on_met_station_core",
+            "resource_heater_on_laser_disdrometer",
+            "resource_heater_on_radiometer_basic",
+            "resource_heater_on_surface_temp_ir",
+            "resource_heater_on_fc4_flux",
+        )
+        if column in truth
+    )
+    if heater_columns:
+        values = truth[list(heater_columns)].to_numpy(dtype=bool)
+        labels = np.asarray(
+            ["heater_" + "".join("1" if value else "0" for value in row) for row in values],
+            dtype=object,
+        )
+        return labels, heater_columns, {}
     state_columns = next(
         (group for group in OPERATING_STATE_GROUPS if all(column in truth for column in group)),
         None,
@@ -368,11 +518,15 @@ def audit_run(
     *,
     steady_budget: float | None = None,
     startup_budget: float | None = None,
+    dynamic_resource_budget: float | None = None,
+    dynamic_resource_fixed_power: float | None = None,
+    oracle_loss_clip: float | None = None,
     activity_aligned_transport_demand: bool = False,
+    start_indices: list[int] | None = None,
 ) -> dict:
     diag = load_diagnostic_module()
     meta = json.loads((run_dir / "v2_ppo_metadata.json").read_text(encoding="utf-8"))
-    truth = pd.read_csv(meta["truth_csv"])
+    truth = merge_dynamic_resource_trace(pd.read_csv(meta["truth_csv"]), meta)
     sensors = load_sensor_specs(meta["sensor_cfg"])
     constraints = constraints_from_metadata(
         meta,
@@ -381,8 +535,28 @@ def audit_run(
         startup_budget=startup_budget,
     )
     masks = diag.build_candidate_masks(sensors, constraints, max_candidate_warmup=None)
-    oracle = load_oracle(Path(meta["oracle_path"]), str(meta.get("oracle_type", "tcn")))
-    starts = [int(x) for x in meta.get("eval_start_indices", [0])][: max(1, max_rollouts)]
+    oracle_path = Path(meta["oracle_path"])
+    if not oracle_path.is_absolute():
+        run_relative = run_dir / oracle_path
+        project_relative = Path.cwd() / oracle_path
+        if run_relative.exists():
+            oracle_path = run_relative
+        elif project_relative.exists():
+            oracle_path = project_relative
+        else:
+            # Keep the run-relative path in the error so missing frozen assets
+            # remain attributable to the manifest that referenced them.
+            oracle_path = run_relative
+    oracle = load_oracle(oracle_path, str(meta.get("oracle_type", "tcn")))
+    if oracle_loss_clip is not None and hasattr(oracle, "cfg"):
+        # Diagnostic only: expose whether the frozen loss clip masks subset
+        # geometry. This does not alter any frozen asset or policy result.
+        oracle.cfg = replace(oracle.cfg, loss_clip=float(oracle_loss_clip))
+    starts = (
+        [int(x) for x in start_indices]
+        if start_indices is not None
+        else [int(x) for x in meta.get("eval_start_indices", [0])]
+    )[: max(1, max_rollouts)]
     operating_labels, operating_state_columns, operating_thresholds = operating_condition_labels(
         truth,
         meta,
@@ -391,7 +565,7 @@ def audit_run(
     records: list[dict] = []
 
     for idx, mask in enumerate(masks):
-        policy = diag.FixedMaskPolicy(mask, name=f"candidate_{idx:03d}")
+        policy = FeasibleFixedMaskPolicy(mask, masks, name=f"candidate_{idx:03d}")
         rollouts = []
         for offset, start_idx in enumerate(starts):
             cfg = env_config_from_metadata(
@@ -400,6 +574,27 @@ def audit_run(
                 seed=int(meta.get("seed", 42)) + 1000 + offset,
                 episode_len=int(steps),
             )
+            if dynamic_resource_budget is not None or dynamic_resource_fixed_power is not None:
+                cfg = replace(
+                    cfg,
+                    dynamic_resource_budget_w=(
+                        float(dynamic_resource_budget)
+                        if dynamic_resource_budget is not None
+                        else cfg.dynamic_resource_budget_w
+                    ),
+                    dynamic_resource_fixed_power_w=(
+                        float(dynamic_resource_fixed_power)
+                        if dynamic_resource_fixed_power is not None
+                        else cfg.dynamic_resource_fixed_power_w
+                    ),
+                )
+            elif steady_budget is not None:
+                # Backward-compatible shorthand for the historical audit
+                # protocol where both constraint layers intentionally shared
+                # one budget. New screens should pass the two budgets
+                # explicitly to avoid conflating normalized action cost with
+                # physical effective resource cost.
+                cfg = replace(cfg, dynamic_resource_budget_w=float(steady_budget))
             env = diag.WarmupSchedulingEnv(truth, sensors, constraints, cfg, oracle=oracle)
             rollouts.append(run_policy_rollout(env, policy, steps=int(steps), start_idx=start_idx))
         result = concat_rollout_results(rollouts, policy_name=policy.name)
@@ -407,13 +602,17 @@ def audit_run(
         operating_condition = operating_labels[result.step_indices]
         sensor_ids = ";".join(spec.sensor_id for spec, selected in zip(sensors, mask, strict=True) if bool(selected))
         steady_cost = float(sum(spec.power_cost for spec, selected in zip(sensors, mask, strict=True) if bool(selected)))
-        for time_idx, loss, subtype_id, operating_label in zip(
+        executed_requested = np.all(result.selected_masks == np.asarray(mask, dtype=int), axis=1)
+        for time_idx, loss, subtype_id, operating_label, requested_ok in zip(
             result.step_indices,
             result.oracle_losses,
             subtype,
             operating_condition,
+            executed_requested,
             strict=True,
         ):
+            if not bool(requested_ok):
+                continue
             records.append({
                 "seed": int(meta.get("seed", -1)),
                 "time_idx": int(time_idx),
@@ -443,12 +642,15 @@ def audit_run(
 
     sensor_ids = [spec.sensor_id for spec in sensors]
     power_rows = []
+    support_by_candidate = frame.groupby("candidate").size().to_dict() if not frame.empty else {}
     for mask in masks:
+        candidate_name = f"candidate_{len(power_rows):03d}"
         power_rows.append({
-            "candidate": f"candidate_{len(power_rows):03d}",
+            "candidate": candidate_name,
             "selected_sensor_ids": ";".join(s for s, selected in zip(sensor_ids, mask, strict=True) if bool(selected)),
             "steady_cost": float(sum(spec.power_cost for spec, selected in zip(sensors, mask, strict=True) if bool(selected))),
             "startup_cost": float(sum(spec.startup_peak_power for spec, selected in zip(sensors, mask, strict=True) if bool(selected))),
+            "executed_rows": int(support_by_candidate.get(candidate_name, 0)),
         })
     specialist = {"surface_temp_ir", "laser_disdrometer", "fc4_flux"}
     specialist_union_feasible = any(
@@ -459,6 +661,7 @@ def audit_run(
         "steady_budget": float(constraints.per_step_budget),
         "startup_budget": float(constraints.startup_peak_budget),
         "candidate_count": int(len(masks)),
+        "candidate_support_rows": {str(key): int(value) for key, value in support_by_candidate.items()},
         "conditions": event_geometry["conditions"],
         "condition_sample_counts": event_geometry["sample_counts"],
         "best_overall_candidate": str(best_overall.candidate),
@@ -499,9 +702,28 @@ def main() -> None:
     parser.add_argument("--out-dir", required=True, type=Path)
     parser.add_argument("--steps", type=int, default=256)
     parser.add_argument("--max-rollouts", type=int, default=4)
+    parser.add_argument("--start-index", action="append", type=int, default=None)
     parser.add_argument("--epsilon", action="append", type=float, default=[0.01, 0.05])
     parser.add_argument("--steady-budget", type=float)
     parser.add_argument("--startup-budget", type=float)
+    parser.add_argument(
+        "--dynamic-resource-budget",
+        type=float,
+        default=None,
+        help="Independent dynamic effective-resource budget; defaults to manifest value.",
+    )
+    parser.add_argument(
+        "--dynamic-resource-fixed-power",
+        type=float,
+        default=None,
+        help="Independent fixed dynamic-resource load, e.g. a mandatory logger/backbone.",
+    )
+    parser.add_argument(
+        "--oracle-loss-clip",
+        type=float,
+        default=None,
+        help="Diagnostic override for the frozen oracle loss clip; never use for final evidence.",
+    )
     parser.add_argument("--activity-aligned-transport-demand", action="store_true")
     parser.add_argument(
         "--torch-threads",
@@ -526,7 +748,11 @@ def main() -> None:
             args.epsilon,
             steady_budget=args.steady_budget,
             startup_budget=args.startup_budget,
+            dynamic_resource_budget=args.dynamic_resource_budget,
+            dynamic_resource_fixed_power=args.dynamic_resource_fixed_power,
+            oracle_loss_clip=args.oracle_loss_clip,
             activity_aligned_transport_demand=bool(args.activity_aligned_transport_demand),
+            start_indices=args.start_index,
         )
         for path in args.run_dir
     ]

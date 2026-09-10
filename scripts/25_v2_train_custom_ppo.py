@@ -82,6 +82,45 @@ def energy_kwargs(args: argparse.Namespace) -> dict[str, float | bool]:
     }
 
 
+def dynamic_resource_kwargs(args: argparse.Namespace) -> dict[str, object]:
+    mapping = tuple(getattr(args, "dynamic_resource_power_mapping", ()))
+    return {
+        "dynamic_resource_power_columns": mapping,
+        "dynamic_resource_fixed_power_w": float(getattr(args, "dynamic_resource_fixed_power_w", 0.0)),
+        "dynamic_resource_unmapped_power_w": getattr(args, "dynamic_resource_unmapped_power_w", None),
+        "dynamic_resource_budget_w": getattr(args, "dynamic_resource_budget_w", None),
+        "include_dynamic_resource_state": bool(getattr(args, "include_dynamic_resource_state", False)),
+    }
+
+
+def merge_dynamic_resource_trace(truth: pd.DataFrame, trace_path: str | None) -> tuple[pd.DataFrame, tuple[tuple[str, str], ...]]:
+    if not trace_path:
+        return truth, ()
+    trace = pd.read_csv(trace_path)
+    resource_columns = [column for column in trace.columns if column.startswith("resource_effective_power_")]
+    if not resource_columns:
+        raise ValueError(f"dynamic resource trace has no resource_effective_power_ columns: {trace_path}")
+    if "time_idx" in truth.columns and "time_idx" in trace.columns:
+        if trace["time_idx"].duplicated().any():
+            raise ValueError("dynamic resource trace contains duplicate time_idx values")
+        # The truth may already carry a stale resource snapshot.  The explicit
+        # trace is authoritative, so remove those columns before the merge to
+        # avoid pandas suffixes and silently selecting the wrong snapshot.
+        stale_resource_columns = [column for column in resource_columns if column in truth.columns]
+        merge_truth = truth.drop(columns=stale_resource_columns)
+        merged = merge_truth.merge(trace[["time_idx", *resource_columns]], on="time_idx", how="left", sort=False, validate="one_to_one")
+        if merged[resource_columns].isna().any().any():
+            raise ValueError("dynamic resource trace does not cover every truth time_idx")
+    elif len(truth) == len(trace):
+        merged = truth.copy()
+        for column in resource_columns:
+            merged[column] = trace[column].to_numpy(dtype=float)
+    else:
+        raise ValueError("dynamic resource trace must share time_idx or row count with truth")
+    mapping = tuple((column.removeprefix("resource_effective_power_"), column) for column in resource_columns)
+    return merged, mapping
+
+
 def resolve_candidate_action_index(
     sensors: list[object],
     candidate_masks: np.ndarray,
@@ -280,14 +319,20 @@ def load_json(path: str | Path) -> dict[str, object]:
     return value
 
 
-def control_source_required_files(reward_loss_normalization: str) -> tuple[str, ...]:
+def control_source_required_files(
+    reward_loss_normalization: str,
+    *,
+    assets_only: bool = False,
+) -> tuple[str, ...]:
     required = [
         "truth_v31_split.csv",
         "v2_ppo_metadata.json",
         "split_protocol_manifest.json",
-        "custom_ppo.pt",
-        "validation_static_candidates.csv",
     ]
+    if not assets_only:
+        required.append("validation_static_candidates.csv")
+    if not assets_only:
+        required.insert(3, "custom_ppo.pt")
     if str(reward_loss_normalization) == "staticnorm_subtype":
         required.extend(
             [
@@ -306,7 +351,10 @@ def validate_control_source(
     candidate_masks: np.ndarray,
     args: argparse.Namespace,
 ) -> tuple[dict[str, object], dict[str, object]]:
-    required = control_source_required_files(str(args.reward_loss_normalization))
+    assets_only = bool(getattr(args, "control_source_assets_only", False))
+    required = control_source_required_files(
+        str(args.reward_loss_normalization), assets_only=assets_only
+    )
     missing = [name for name in required if not (source_dir / name).is_file()]
     if missing:
         raise FileNotFoundError(f"control source {source_dir} is missing: {missing}")
@@ -357,10 +405,23 @@ def validate_control_source(
     if requested_static and source_static != requested_static:
         raise ValueError("control source validation start indices do not match requested indices")
 
-    import torch
+    source_masks_path = source_dir / "candidate_masks.npy"
+    if source_masks_path.is_file():
+        source_masks = np.asarray(np.load(source_masks_path), dtype=bool)
+    elif (source_dir / "custom_ppo.pt").is_file():
+        import torch
 
-    checkpoint = torch.load(source_dir / "custom_ppo.pt", map_location="cpu", weights_only=False)
-    source_masks = np.asarray(checkpoint.get("candidate_masks"), dtype=bool)
+        checkpoint = torch.load(source_dir / "custom_ppo.pt", map_location="cpu", weights_only=False)
+        source_masks = np.asarray(checkpoint.get("candidate_masks"), dtype=bool)
+    elif assets_only:
+        source_masks = None
+    else:
+        raise FileNotFoundError(f"control source is missing candidate_masks.npy or custom_ppo.pt: {source_dir}")
+    if source_masks is None:
+        expected_count = int(metadata.get("candidate_mask_count", -1))
+        if expected_count != int(candidate_masks.shape[0]):
+            raise ValueError("asset-only control source candidate count does not match requested action surface")
+        return metadata, manifest
     if source_masks.shape != candidate_masks.shape or not np.array_equal(source_masks, candidate_masks):
         raise ValueError("control source candidate masks do not match the requested action surface")
     return metadata, manifest
@@ -682,6 +743,11 @@ def main() -> None:
         help="Reuse truth-linked frozen evaluator and validation assets from an existing run.",
     )
     parser.add_argument(
+        "--control-source-assets-only",
+        action="store_true",
+        help="Allow a frozen evaluator/geometry source without a prior policy checkpoint.",
+    )
+    parser.add_argument(
         "--training-control-source-run-dirs",
         nargs="*",
         default=None,
@@ -968,6 +1034,15 @@ def main() -> None:
     parser.add_argument("--per-step-budget", type=float, default=1.7)
     parser.add_argument("--startup-peak-budget", type=float, default=3.2)
     parser.add_argument(
+        "--dynamic-resource-trace",
+        default=None,
+        help="Optional truth-aligned CSV with resource_effective_power_* columns.",
+    )
+    parser.add_argument("--dynamic-resource-budget-w", type=float, default=None)
+    parser.add_argument("--dynamic-resource-fixed-power-w", type=float, default=0.0)
+    parser.add_argument("--dynamic-resource-unmapped-power-w", type=float, default=None)
+    parser.add_argument("--include-dynamic-resource-state", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument(
         "--max-active",
         type=int,
         default=None,
@@ -1083,6 +1158,9 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     truth_path = helpers.ensure_truth(args)
     truth = helpers.ensure_state_columns(pd.read_csv(truth_path))
+    truth, args.dynamic_resource_power_mapping = merge_dynamic_resource_trace(
+        truth, args.dynamic_resource_trace
+    )
     sensor_cfg_path = resolve_sensor_cfg(str(args.sensor_cfg))
     sensors = load_sensor_specs(sensor_cfg_path)
     coverage_groups = () if bool(args.disable_coverage_groups) else helpers.DEFAULT_COVERAGE_GROUPS
@@ -1093,7 +1171,7 @@ def main() -> None:
         required_sensor_ids=tuple(str(sensor_id) for sensor_id in args.required_sensors),
         coverage_groups=coverage_groups,
     )
-    candidate_masks = helpers.build_projected_candidate_masks(
+    candidate_masks = helpers.build_arbitrary_candidate_masks(
         sensors,
         constraints,
         max_candidate_warmup=None if int(args.ppo_max_candidate_warmup) < 0 else int(args.ppo_max_candidate_warmup),
@@ -1381,6 +1459,7 @@ def main() -> None:
         alert_context_trend_lookback=max(1, int(args.alert_context_trend_lookback)),
         uncertainty_process_variance=uncertainty_process_variance,
         measurement_update_mode=str(args.measurement_update_mode),
+        **dynamic_resource_kwargs(args),
         **energy_kwargs(args),
     )
     reward_loss_normalizers: tuple[float, float, float] | None = None
@@ -1577,6 +1656,15 @@ def main() -> None:
                 "columns": [str(x) for x in (args.sensor_quality_columns or ())],
                 "max_noise_multiplier": float(args.sensor_quality_max_noise_multiplier),
                 "availability_floor": float(args.sensor_quality_availability_floor),
+            },
+            "dynamic_resource": {
+                "trace_csv": "" if not args.dynamic_resource_trace else str(Path(args.dynamic_resource_trace).resolve()),
+                "power_columns": {str(sensor_id): str(column) for sensor_id, column in args.dynamic_resource_power_mapping},
+                "fixed_power_w": float(args.dynamic_resource_fixed_power_w),
+                "unmapped_power_w": args.dynamic_resource_unmapped_power_w,
+                "budget_w": None if args.dynamic_resource_budget_w is None else float(args.dynamic_resource_budget_w),
+                "state_in_observation": bool(args.include_dynamic_resource_state),
+                "feasibility_source": "online_effective_resource_mask",
             },
             "uncertainty_proxy": {
                 "process_variance": [float(x) for x in uncertainty_process_variance],
@@ -2251,6 +2339,7 @@ def main() -> None:
         measurement_update_mode=str(args.measurement_update_mode),
         oracle_loss_reward_normalizers=reward_loss_normalizers,
         oracle_loss_reward_default_normalizer=float(reward_loss_default_normalizer),
+        **dynamic_resource_kwargs(args),
         **energy_kwargs(args),
     )
     if args.policy_alignment_audit_output:
@@ -2746,6 +2835,15 @@ def main() -> None:
             "degraded_coverage": float(args.channel_quality_degraded_coverage),
             "degraded_value": float(args.channel_quality_degraded_value),
             "transition_steps": int(args.channel_quality_transition_steps),
+        },
+        "dynamic_resource": {
+            "trace_csv": "" if not args.dynamic_resource_trace else str(Path(args.dynamic_resource_trace).resolve()),
+            "power_columns": {str(sensor_id): str(column) for sensor_id, column in args.dynamic_resource_power_mapping},
+            "fixed_power_w": float(args.dynamic_resource_fixed_power_w),
+            "unmapped_power_w": args.dynamic_resource_unmapped_power_w,
+            "budget_w": None if args.dynamic_resource_budget_w is None else float(args.dynamic_resource_budget_w),
+            "state_in_observation": bool(args.include_dynamic_resource_state),
+            "feasibility_source": "online_effective_resource_mask",
         },
         "agent_alert_context": {
             "include_event_flag_in_state": bool(args.include_event_flag_in_state),

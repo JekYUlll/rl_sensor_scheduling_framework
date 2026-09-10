@@ -1,0 +1,29 @@
+{
+  "schema_version": "modbus_cold_availability_v1",
+  "purpose": "Empirical deployment-observable availability relation for the Modbus weather channel",
+  "source": "SEUAWS rs485-reader sensor_test_report.md and wind_failure_by_temperature_bin.csv",
+  "source_scope": "indoor/freezer hardware test; used as an independent calibration reference, not Antarctic field validation",
+  "driver_column": "agent_context_nowcast_air_temperature_c",
+  "target_sensor": "met_station_core",
+  "target_failure": "Modbus WS_Avg invalid sentinel or unavailable wind measurement",
+  "quality_bins": [
+    {"upper_exclusive_c": -46.0, "quality": 0.019},
+    {"upper_exclusive_c": -44.0, "quality": 0.083},
+    {"upper_exclusive_c": -40.0, "quality": 0.251},
+    {"upper_exclusive_c": -30.0, "quality": 0.639},
+    {"upper_exclusive_c": -10.0, "quality": 0.952},
+    {"upper_exclusive_c": 10.0, "quality": 1.0},
+    {"upper_exclusive_c": null, "quality": 1.0}
+  ],
+  "reported_failure_rates": {
+    "le_minus_46_c": 0.981,
+    "minus_46_to_minus_44_c": 0.917,
+    "minus_44_to_minus_40_c": 0.749,
+    "minus_40_to_minus_30_c": 0.361,
+    "minus_30_to_minus_10_c": 0.048,
+    "minus_10_to_10_c": 0.0,
+    "greater_10_c": 0.0
+  },
+  "other_channels_unchanged": true,
+  "exact_test_labels_exposed_to_policy": false
+}

@@ -1,0 +1,47 @@
+{
+  "version": "heater_quality_relation_v1",
+  "description": "Predeclared proxy relation between documented heater state and sensor observation quality.",
+  "risk_rule": {
+    "air_temperature_max_c": -5.0,
+    "dew_point_margin_max_c": 1.0,
+    "snow_surface_temperature_max_c": -5.0
+  },
+  "channels": {
+    "met_station_core": {
+      "heater_column": "resource_heater_on_met_station_core",
+      "quality_when_heated": 1.0,
+      "quality_when_unheated_in_risk": 0.35,
+      "quality_when_unheated_outside_risk": 1.0
+    },
+    "laser_disdrometer": {
+      "heater_column": "resource_heater_on_laser_disdrometer",
+      "quality_when_heated": 1.0,
+      "quality_when_unheated_in_risk": 0.25,
+      "quality_when_unheated_outside_risk": 1.0
+    },
+    "radiometer_basic": {
+      "heater_column": null,
+      "quality_when_heated": 1.0,
+      "quality_when_unheated_in_risk": 0.75,
+      "quality_when_unheated_outside_risk": 1.0
+    },
+    "surface_temp_ir": {
+      "heater_column": null,
+      "quality_when_heated": 1.0,
+      "quality_when_unheated_in_risk": 0.80,
+      "quality_when_unheated_outside_risk": 1.0
+    },
+    "fc4_flux": {
+      "heater_column": null,
+      "quality_when_heated": 1.0,
+      "quality_when_unheated_in_risk": 0.95,
+      "quality_when_unheated_outside_risk": 1.0
+    },
+    "cr1000xe_backbone": {
+      "heater_column": null,
+      "quality_when_heated": 1.0,
+      "quality_when_unheated_in_risk": 1.0,
+      "quality_when_unheated_outside_risk": 1.0
+    }
+  }
+}

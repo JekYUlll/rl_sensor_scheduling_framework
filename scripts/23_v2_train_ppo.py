@@ -640,6 +640,42 @@ def build_projected_candidate_masks(
     return np.asarray(list(masks.values()), dtype=bool)
 
 
+def build_arbitrary_candidate_masks(
+    sensors: list,
+    constraints: PowerConstraintsV2,
+    *,
+    max_candidate_warmup: int | None = None,
+) -> np.ndarray:
+    """Enumerate the declared subset action space without static projection.
+
+    Power and startup feasibility are state-dependent and must be applied by
+    ``feasible_candidate_mask`` at each decision epoch.  Projecting here would
+    silently merge distinct requested subsets and shrink the action space before
+    the runtime feasibility mask is evaluated.
+    """
+    n_sensors = len(sensors)
+    allowed = np.ones(n_sensors, dtype=bool)
+    if max_candidate_warmup is not None:
+        allowed = np.asarray(
+            [int(spec.warmup_steps) <= int(max_candidate_warmup) for spec in sensors],
+            dtype=bool,
+        )
+    required_indices = {
+        int(idx)
+        for idx, spec in enumerate(sensors)
+        if str(spec.sensor_id) in set(str(value) for value in constraints.required_sensor_ids)
+    }
+    masks: list[np.ndarray] = []
+    for value in range(1 << n_sensors):
+        mask = np.asarray([(value >> idx) & 1 for idx in range(n_sensors)], dtype=bool)
+        if np.any(mask & ~allowed) or any(not bool(mask[idx]) for idx in required_indices):
+            continue
+        masks.append(mask)
+    if not masks:
+        raise ValueError("No arbitrary subset candidates satisfy the declared sensor/warmup requirements")
+    return np.asarray(masks, dtype=bool)
+
+
 def plot_training_eval(metrics: pd.DataFrame, out_dir: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 4))
     metrics.sort_values("oracle_loss_mean").plot.bar(x="policy", y="oracle_loss_mean", ax=ax, legend=False)

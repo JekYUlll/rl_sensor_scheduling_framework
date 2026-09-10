@@ -1,0 +1,8 @@
+# Subset forecast crossover audit
+
+| Seed | Best static | Cost | Condition winners | 1% intersection |
+|---:|---|---:|---|---|
+| 7177 | `candidate_005` (met_station_core;surface_temp_ir;cr1000xe_backbone) | 1.8904 | {'mixed': 'candidate_005', 'thermal': 'candidate_010', 'transport': 'candidate_005'} | ['candidate_000', 'candidate_001', 'candidate_002', 'candidate_003', 'candidate_004', 'candidate_005', 'candidate_006', 'candidate_008', 'candidate_010', 'candidate_016', 'candidate_017', 'candidate_018'] |
+| 7178 | `candidate_005` (met_station_core;surface_temp_ir;cr1000xe_backbone) | 1.8904 | {'mixed': 'candidate_005', 'thermal': 'candidate_005', 'transport': 'candidate_005'} | ['candidate_000', 'candidate_001', 'candidate_002', 'candidate_003', 'candidate_004', 'candidate_005', 'candidate_006', 'candidate_008', 'candidate_010', 'candidate_016', 'candidate_017', 'candidate_018'] |
+| 7179 | `candidate_010` (radiometer_basic;laser_disdrometer;cr1000xe_backbone) | 1.9704 | {'mixed': 'candidate_006', 'thermal': 'candidate_010', 'transport': 'candidate_010'} | ['candidate_000', 'candidate_001', 'candidate_002', 'candidate_003', 'candidate_004', 'candidate_005', 'candidate_006', 'candidate_008', 'candidate_010', 'candidate_016', 'candidate_017', 'candidate_018'] |
+| 7180 | `candidate_002` (radiometer_basic;cr1000xe_backbone) | 1.0904 | {'mixed': 'candidate_002', 'thermal': 'candidate_002', 'transport': 'candidate_002'} | ['candidate_000', 'candidate_001', 'candidate_002', 'candidate_003', 'candidate_004', 'candidate_005', 'candidate_006', 'candidate_008', 'candidate_010', 'candidate_016', 'candidate_017', 'candidate_018'] |

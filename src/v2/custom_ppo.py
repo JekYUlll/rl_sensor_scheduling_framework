@@ -2656,16 +2656,11 @@ def feasible_candidate_mask(env: WarmupSchedulingEnv, candidate_masks: np.ndarra
     for idx, mask in enumerate(masks):
         feasible[idx] = bool(env.is_mask_executable(mask))
     if not np.any(feasible):
-        # Preserve the historical fallback only when the projector has no
-        # feasible candidate.  Under an active dwell hold, the previous
-        # executed subset must remain represented by the candidate geometry.
-        if int(getattr(env, "dwell_hold_remaining", 0)) <= 0:
-            feasible[:] = True
-        else:
-            raise ValueError(
-                "candidate_masks must contain the currently executed subset "
-                "while minimum dwell is active"
-            )
+        raise ValueError(
+            "candidate_masks contain no executable subset at the current "
+            "resource/dwell state; the action space or environment constraints "
+            "are inconsistent"
+        )
     return feasible
 
 

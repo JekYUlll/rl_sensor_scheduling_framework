@@ -809,6 +809,7 @@ def add_forecast_value_dynamics(
     horizon_persistent_latent: bool = False,
     specialist_resilient_quality: bool = False,
     activity_aligned_transport_demand: bool = False,
+    specialist_target_innovations: bool = False,
     forecast_lead_steps: int = 8,
 ):
     """Add forecastable demand and persistent unresolved target components."""
@@ -997,6 +998,56 @@ def add_forecast_value_dynamics(
         10.0,
     )
 
+    if specialist_target_innovations:
+        # Persistent unresolved local variability makes the specialist
+        # measurements materially informative without exposing a channel rule.
+        specialist_flux_latent = ar1(130_011)
+        specialist_particle_latent = ar1(130_023)
+        specialist_thermal_latent = ar1(130_037)
+        flux_gain = 0.05 + 0.95 * actual_flux
+        particle_gain = 0.05 + 0.95 * actual_particle
+        thermal_gain = 0.05 + 0.95 * actual_thermal
+        out["snow_mass_flux_kg_m2_s"] = np.where(
+            active,
+            np.clip(
+                out["snow_mass_flux_kg_m2_s"].to_numpy(dtype=float)
+                * np.exp(0.80 * flux_gain * specialist_flux_latent),
+                0.0,
+                None,
+            ),
+            out["snow_mass_flux_kg_m2_s"].to_numpy(dtype=float),
+        )
+        out["snow_particle_mean_velocity_ms"] = np.where(
+            active,
+            np.clip(
+                out["snow_particle_mean_velocity_ms"].to_numpy(dtype=float)
+                + 3.0 * particle_gain * specialist_particle_latent,
+                0.0,
+                20.0,
+            ),
+            out["snow_particle_mean_velocity_ms"].to_numpy(dtype=float),
+        )
+        out["snow_particle_mean_diameter_mm"] = np.where(
+            active,
+            np.clip(
+                out["snow_particle_mean_diameter_mm"].to_numpy(dtype=float)
+                + 0.035 * particle_gain * specialist_particle_latent,
+                0.04,
+                0.5,
+            ),
+            out["snow_particle_mean_diameter_mm"].to_numpy(dtype=float),
+        )
+        out["snow_surface_temperature_c"] = np.where(
+            active,
+            np.clip(
+                out["snow_surface_temperature_c"].to_numpy(dtype=float)
+                + 1.8 * thermal_gain * specialist_thermal_latent,
+                -80.0,
+                10.0,
+            ),
+            out["snow_surface_temperature_c"].to_numpy(dtype=float),
+        )
+
     def quality_values(flux: np.ndarray, particle: np.ndarray, thermal: np.ndarray) -> dict[str, np.ndarray]:
         if specialist_resilient_quality:
             return {
@@ -1134,6 +1185,7 @@ def main() -> None:
     parser.add_argument("--forecast-value-horizon-persistent-latent", action="store_true")
     parser.add_argument("--forecast-value-specialist-resilient-quality", action="store_true")
     parser.add_argument("--forecast-value-activity-aligned-transport-demand", action="store_true")
+    parser.add_argument("--forecast-value-specialist-target-innovations", action="store_true")
     parser.add_argument("--out", default="data/generated/public_weather_truth.csv")
     parser.add_argument("--report-dir", default="reports/datasets/public_weather_truth")
     args = parser.parse_args()
@@ -1325,6 +1377,7 @@ def main() -> None:
             horizon_persistent_latent=bool(args.forecast_value_horizon_persistent_latent),
             specialist_resilient_quality=bool(args.forecast_value_specialist_resilient_quality),
             activity_aligned_transport_demand=bool(args.forecast_value_activity_aligned_transport_demand),
+            specialist_target_innovations=bool(args.forecast_value_specialist_target_innovations),
             forecast_lead_steps=int(args.nowcast_lead_steps),
         )
         meta["forecast_value_state"] = {
@@ -1342,6 +1395,7 @@ def main() -> None:
             "horizon_persistent_latent": bool(args.forecast_value_horizon_persistent_latent),
             "specialist_resilient_quality": bool(args.forecast_value_specialist_resilient_quality),
             "activity_aligned_transport_demand": bool(args.forecast_value_activity_aligned_transport_demand),
+            "specialist_target_innovations": bool(args.forecast_value_specialist_target_innovations),
             "online_columns": [
                 "agent_context_forecast_flux_demand",
                 "agent_context_forecast_particle_demand",

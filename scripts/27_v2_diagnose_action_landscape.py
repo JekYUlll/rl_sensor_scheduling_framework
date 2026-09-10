@@ -102,28 +102,28 @@ def build_candidate_masks(
     *,
     max_candidate_warmup: int | None,
 ) -> np.ndarray:
-    projector = PowerProjector(sensors, constraints)
-    runtimes = {spec.sensor_id: SensorRuntime(spec) for spec in sensors}
+    """Enumerate the full declared subset space; feasibility is runtime state.
+
+    This diagnostic must not call ``PowerProjector.project_mask`` during action
+    construction: projection rewrites an infeasible request and collapses
+    distinct subset actions.  The runtime environment applies the hard mask.
+    """
     n_sensors = len(sensors)
     allowed = np.ones(n_sensors, dtype=bool)
     if max_candidate_warmup is not None:
         allowed = np.asarray([int(spec.warmup_steps) <= int(max_candidate_warmup) for spec in sensors], dtype=bool)
-    masks: dict[tuple[int, ...], np.ndarray] = {}
+    required_ids = {str(value) for value in constraints.required_sensor_ids}
+    masks: list[np.ndarray] = []
     for value in range(1 << n_sensors):
         desired = np.asarray([(value >> idx) & 1 for idx in range(n_sensors)], dtype=bool)
-        if np.any(desired & ~allowed):
+        if np.any(desired & ~allowed) or any(
+            not bool(desired[idx]) for idx, spec in enumerate(sensors) if str(spec.sensor_id) in required_ids
+        ):
             continue
-        try:
-            result = projector.project_mask(desired, runtimes)
-        except ValueError:
-            continue
-        if np.any(result.selected_mask & ~allowed):
-            continue
-        key = tuple(int(x) for x in result.selected_mask.tolist())
-        masks[key] = result.selected_mask.astype(bool)
+        masks.append(desired)
     if not masks:
-        raise ValueError("No feasible candidate masks found")
-    return np.asarray(list(masks.values()), dtype=bool)
+        raise ValueError("No arbitrary subset candidates satisfy the declared sensor/warmup requirements")
+    return np.asarray(masks, dtype=bool)
 
 
 def constraint_binding_rate(sensors: list, constraints: PowerConstraintsV2, *, samples: int, seed: int) -> float:
