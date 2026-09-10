@@ -10690,3 +10690,17 @@ until all four manifests pass independent validation.
 - Audited the real SEUAWS supply/heater fields and recorded their limits in
   `reports/entity_supply_validation_20260910.md`; voltage telemetry is usable
   for hardware validation, but not for an Antarctic SOC trace.
+
+## 2026-09-10 - V645 empirical cold-wind route closeout
+
+- Re-audited V616 complete-subset forecast geometry before adding truth:
+  operating opportunity gaps were `0.001953, 0.001002, 0.001046, 0`.
+- Added a truth-only delayed AR(1) wind innovation scaled by the documented
+  empirical cold-availability quality proxy. No budget, heater rule, reward,
+  policy feature, or PPO architecture changed.
+- Refit matched frozen assets and audited all 32 subsets on four seeds. V645
+  gaps were `0, 0.015164, 0.000944, 0.004598`; only `1/4` passed the `0.01`
+  materiality gate, and static near-optimal candidates remained in `3/4`.
+- Closed V645 before online transfer/PPO. The route increased target variation
+  but did not establish stable downstream subset-value separation.
+- Added compact provenance artifacts and scripts; pushed as `e75ff78`.
