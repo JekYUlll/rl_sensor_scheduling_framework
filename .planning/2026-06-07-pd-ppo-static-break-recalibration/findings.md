@@ -4236,3 +4236,20 @@ seeds. Operating gaps were `0.0020498832`, `0`, `0.0003399052`, and
 intersections were nonempty in every seed. The resource chain is therefore
 causal and state-supported, but its variation still does not create material
 forecast-value separation. V681 is closed before online transfer and PPO.
+## V681 failure localization
+
+The failure is downstream task geometry, not resource occupancy. In seed7178,
+the operating gap is exactly zero and most feasible candidates remain within
+the 1% near-optimal set. Seed7177 has the largest gap, but it is only
+`0.0020498832`. The operating condition winners also remain seed-dependent:
+seed7177 switches between candidates 020 and 012, whereas seed7178 selects
+candidate 000 in every heater state. The joint resource controller therefore
+changes feasibility without making specialist measurements sufficiently
+valuable to the total forecast objective.
+
+The next admissible design is a bounded V682 joint-contrast truth screen:
+retain the V527-r2 causal mode/nowcast structure and the V681 resource
+controller, but predeclare stronger specialist-specific target innovations and
+measurement-quality contrast within physically plausible ranges. The screen
+must be truth-only first; no PPO or online transfer is allowed until all four
+seeds show material operating gap and empty 1% static intersection.

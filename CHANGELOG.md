@@ -10981,3 +10981,12 @@ until all four manifests pass independent validation.
   has genuine heater-state variation, but not enough downstream value
   separation. The next route must redesign the joint target-quality-resource
   process; PPO tuning is not indicated.
+## 2026-09-11 - V681 failure localization and V682 decision
+
+- Condition-level losses show that V681's resource frontier changes are not
+  reflected strongly enough in forecast value. Seed7178 has zero operating
+  gap, while seed7177 reaches only `0.0020498832`.
+- V682 will keep the causal V527-r2/V681 resource structure and change only a
+  predeclared specialist target-amplitude and observation-quality contrast.
+- V682 remains truth-only until four-seed geometry passes; no PPO tuning or
+  final-window feedback selection is permitted.

@@ -1574,3 +1574,13 @@ V681 operating gaps for seeds 7177--7180 were `0.0020498832`, `0`,
 operating near-optimal static intersection. The next route must redesign the
 joint target-quality-resource process; another PPO or budget retry is not
 justified.
+### Phase 82: Joint target-quality contrast redesign
+- [ ] Define fixed, physically interpretable specialist target-amplitude and
+  observation-quality ranges before using final-window geometry.
+- [ ] Generate a truth-only V682 candidate with the unchanged V681 resource
+  controller and four-seed support.
+- [ ] Refit matched frozen evaluators only if the truth-only support and
+  quality-coupling checks pass.
+- [ ] Close the route before transfer/PPO if the four-seed materiality gate
+  fails again.
+- **Status:** active; V681 shows the need for joint target-quality contrast.
