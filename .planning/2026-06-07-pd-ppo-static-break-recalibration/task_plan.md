@@ -1454,3 +1454,12 @@ chronologically identifiable.
 - [ ] Define the next physical resource state with full final-window support
   before rebuilding any forecaster.
 - **Status:** active; no PPO is permitted.
+
+### Phase 72: V672 shared-driver resource geometry (2026-09-11)
+- [x] Define a shared-driver hysteresis controller with fixed frequency costs.
+- [x] Screen final-window state support and feasible-frontier occupancy.
+- [ ] Generate matched resource traces remotely from the frozen V669 truth.
+- [ ] Complete 32-subset forecast geometry before any transfer audit.
+- [ ] Close the route if the operating opportunity or static-intersection
+  gate fails.
+- **Status:** active; V672 passes resource support only.

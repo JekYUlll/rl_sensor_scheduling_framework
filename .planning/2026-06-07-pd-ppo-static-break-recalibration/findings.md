@@ -4141,3 +4141,11 @@ dew-point risk inputs were too weak in the available truth, so it is rejected
 as a scene candidate rather than threshold-tuned to force occupancy. The next
 route must obtain full final-window support from a traceable physical driver
 before any new assets are built.
+## 2026-09-11 V672 resource support
+
+The shared-driver controller restores state support in the final partition
+without changing target truth or fixed frequency multipliers. Each seed has
+all four core/laser heater combinations in the final partition, with 11--16
+feasible subsets per row. This passes the resource occupancy gate only; the
+forecast evaluator must still demonstrate condition-specific subset value and
+chronological online transfer.

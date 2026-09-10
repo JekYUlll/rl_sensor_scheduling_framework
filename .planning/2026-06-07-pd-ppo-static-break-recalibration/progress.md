@@ -9257,3 +9257,15 @@ The full truth sequence had `00`, `01`, and `11` resource states, so this is a
 final-window support failure, not evidence that the controller has no global
 variation. A separate conditional dew-point controller was screened locally,
 but its heater duty was effectively zero on all seeds and it is not promoted.
+## 2026-09-11 V672 shared-driver resource screen
+
+V672 replaces the V669 weather-threshold heater trace with a declared
+shared-driver hysteresis controller. It uses the same transport, particle,
+and thermal projections that drive channel quality; fixed acquisition costs
+remain constant. Local final-window screens for seeds `7177--7180` all contain
+`00/01/10/11` heater states, `11--16` feasible masks, and frontier-change
+fractions `0.421`, `0.706`, `0.868`, and `0.409`.
+
+V672 is resource evidence only. The next run must regenerate the resource
+trace remotely and perform frozen 32-subset forecast geometry; PPO remains
+blocked.
