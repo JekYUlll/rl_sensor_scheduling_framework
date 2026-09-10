@@ -10990,3 +10990,6 @@ until all four manifests pass independent validation.
   predeclared specialist target-amplitude and observation-quality contrast.
 - V682 remains truth-only until four-seed geometry passes; no PPO tuning or
   final-window feedback selection is permitted.
+- V682 truth generator is implemented locally for the next policy-free screen.
+  It preserves the V527-r2 observable mode/nowcast chain and V681 resource
+  controller while adding a fixed specialist target/quality contrast.

@@ -9381,3 +9381,13 @@ window contains all four joint heater states (`00`, `01`, `10`, `11`), and the
 state-dependent feasible-mask counts are `16/11/16/11`. No evaluator, online
 transfer, or PPO process has been started. The next action is remote
 reproduction followed by matched frozen-asset refitting.
+## 2026-09-11 V682 joint-contrast truth design
+
+V682 is implemented locally as a policy-free scenario candidate. It retains
+the V527-r2 causal mode/nowcast process and the V681 resource controller, but
+uses fixed target excursions of `0.0030` flux, `10.0` m/s particle velocity,
+`0.18` mm particle diameter, and `15.0` C surface temperature. The matched
+specialist quality is fixed near `0.95`; unmatched specialist quality is
+degraded by a fixed `0.65 * mode_strength` multiplier. These constants were
+declared before any V682 geometry result. Local generation succeeded for all
+four seeds; remote truth-only screening is the next gate.
