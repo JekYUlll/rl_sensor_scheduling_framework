@@ -4211,3 +4211,28 @@ trace. The geometry failed in three of four seeds, with operating gaps `0`,
 resource trace was generated from a different target process, this route does
 not isolate the V527-r2 truth relation. The next route must generate resource
 loads from the same observable drivers and mode proxy.
+## V681 matched resource design (2026-09-11)
+
+The V527-r2 truth exposes causal, deployable forecast-mode scores and
+low-pass wind/thermal drivers. The new resource controller uses:
+
+```text
+core  = 0.25 + 0.45*thermal_score + 0.15*transport_score + 0.15*cold_load
+laser = 0.20 + 0.40*particle_score + 0.25*transport_score + 0.15*wind_load
+```
+
+with fixed hysteresis thresholds on=`0.50` and off=`0.35`. It does not read
+`generator_persistent_mode_id` or `generator_independent_target_innovation`.
+Local final-window screening gives all four heater states in all four seeds
+and distinct feasible frontiers with 16, 11, 16, and 11 masks at budget 2.50.
+This is a resource-geometry pass only; downstream forecast geometry remains
+untested and PPO remains blocked.
+
+## V681 geometry closeout (2026-09-11)
+
+Matched frozen assets and the 32-subset geometry audit completed for all four
+seeds. Operating gaps were `0.0020498832`, `0`, `0.0003399052`, and
+`0.0000071095` for seeds 7177--7180. The 1% operating near-optimal static
+intersections were nonempty in every seed. The resource chain is therefore
+causal and state-supported, but its variation still does not create material
+forecast-value separation. V681 is closed before online transfer and PPO.

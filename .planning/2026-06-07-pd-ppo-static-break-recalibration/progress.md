@@ -9367,3 +9367,17 @@ trace. Operating gaps were `0.0491808106`, `0`, `0.0009802611`, and `0` for
 seeds `7177--7180`; only seed7177 had an empty 1% static intersection. The
 route is closed as a cross-scene resource mismatch, not as a rejection of the
 V527-r2 truth relation. A matched resource controller is required next.
+## 2026-09-11 V681 truth-only resource screen
+
+Implemented `scripts/187_build_v527_observable_resource_trace.py` and
+`scripts/188_audit_observable_resource_screen.py`. The controller is matched
+to V527-r2 and uses only its declared online forecast-mode proxies and causal
+wind/thermal drivers. It excludes the persistent mode id and target
+innovation. Existing heater increments, normalized budget `2.50`, and
+hysteresis thresholds `0.50/0.35` remain fixed.
+
+Local truth-only screening passed for seeds 7177--7180. Each final evaluation
+window contains all four joint heater states (`00`, `01`, `10`, `11`), and the
+state-dependent feasible-mask counts are `16/11/16/11`. No evaluator, online
+transfer, or PPO process has been started. The next action is remote
+reproduction followed by matched frozen-asset refitting.

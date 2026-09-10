@@ -10957,3 +10957,27 @@ until all four manifests pass independent validation.
   all four resource states were recovered across all four seeds.
 - Launched V680 asset refitting with the previously truth-gated V527-r2
   observable target chain, the V672 resource trace, and budget `2.50`.
+## 2026-09-11 - V681 matched observable resource screen
+
+- Added `scripts/187_build_v527_observable_resource_trace.py` and
+  `scripts/188_audit_observable_resource_screen.py`.
+- The controller uses only V527-r2 online forecast-mode proxies and causal
+  wind/thermal drivers; latent mode ids and future target innovations are
+  excluded. Existing heater increments and hysteresis thresholds remain fixed.
+- Truth-only screening passed all four development seeds: final windows
+  contain heater states `00/01/10/11`, with feasible-frontier sizes
+  `16/11/16/11` at budget `2.50`.
+- No frozen evaluator, online-transfer, or PPO result is implied. Matched
+  asset refitting is the next gated step.
+
+## 2026-09-11 - V681 geometry closeout
+
+- Matched frozen assets and the 32-subset forecast geometry audit completed
+  for seeds 7177--7180.
+- Operating gaps were `0.0020498832`, `0`, `0.0003399052`, and `0.0000071095`;
+  all four seeds retained a nonempty 1% operating near-optimal static
+  intersection.
+- Closed V681 before online transfer and PPO. The observable resource chain
+  has genuine heater-state variation, but not enough downstream value
+  separation. The next route must redesign the joint target-quality-resource
+  process; PPO tuning is not indicated.

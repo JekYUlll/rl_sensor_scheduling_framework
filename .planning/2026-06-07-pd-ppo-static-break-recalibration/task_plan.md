@@ -1550,12 +1550,27 @@ chronologically identifiable.
   policy route was promoted.
 
 ### Phase 80: Matched observable resource trace (2026-09-11)
-- [ ] Build a truth-only effective-resource controller directly from the
+- [x] Build a truth-only effective-resource controller directly from the
   V527-r2 observable wind/thermal/mode proxies; do not reuse V672 resource
   traces from another target process.
-- [ ] Screen heater occupancy, persistence, feasible-frontier variation, and
+- [x] Screen heater occupancy, persistence, feasible-frontier variation, and
   cross-seed state support before fitting any evaluator.
-- [ ] Require the same four-seed support gates and document controller
+- [x] Require the same four-seed support gates and document controller
   thresholds before a matched asset refit.
 - [ ] Keep online transfer and PPO blocked until matched geometry passes.
-- **Status:** active; V680 is closed as a cross-scene resource mismatch.
+- **Status:** complete; V681 truth-only screen passed. Phase 81 owns remote
+  reproduction and matched frozen-asset geometry.
+### Phase 81: V681 remote reproduction and matched geometry
+- [x] Sync the V681 controller and launcher to `remote-gpu`.
+- [x] Reproduce the truth-only occupancy/frontier screen remotely.
+- [x] Prepare matched frozen assets only if the remote screen matches local
+  results; audit all four seeds at budget `2.50`.
+- [x] Keep transfer and PPO blocked because the four-seed operating geometry
+  gate did not pass.
+- **Status:** complete; matched V681 geometry closed before transfer/PPO.
+
+V681 operating gaps for seeds 7177--7180 were `0.0020498832`, `0`,
+`0.0003399052`, and `0.0000071095`; every seed retained a nonempty 1%
+operating near-optimal static intersection. The next route must redesign the
+joint target-quality-resource process; another PPO or budget retry is not
+justified.
