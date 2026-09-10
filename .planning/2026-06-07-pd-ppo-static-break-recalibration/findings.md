@@ -4083,3 +4083,38 @@ feature, exact failure labels are not used, and no PPO-facing architecture or
 reward changes are allowed. If this truth-only screen does not produce stable
 subset forecast geometry, the empirical-cold route will be closed instead of
 being tuned around the geometry result.
+## 2026-09-10 V610 geometry conclusion superseded
+
+The first V610 report is not a valid operating-state result. The resource
+builder adds `resource_frequency_mode_id`, but the audit selected heater-state
+columns first and reported `heater_00000`, `heater_01000`, and `heater_11000`.
+Because the reported operating gap and near-optimal intersection depend on
+that partition, the V610 closeout is withdrawn pending V668. The correction
+changes only truth-side evaluation stratification; the scheduler never sees
+the mode id.
+## 2026-09-10 V668 corrected frequency-mode closeout
+
+The corrected V668 audit confirms that the original V610 failure was partly
+an audit-label bug, but correcting it does not rescue the route. The operating
+forecast gaps for seeds `7177--7180` are `0`, `0.0000262`, `0`, and `0`; every
+seed retains a nonempty 1% near-optimal static intersection. The resource
+frequency mode changes feasibility, but the downstream forecast objective
+still admits a static shortcut after deployable state stratification. This is
+a scene-geometry failure, not a PPO failure. No online transfer or PPO run is
+permitted on V610/V668.
+## 2026-09-10 V669 candidate scene
+
+The first candidate after V668 uses shared observable weather drivers instead
+of a randomly generated operating mode. Wind and humidity drive transport and
+particle demand, while cold/dew-point/radiation conditions drive thermal
+and icing demand. The same drivers are applied with a declared six-step lag
+to target innovation and channel quality, and the existing hardware-derived
+hysteresis controller generates the resource trace.
+
+The truth-only screen is promising but not evidence of adaptive scheduling:
+all four seeds have balanced driver support, `11--16` feasible masks per row,
+`11/32` always-feasible masks, and about `85%` frontier changes. The required
+next test is a frozen 32-subset forecast geometry audit. No PPO should be
+started unless operating condition gaps are material, the near-optimal static
+intersection is empty, and a train-only deployable observation policy transfers
+through the dwell-aware environment.

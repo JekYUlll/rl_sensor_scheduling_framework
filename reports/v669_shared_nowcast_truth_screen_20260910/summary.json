@@ -1,0 +1,134 @@
+{
+  "route": "shared nowcast quality/resource truth-only screen",
+  "seeds": [
+    {
+      "seed": 7177,
+      "rows": 90000,
+      "dominant_driver": {
+        "thermal": 32197,
+        "particle": 29351,
+        "transport": 28452
+      },
+      "transport_mean": 0.3678406413145158,
+      "transport_p90": 0.7795611883288406,
+      "particle_mean": 0.37356557005395413,
+      "particle_p90": 0.7273759846691954,
+      "thermal_mean": 0.32039931482655487,
+      "thermal_p90": 0.5460145860454119,
+      "quality_means": {
+        "fc4_flux": 0.32751745083745787,
+        "laser_disdrometer": 0.20495192969419845,
+        "surface_temp_ir": 0.2716704960411728,
+        "radiometer_basic": 0.22507963026353123
+      },
+      "heater_duty": {
+        "met_station_core": 0.6945777777777777,
+        "laser_disdrometer": 0.8489444444444444,
+        "radiometer_basic": 0.0,
+        "surface_temp_ir": 0.0,
+        "fc4_flux": 0.0
+      },
+      "feasible_min": 11,
+      "feasible_max": 16,
+      "feasible_always": 11,
+      "frontier_change_fraction": 0.8489444444444444
+    },
+    {
+      "seed": 7178,
+      "rows": 90000,
+      "dominant_driver": {
+        "thermal": 32003,
+        "particle": 29295,
+        "transport": 28702
+      },
+      "transport_mean": 0.3682310281580204,
+      "transport_p90": 0.7791864374123764,
+      "particle_mean": 0.37360796322120765,
+      "particle_p90": 0.7249061232516631,
+      "thermal_mean": 0.32085138343241026,
+      "thermal_p90": 0.5468652223732442,
+      "quality_means": {
+        "fc4_flux": 0.32703023384114566,
+        "laser_disdrometer": 0.20593197605312932,
+        "surface_temp_ir": 0.2728923935592315,
+        "radiometer_basic": 0.22520213514944964
+      },
+      "heater_duty": {
+        "met_station_core": 0.6936444444444444,
+        "laser_disdrometer": 0.8481444444444445,
+        "radiometer_basic": 0.0,
+        "surface_temp_ir": 0.0,
+        "fc4_flux": 0.0
+      },
+      "feasible_min": 11,
+      "feasible_max": 16,
+      "feasible_always": 11,
+      "frontier_change_fraction": 0.8482111111111111
+    },
+    {
+      "seed": 7179,
+      "rows": 90000,
+      "dominant_driver": {
+        "thermal": 32106,
+        "particle": 29377,
+        "transport": 28517
+      },
+      "transport_mean": 0.3679134837513151,
+      "transport_p90": 0.7774682013522285,
+      "particle_mean": 0.3736313151787223,
+      "particle_p90": 0.7260809447070554,
+      "thermal_mean": 0.32110485973384423,
+      "thermal_p90": 0.5457927729384787,
+      "quality_means": {
+        "fc4_flux": 0.3261742047356269,
+        "laser_disdrometer": 0.20525864933625296,
+        "surface_temp_ir": 0.2725011041930213,
+        "radiometer_basic": 0.22548477686747057
+      },
+      "heater_duty": {
+        "met_station_core": 0.6934666666666667,
+        "laser_disdrometer": 0.8496888888888889,
+        "radiometer_basic": 0.0,
+        "surface_temp_ir": 0.0,
+        "fc4_flux": 0.0
+      },
+      "feasible_min": 11,
+      "feasible_max": 16,
+      "feasible_always": 11,
+      "frontier_change_fraction": 0.8497333333333333
+    },
+    {
+      "seed": 7180,
+      "rows": 90000,
+      "dominant_driver": {
+        "thermal": 32232,
+        "particle": 29249,
+        "transport": 28519
+      },
+      "transport_mean": 0.36888222138826937,
+      "transport_p90": 0.7827058846280804,
+      "particle_mean": 0.37423818623633526,
+      "particle_p90": 0.726337746003655,
+      "thermal_mean": 0.32079221365459537,
+      "thermal_p90": 0.5455776620720543,
+      "quality_means": {
+        "fc4_flux": 0.32756043835652626,
+        "laser_disdrometer": 0.2062229438746338,
+        "surface_temp_ir": 0.2722873466423995,
+        "radiometer_basic": 0.22548286522490282
+      },
+      "heater_duty": {
+        "met_station_core": 0.6956888888888889,
+        "laser_disdrometer": 0.851,
+        "radiometer_basic": 0.0,
+        "surface_temp_ir": 0.0,
+        "fc4_flux": 0.0
+      },
+      "feasible_min": 11,
+      "feasible_max": 16,
+      "feasible_always": 11,
+      "frontier_change_fraction": 0.8510555555555556
+    }
+  ],
+  "status": "resource occupancy and causal-support screen passed; frozen forecaster not built; PPO not run"
+}

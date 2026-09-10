@@ -335,6 +335,20 @@ def operating_condition_labels(
     activity_aligned_transport_demand: bool = False,
 ) -> tuple[np.ndarray, tuple[str, ...] | None, dict[str, float]]:
     """Return disjoint operating-state bins fixed on the training partition."""
+    # The frequency-cost route defines the resource state explicitly through a
+    # truth-only mode id.  Prefer it before generic heater columns so that the
+    # geometry audit is stratified by the state that actually drives the
+    # effective resource trace.  This column is never exposed to the policy.
+    if "resource_frequency_mode_id" in truth:
+        mode_names = {0: "transport", 1: "particle", 2: "thermal"}
+        mode_values = truth["resource_frequency_mode_id"].to_numpy(dtype=int)
+        labels = np.asarray(
+            [mode_names.get(int(value), "unclassified") for value in mode_values],
+            dtype=object,
+        )
+        return labels, ("resource_frequency_mode_id",), {
+            "resource_frequency_mode_id": 0.0
+        }
     factor_columns = tuple(
         f"agent_context_operating_factor_{name}"
         for name in ("transport", "particle", "thermal")

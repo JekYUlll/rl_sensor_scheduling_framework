@@ -1402,3 +1402,31 @@ chronologically identifiable.
 - [ ] Run the executable train-only observation transfer audit before any PPO
   probe.
 - **Status:** active; flexible-subset PPO remains blocked pending a new scene.
+
+### Phase 68: Corrected V610 frequency-mode geometry (2026-09-10)
+- [x] Confirm that the original V610 audit stratified rows by heater columns,
+  despite the frequency-cost trace exporting `resource_frequency_mode_id`.
+- [x] Patch the geometry audit to prioritize the truth-only resource mode id
+  before generic factor, duty, or heater labels.
+- [x] Reuse the V610 assets, budget, evaluator, and four predeclared starts;
+  do not change truth, resource costs, or PPO.
+- [x] Complete the corrected four-seed geometry audit.
+- [x] Apply the online-transfer gate decision from the corrected operating
+  geometry before considering any policy run.
+- **Status:** complete; operating gaps were `0`, `0.0000262`, `0`, and `0`,
+  with a nonempty 1% static intersection in every seed. V610 is closed before
+  online transfer and PPO.
+
+### Phase 69: Causal scene redesign after V668 (2026-09-10)
+- [x] Withdraw the invalid heater-partition V610 conclusion.
+- [x] Confirm that the corrected frequency-mode route still fails the
+  deployable forecast-geometry gate.
+- [x] Reuse only the 09-02 guidance: share observable drivers between
+  forecast-relevant quality and resource load, with truth-only latent state.
+- [x] Define cross-seed support, persistence, full-window geometry, and
+  executable online-transfer acceptance tests before generating assets.
+- [x] Implement the next truth-only screen without creating PPO checkpoints.
+- [ ] Generate matched frozen evaluator assets only if the truth-only screen
+  remains physically supported after the remote reproducibility check.
+- **Status:** active; V669 passes the local occupancy screen, but PPO remains
+  blocked pending complete-subset geometry and online transfer.
