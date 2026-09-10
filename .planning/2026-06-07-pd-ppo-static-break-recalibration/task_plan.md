@@ -1546,5 +1546,5 @@ chronologically identifiable.
   refitting assets.
 - [ ] Do not alter PPO, start online transfer, or select final windows until
   all four seeds pass the policy-free geometry gate.
-- **Status:** asset refitting is running remotely in tmux `v680_assets`; no
-  policy training is permitted.
+- **Status:** asset refit completed; geometry is running remotely in tmux
+  `v680_geometry`; no policy training is permitted.

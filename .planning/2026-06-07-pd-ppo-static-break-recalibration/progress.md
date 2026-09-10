@@ -9355,3 +9355,7 @@ The first V679 state audit was invalid because it read stale resource columns
 from the truth CSV. A corrected merge with the manifest-declared V672 trace
 recovered all four resource states; the corrected artifacts are stored under
 `reports/analysis/v679_target_innovation_quality_audit_corrected_20260911/`.
+
+V680 asset refitting completed for all four seeds with valid TCN checkpoints.
+The frozen 32-subset geometry audit is now running remotely in tmux
+`v680_geometry`; no transfer or PPO process has been started.
