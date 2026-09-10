@@ -1536,15 +1536,26 @@ chronologically identifiable.
 - **Status:** complete; pair-capable resource geometry alone is insufficient.
 
 ### Phase 79: Cross-seed target-innovation redesign (2026-09-11)
-- [ ] Audit V675 target innovation and specialist-quality contrast by operating
+- [x] Audit V675 target innovation and specialist-quality contrast by operating
   state and contiguous block, separating target persistence from measurement
   noise.
-- [ ] Define a truth-only, deployable-state-conditioned target process with
+- [x] Define a truth-only, deployable-state-conditioned target process with
   persistent specialist-specific innovation, without using future targets or
   event labels in the scheduler.
-- [ ] Predeclare four-seed support and subset-forecast geometry gates before
+- [x] Predeclare four-seed support and subset-forecast geometry gates before
   refitting assets.
-- [ ] Do not alter PPO, start online transfer, or select final windows until
+- [x] Do not alter PPO, start online transfer, or select final windows until
   all four seeds pass the policy-free geometry gate.
-- **Status:** asset refit completed; geometry is running remotely in tmux
-  `v680_geometry`; no policy training is permitted.
+- **Status:** complete; V680 showed a cross-scene resource mismatch and no
+  policy route was promoted.
+
+### Phase 80: Matched observable resource trace (2026-09-11)
+- [ ] Build a truth-only effective-resource controller directly from the
+  V527-r2 observable wind/thermal/mode proxies; do not reuse V672 resource
+  traces from another target process.
+- [ ] Screen heater occupancy, persistence, feasible-frontier variation, and
+  cross-seed state support before fitting any evaluator.
+- [ ] Require the same four-seed support gates and document controller
+  thresholds before a matched asset refit.
+- [ ] Keep online transfer and PPO blocked until matched geometry passes.
+- **Status:** active; V680 is closed as a cross-scene resource mismatch.

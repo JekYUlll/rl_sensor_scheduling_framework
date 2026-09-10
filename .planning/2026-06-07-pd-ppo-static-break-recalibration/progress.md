@@ -9359,3 +9359,11 @@ recovered all four resource states; the corrected artifacts are stored under
 V680 asset refitting completed for all four seeds with valid TCN checkpoints.
 The frozen 32-subset geometry audit is now running remotely in tmux
 `v680_geometry`; no transfer or PPO process has been started.
+
+## 2026-09-11 V680 closeout
+
+V680 completed with the V527-r2 target truth but the independent V672 resource
+trace. Operating gaps were `0.0491808106`, `0`, `0.0009802611`, and `0` for
+seeds `7177--7180`; only seed7177 had an empty 1% static intersection. The
+route is closed as a cross-scene resource mismatch, not as a rejection of the
+V527-r2 truth relation. A matched resource controller is required next.

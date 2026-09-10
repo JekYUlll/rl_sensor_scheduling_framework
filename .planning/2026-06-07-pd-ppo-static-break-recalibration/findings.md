@@ -4202,3 +4202,12 @@ geometry implementation by dropping stale resource columns and merging the
 manifest-declared V672 resource trace. It recovers all four states (`00000`,
 `01000`, `10000`, `11000`) across all four seeds. This was an audit-label
 correction only; it changes no V678 geometry result.
+
+## V680 cross-scene mismatch closeout (2026-09-11)
+
+V680 reused the V527-r2 observable target/quality truth with the V672 resource
+trace. The geometry failed in three of four seeds, with operating gaps `0`,
+`0.0009802611`, and `0` and nonempty static intersections. Because the
+resource trace was generated from a different target process, this route does
+not isolate the V527-r2 truth relation. The next route must generate resource
+loads from the same observable drivers and mode proxy.
