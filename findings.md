@@ -1558,3 +1558,10 @@ fits the same train-only candidate-loss regressors, then evaluates their
 choices through the real environment with the six-step dwell guard, dynamic
 resource budget, startup handling, and no event labels. The route remains
 blocked from PPO until seed/window transfer is positive and stable.
+
+The V667 result closes this repair route. Real execution improved 16 of 32
+seed-window pairs, but seed7403 had mean degradation `+0.026810`, seed7404
+had `+0.002255`, and the pooled seed mean was approximately `+0.001798` loss.
+All windows had zero warm-up aborts. The remaining blocker is therefore a
+causal/observable transfer failure, not a missing dwell implementation. No
+PPO training is justified on the V601 alert-coupled scene.

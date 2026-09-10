@@ -1385,7 +1385,20 @@ chronologically identifiable.
   did not execute its selected sequence through the dwell-aware environment.
 - [x] Implement a train-only observation-value policy whose selections are
   replayed through `WarmupSchedulingEnv`, with event labels excluded.
-- [ ] Complete the four-seed, eight-window executable transfer audit.
-- [ ] Promote the alert-coupled route only if executable transfer is positive
-  and stable across seeds; otherwise close it without PPO.
-- **Status:** active; V667 is running remotely, and PPO remains blocked.
+- [x] Complete the four-seed, eight-window executable transfer audit.
+- [x] Close the alert-coupled route because executable transfer is not stable
+  across seeds; do not start PPO on this route.
+- **Status:** complete; V667 found 16/32 window wins, but the pooled mean
+  transfer delta remained positive in loss and seed7403 degraded.
+
+### Phase 67: Next causal scene design (2026-09-10)
+- [ ] Reuse only the physics and observation lessons from V627--V667; do not
+  reuse a scene whose online transfer gate has failed.
+- [ ] Define a new truth-only causal chain in which forecast-relevant channel
+  quality and effective resource load share observable drivers, with explicit
+  cross-seed and full final-window support requirements.
+- [ ] Run policy-free resource occupancy and complete-subset geometry before
+  generating any PPO asset or checkpoint.
+- [ ] Run the executable train-only observation transfer audit before any PPO
+  probe.
+- **Status:** active; flexible-subset PPO remains blocked pending a new scene.

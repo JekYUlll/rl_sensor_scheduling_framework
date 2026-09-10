@@ -22,8 +22,8 @@ import json
 from pathlib import Path
 import pandas as pd
 root = Path("reports/v667_executable_alert_transfer_b2p15_20260910")
-frames = [pd.read_csv(p) for p in sorted(root.glob("seed*_window_results.csv"))]
-summaries = [json.loads(p.read_text()) for p in sorted(root.glob("seed*_summary.json"))]
+frames = [pd.read_csv(p) for p in sorted(root.glob("seed*/seed*_window_results.csv"))]
+summaries = [json.loads(p.read_text()) for p in sorted(root.glob("seed*/seed*_summary.json"))]
 pd.concat(frames, ignore_index=True).to_csv(root / "window_results.csv", index=False)
 (root / "summary.json").write_text(json.dumps(summaries, indent=2) + "\n")
 print(json.dumps(summaries, indent=2))
