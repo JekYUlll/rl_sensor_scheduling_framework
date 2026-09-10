@@ -1,0 +1,79 @@
+{
+  "seed": 7401,
+  "rows": [
+    {
+      "seed": 7401,
+      "start": 76589,
+      "transfer_loss": 0.2040016503597144,
+      "static_loss": 0.2907126812497154,
+      "transfer_minus_static": -0.08671103089000098,
+      "switches": 54,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7401,
+      "start": 77858,
+      "transfer_loss": 0.33706020523095503,
+      "static_loss": 0.3377157664508559,
+      "transfer_minus_static": -0.0006555612199008465,
+      "switches": 39,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7401,
+      "start": 79988,
+      "transfer_loss": 0.31930286245187744,
+      "static_loss": 0.3479801167268306,
+      "transfer_minus_static": -0.028677254274953157,
+      "switches": 44,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7401,
+      "start": 82985,
+      "transfer_loss": 0.3177777216187678,
+      "static_loss": 0.5069032194151077,
+      "transfer_minus_static": -0.18912549779633991,
+      "switches": 12,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7401,
+      "start": 86293,
+      "transfer_loss": 0.3865489357849583,
+      "static_loss": 0.32407022069673985,
+      "transfer_minus_static": 0.06247871508821845,
+      "switches": 49,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7401,
+      "start": 86811,
+      "transfer_loss": 0.7215563555946574,
+      "static_loss": 0.6435081466333941,
+      "transfer_minus_static": 0.0780482089612633,
+      "switches": 19,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7401,
+      "start": 88490,
+      "transfer_loss": 0.27414014283567667,
+      "static_loss": 0.2682511425227858,
+      "transfer_minus_static": 0.0058890003128908575,
+      "switches": 45,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7401,
+      "start": 89496,
+      "transfer_loss": 0.3228307421086356,
+      "static_loss": 0.3368468943517655,
+      "transfer_minus_static": -0.014016152243129909,
+      "switches": 37,
+      "warmup_abort_count": 0
+    }
+  ],
+  "mean_transfer_minus_static": -0.021596196507744025,
+  "diagnostic_status": "train_only_observable_regressors; real_env_dwell_execution; event_labels_excluded; no_PPO"
+}
