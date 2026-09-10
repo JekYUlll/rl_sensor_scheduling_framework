@@ -9109,3 +9109,51 @@ improved over static, and switching rates were `0.137`, `0.238`, `0.410`, and
 training. V648 is retained as a valid downstream-geometry result, while the
 current physical-resource route is closed because its opportunity is not
 stably identifiable from the available online observables.
+
+## 2026-09-10 V651 Stage-B re-screen launched
+
+The next route reuses the predeclared persistent transport/thermal truth chain
+from Stage-A planning and the existing entity resource traces. It does not
+change the PPO objective, policy architecture, or resource rules. V651 only
+rebuilds the frozen evaluator assets with `--oracle-candidate-mask-repeat 1`
+and retains the physical 20 W dynamic guard, normalized 20 W interface guard,
+minimum dwell 6, and chronological partitions. PPO remains blocked until the
+four-seed geometry and online-transfer gates pass.
+
+V652 completed with 32 candidate masks, but its operating report was not
+promoted: `operating_condition_labels()` selected the generic resource-duty
+columns before the persistent online transport/particle/thermal columns, so
+most runs collapsed to one `duty_1_0` condition. This is an audit-label bug,
+not a scene result. The function was corrected to prioritize the explicit
+`generator_online_*_state` factors when present, and V653 is rerunning the
+same assets and starts with that correction.
+
+## 2026-09-10 V653 audit correction diagnosis and V654 relaunch
+
+V653 completed all eight train/test audits, but exposed a second labeling
+problem: the three persistent factors were reduced with `argmax`. In the V535
+truth, thermal state is continuously nonzero and usually larger than the
+transport state, while flux and particle states are identical. Consequently
+every operating report still collapsed to `thermal`, making the operating gap
+artificially zero. This is an audit-definition failure, not a scene result,
+and V653 is not promoted.
+
+The audit now uses fixed-threshold multi-factor labels (`calm`, `flux`,
+`particle`, `thermal`, and observed combinations) instead of a mutually
+exclusive argmax. V654 reruns the identical V651 frozen assets, budgets,
+starts, and evaluator with only this label construction changed. PPO remains
+blocked until V654 establishes material state-conditioned geometry and the
+chronological online-transfer gate.
+
+## 2026-09-10 V654 Stage-B closeout
+
+The multi-factor audit correction produced meaningful labels in a small part
+of the held-out data, but the route still failed the predeclared geometry gate.
+Test operating gaps for seeds `7231--7234` were `0.000000`, `0.000000`,
+`0.000000`, and `0.001529`; the operating winner therefore did not provide a
+stable downstream opportunity. The broader conditionwise gaps were also
+inconsistent (`0`, `0.011166`, `0.000879`, `0.004581`). In addition, the 20 W
+resource guard left essentially all 32 candidate masks executable in the
+sampled windows, so it did not form a binding state-dependent feasible
+frontier. V654 is closed before online transfer and PPO. No policy evidence is
+promoted from V651--V654.

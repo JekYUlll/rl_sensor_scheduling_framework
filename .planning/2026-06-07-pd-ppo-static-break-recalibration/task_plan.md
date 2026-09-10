@@ -1301,3 +1301,15 @@ stable task-level adaptive opportunity.
 - [x] Append exact results to progress, findings, and CHANGELOG.
 - **Status:** complete; next route must change the physical/forecast coupling,
   not tune PPO on the closed route
+
+### Phase 59: Stage-B persistent target/resource re-screen (2026-09-10)
+- [x] Reuse the predeclared persistent transport/thermal truth chain from
+  Stage-A planning, with its noisy nowcast driver and causal quality link.
+- [x] Reuse the matched entity resource traces and physical budget settings.
+- [x] Rebuild forecaster assets with complete candidate-mask coverage.
+- [x] Complete the first four-seed geometry run and identify its operating-label
+  priority bug.
+- [ ] Complete corrected four-seed 32-subset forecast geometry.
+- [ ] Apply the same online-transfer gate before any PPO training.
+- **Status:** complete; V654 failed held-out operating geometry and binding
+  resource gates; PPO remains blocked on this route

@@ -10777,3 +10777,35 @@ until all four manifests pass independent validation.
   downstream geometry evidence, but no policy result is promoted from this
   route. A new route must improve the physical/forecast coupling or online
   observability instead of tuning PPO here.
+
+## 2026-09-10 - V652 operating-label audit correction
+
+- V651 rebuilt four persistent transport/thermal assets with balanced
+  candidate-mask exposure and completed successfully.
+- V652's first geometry pass was not promoted because the audit prioritized
+  generic resource-duty columns and collapsed most Stage-B records into one
+  operating condition.
+- Updated `operating_condition_labels()` to use explicit
+  `generator_online_flux/particle/thermal_state` factors when present. V653
+  reruns the same assets, starts, budgets, and evaluator with only this audit
+  correction; PPO remains blocked.
+
+## 2026-09-10 - V653/V654 multi-factor label correction
+
+- V653 completed but remained invalid for operating geometry because its
+  argmax reduction assigned the persistent Stage-B records almost entirely to
+  `thermal`; this was not promoted as scene evidence.
+- Replaced the argmax reduction with fixed-threshold multi-factor labels that
+  retain simultaneous transport and thermal activity.
+- Launched V654 on the unchanged V651 assets and protocol. PPO remains blocked
+  pending corrected geometry and chronological transfer.
+
+## 2026-09-10 - V654 Stage-B route closeout
+
+- The fixed-threshold multi-factor audit completed on all four seeds.
+- Held-out operating gaps were `0`, `0`, `0`, and `0.001529`; the route failed
+  the `0.01` all-seed geometry gate.
+- The 20 W resource guard left the complete 32-mask family effectively
+  executable, so it did not provide binding dynamic feasibility.
+- Closed V651--V654 before online transfer and PPO. No policy result is
+  promoted; the next route must correct the physical resource interface.

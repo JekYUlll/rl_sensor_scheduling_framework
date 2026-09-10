@@ -4030,6 +4030,30 @@ reward changes are allowed. If this truth-only screen does not produce stable
 subset forecast geometry, the empirical-cold route will be closed instead of
 being tuned around the geometry result.
 
+## V653 audit-definition failure
+
+V653 correctly loaded the persistent Stage-B factor columns, but the first
+correction still used an argmax label. The V535 generator intentionally gives
+the thermal state a persistent baseline while the flux and particle states
+share the transport load. An argmax therefore assigns nearly every row to
+thermal even though transport and thermal activity vary jointly. This makes
+the reported operating gap meaningless and cannot be used to accept or reject
+the scene. The audit must preserve the multi-factor state using fixed causal
+thresholds and explicit combinations; V654 is the corrected rerun.
+
+## V654 Stage-B closeout
+
+The corrected multi-factor labels removed the audit artifact, but did not
+rescue the scene. Held-out operating gaps were `0`, `0`, `0`, and `0.001529`,
+well below the `0.01` materiality requirement. The conditionwise gaps were
+`0`, `0.011166`, `0.000879`, and `0.004581`, so the apparent opportunity was
+not stable across seeds or chronological starts. The normalized 20 W guard
+also left all 32 candidate masks supported in the sampled windows, which means
+the intended resource geometry was not binding. This route is closed before
+online transfer and PPO. The next route must repair the physical budget
+interface or introduce an independently justified state-dependent cost before
+any learner is trained.
+
 ## V645 closeout finding
 
 The delayed cold-risk wind innovation increased target perturbation in low

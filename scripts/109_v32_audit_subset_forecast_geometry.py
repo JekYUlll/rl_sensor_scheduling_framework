@@ -347,6 +347,28 @@ def operating_condition_labels(
         labels = names[winner].astype(object)
         labels[np.max(values, axis=1) < 0.5] = "mixed"
         return labels, factor_columns, {column: 0.5 for column in factor_columns}
+    online_factor_columns = tuple(
+        column
+        for column in (
+            "generator_online_flux_state",
+            "generator_online_particle_state",
+            "generator_online_thermal_state",
+        )
+        if column in truth
+    )
+    if len(online_factor_columns) == 3:
+        values = truth[list(online_factor_columns)].to_numpy(dtype=float)
+        names = ("flux", "particle", "thermal")
+        active = values >= 0.5
+        labels = np.asarray(
+            [
+                "+".join(name for name, is_active in zip(names, row) if is_active)
+                or "calm"
+                for row in active
+            ],
+            dtype=object,
+        )
+        return labels, online_factor_columns, {column: 0.5 for column in online_factor_columns}
     duty_columns = tuple(
         column
         for column in (
