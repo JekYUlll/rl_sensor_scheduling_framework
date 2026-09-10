@@ -9297,3 +9297,9 @@ blocked.
   intersections were empty only for 7177 and contained 7, 7, and 2 candidates
   for 7178--7180. The heater-quality relation therefore did not repair the
   cross-seed task-level geometry. V673 is closed before transfer/PPO.
+- V674 was closed at the truth-only screen because IR and radiometer shared
+  the same thermal affinity and IR never became the highest-quality channel.
+  V675 separates radiometer quality through lagged solar nowcast while keeping
+  IR thermal, FC4 transport, and laser particle affinities. Final-window
+  best-channel fractions now cover all four specialist channels; a frozen
+  geometry audit is being prepared, with PPO still blocked.

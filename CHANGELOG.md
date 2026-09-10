@@ -10897,3 +10897,13 @@ until all four manifests pass independent validation.
   1% near-optimal static intersection remained nonempty in three seeds.
 - Closed V673 before transfer and PPO. The next route must redesign the joint
   target-quality-resource causal chain; no learned-policy evidence is implied.
+## 2026-09-11 - V674/V675 specialist-affinity screen
+
+- Closed V674 before asset preparation because the shared thermal affinity made
+  IR redundant with the higher-floor radiometer.
+- Defined V675 with a separate lagged solar-nowcast affinity for the radiometer;
+  the truth-only final-window screen gives all four specialist channels
+  nonzero best-quality support.
+- V675 is eligible for one policy-free 32-subset geometry audit only. PPO
+  remains blocked pending cross-seed operating gaps and static-intersection
+  gates.

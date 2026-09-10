@@ -1491,4 +1491,5 @@ chronologically identifiable.
   static intersections before any online-transfer audit or PPO run.
 - [ ] Rebuild frozen assets and repeat geometry only after the truth-only
   support screen passes.
-- **Status:** active; no PPO is permitted.
+- **Status:** active; V675 truth-only split-affinity screen has enough
+  specialist crossover for one geometry audit; no PPO is permitted.
