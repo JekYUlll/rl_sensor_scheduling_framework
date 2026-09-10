@@ -3930,3 +3930,52 @@ heating is rare (`74/17,720` rows), and no system-level current or charging
 trace is present. These data validate acquisition fields only. They do not
 justify a synthetic Antarctic battery/SOC process or extrapolated heater duty.
 See `reports/entity_supply_validation_20260910.md`.
+
+## V616 task-level geometry finding
+
+The V616 resource/quality route is not an all-or-nothing failure. Under the
+32-subset frozen evaluator, operating-condition winners vary across three of
+four seeds, but the attainable loss reduction over the best static subset is
+only `0.00100--0.00195`, and one seed has zero gap. A changing feasible
+frontier therefore does not by itself establish a useful downstream forecast
+opportunity. The gate must remain at the complete-subset forecast level.
+
+## V645 admissible intervention
+
+The next intervention is restricted to the target side of the causal chain.
+It uses the already measured cold-availability quality proxy to scale a
+delayed persistent wind innovation. The audit column is not an observation
+feature, exact failure labels are not used, and no PPO-facing architecture or
+reward changes are allowed. If this truth-only screen does not produce stable
+subset forecast geometry, the empirical-cold route will be closed instead of
+being tuned around the geometry result.
+
+## V645 closeout finding
+
+The delayed cold-risk wind innovation increased target perturbation in low
+quality periods, but it did not consistently change the downstream best subset.
+One seed gained a material `0.015164` conditionwise opportunity, while the
+other three were `0.000000`, `0.000944`, and `0.004598`; three seeds retained a
+1% near-optimal static candidate. This separates target variability from
+forecast-value variability: making a target harder under cold risk is not
+enough to create a deployable adaptive scheduling opportunity. The route is
+closed without PPO.
+
+## V616 task-level geometry finding
+
+The V616 resource/quality route is not an all-or-nothing failure. Under the
+32-subset frozen evaluator, operating-condition winners vary across three of
+four seeds, but the attainable loss reduction over the best static subset is
+only `0.00100--0.00195`, and one seed has zero gap. A changing feasible
+frontier therefore does not by itself establish a useful downstream forecast
+opportunity. The gate must remain at the complete-subset forecast level.
+
+## V645 admissible intervention
+
+The next intervention is restricted to the target side of the causal chain.
+It uses the already measured cold-availability quality proxy to scale a
+delayed persistent wind innovation. The audit column is not an observation
+feature, exact failure labels are not used, and no PPO-facing architecture or
+reward changes are allowed. If this truth-only screen does not produce stable
+subset forecast geometry, the empirical-cold route will be closed instead of
+being tuned around the geometry result.

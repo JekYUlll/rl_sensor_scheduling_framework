@@ -8957,3 +8957,62 @@ trace and nonzero Parsivel heating occurs in only 74 of 17,720 rows. It cannot
 parameterize Antarctic SOC. The result is recorded in
 `reports/entity_supply_validation_20260910.md`; SOC remains gated while the
 instantaneous physical-resource route remains active.
+
+## 2026-09-10 V616 subset forecast crossover audit
+
+The existing V616 frozen geometry was audited with the complete 32-subset
+candidate losses before any new truth generation. Operating opportunity gaps
+for seeds `7401--7404` were `0.001953`, `0.001002`, `0.001046`, and `0.000000`.
+Condition-specific winners changed in the first three seeds, while
+`candidate_005` remained the best static candidate in all four. The 1%
+near-optimal intersection was empty for the first three seeds and contained
+`candidate_005` for seed `7404`. This is weak task-level crossover, below the
+predeclared `0.01` all-seed materiality gate; PPO remains blocked.
+
+The read-only audit was run on `remote-gpu` with
+`scripts/182_audit_subset_forecast_crossover.py` and written to
+`reports/v645_existing_v616_subset_crossover_audit_20260910/`.
+
+## 2026-09-10 V645 truth-only route prepared
+
+Added `scripts/183_build_empirical_cold_wind_innovation_truth.py` and
+`scripts/run_v645_empirical_cold_wind_truth_20260910.sh`. The generator keeps
+the V614 empirical cold-availability relation and adds a six-step-delayed,
+seeded AR(1) wind innovation scaled by the measured cold-risk proxy. It does
+not change power, heater rules, target weights, or policy features. The
+generator and runner pass local Python/shell syntax checks and `git diff
+--check`; the remote truth-only run has not yet been launched.
+
+## 2026-09-10 V645 truth-only closeout and asset launch
+
+V645 generated four 90,000-row truths on `remote-gpu`. The cold-risk-scaled
+innovation had standard deviations `0.643`, `0.673`, `0.691`, and `0.654 m/s`;
+the 95th absolute magnitudes were `1.492--1.571 m/s`. Mean absolute innovation
+was approximately `0.96--1.03 m/s` in the low-quality group and
+`0.18--0.19 m/s` in the remaining group. Wind clipping was negligible (0--2
+rows at the lower bound and none at the upper bound), and the generator column
+was not included in the policy quality/context columns. The outer tmux wrapper
+recorded status `1` because `$?` was expanded before tmux execution; all four
+metadata files, CSVs, and `truth_summary.json` were independently verified.
+
+The documented cold-availability bins cover almost all extreme-scene rows with
+partial degradation, not binary failure: `quality < 1` is about 99%, while
+`quality < 0.5` is about 22.5%. This distinction is retained in the audit.
+Matched V645 asset preparation is now running with the V616 protocol unchanged
+apart from the wind target.
+
+## 2026-09-10 V645 geometry closeout
+
+V645 froze matched assets and completed the four-seed 32-subset forecast
+geometry audit with nonbinding loss clipping. Operating opportunity gaps were
+`0.000000`, `0.015164`, `0.000944`, and `0.004598` for seeds `7401--7404`.
+Only seed7402 passed the `0.01` materiality gate. The 1% near-optimal static
+intersection contained `candidate_003` for seed7401 and `candidate_005` for
+seed7403; seed7402 and seed7404 had empty intersections, but the all-seed
+criterion still failed. Seed7401 selected `candidate_003` in every heater
+condition, confirming a persistent static shortcut.
+
+Decision: close V645 before online transfer and PPO. The cold-availability
+route changes target perturbation magnitude but does not create stable
+downstream subset-value separation across seeds. No V645 policy result is
+promoted.

@@ -1231,3 +1231,21 @@ V643 remains the latest valid geometry screen. The next admissible work unit is
 either a data-backed supply/storage trace audit or a predeclared physical budget
 phase screen; no policy training is allowed before the subset-level opportunity
 and online-transfer gates pass.
+
+### Phase 54: Empirical Cold-Wind Target Coupling (2026-09-10)
+- [x] Re-audit the existing V616 32-subset forecast geometry before creating
+  new truth.
+- [x] Record that operating opportunity gaps were `0.001953`, `0.001002`,
+  `0.001046`, and `0.000000` for seeds `7401--7404`; condition-specific
+  winners changed in three seeds, but the all-seed materiality gate failed.
+- [x] Implement a truth-only delayed AR(1) wind innovation scaled by the
+  measured cold-availability risk. The audit column is excluded from policy
+  context and no exact test labels are used.
+- [x] Run V645 truth-only generation on `remote-gpu` and audit support,
+  temporal lag, clipping, and policy-input exclusion.
+- [x] Rebuild matched frozen assets and rerun resource/subset geometry after
+  the truth-only audit was judged plausible.
+- [x] Close this route before PPO because the all-seed `>=0.01` opportunity
+  gate and the 1% near-optimal-intersection gate failed.
+- **Status:** closed before online transfer/PPO. V645 did not establish a
+  stable task-level adaptive opportunity.

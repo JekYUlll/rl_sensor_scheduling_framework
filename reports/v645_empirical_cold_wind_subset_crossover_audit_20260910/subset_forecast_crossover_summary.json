@@ -1,0 +1,96 @@
+[
+  {
+    "seed": 7401,
+    "candidate_count": 16,
+    "conditions": [
+      "heater_00000",
+      "heater_01000",
+      "heater_10000",
+      "heater_11000"
+    ],
+    "condition_best_candidates": {
+      "heater_00000": "candidate_003",
+      "heater_01000": "candidate_003",
+      "heater_10000": "candidate_003",
+      "heater_11000": "candidate_003"
+    },
+    "best_static_candidate": "candidate_003",
+    "best_static_sensors": "met_station_core;radiometer_basic;cr1000xe_backbone",
+    "best_static_cost": 1.8104,
+    "best_static_loss": 0.4024363387725316,
+    "conditionwise_1pct_intersection": [
+      "candidate_003"
+    ],
+    "conditionwise_5pct_intersection": [
+      "candidate_003"
+    ]
+  },
+  {
+    "seed": 7402,
+    "candidate_count": 16,
+    "conditions": [
+      "heater_00000",
+      "heater_01000",
+      "heater_10000",
+      "heater_11000"
+    ],
+    "condition_best_candidates": {
+      "heater_00000": "candidate_005",
+      "heater_01000": "candidate_003",
+      "heater_10000": "candidate_003",
+      "heater_11000": "candidate_005"
+    },
+    "best_static_candidate": "candidate_005",
+    "best_static_sensors": "met_station_core;surface_temp_ir;cr1000xe_backbone",
+    "best_static_cost": 1.8904,
+    "best_static_loss": 0.32925664374488406,
+    "conditionwise_1pct_intersection": [],
+    "conditionwise_5pct_intersection": []
+  },
+  {
+    "seed": 7403,
+    "candidate_count": 16,
+    "conditions": [
+      "heater_00000",
+      "heater_01000",
+      "heater_10000",
+      "heater_11000"
+    ],
+    "condition_best_candidates": {
+      "heater_00000": "candidate_005",
+      "heater_01000": "candidate_005",
+      "heater_10000": "candidate_005",
+      "heater_11000": "candidate_003"
+    },
+    "best_static_candidate": "candidate_005",
+    "best_static_sensors": "met_station_core;surface_temp_ir;cr1000xe_backbone",
+    "best_static_cost": 1.8904,
+    "best_static_loss": 0.40992898732656613,
+    "conditionwise_1pct_intersection": [],
+    "conditionwise_5pct_intersection": [
+      "candidate_005"
+    ]
+  },
+  {
+    "seed": 7404,
+    "candidate_count": 16,
+    "conditions": [
+      "heater_00000",
+      "heater_01000",
+      "heater_10000",
+      "heater_11000"
+    ],
+    "condition_best_candidates": {
+      "heater_00000": "candidate_005",
+      "heater_01000": "candidate_001",
+      "heater_10000": "candidate_005",
+      "heater_11000": "candidate_005"
+    },
+    "best_static_candidate": "candidate_005",
+    "best_static_sensors": "met_station_core;surface_temp_ir;cr1000xe_backbone",
+    "best_static_cost": 1.8904,
+    "best_static_loss": 0.3239189280575374,
+    "conditionwise_1pct_intersection": [],
+    "conditionwise_5pct_intersection": []
+  }
+]
