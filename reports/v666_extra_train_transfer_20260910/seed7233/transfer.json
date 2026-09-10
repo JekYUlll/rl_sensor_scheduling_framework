@@ -1,0 +1,16 @@
+{
+  "seed": 7233,
+  "observation_dim": 520,
+  "train_rows": 16384,
+  "test_rows": 17888,
+  "model_count": 16,
+  "transfer_rows": 1280,
+  "transfer_loss": 0.4502321509819012,
+  "static_candidate": "candidate_014",
+  "static_sensors": "radiometer_basic;surface_temp_ir;laser_disdrometer;cr1000xe_backbone",
+  "static_train_loss": 0.44672905763582094,
+  "static_test_loss": 0.4233084178712827,
+  "transfer_minus_static": 0.02692373311061852,
+  "transfer_switches_per_row": 0.32265625,
+  "diagnostic_status": "full_deployable_observation; exact_event_flag_excluded; train_only_regressors; no_event_labels"
+}

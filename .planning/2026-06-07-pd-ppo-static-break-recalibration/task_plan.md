@@ -1364,12 +1364,20 @@ chronologically identifiable.
 
 ### Phase 64: Deployable observation transfer (2026-09-10)
 - [x] Complete pooled V662 geometry on the fixed final-window grid.
-- [ ] Generate online observations for the same train/test windows without
+- [x] Generate online observations for the same train/test windows without
   event labels or future targets.
-- [ ] Fit train-only candidate-loss regressors and evaluate test transfer.
-- [ ] Run PPO only if the pooled transfer gate is positive and stable across
-  seeds; otherwise close this scene before policy training.
-- **Status:** active; V663 observation generation is running remotely.
+- [x] Fit train-only candidate-loss regressors and evaluate test transfer.
+- [x] Add the predeclared fourth training start and repeat the transfer check.
+- **Status:** complete; V664/V666 improved three seeds but had mean loss
+  degradation and a persistent seed7233 failure. PPO was correctly blocked.
+
+### Phase 65: Causal quality-link redesign gate (2026-09-10)
+- [x] Close the V658--V666 specialist-mode route before PPO.
+- [ ] Design a new causal quality/resource chain with cross-seed support,
+  preserving truth-only generation and online observability.
+- [ ] Repeat policy-free resource occupancy, subset geometry, and online
+  transfer gates before considering any PPO probe.
+- **Status:** active; no PPO has been run on the flexible-subset redesign.
 
 ### Phase 61: Observable specialist-mode route (2026-09-10)
 - [x] Build truth-only persistent specialist modes from training-prefix

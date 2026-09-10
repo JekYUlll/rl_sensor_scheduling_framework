@@ -3216,3 +3216,18 @@ This was diagnosed from the remote traceback. The path resolver now first
 checks the repository-relative manifest path and then falls back to the legacy
 run-relative form. The corrected script is ready to resync; remote execution
 is pending recovery of the SSH connection.
+
+## 2026-09-10 V664/V666 transfer closeout
+
+V664 fitted train-only ExtraTrees candidate-loss regressors on the fixed
+three-start training set and evaluated the five-window final grid. Relative
+to the train-selected static candidate, seeds `7231`, `7232`, and `7234`
+improved by `0.013037`, `0.000341`, and `0.003793`, while seed `7233`
+degraded by `0.051995`; the mean delta was `+0.008706` in loss, so the
+transfer gate failed.
+
+V666 added the predeclared fourth training start `81789` without changing the
+test grid. The deltas were `-0.012072`, `-0.012050`, `+0.026924`, and
+`-0.031532`, for a mean degradation of `+0.007183`. This bounded stability
+check also failed. The V658--V666 route is closed before PPO; seed7233 is a
+reproducible cross-seed transfer failure, not a reason to tune the policy.

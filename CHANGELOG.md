@@ -10868,3 +10868,12 @@ until all four manifests pass independent validation.
 - Corrected the resolver to prefer the existing repository-relative path and
   retain the legacy run-relative fallback. The corrected remote launch awaits
   SSH recovery; no partial observation result is promoted.
+
+## 2026-09-10 - V664/V666 transfer closeout
+
+- V664 train-only observation transfer improved three seeds but degraded seed
+  `7233` by `0.051995`; mean loss degradation was `+0.008706`.
+- V666 added the predeclared fourth training start and still degraded seed
+  `7233` by `0.026924`, with mean degradation `+0.007183`.
+- Closed the V658--V666 route before PPO. The next route must redesign the
+  causal quality/resource coupling and pass policy-free transfer gates first.
