@@ -9333,3 +9333,12 @@ truth/evaluator assets and the same four starts. This budget is selected from
 the frozen startup-cost thresholds so that the three specialist pairs are
 feasible while the specialist union remains infeasible. The job is a
 policy-free geometry audit; no online transfer or PPO process is running.
+
+## 2026-09-11 V678 closeout
+
+V678 completed all four geometry audits. The operating gaps were
+`0.0370164451`, `0.0000063937`, `0.0001480981`, and `0.0026746816` for
+seeds `7177--7180`; only 7177 had an empty 1% operating static intersection.
+The pair-capable budget therefore creates adaptive opportunity in one seed but
+not a stable cross-seed task geometry. Online transfer and PPO remain blocked.
+The next work is a target-innovation/quality audit, not another budget probe.

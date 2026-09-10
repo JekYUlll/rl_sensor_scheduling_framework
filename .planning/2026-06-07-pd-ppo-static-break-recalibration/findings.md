@@ -4181,3 +4181,14 @@ space more constrained without making condition-specific subset value
 separate. Further budget-only sweeps are not justified. The next diagnostic
 must identify the static winning subset and measure its condition/block regret
 before any new truth generation or policy training.
+
+## V678 specialist-pair geometry closeout (2026-09-11)
+
+Budget `2.50` corrected the mechanical limitation identified by V677: all
+three specialist pairs can now be startup-feasible while their union remains
+infeasible. However, only seed7177 passed the downstream operating geometry
+gate. Seeds7178--7180 had operating gaps `0.0000063937`, `0.0001480981`, and
+`0.0026746816`, with nonempty 1% static intersections. The remaining blocker
+is therefore the cross-seed target/quality innovation process, not the
+arbitrary-subset action representation or PPO capacity. No transfer or PPO
+was run.

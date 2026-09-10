@@ -1524,14 +1524,26 @@ chronologically identifiable.
 - **Status:** complete; the next probe is a single budget-2.50 geometry audit.
 
 ### Phase 78: Binding specialist-pair geometry (2026-09-11)
-- [ ] Reuse V675 truth and frozen evaluator assets without refitting or
+- [x] Reuse V675 truth and frozen evaluator assets without refitting or
   changing the target/quality process.
-- [ ] Audit all four development seeds at normalized budget `2.50`, where the
+- [x] Audit all four development seeds at normalized budget `2.50`, where the
   three specialist pairs are startup-feasible but their three-channel union
   remains infeasible under the current manifest.
-- [ ] Require operating gaps above `0.01` and empty 1% operating static
+- [x] Require operating gaps above `0.01` and empty 1% operating static
   intersections in all four seeds before online transfer.
-- [ ] If geometry passes, run train-only online transfer; PPO remains blocked
-  until transfer also passes.
-- **Status:** running remotely in tmux `v678_geometry`; geometry only, PPO
-  remains blocked.
+- [x] Close the route because three seeds fail the operating-gap/static-
+  intersection gate; do not run online transfer or PPO.
+- **Status:** complete; pair-capable resource geometry alone is insufficient.
+
+### Phase 79: Cross-seed target-innovation redesign (2026-09-11)
+- [ ] Audit V675 target innovation and specialist-quality contrast by operating
+  state and contiguous block, separating target persistence from measurement
+  noise.
+- [ ] Define a truth-only, deployable-state-conditioned target process with
+  persistent specialist-specific innovation, without using future targets or
+  event labels in the scheduler.
+- [ ] Predeclare four-seed support and subset-forecast geometry gates before
+  refitting assets.
+- [ ] Do not alter PPO, start online transfer, or select final windows until
+  all four seeds pass the policy-free geometry gate.
+- **Status:** active; all budget-only routes are closed.

@@ -10938,3 +10938,12 @@ until all four manifests pass independent validation.
 - Resource-only feasibility screening found 5--6 masks at budget 1.45 versus
   11--16 at 2.15. A four-seed V676 geometry probe is queued with the same
   frozen assets; no PPO evidence is implied.
+
+## 2026-09-11 - V678 specialist-pair geometry closeout
+
+- Audited all four seeds at predeclared budget `2.50`, reusing unchanged V675
+  truth and evaluator assets.
+- Only seed7177 passed the operating geometry gate (`0.0370164451`); seeds
+  7178--7180 remained below `0.01` and retained nonempty static intersections.
+- Closed budget exploration before transfer/PPO. The next route must repair
+  cross-seed target innovation and specialist-quality contrast.
