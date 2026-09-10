@@ -10889,3 +10889,11 @@ until all four manifests pass independent validation.
 - Closed V672 before online transfer and PPO. No policy result is promoted;
   the next route must redesign the causal link between deployable operating
   state, channel quality, and effective resource load.
+## 2026-09-11 - V673 heater-quality geometry closeout
+
+- Applied the predeclared heater-quality relation to the V672 shared-driver
+  truth and refit the four frozen TCN assets.
+- Operating gaps were `0.03421241`, `0`, `0.00009367`, and `0.00010058`; the
+  1% near-optimal static intersection remained nonempty in three seeds.
+- Closed V673 before transfer and PPO. The next route must redesign the joint
+  target-quality-resource causal chain; no learned-policy evidence is implied.

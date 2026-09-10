@@ -9292,3 +9292,8 @@ blocked.
   and discrete quality levels for the heated and exposed channels. Matched
   frozen-asset refitting was launched remotely in tmux `v673_assets`; geometry
   remains pending and PPO is still blocked.
+- V673 geometry completed for all four seeds. Operating gaps were
+  `0.03421241`, `0`, `0.00009367`, and `0.00010058`; 1% near-optimal static
+  intersections were empty only for 7177 and contained 7, 7, and 2 candidates
+  for 7178--7180. The heater-quality relation therefore did not repair the
+  cross-seed task-level geometry. V673 is closed before transfer/PPO.

@@ -1474,7 +1474,21 @@ chronologically identifiable.
   online-transfer gates before generating new frozen assets.
 - [x] Run the policy-free resource occupancy screen on all
   four development seeds; it passed state support.
-- [ ] Run the complete-subset geometry screen on all
+- [x] Run the complete-subset geometry screen on all
   four development seeds; do not launch PPO unless all gates pass.
-- **Status:** active; V673 asset preparation is running and flexible-subset PPO
-  remains blocked.
+- [x] Close the route because the operating opportunity/static-intersection
+  gate fails in three of four seeds.
+- **Status:** complete; V673 quality changes are observable but do not yield
+  stable downstream subset geometry. Flexible-subset PPO remains blocked.
+
+### Phase 74: Joint target-quality-resource redesign (2026-09-11)
+- [ ] Preserve V672/V673 as closed evidence that resource occupancy and
+  discrete quality changes alone are insufficient.
+- [ ] Define a causal target process in which the same persistent observable
+  operating state changes future target innovation and the quality of the
+  corresponding specialist, while resource load remains hardware-grounded.
+- [ ] Require cross-seed operating gaps above 0.01 and empty 1% near-optimal
+  static intersections before any online-transfer audit or PPO run.
+- [ ] Rebuild frozen assets and repeat geometry only after the truth-only
+  support screen passes.
+- **Status:** active; no PPO is permitted.

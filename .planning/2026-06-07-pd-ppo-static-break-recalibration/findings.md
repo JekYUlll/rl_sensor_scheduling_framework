@@ -4159,3 +4159,14 @@ intersection. Seeds7178 and 7179 had effectively zero operating gaps and seven
 near-optimal static candidates; seed7180 had a small gap (`0.00234366`) and two
 near-optimal candidates. This separates resource occupancy from task-level
 adaptive opportunity and closes V672 before online transfer or PPO.
+
+## V673 heater-quality geometry (2026-09-11)
+
+Applying the existing heater-quality relation made the measurement-quality
+state explicitly change with the same operating risk and heater state. It did
+not change the decision: only seed7177 had a material operating gap
+(`0.03421241`) with an empty 1% static intersection. Seeds7178--7180 had
+operating gaps `0`, `0.00009367`, and `0.00010058`, with 7, 7, and 2
+near-optimal static candidates. The next design must alter the shared target,
+quality, and resource persistence/innovation chain; further PPO tuning is not
+justified before that policy-free gate passes.
