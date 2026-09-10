@@ -4149,3 +4149,13 @@ all four core/laser heater combinations in the final partition, with 11--16
 feasible subsets per row. This passes the resource occupancy gate only; the
 forecast evaluator must still demonstrate condition-specific subset value and
 chronological online transfer.
+## V672 shared-driver geometry (2026-09-11)
+
+The shared-driver resource controller successfully created four supported
+operating states and a changing feasible frontier, but the forecast objective
+did not consistently inherit that variation. Seed7177 had a material operating
+opportunity gap (`0.03418140`) and an empty 1% near-optimal static
+intersection. Seeds7178 and 7179 had effectively zero operating gaps and seven
+near-optimal static candidates; seed7180 had a small gap (`0.00234366`) and two
+near-optimal candidates. This separates resource occupancy from task-level
+adaptive opportunity and closes V672 before online transfer or PPO.

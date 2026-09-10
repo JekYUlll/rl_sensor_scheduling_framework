@@ -10877,3 +10877,15 @@ until all four manifests pass independent validation.
   `7233` by `0.026924`, with mean degradation `+0.007183`.
 - Closed the V658--V666 route before PPO. The next route must redesign the
   causal quality/resource coupling and pass policy-free transfer gates first.
+## 2026-09-11 - V672 shared-driver geometry closeout
+
+- Added the remote four-seed downstream geometry audit under
+  `reports/v672_shared_driver_geometry_b2p15_20260911/`.
+- The shared-driver resource trace produced all four heater states and a
+  changing feasible frontier, but the operating forecast gap passed the
+  materiality gate only for seed 7177 (`0.03418140`). Seeds 7178--7180 had
+  gaps `0.00000691`, `0.00010739`, and `0.00234366`, with nonempty 1%
+  near-optimal static intersections.
+- Closed V672 before online transfer and PPO. No policy result is promoted;
+  the next route must redesign the causal link between deployable operating
+  state, channel quality, and effective resource load.

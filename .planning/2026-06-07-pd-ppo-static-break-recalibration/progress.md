@@ -9269,3 +9269,26 @@ fractions `0.421`, `0.706`, `0.868`, and `0.409`.
 V672 is resource evidence only. The next run must regenerate the resource
 trace remotely and perform frozen 32-subset forecast geometry; PPO remains
 blocked.
+## 2026-09-11 - V672 shared-driver geometry closed
+
+- Remote V672 geometry completed for seeds 7177--7180 using the frozen V669
+  truth, the shared-driver resource trace, budget 2.15, and all 32 candidate
+  subsets. No PPO or online-transfer process was launched.
+- Resource occupancy remained supported (`heater_00000`, `01000`, `10000`,
+  `11000`) in all four final windows, but this did not guarantee downstream
+  forecast separation.
+- Operating gaps were `0.03418140`, `0.00000691`, `0.00010739`, and
+  `0.00234366`. The 1% operating near-optimal static intersection was empty
+  only for seed7177 and contained 7, 7, and 2 candidates for seeds 7178--7180.
+- Decision: close V672 before transfer/PPO. Continue with a new causal
+  resource-quality design; do not retune PPO or select a favorable seed/window.
+- Artifacts: `reports/v672_shared_driver_geometry_b2p15_20260911/README.md`,
+  four per-seed JSON files, and four condition-loss CSVs.
+- A read-only remote audit found the V672 particle-quality column was almost
+  uncorrelated with the particle driver (approximately -0.02 across seeds),
+  while transport and thermal quality relationships were positive. This
+  motivated V673's predeclared heater-quality relation, not a PPO change.
+- V673 truth-only output has all four heater states in each fixed final window
+  and discrete quality levels for the heated and exposed channels. Matched
+  frozen-asset refitting was launched remotely in tmux `v673_assets`; geometry
+  remains pending and PPO is still blocked.

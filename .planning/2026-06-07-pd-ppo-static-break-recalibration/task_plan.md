@@ -1458,8 +1458,23 @@ chronologically identifiable.
 ### Phase 72: V672 shared-driver resource geometry (2026-09-11)
 - [x] Define a shared-driver hysteresis controller with fixed frequency costs.
 - [x] Screen final-window state support and feasible-frontier occupancy.
-- [ ] Generate matched resource traces remotely from the frozen V669 truth.
-- [ ] Complete 32-subset forecast geometry before any transfer audit.
-- [ ] Close the route if the operating opportunity or static-intersection
-  gate fails.
-- **Status:** active; V672 passes resource support only.
+- [x] Generate matched resource traces remotely from the frozen V669 truth.
+- [x] Complete 32-subset forecast geometry before any transfer audit.
+- [x] Close the route because the operating opportunity/static-intersection
+  gate fails in three of four seeds.
+- **Status:** complete; V672 passes resource support in all seeds but fails
+  stable downstream geometry, so no transfer or PPO was run.
+
+### Phase 73: Post-V672 causal resource-quality redesign (2026-09-11)
+- [ ] Preserve the V672 controller and geometry as a closed negative screen.
+- [x] Identify a physically supported mechanism that changes both channel
+  quality and effective resource cost on the same deployable state, without
+  tuning thresholds against final-test losses.
+- [x] Define truth-only occupancy, operating-gap, static-intersection, and
+  online-transfer gates before generating new frozen assets.
+- [x] Run the policy-free resource occupancy screen on all
+  four development seeds; it passed state support.
+- [ ] Run the complete-subset geometry screen on all
+  four development seeds; do not launch PPO unless all gates pass.
+- **Status:** active; V673 asset preparation is running and flexible-subset PPO
+  remains blocked.
