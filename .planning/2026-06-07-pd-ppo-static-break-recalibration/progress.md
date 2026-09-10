@@ -9071,3 +9071,41 @@ geometry failed. V647 is retained as an invalid audit. V648 keeps the same
 truth, physical resource trace, budgets, starts, and geometry protocol while
 adding `--oracle-candidate-mask-repeat 1` so the forecaster sees the complete
 candidate-mask surface. PPO remains blocked pending the corrected geometry.
+
+## 2026-09-10 V648 mask-balanced geometry closeout
+
+V648 completed the corrected four-seed audit. The 32-subset operating
+opportunity gaps were `0.043614`, `0.022431`, `0.026198`, and `0.016515` for
+seeds `7401--7404`; all four pass the `0.01` materiality gate. The 1% near-
+optimal static intersection was empty for every seed, and the operating-state
+winner changed across heater conditions within every seed. This is the first
+flexible-subset route in this plan to pass the complete-subset downstream
+geometry gate. Online transfer remains the next gate; PPO is still blocked.
+
+## 2026-09-10 V649 online-transfer screen
+
+V649 is running a chronological held-out-start audit. The heater-state winner
+lookup is fitted on three starts per seed and evaluated on untouched start
+`82600` with the real warmup/dwell environment. It uses observable resource
+state only; no event labels, future targets, PPO outputs, or test feedback are
+used. PPO remains blocked until the transfer margin and behavior gates are
+audited.
+
+## 2026-09-10 V649/V650 transfer closeout
+
+V649's observable heater-state winner lookup did not transfer to the held-out
+start. The transfer-minus-static losses were `0.000000`, `+0.071010`,
+`0.000000`, and `+0.028867` for seeds `7401--7404`; seed7402 incurred two
+warmup aborts and seed7404 made 23 switches. The failure is not an asset or
+geometry failure: the test starts contain resource states whose condition-wise
+forecast winners are not stable under the heater-state key.
+
+V650 then fitted per-subset ExtraTrees regressors from deployable nowcast,
+alert, quality, controller, and heater features using train-partition fixed-
+mask replay. This no-dwell diagnostic produced transfer-minus-static losses
+`-0.005678`, `+0.072917`, `+0.034241`, and `+0.028394`; only `1/4` seeds
+improved over static, and switching rates were `0.137`, `0.238`, `0.410`, and
+`0.336` per row. The online-transfer gate therefore fails before any PPO
+training. V648 is retained as a valid downstream-geometry result, while the
+current physical-resource route is closed because its opportunity is not
+stably identifiable from the available online observables.

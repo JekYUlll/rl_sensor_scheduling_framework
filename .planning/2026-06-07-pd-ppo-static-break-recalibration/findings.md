@@ -1,5 +1,32 @@
 # Findings & Decisions
 
+## 2026-09-10 V648 geometry pass
+
+The corrected mask-balanced assets remove the V647 normalization failure. All
+four seeds pass the operating opportunity threshold with gaps
+`0.043614/0.022431/0.026198/0.016515`, and every seed has an empty 1% near-
+optimal static intersection. The best operating candidate changes between
+heater states in all four seeds. This establishes task-level adaptive
+opportunity under the physical resource chain. It does not establish that the
+online observation identifies the winning subset, so the next required test is
+chronological online transfer; no policy result is promoted yet.
+
+V649 uses a heater-state winner lookup trained on three starts and evaluated
+on held-out start `82600` before any PPO training. A positive result would
+justify a small policy probe; a failure would block PPO and require closing or
+revising the resource-state route.
+
+## V649/V650 closeout decision
+
+V649 failed the chronological transfer gate: the heater-state lookup was no
+ better than the training static candidate in only two seeds and was worse in
+ the other two. V650 used a richer online feature set and no dwell execution,
+ but improved over static in only one of four seeds. The physical route is
+ closed before PPO. The evidence supports the narrower conclusion that
+ state-dependent feasible-subset geometry exists, but the current online
+ observations do not identify its forecast-value winner robustly enough for a
+ learned-policy claim.
+
 ## 2026-09-10 V647 invalid-asset diagnosis
 
 V647's large losses are invalid for scientific interpretation. The physical

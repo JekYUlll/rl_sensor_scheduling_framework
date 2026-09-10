@@ -1276,7 +1276,28 @@ stable task-level adaptive opportunity.
   budgets set to nonbinding `10.0/10.0`, physical dynamic budget fixed at
   `55 W`, and all other V646 settings frozen.
 - [x] Launch remote four-seed asset preparation.
-- [ ] Complete the 32-subset downstream geometry audit.
-- [ ] Close or advance to online transfer based on the same all-seed
+- [x] Complete the 32-subset downstream geometry audit.
+- [x] Advance to online transfer after the all-seed
   opportunity and near-optimal-static gates.
-- **Status:** in_progress
+- **Status:** complete; V648 passed and V649 transfer screen active
+
+### Phase 57: Chronological online transfer after V648
+- [x] Diagnose and reject the V647 mask-normalization asset failure.
+- [x] Rebuild V648 forecaster assets with complete candidate-mask coverage.
+- [x] Verify V648 four-seed operating forecast geometry.
+- [x] Evaluate a heater-state winner lookup trained on three starts and tested
+  on a held-out start.
+- [x] Reject the heater-state transfer lookup after held-out losses were
+  non-positive in only `0/4` seeds.
+- [x] Run the bounded observable-context fixed-mask transfer probe.
+- [x] Close this physical-resource route before PPO because the probe was
+  worse than the static reference in `3/4` seeds and had no dwell execution.
+- **Status:** complete; no PPO result is promoted
+
+### Phase 58: Route closeout and evidence handoff (2026-09-10)
+- [x] Preserve V648 as geometry evidence, not policy evidence.
+- [x] Preserve V649 as a failed resource-state transfer diagnostic.
+- [x] Preserve V650 as a failed observable-context opportunity probe.
+- [x] Append exact results to progress, findings, and CHANGELOG.
+- **Status:** complete; next route must change the physical/forecast coupling,
+  not tune PPO on the closed route

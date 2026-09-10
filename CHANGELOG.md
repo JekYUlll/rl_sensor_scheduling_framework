@@ -1,5 +1,16 @@
 # PD-PPO Scene Recalibration Changelog
 
+## 2026-09-10 - V648 mask-balanced geometry pass
+
+- Rebuilt all four physical-only assets with candidate-mask coverage in
+  forecaster training; all saved mask normalizers remained non-degenerate.
+- The corrected 32-subset operating geometry passed all four development
+  seeds: opportunity gaps were `0.043614`, `0.022431`, `0.026198`, and
+  `0.016515`, with empty 1% near-optimal static intersections in every seed.
+- Operating-state winners changed across heater conditions in every seed.
+  The route now advances to online-transfer screening; PPO remains blocked
+  until that gate is passed.
+
 ## 2026-09-10 - V627-V636 observable physical-resource route
 
 - Added a hardware-manifest-based, decision-time heater/resource trace for
@@ -10730,3 +10741,39 @@ until all four manifests pass independent validation.
 - Added V648 asset and geometry runners with one explicit training repeat for
   every candidate mask. Truth, physical resource trace, budgets, starts, and
   geometry gates remain unchanged.
+
+## 2026-09-10 - V649 chronological transfer screen launched
+
+- Added a held-out-start transfer audit using only observable heater-state
+  features. The winner lookup is fitted from three geometry starts and is
+  evaluated on the fourth start with the real warmup/dwell environment.
+- No event labels, future targets, PPO outputs, or test feedback are used to
+  construct the lookup. PPO remains blocked pending this transfer gate.
+
+## 2026-09-10 - V648 geometry gate passed; V649 transfer pending
+
+- V648 corrected the V647 mask-normalization asset failure by repeating every
+  candidate mask during forecaster preparation.
+- Four-seed operating opportunity gaps were `0.043614`, `0.022431`, `0.026198`,
+  and `0.016515`; every seed passed the predeclared `0.01` materiality gate.
+- The 1% near-optimal static intersection was empty for all four seeds, and
+  heater-state winners changed within every seed.
+- V649 is testing a heater-state winner lookup trained on three starts and
+  evaluated on held-out start `82600`. PPO remains blocked until this
+  chronological online-transfer gate is complete.
+
+## 2026-09-10 - V649/V650 online-transfer closeout
+
+- V649 completed the held-out-start heater-state lookup audit. Transfer minus
+  static losses were `0.000000`, `+0.071010`, `0.000000`, and `+0.028867` for
+  seeds `7401--7404`; the route failed the all-seed online-transfer gate.
+- V650 fitted per-subset observable-context regressors from train-partition
+  fixed-mask replay. The four transfer minus static losses were `-0.005678`,
+  `+0.072917`, `+0.034241`, and `+0.028394`; only `1/4` improved over static.
+- V650 did not use PPO, event labels, future targets, or dwell execution. Its
+  high switching rates in losing seeds reinforce that the current online
+  value mapping is not deployment-ready.
+- The physical-resource route is closed before PPO. V648 remains valid
+  downstream geometry evidence, but no policy result is promoted from this
+  route. A new route must improve the physical/forecast coupling or online
+  observability instead of tuning PPO here.

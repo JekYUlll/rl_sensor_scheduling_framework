@@ -1,0 +1,38 @@
+{
+  "seeds": [
+    {
+      "seed": 7401,
+      "transfer_loss": 0.3453503009513952,
+      "static_loss": 0.3453503009513952,
+      "transfer_minus_static": 0.0,
+      "transfer_switches": 0,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7402,
+      "transfer_loss": 0.28109825419960544,
+      "static_loss": 0.21008842180890497,
+      "transfer_minus_static": 0.07100983239070047,
+      "transfer_switches": 14,
+      "warmup_abort_count": 2
+    },
+    {
+      "seed": 7403,
+      "transfer_loss": 0.28732524006045423,
+      "static_loss": 0.28732524006045423,
+      "transfer_minus_static": 0.0,
+      "transfer_switches": 0,
+      "warmup_abort_count": 0
+    },
+    {
+      "seed": 7404,
+      "transfer_loss": 0.33494372403947636,
+      "static_loss": 0.3060763218672946,
+      "transfer_minus_static": 0.028867402172181755,
+      "transfer_switches": 23,
+      "warmup_abort_count": 0
+    }
+  ],
+  "all_positive_margin": false,
+  "diagnostic_status": "chronological_observable_heater_winner_lookup; held_out_start; no_PPO"
+}
