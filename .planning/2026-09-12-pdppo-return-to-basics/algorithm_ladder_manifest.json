@@ -1,0 +1,57 @@
+{
+  "version": "pdppo_return_to_basics_2026-09-12",
+  "primary_method": "forecast-loss masked categorical PPO",
+  "action_geometry": "exact feasible sensor subsets",
+  "physical_entity_track": "paused_until_system_power_or_soc_input",
+  "execution_consistency": {
+    "existing_support": [
+      "singleton_feasible_mask_during_valid_dwell",
+      "decision_only_policy_updates",
+      "decision_block_credit"
+    ],
+    "required_smoke_flags": {
+      "decision_only_policy_updates": true,
+      "decision_block_credit": true,
+      "decision_block_reward_mode": "sum"
+    }
+  },
+  "ladder": [
+    {
+      "id": "q1_regression",
+      "status": "pending",
+      "purpose": "regress exclusive-specialist capability"
+    },
+    {
+      "id": "mask32_controlled_geometry",
+      "status": "pending",
+      "purpose": "test complete-subset forecast opportunity before PPO"
+    },
+    {
+      "id": "online_transfer_probe",
+      "status": "pending",
+      "purpose": "test deployable observation-to-subset-value transfer"
+    },
+    {
+      "id": "ppo_development",
+      "status": "blocked_by_prior_gates",
+      "purpose": "four-seed policy probe after geometry and transfer pass"
+    },
+    {
+      "id": "fresh_confirmation",
+      "status": "blocked_by_prior_gates",
+      "purpose": "at least twelve locked-seed confirmation evaluation"
+    }
+  ],
+  "forbidden_primary_components": [
+    "bandit_prior",
+    "residual_bandit_action",
+    "counterfactual_bandit_label",
+    "bandit_margin_reward"
+  ],
+  "gates": {
+    "operating_opportunity_gap": ">0.01",
+    "near_optimal_static_intersection": "empty_at_epsilon_0.01",
+    "online_transfer_capture_ratio": ">0.3",
+    "confirmation_seed_count": ">=12"
+  }
+}
