@@ -1,0 +1,92 @@
+{
+  "seed": 7180,
+  "candidate_count": 32,
+  "start_indices": [
+    24287,
+    752,
+    28527,
+    23580
+  ],
+  "steps_per_start": 512,
+  "reserve_wh": 1728.0,
+  "support_rows": {
+    "candidate_000": 2048,
+    "candidate_001": 978,
+    "candidate_002": 1385,
+    "candidate_003": 963,
+    "candidate_004": 1414,
+    "candidate_005": 976,
+    "candidate_006": 1381,
+    "candidate_007": 963,
+    "candidate_008": 99,
+    "candidate_009": 99,
+    "candidate_010": 99,
+    "candidate_011": 99,
+    "candidate_012": 99,
+    "candidate_013": 99,
+    "candidate_014": 99,
+    "candidate_015": 99,
+    "candidate_016": 1411,
+    "candidate_017": 975,
+    "candidate_018": 1361,
+    "candidate_019": 961,
+    "candidate_020": 1410,
+    "candidate_021": 974,
+    "candidate_022": 1353,
+    "candidate_023": 960,
+    "candidate_024": 99,
+    "candidate_025": 99,
+    "candidate_026": 99,
+    "candidate_027": 99,
+    "candidate_028": 99,
+    "candidate_029": 99,
+    "candidate_030": 99,
+    "candidate_031": 99
+  },
+  "record_rows": 21097,
+  "best_overall_candidate": "candidate_021",
+  "best_overall_sensors": "met_station_core;surface_temp_ir;fc4_flux;cr1000xe_backbone",
+  "best_overall_loss": 85.98429730393804,
+  "resource_geometry": {
+    "conditions": [
+      "high_high",
+      "low_high",
+      "low_low",
+      "low_mid",
+      "zero_high",
+      "zero_low",
+      "zero_mid"
+    ],
+    "sample_counts": {
+      "high_high": 3776,
+      "low_high": 848,
+      "low_low": 758,
+      "low_mid": 156,
+      "zero_high": 5152,
+      "zero_low": 2649,
+      "zero_mid": 7758
+    },
+    "best_candidates": {
+      "high_high": "candidate_021",
+      "low_high": "candidate_008",
+      "low_low": "candidate_022",
+      "low_mid": "candidate_000",
+      "zero_high": "candidate_017",
+      "zero_low": "candidate_000",
+      "zero_mid": "candidate_021"
+    },
+    "best_static_candidate": "candidate_000",
+    "best_static_loss": 86.00432872129392,
+    "weighted_best_loss": 85.9808107798933,
+    "opportunity_gap_best_static_minus_conditionwise": 0.023517941400612585,
+    "near_optimal_intersections": {
+      "0.01": [],
+      "0.05": [
+        "candidate_000",
+        "candidate_004",
+        "candidate_016",
+        "candidate_020"
+      ]
+    }
+  }
+}

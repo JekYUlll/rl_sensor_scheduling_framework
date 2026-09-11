@@ -1,0 +1,100 @@
+{
+  "seed": 7177,
+  "candidate_count": 32,
+  "start_indices": [
+    24682,
+    754,
+    29222,
+    23589
+  ],
+  "steps_per_start": 512,
+  "reserve_wh": 1728.0,
+  "support_rows": {
+    "candidate_000": 2048,
+    "candidate_001": 974,
+    "candidate_002": 1389,
+    "candidate_003": 959,
+    "candidate_004": 1409,
+    "candidate_005": 972,
+    "candidate_006": 1386,
+    "candidate_007": 959,
+    "candidate_008": 134,
+    "candidate_009": 134,
+    "candidate_010": 134,
+    "candidate_011": 134,
+    "candidate_012": 134,
+    "candidate_013": 134,
+    "candidate_014": 134,
+    "candidate_015": 134,
+    "candidate_016": 1406,
+    "candidate_017": 971,
+    "candidate_018": 1373,
+    "candidate_019": 957,
+    "candidate_020": 1405,
+    "candidate_021": 970,
+    "candidate_022": 1367,
+    "candidate_023": 957,
+    "candidate_024": 134,
+    "candidate_025": 134,
+    "candidate_026": 134,
+    "candidate_027": 134,
+    "candidate_028": 134,
+    "candidate_029": 134,
+    "candidate_030": 134,
+    "candidate_031": 134
+  },
+  "record_rows": 21646,
+  "best_overall_candidate": "candidate_000",
+  "best_overall_sensors": "cr1000xe_backbone",
+  "best_overall_loss": 90.00550526380539,
+  "resource_geometry": {
+    "conditions": [
+      "high_high",
+      "low_high",
+      "low_low",
+      "low_mid",
+      "zero_high",
+      "zero_low",
+      "zero_mid"
+    ],
+    "sample_counts": {
+      "high_high": 4416,
+      "low_high": 576,
+      "low_low": 796,
+      "low_mid": 157,
+      "zero_high": 5344,
+      "zero_low": 2687,
+      "zero_mid": 7670
+    },
+    "best_candidates": {
+      "high_high": "candidate_026",
+      "low_high": "candidate_026",
+      "low_low": "candidate_020",
+      "low_mid": "candidate_022",
+      "zero_high": "candidate_024",
+      "zero_low": "candidate_022",
+      "zero_mid": "candidate_021"
+    },
+    "best_static_candidate": "candidate_022",
+    "best_static_loss": 90.01476072900368,
+    "weighted_best_loss": 90.01216957219123,
+    "opportunity_gap_best_static_minus_conditionwise": 0.0025911568124570294,
+    "near_optimal_intersections": {
+      "0.01": [
+        "candidate_006",
+        "candidate_018",
+        "candidate_022"
+      ],
+      "0.05": [
+        "candidate_000",
+        "candidate_002",
+        "candidate_004",
+        "candidate_006",
+        "candidate_016",
+        "candidate_018",
+        "candidate_020",
+        "candidate_022"
+      ]
+    }
+  }
+}

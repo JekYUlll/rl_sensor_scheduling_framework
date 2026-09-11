@@ -52,9 +52,15 @@ def prepare(
     truth_root: Path,
     output_root: Path,
     budget: float,
+    startup_budget: float | None,
     objective: str,
     oracle_loss_clip: float | None,
     context_columns: tuple[str, ...],
+    sensor_cfg: str | None,
+    dynamic_budget: float | None,
+    resource_power_prefix: str,
+    sensor_quality_columns: tuple[str, ...] | None,
+    required_sensor_ids: tuple[str, ...] | None,
 ) -> dict:
     source = source_root / f"seed{seed}"
     output = output_root / f"seed{seed}"
@@ -63,12 +69,30 @@ def prepare(
     shutil.copytree(source, output)
     metadata_path = output / "v2_ppo_metadata.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    # The source asset may be a symlinked template from another seed.  The
+    # prepared manifest must identify the target seed, not the template seed.
+    metadata["seed"] = int(seed)
+    if sensor_cfg is not None:
+        sensor_cfg_path = Path(sensor_cfg)
+        if sensor_cfg_path.is_absolute():
+            sensor_cfg_path = sensor_cfg_path.relative_to(ROOT)
+        metadata["sensor_cfg"] = str(sensor_cfg_path)
     target_truth = truth_root / f"truth_seed{seed}.csv"
     truth = pd.read_csv(target_truth)
     # The mandatory logger/backbone is not a specialist measurement channel.
     # Older truth generators omit its explicit quality column, but the runtime
     # environment requires the schema and the backbone has unit quality.
     truth["agent_context_quality_cr1000xe_backbone"] = 1.0
+    if sensor_quality_columns is not None:
+        metadata["sensor_quality"] = {
+            **dict(metadata.get("sensor_quality", {})),
+            "columns": list(sensor_quality_columns),
+        }
+    if required_sensor_ids is not None:
+        metadata["constraints"] = {
+            **dict(metadata.get("constraints", {})),
+            "required_sensor_ids": list(required_sensor_ids),
+        }
     truth_path = output / "truth_v608_causal.csv"
     truth.to_csv(truth_path, index=False)
 
@@ -84,15 +108,28 @@ def prepare(
         "include_event_flag_in_state": False,
         "include_alert_context_features": False,
     }
-    metadata["dynamic_resource"] = {
+    dynamic_cfg = {
         **dict(metadata.get("dynamic_resource", {})),
         "trace_csv": str(resource_path.relative_to(ROOT)),
         "controller": "entity_heater_trace_v1_with_causal_specialist_targets",
     }
+    dynamic_cfg["power_columns"] = {
+        sensor_id: f"{resource_power_prefix}{sensor_id}"
+        for sensor_id in (
+            "met_station_core",
+            "laser_disdrometer",
+            "radiometer_basic",
+            "surface_temp_ir",
+            "fc4_flux",
+        )
+    }
+    if dynamic_budget is not None:
+        dynamic_cfg["budget_w"] = float(dynamic_budget)
+    metadata["dynamic_resource"] = dynamic_cfg
     metadata["constraints"] = {
         **dict(metadata.get("constraints", {})),
         "per_step_budget": float(budget),
-        "startup_peak_budget": float(budget),
+        "startup_peak_budget": float(budget if startup_budget is None else startup_budget),
     }
     metadata["state_columns"] = list(helpers.STATE_COLUMNS)
     metadata["reward_target_columns"] = list(helpers.REWARD_TARGET_COLUMNS)
@@ -104,6 +141,10 @@ def prepare(
     metadata["uncertainty_proxy"] = uncertainty
 
     sensors = load_sensor_specs(str(ROOT / metadata["sensor_cfg"]))
+    # Keep the manifest's channel identity synchronized with the sensor file.
+    # Source templates may carry historical sensor_ids even when the selected
+    # entity configuration has changed.
+    metadata["sensor_ids"] = [spec.sensor_id for spec in sensors]
     constraints_meta = dict(metadata.get("constraints", {}))
     constraints = PowerConstraintsV2(
         max_active=constraints_meta.get("max_active"),
@@ -174,8 +215,31 @@ def main() -> None:
     parser.add_argument("--seeds", type=int, nargs="+", default=[7177, 7178, 7179, 7180])
     parser.add_argument("--resource-root", type=Path, default=None)
     parser.add_argument("--budget", type=float, default=2.15)
+    parser.add_argument("--startup-budget", type=float, default=None)
+    parser.add_argument(
+        "--sensor-cfg",
+        type=str,
+        default=None,
+        help="Optional sensor configuration path, relative to the repository root.",
+    )
+    parser.add_argument(
+        "--dynamic-budget",
+        type=float,
+        default=None,
+        help="Optional dynamic-resource budget; defaults to the source metadata value.",
+    )
+    parser.add_argument(
+        "--resource-power-prefix",
+        type=str,
+        default="resource_effective_power_",
+        help="Prefix used for per-sensor dynamic-resource columns in the trace.",
+    )
     parser.add_argument("--objective", choices=("ordinary", "group_balanced"), default="ordinary")
     parser.add_argument("--oracle-loss-clip", type=float, default=None)
+    parser.add_argument("--sensor-quality-max-noise-multiplier", type=float, default=None)
+    parser.add_argument("--sensor-quality-availability-floor", type=float, default=None)
+    parser.add_argument("--sensor-quality-columns", nargs="*", default=None)
+    parser.add_argument("--required-sensor-ids", nargs="*", default=None)
     parser.add_argument("--context-columns", nargs="*", default=[
         "agent_context_forecast_mode_transport",
         "agent_context_forecast_mode_particle",
@@ -190,10 +254,24 @@ def main() -> None:
     result = [
         prepare(
             seed, args.source_root, args.truth_root, args.output_root, float(args.budget),
-            args.objective, args.oracle_loss_clip, tuple(args.context_columns)
+            args.startup_budget, args.objective, args.oracle_loss_clip, tuple(args.context_columns),
+            args.sensor_cfg, args.dynamic_budget, args.resource_power_prefix,
+            None if args.sensor_quality_columns is None else tuple(args.sensor_quality_columns),
+            None if args.required_sensor_ids is None else tuple(args.required_sensor_ids),
         )
         for seed in args.seeds
     ]
+    for item in result:
+        metadata_path = args.output_root / f"seed{item['seed']}" / "v2_ppo_metadata.json"
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        quality = dict(metadata.get("sensor_quality", {}))
+        if args.sensor_quality_max_noise_multiplier is not None:
+            quality["max_noise_multiplier"] = float(args.sensor_quality_max_noise_multiplier)
+        if args.sensor_quality_availability_floor is not None:
+            quality["availability_floor"] = float(args.sensor_quality_availability_floor)
+        if quality:
+            metadata["sensor_quality"] = quality
+            metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
 
 

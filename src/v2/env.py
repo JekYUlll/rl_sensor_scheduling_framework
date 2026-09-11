@@ -37,6 +37,7 @@ class WarmupEnvConfig:
     energy_capacity: float = 0.0
     initial_energy: float = 0.0
     harvest_per_step: float = 0.0
+    energy_harvest_column: str | None = None
     reserve_energy: float = 0.0
     energy_step_hours: float = 1.0
     fixed_external_power_w: float = 0.0
@@ -89,6 +90,7 @@ class WarmupEnvConfig:
     dynamic_resource_unmapped_power_w: float | None = None
     dynamic_resource_budget_w: float | None = None
     include_dynamic_resource_state: bool = False
+    energy_use_dynamic_resource_cost: bool = False
 
 
 class WarmupSchedulingEnv:
@@ -132,6 +134,14 @@ class WarmupSchedulingEnv:
             external_values = truth_df[cfg.fixed_external_power_column].to_numpy(dtype=float)
             if np.any(~np.isfinite(external_values)) or np.any(external_values < 0.0):
                 raise ValueError("fixed external power column must contain finite non-negative values")
+        if cfg.energy_harvest_column is not None:
+            if cfg.energy_harvest_column not in truth_df.columns:
+                raise ValueError(
+                    f"truth_df is missing energy harvest column: {cfg.energy_harvest_column}"
+                )
+            harvest_values = truth_df[cfg.energy_harvest_column].to_numpy(dtype=float)
+            if np.any(~np.isfinite(harvest_values)) or np.any(harvest_values < 0.0):
+                raise ValueError("energy harvest column must contain finite non-negative values")
         if cfg.dynamic_resource_fixed_power_w < 0.0 or not np.isfinite(float(cfg.dynamic_resource_fixed_power_w)):
             raise ValueError("dynamic_resource_fixed_power_w must be finite and non-negative")
         if cfg.dynamic_resource_unmapped_power_w is not None and (
@@ -210,6 +220,11 @@ class WarmupSchedulingEnv:
         self.fixed_external_power_values = (
             self.truth_df[cfg.fixed_external_power_column].to_numpy(dtype=float)
             if cfg.fixed_external_power_column is not None
+            else np.zeros(len(self.truth_df), dtype=float)
+        )
+        self.energy_harvest_values = (
+            self.truth_df[cfg.energy_harvest_column].to_numpy(dtype=float)
+            if cfg.energy_harvest_column is not None
             else np.zeros(len(self.truth_df), dtype=float)
         )
         dynamic_columns = {str(sensor_id): str(column) for sensor_id, column in cfg.dynamic_resource_power_columns}
@@ -570,9 +585,11 @@ class WarmupSchedulingEnv:
         energy_before = float(self.current_energy)
         energy_harvest = self._energy_harvest()
         external_power_w = self._fixed_external_power_w()
-        energy_consumption_wh = (
-            (steady_power + external_power_w) * float(self.cfg.energy_step_hours)
-        )
+        if bool(self.cfg.energy_use_dynamic_resource_cost) and self.dynamic_resource_budget_w is not None:
+            load_power_w = float(self.dynamic_resource_cost(selected_mask))
+        else:
+            load_power_w = steady_power + external_power_w
+        energy_consumption_wh = load_power_w * float(self.cfg.energy_step_hours)
         energy_after_unclipped = energy_before + energy_harvest - energy_consumption_wh
         energy_deficit = max(0.0, float(self.cfg.reserve_energy) - energy_after_unclipped) if self._energy_enabled() else 0.0
         if self._energy_enabled():
@@ -641,6 +658,7 @@ class WarmupSchedulingEnv:
             "peak_power": peak_power,
             "fixed_external_power_w": float(external_power_w),
             "energy_consumption_wh": float(energy_consumption_wh),
+            "energy_load_power_w": float(load_power_w),
             "soc": float(self.current_energy),
             "soc_ratio": self._soc_ratio(),
             "energy_before": float(energy_before),
@@ -907,12 +925,20 @@ class WarmupSchedulingEnv:
             return 0.0
         capacity = max(float(self.cfg.energy_capacity), 1e-6)
         initial = float(self.cfg.initial_energy)
-        if initial <= 0.0:
+        # A trace-backed account may legitimately start at zero SOC. Preserve
+        # the historical zero-means-full default only for the constant-harvest
+        # compatibility path.
+        if initial <= 0.0 and self.cfg.energy_harvest_column is None:
             initial = capacity
         return float(np.clip(initial, 0.0, capacity))
 
     def _energy_harvest(self) -> float:
-        return float(max(0.0, float(self.cfg.harvest_per_step))) if self._energy_enabled() else 0.0
+        if not self._energy_enabled():
+            return 0.0
+        if self.cfg.energy_harvest_column is not None:
+            idx = int(np.clip(self.current_idx, 0, len(self.energy_harvest_values) - 1))
+            return float(max(0.0, self.energy_harvest_values[idx]))
+        return float(max(0.0, float(self.cfg.harvest_per_step)))
 
     def _fixed_external_power_w(self) -> float:
         if not self._energy_enabled():

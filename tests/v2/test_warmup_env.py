@@ -101,6 +101,25 @@ def test_dynamic_resource_envelope_filters_candidate_masks() -> None:
     assert env._state().shape[0] > len(STATE_COLUMNS) * 2
 
 
+def test_trace_backed_zero_soc_is_not_replaced_by_legacy_full_capacity_default() -> None:
+    truth = _truth(2).assign(energy_harvest_wh=[0.0, 0.0])
+    env = WarmupSchedulingEnv(
+        truth,
+        _sensors(),
+        PowerConstraintsV2(max_active=3, per_step_budget=10.0, startup_peak_budget=10.0),
+        WarmupEnvConfig(
+            state_columns=STATE_COLUMNS,
+            episode_len=2,
+            energy_account_enabled=True,
+            energy_capacity=100.0,
+            initial_energy=0.0,
+            energy_harvest_column="energy_harvest_wh",
+        ),
+    )
+    env.reset()
+    assert env.current_energy == 0.0
+
+
 def test_dynamic_resource_guard_can_break_dwell_when_locked_action_expires() -> None:
     truth = _truth(4).assign(
         resource_met=[0.5, 2.0, 2.0, 2.0],
