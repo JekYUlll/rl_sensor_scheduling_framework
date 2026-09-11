@@ -21,12 +21,18 @@ from v2.sensor_spec import load_sensor_specs  # noqa: E402
 from v2.warmup_state import SensorRuntime  # noqa: E402
 
 
-def feasible_masks(sensors: list, *, budget: float, startup_budget: float) -> np.ndarray:
+def feasible_masks(
+    sensors: list,
+    *,
+    budget: float,
+    startup_budget: float,
+    required_sensor_ids: tuple[str, ...] = (),
+) -> np.ndarray:
     constraints = PowerConstraintsV2(
         max_active=None,
         per_step_budget=float(budget),
         startup_peak_budget=float(startup_budget),
-        required_sensor_ids=(),
+        required_sensor_ids=tuple(required_sensor_ids),
         coverage_groups=(),
     )
     projector = PowerProjector(sensors, constraints)
@@ -48,6 +54,12 @@ def main() -> None:
     )
     parser.add_argument("--budget", type=float, default=1.35)
     parser.add_argument("--startup-peak-budget", type=float, default=1.65)
+    parser.add_argument(
+        "--required-sensors",
+        nargs="*",
+        default=(),
+        help="Sensor IDs that must be present in every projected candidate mask.",
+    )
     parser.add_argument("--output", default=None)
     args = parser.parse_args()
 
@@ -56,6 +68,7 @@ def main() -> None:
         sensors,
         budget=float(args.budget),
         startup_budget=float(args.startup_peak_budget),
+        required_sensor_ids=tuple(str(item) for item in args.required_sensors),
     )
     costs = np.asarray([float(spec.power_cost) for spec in sensors], dtype=float)
     peaks = np.asarray([float(max(spec.power_cost, spec.startup_peak_power)) for spec in sensors], dtype=float)
@@ -69,6 +82,7 @@ def main() -> None:
         "startup_costs": peaks.tolist(),
         "budget": float(args.budget),
         "startup_peak_budget": float(args.startup_peak_budget),
+        "required_sensor_ids": [str(item) for item in args.required_sensors],
         "candidate_mask_count": int(len(masks)),
         "cardinality_counts": {
             str(key): int(value) for key, value in sorted(Counter(cardinalities.tolist()).items())

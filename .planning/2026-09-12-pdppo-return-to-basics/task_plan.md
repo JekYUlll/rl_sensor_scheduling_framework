@@ -59,6 +59,11 @@ executability, and observability gates then apply.
 - Decide whether the singleton-mask fix belongs in the environment, policy
   collector, or both; do not silently change historical experiment defaults.
 
+Status: implementation audit and local execution-consistency coverage are
+complete. The flexible-subset preflight now accepts explicit required sensors;
+without this argument it could incorrectly count the logger backbone as a
+selectable channel.
+
 ### Phase B: execution-consistent PD-PPO
 
 - Add an opt-in execution-consistent mode.
@@ -80,6 +85,10 @@ executability, and observability gates then apply.
   while changing one mechanism at a time.
 - Evaluate fixed, myopic forecast-greedy, contextual probe, original PD-PPO,
   and execution-consistent PD-PPO before any fresh physical claim.
+
+Status: q=1 regression is running remotely. The entity mask preflight has been
+rerun with the mandatory backbone and yields 16 feasible masks at the current
+fixed-cost budget; subset-level forecast geometry is not yet run.
 
 ### Phase D: physical re-entry gate
 

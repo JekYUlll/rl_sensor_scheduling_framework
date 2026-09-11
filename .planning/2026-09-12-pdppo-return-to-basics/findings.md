@@ -41,3 +41,18 @@ policy-free opportunity gap.
 Continue through the algorithm ladder and execution-consistency audit. Keep the
 entity physical route paused until new system-level telemetry or a documented
 deployment resource trace is available.
+
+## 2026-09-12 execution-consistent q=1 wave
+
+- The local test slice covering custom PPO, warmup/dwell environment behavior,
+  DQN masks, and transition-aware scoring passed (`72 passed`).
+- The q=1 regression is running from an isolated remote source snapshot rather
+  than the dirty historical checkout. It uses the old five-channel geometry
+  with `met_station_core` required and `max_active=2`, so feasible actions are
+  the core plus at most one specialist.
+- The wave uses seed-specific frozen truth copied from existing no-warmup
+  artifacts. It tests algorithmic execution semantics only; its truth source
+  is not being presented as a new deployment or scene-calibration result.
+- A missing helper in the first source snapshot caused a pre-training launch
+  failure and was corrected before the current tmux wave. The failed attempt
+  produced no policy result.
