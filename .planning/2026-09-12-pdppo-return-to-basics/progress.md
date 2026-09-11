@@ -34,6 +34,10 @@
   infeasible under the declared fixed-cost geometry. This is the correct
   entity action surface for the current budget, not an assumed full 32-mask
   surface.
+- The q=1 seed41 training reached 30,720/30,000 timesteps and produced a
+  checkpoint and rollout. Evaluation is still running on the remote CPU path;
+  seeds 42--44 have not started. The live artifact is under
+  `/data/zhangzhuyu/pdppo_return_to_basics/q1_regression_20260912/`.
 
 ## Next action
 
