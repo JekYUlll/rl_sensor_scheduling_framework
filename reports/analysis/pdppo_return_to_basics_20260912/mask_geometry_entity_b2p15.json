@@ -1,0 +1,206 @@
+{
+  "sensor_cfg": "/data/zhangzhuyu/pdppo_return_to_basics/framework_0c2eef0/configs/sensors/windblown_sensors_entity_effective_cost_v1.yaml",
+  "sensor_ids": [
+    "met_station_core",
+    "radiometer_basic",
+    "surface_temp_ir",
+    "laser_disdrometer",
+    "fc4_flux",
+    "cr1000xe_backbone"
+  ],
+  "effective_costs": [
+    0.72,
+    0.68,
+    0.76,
+    0.88,
+    0.82,
+    0.4104
+  ],
+  "startup_costs": [
+    0.84,
+    0.8,
+    0.92,
+    1.08,
+    0.98,
+    0.4104
+  ],
+  "budget": 2.15,
+  "startup_peak_budget": 2.6,
+  "required_sensor_ids": [
+    "cr1000xe_backbone"
+  ],
+  "candidate_mask_count": 16,
+  "cardinality_counts": {
+    "1": 1,
+    "2": 5,
+    "3": 10
+  },
+  "channel_candidate_counts": {
+    "met_station_core": 5,
+    "radiometer_basic": 5,
+    "surface_temp_ir": 5,
+    "laser_disdrometer": 5,
+    "fc4_flux": 5,
+    "cr1000xe_backbone": 16
+  },
+  "all_single_channels_feasible": false,
+  "empty_mask_feasible": false,
+  "full_open_cost": 4.2703999999999995,
+  "full_open_peak": 5.0304,
+  "full_open_feasible": false,
+  "masks": [
+    {
+      "sensor_ids": [
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 1,
+      "steady_cost": 0.4104,
+      "cold_start_cost": 0.4104
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.1303999999999998,
+      "cold_start_cost": 1.2504
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.0904,
+      "cold_start_cost": 1.2104
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "radiometer_basic",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.8104,
+      "cold_start_cost": 2.0504
+    },
+    {
+      "sensor_ids": [
+        "surface_temp_ir",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.1703999999999999,
+      "cold_start_cost": 1.3304
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "surface_temp_ir",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.8904,
+      "cold_start_cost": 2.1704
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "surface_temp_ir",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.8504,
+      "cold_start_cost": 2.1304
+    },
+    {
+      "sensor_ids": [
+        "laser_disdrometer",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.2904,
+      "cold_start_cost": 1.4904000000000002
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "laser_disdrometer",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 2.0103999999999997,
+      "cold_start_cost": 2.3304
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "laser_disdrometer",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.9704000000000002,
+      "cold_start_cost": 2.2904
+    },
+    {
+      "sensor_ids": [
+        "surface_temp_ir",
+        "laser_disdrometer",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 2.0504,
+      "cold_start_cost": 2.4104
+    },
+    {
+      "sensor_ids": [
+        "fc4_flux",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 2,
+      "steady_cost": 1.2304,
+      "cold_start_cost": 1.3904
+    },
+    {
+      "sensor_ids": [
+        "met_station_core",
+        "fc4_flux",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.9504000000000001,
+      "cold_start_cost": 2.2304
+    },
+    {
+      "sensor_ids": [
+        "radiometer_basic",
+        "fc4_flux",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.9104,
+      "cold_start_cost": 2.1904
+    },
+    {
+      "sensor_ids": [
+        "surface_temp_ir",
+        "fc4_flux",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 1.9904000000000002,
+      "cold_start_cost": 2.3104
+    },
+    {
+      "sensor_ids": [
+        "laser_disdrometer",
+        "fc4_flux",
+        "cr1000xe_backbone"
+      ],
+      "cardinality": 3,
+      "steady_cost": 2.1104,
+      "cold_start_cost": 2.4704
+    }
+  ]
+}
