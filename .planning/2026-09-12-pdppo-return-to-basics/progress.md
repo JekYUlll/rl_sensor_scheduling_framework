@@ -38,6 +38,12 @@
   checkpoint and rollout. Evaluation is still running on the remote CPU path;
   seeds 42--44 have not started. The live artifact is under
   `/data/zhangzhuyu/pdppo_return_to_basics/q1_regression_20260912/`.
+- The first q=1 wave completed training but was rejected as a regression
+  result: its final evaluator required event-subtype latent columns absent from
+  the frozen truth files and exited before a valid full summary. A separate
+  reduced wave `pdppo-q1-regression2` now disables subtype targets, retains the
+  execution-consistent flags, and runs seeds 41--44 from the same isolated
+  source snapshot.
 
 ## Next action
 
