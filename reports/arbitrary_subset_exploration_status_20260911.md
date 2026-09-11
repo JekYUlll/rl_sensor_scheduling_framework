@@ -113,3 +113,19 @@ implementation cleanup rather than adding another synthetic coupling.
 Remote execution is currently quiescent. The experiment workspace occupies
 about 1.8 GB under `/data/zhangzhuyu/pdppo_soc_screen_v699`; the account uses
 about 27.9 GB of a 100 GB quota, so no urgent migration or deletion is needed.
+
+## Independent hardware-input audit (2026-09-11)
+
+The available room/freezer acquisition archive was checked as a possible new
+resource input. It covers about 115 hours and contains weather-station battery
+voltage, Parsivel supply voltage, and heater-status/current fields. It does not
+contain system-level current, charging power, battery state, or an Antarctic
+deployment distribution. Nonzero heater states are rare (`74/17,720` rows).
+These records can validate interface fields and device telemetry, but cannot
+justify a synthetic SOC trajectory or persistent heater-duty distribution.
+
+Consequently, no independent physical resource input is currently available
+for a defensible next geometry screen. The branch is scientifically paused at
+the policy-free evidence gate; the next admissible experiment requires a new
+system-level power/SOC measurement or a separately documented deployment
+resource trace.
