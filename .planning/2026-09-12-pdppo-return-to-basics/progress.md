@@ -18,3 +18,10 @@
 
 Add an explicit ladder manifest and run a CPU smoke check with the
 execution-consistent flags before launching any remote experiment.
+
+## Goal transition (2026-09-12)
+
+The prior goal was not marked complete because its physical and policy-evidence
+requirements remain unmet. A new abstract active goal is defined in
+`.planning/GOAL.md`; subsequent planning and execution should use that file
+as the authority while retaining the prior blocked route as evidence.
