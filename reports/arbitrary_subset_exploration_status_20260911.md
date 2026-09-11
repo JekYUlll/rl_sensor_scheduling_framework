@@ -129,3 +129,18 @@ for a defensible next geometry screen. The branch is scientifically paused at
 the policy-free evidence gate; the next admissible experiment requires a new
 system-level power/SOC measurement or a separately documented deployment
 resource trace.
+
+## Existing heater-quality route audit (2026-09-11)
+
+The remaining apparently distinct option was checked against the recorded
+history. The repository already contains the predeclared heater-quality route:
+V673, V685, V686, and the bounded V688 budget correction. These versions
+coupled heater state to measurement quality as well as resource cost and were
+screened without PPO. They produced changing condition-wise winners in some
+seeds, but failed the all-seed operating-value gate; repeated quality-floor or
+budget adjustment is therefore not an admissible continuation.
+
+The current branch has consequently exhausted the justified local physical
+routes. Further progress requires an external change: system-level power/SOC
+telemetry, a documented deployment resource trace, or a newly specified
+hardware measurement model. No additional remote job was launched.
