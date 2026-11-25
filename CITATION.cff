@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "RL Sensor Scheduling Framework"
+abstract: "A research framework for power-constrained online scheduling of multi-sensor observation systems."
+version: "0.1.0"
+date-released: "2026-11-25"
+license: MIT
+repository-code: "https://github.com/JekYUlll/rl_sensor_scheduling_framework"
+authors:
+  - family-names: Zhang
+    given-names: Zhuyu
+keywords:
+  - reinforcement learning
+  - sensor scheduling
+  - power constraints
+  - state estimation
+  - time series forecasting

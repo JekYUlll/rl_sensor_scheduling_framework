@@ -1,0 +1,52 @@
+{
+  "scope": "diagnostic only; final-test action selection or privileged event labels prevent primary use",
+  "posthoc_best_static": {
+    "available_seeds": 22,
+    "wins": 22,
+    "mean_margin": 0.07063478643381754,
+    "median_margin": 0.067670505088137,
+    "minimum_margin": 0.024672700538464,
+    "bootstrap_95_ci": [
+      0.06112734187440071,
+      0.08023610761594449
+    ],
+    "one_sided_sign_test_p": 2.384185791015625e-07
+  },
+  "validation_selected_static_replay": {
+    "available_seeds": 22,
+    "wins": 22,
+    "mean_margin": 0.077757178646797,
+    "median_margin": 0.072565528380054,
+    "minimum_margin": 0.030525547048095,
+    "bootstrap_95_ci": [
+      0.06727335735508125,
+      0.08887563281616499
+    ],
+    "one_sided_sign_test_p": 2.384185791015625e-07
+  },
+  "privileged_event_label_available_seeds": 22,
+  "privileged_event_label_vs_pdppo": {
+    "available_seeds": 22,
+    "wins": 19,
+    "mean_margin": 0.00604918134853932,
+    "median_margin": 0.0042767320093315,
+    "minimum_margin": -0.007229280389159,
+    "bootstrap_95_ci": [
+      0.0034792643818377447,
+      0.008715769889486594
+    ],
+    "one_sided_sign_test_p": 0.0004277229309082031
+  },
+  "privileged_event_label_vs_validation_selected_static_replay": {
+    "available_seeds": 22,
+    "wins": 22,
+    "mean_margin": 0.08380635999533649,
+    "median_margin": 0.08191531539273594,
+    "minimum_margin": 0.03466280539287492,
+    "bootstrap_95_ci": [
+      0.07281574872576356,
+      0.09522726901314581
+    ],
+    "one_sided_sign_test_p": 2.384185791015625e-07
+  }
+}

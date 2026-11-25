@@ -1,0 +1,4 @@
+oracle_checkpoint: "reports/v2_forecast_eval_grid_prior_kl1/budget1p70_seed41/v2_tcn_oracle.pt"
+paper_table_dir: "reports/v2_paper_tables_prior_kl1"
+paper_grid_dir: "reports/v2_forecast_eval_grid_prior_kl1"
+paper_asset_dir: "reports/v2_paper_assets_prior_kl1"

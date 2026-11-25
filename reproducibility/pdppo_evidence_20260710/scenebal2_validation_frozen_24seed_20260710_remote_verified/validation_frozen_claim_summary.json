@@ -1,0 +1,98 @@
+{
+  "metric": "equal-weight event-subtype macro loss normalized by validation static-candidate medians",
+  "normalizer_source": "validation_static_candidates.csv",
+  "primary_reference": "validation_selected_static",
+  "seed_count": 24,
+  "bootstrap_samples": 100000,
+  "bootstrap_seed": 20260710,
+  "pdppo_vs_validation_selected_static": {
+    "available_seeds": 24,
+    "wins": 24,
+    "mean_margin": 0.07781980193560041,
+    "median_margin": 0.074435677688311,
+    "minimum_margin": 0.03153212714167,
+    "bootstrap_95_ci": [
+      0.06646815352395163,
+      0.08960818659756087
+    ],
+    "one_sided_sign_test_p": 5.960464477539063e-08
+  },
+  "pdppo_vs_aoi": {
+    "available_seeds": 24,
+    "wins": 24,
+    "mean_margin": 0.15792824623667986,
+    "median_margin": 0.13646611149231203,
+    "minimum_margin": 0.084341975747064,
+    "bootstrap_95_ci": [
+      0.13754438858929904,
+      0.18033321040154626
+    ],
+    "one_sided_sign_test_p": 5.960464477539063e-08
+  },
+  "pdppo_vs_round_robin": {
+    "available_seeds": 24,
+    "wins": 24,
+    "mean_margin": 0.15855252575973988,
+    "median_margin": 0.1305458706487005,
+    "minimum_margin": 0.075575382351406,
+    "bootstrap_95_ci": [
+      0.13702075849271902,
+      0.1815187482818947
+    ],
+    "one_sided_sign_test_p": 5.960464477539063e-08
+  },
+  "pdppo_vs_random": {
+    "available_seeds": 24,
+    "wins": 24,
+    "mean_margin": 0.16005000732184202,
+    "median_margin": 0.15247325576982101,
+    "minimum_margin": 0.083389245796898,
+    "bootstrap_95_ci": [
+      0.13811548814538813,
+      0.18324617905241708
+    ],
+    "one_sided_sign_test_p": 5.960464477539063e-08
+  },
+  "pdppo_vs_posthoc_best_rule_dynamic": {
+    "available_seeds": 24,
+    "wins": 24,
+    "mean_margin": 0.1498321826303212,
+    "median_margin": 0.1282560910763545,
+    "minimum_margin": 0.075575382351406,
+    "bootstrap_95_ci": [
+      0.12980989889684608,
+      0.17109230624595306
+    ],
+    "one_sided_sign_test_p": 5.960464477539063e-08
+  },
+  "step_pdppo_vs_validation_selected_static": {
+    "available_seeds": 24,
+    "wins": 24,
+    "mean_margin": 0.1530814533034572,
+    "median_margin": 0.106010207286317,
+    "minimum_margin": 0.031445452018488,
+    "bootstrap_95_ci": [
+      0.11413637222246667,
+      0.1971416067172944
+    ],
+    "one_sided_sign_test_p": 5.960464477539063e-08
+  },
+  "behavior_available_seeds": 24,
+  "behavior_all_zero_abort": true,
+  "behavior_mid_duty_sensor_range": [
+    3.0,
+    4.0
+  ],
+  "behavior_always_on_sensor_range": [
+    1.0,
+    1.0
+  ],
+  "behavior_always_off_sensor_range": [
+    1.0,
+    1.0
+  ],
+  "behavior_switches_per_step_range": [
+    0.003337403337403,
+    0.006186406186406
+  ]
+}

@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+"""Run the exact-geometry receding diagnostic for one frozen V32 run."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+
+def append_sensor_quality_args(command: list[str], metadata: dict[str, object]) -> None:
+    quality = dict(metadata.get("sensor_quality") or {})
+    quality_columns = list(quality.get("columns") or [])
+    if not quality_columns:
+        return
+    command.extend(["--sensor-quality-columns", *map(str, quality_columns)])
+    command.extend([
+        "--sensor-quality-max-noise-multiplier",
+        str(quality.get("max_noise_multiplier", 1.0)),
+        "--sensor-quality-availability-floor",
+        str(quality.get("availability_floor", 1.0)),
+    ])
+
+
+def append_alert_context_args(command: list[str], metadata: dict[str, object]) -> None:
+    alert = dict(metadata.get("agent_alert_context") or {})
+    columns = list(alert.get("columns") or [])
+    if columns:
+        command.extend(["--alert-context-columns", *map(str, columns)])
+    command.extend([
+        "--alert-context-threshold",
+        str(alert.get("threshold", 0.5)),
+        "--alert-context-trend-lookback",
+        str(alert.get("trend_lookback", 6)),
+    ])
+    command.append(
+        "--include-alert-context-features"
+        if bool(alert.get("include_alert_context_features", False))
+        else "--no-include-alert-context-features"
+    )
+    command.append(
+        "--include-event-flag-in-state"
+        if bool(alert.get("include_event_flag_in_state", False))
+        else "--no-include-event-flag-in-state"
+    )
+
+
+def append_agent_context_args(command: list[str], metadata: dict[str, object]) -> None:
+    columns = list(metadata.get("agent_context_columns") or [])
+    if not columns:
+        return
+    command.extend(["--agent-context-columns", *map(str, columns)])
+    normalization = dict(metadata.get("agent_context_normalization") or {})
+    mean = list(normalization.get("mean") or [])
+    std = list(normalization.get("std") or [])
+    if mean or std:
+        if len(mean) != len(columns) or len(std) != len(columns):
+            raise ValueError("agent-context normalization metadata is incomplete")
+        command.extend(["--agent-context-normalization-mean", *map(str, mean)])
+        command.extend(["--agent-context-normalization-std", *map(str, std)])
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run-dir", required=True, type=Path)
+    parser.add_argument("--output-subdir", default="receding_oracle_l8_scene_gate")
+    parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--receding-oracle-lookahead-steps",
+        type=int,
+        default=None,
+        help="Override the recorded forecast horizon for an offline receding diagnostic.",
+    )
+    parser.add_argument(
+        "--partition",
+        choices=("rl_train", "validation", "final_test"),
+        default="final_test",
+    )
+    args = parser.parse_args()
+
+    run = args.run_dir.resolve()
+    root = Path(__file__).resolve().parents[1]
+    metadata = json.loads((run / "v2_ppo_metadata.json").read_text())
+    manifest = json.loads((run / "split_protocol_manifest.json").read_text())
+    geometry = json.loads((run / "action_geometry.json").read_text())
+    local_truth_path = run / "truth_v31_split.csv"
+    metadata_truth_path = Path(str(metadata.get("truth_csv") or ""))
+    truth_path = local_truth_path if local_truth_path.is_file() else metadata_truth_path
+    if not truth_path.is_file():
+        raise FileNotFoundError(
+            "Expected a local truth_v31_split.csv or a valid truth_csv path in run metadata"
+        )
+    if args.partition == "rl_train":
+        start_indices = manifest["rl_train"]["candidate_prior_starts"]
+        eval_steps = manifest["rl_train"]["candidate_prior_steps"]
+    elif args.partition == "validation":
+        start_indices = manifest["validation"]["static_selection_starts"]
+        eval_steps = manifest["validation"]["static_selection_steps"]
+    else:
+        start_indices = manifest["final_test"]["eval_starts"]
+        eval_steps = manifest["final_test"]["eval_steps"]
+    command = [
+        sys.executable,
+        str(root / "scripts/49_v31_physical_event_oracle_lift.py"),
+        "--truth-csv", str(truth_path),
+        "--out-dir", str(run / args.output_subdir),
+        "--sensor-cfg", str(geometry["sensor_cfg"]),
+        "--budget", str(geometry["budget"]),
+        "--startup-peak-budget", str(geometry["startup_peak_budget"]),
+        "--max-active", str(len(geometry["sensor_ids"])),
+        "--required-sensors",
+        "--target-weights", *map(str, metadata["target_weights"]),
+        "--target-scales", *map(str, metadata["target_scales"]),
+        "--lookback", str(metadata["lookback"]),
+        "--horizon", str(metadata["horizon"]),
+        "--oracle-type", "tcn",
+        "--oracle-path", str(run / "v2_tcn_oracle.pt"),
+        "--oracle-inference-device", args.device,
+        "--oracle-loss-clip", str(manifest["ppo_controls"]["oracle_loss_clip"]),
+        "--freq-s", str(metadata["freq_s"]),
+        "--eval-steps", str(eval_steps),
+        "--eval-rollouts", str(metadata["eval_rollouts"]),
+        "--eval-start-indices", *map(str, start_indices),
+        "--env-min-dwell-steps", str(metadata["reward_shaping"]["min_dwell_steps"]),
+        "--schedule-diagnostics",
+        "--schedule-family", "receding_oracle",
+        "--receding-oracle-lookahead-steps",
+        str(
+            metadata["horizon"]
+            if args.receding_oracle_lookahead_steps is None
+            else args.receding_oracle_lookahead_steps
+        ),
+        "--seed", str(manifest["seed"]),
+    ]
+    if metadata.get("state_columns"):
+        command.extend(["--state-columns", *map(str, metadata["state_columns"])])
+    append_agent_context_args(command, metadata)
+    append_sensor_quality_args(command, metadata)
+    append_alert_context_args(command, metadata)
+    shaping = dict(metadata.get("reward_shaping") or {})
+    command.append(
+        "--common-random-numbers"
+        if bool(shaping.get("common_random_numbers", False))
+        else "--no-common-random-numbers"
+    )
+    subprocess.run(command, cwd=root, check=True)
+
+
+if __name__ == "__main__":
+    main()

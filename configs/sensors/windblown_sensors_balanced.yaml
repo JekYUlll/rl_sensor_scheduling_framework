@@ -1,0 +1,99 @@
+sensors:
+  # Weakly heterogeneous v2 benchmark regime. Powers are kept in the same
+  # low-power deployment range so scheduling is driven by forecast value,
+  # warmup, and event context rather than by an obvious cheap/expensive split.
+  - sensor_id: met_station_core
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+      - air_temperature_c
+      - relative_humidity
+      - air_pressure_pa
+    refresh_interval: 1
+    power_cost: 0.42
+    startup_peak_power: 0.55
+    warmup_steps: 0
+    noise_std:
+      wind_speed_ms: 0.55
+      wind_direction_deg: 6.00
+      air_temperature_c: 0.45
+      relative_humidity: 1.00
+      air_pressure_pa: 15.0
+
+  - sensor_id: radiometer_basic
+    variables:
+      - solar_radiation_wm2
+    refresh_interval: 1
+    power_cost: 0.36
+    startup_peak_power: 0.48
+    warmup_steps: 0
+    noise_std:
+      solar_radiation_wm2: 8.0
+
+  - sensor_id: surface_temp_ir
+    variables:
+      - snow_surface_temperature_c
+    refresh_interval: 1
+    power_cost: 0.38
+    startup_peak_power: 0.50
+    warmup_steps: 1
+    noise_std:
+      snow_surface_temperature_c: 0.08
+
+  - sensor_id: ultrasonic_anemometer_hd
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+    refresh_interval: 1
+    power_cost: 0.58
+    startup_peak_power: 0.78
+    warmup_steps: 1
+    noise_std:
+      wind_speed_ms: 0.04
+      wind_direction_deg: 0.40
+
+  - sensor_id: shielded_thermo_hygro
+    variables:
+      - air_temperature_c
+      - relative_humidity
+    refresh_interval: 2
+    power_cost: 0.52
+    startup_peak_power: 0.70
+    warmup_steps: 1
+    noise_std:
+      air_temperature_c: 0.04
+      relative_humidity: 0.40
+
+  - sensor_id: snow_particle_counter
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+    refresh_interval: 2
+    power_cost: 0.68
+    startup_peak_power: 0.92
+    warmup_steps: 2
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.08
+      snow_particle_mean_velocity_ms: 0.20
+
+  - sensor_id: laser_disdrometer
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+    refresh_interval: 4
+    power_cost: 0.82
+    startup_peak_power: 1.15
+    warmup_steps: 4
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.03
+      snow_particle_mean_velocity_ms: 0.08
+
+  - sensor_id: fc4_flux
+    variables:
+      - snow_mass_flux_kg_m2_s
+    refresh_interval: 4
+    power_cost: 0.86
+    startup_peak_power: 1.20
+    warmup_steps: 5
+    noise_std:
+      snow_mass_flux_kg_m2_s: 3.0e-06

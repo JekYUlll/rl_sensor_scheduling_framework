@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "purpose": "frequency-scaled effective-cost geometry screen; not installed telemetry",
+  "base_reference": "configs/sensors/windblown_sensors_physical_power_v1.yaml",
+  "sampling_frequency_is_action": false,
+  "development_effective_budget": 2.15,
+  "mandatory_backbone": {
+    "channel_id": "cr1000xe_backbone",
+    "steady_power_w": 0.4104,
+    "startup_peak_power_w": 0.4104
+  },
+  "channels": [
+    {"channel_id": "met_station_core", "base_power_w": 0.30, "frequency_multiplier": 2.40, "effective_cost": 0.72, "startup_cost": 0.84},
+    {"channel_id": "radiometer_basic", "base_power_w": 0.36, "frequency_multiplier": 1.89, "effective_cost": 0.68, "startup_cost": 0.80},
+    {"channel_id": "surface_temp_ir", "base_power_w": 0.0156, "frequency_multiplier": 48.72, "effective_cost": 0.76, "startup_cost": 0.92},
+    {"channel_id": "laser_disdrometer", "base_power_w": 1.50, "frequency_multiplier": 0.587, "effective_cost": 0.88, "startup_cost": 1.08},
+    {"channel_id": "fc4_flux", "base_power_w": 0.06, "frequency_multiplier": 13.67, "effective_cost": 0.82, "startup_cost": 0.98}
+  ],
+  "notes": [
+    "The multipliers encode fixed within-run acquisition/interface duty and are not selectable by the policy.",
+    "The screen tests resource geometry only; it is not a claim about installed wattage.",
+    "The same six physical channels and truth variables are retained; only effective resource accounting changes."
+  ]
+}

@@ -1,0 +1,50 @@
+env_name: windblown
+horizon: 2000
+base_freq_s: 1
+start_timestamp: "2026-01-01 00:00:00"
+state_columns:
+  - wind_speed_ms
+  - wind_direction_deg
+  - air_temperature_c
+  - relative_humidity
+  - air_pressure_pa
+  - solar_radiation_wm2
+  - snow_surface_temperature_c
+  - snow_particle_mean_diameter_mm
+  - snow_particle_mean_velocity_ms
+  - snow_mass_flux_kg_m2_s
+event_column: event_flag
+event_source_column: snow_mass_flux_kg_m2_s
+event_quantile: 0.9
+selector_mode: online_projector
+reward_target_columns:
+  - air_temperature_c
+  - snow_surface_temperature_c
+  - wind_speed_ms
+  - wind_direction_deg
+  - solar_radiation_wm2
+  - snow_particle_mean_diameter_mm
+  - snow_particle_mean_velocity_ms
+  - snow_mass_flux_kg_m2_s
+forecast_target_columns:
+  - air_temperature_c
+  - snow_surface_temperature_c
+  - wind_speed_ms
+  - wind_dir_sin
+  - wind_dir_cos
+  - solar_radiation_wm2
+  - snow_particle_mean_diameter_mm
+  - snow_mass_flux_kg_m2_s
+  - snow_particle_mean_velocity_ms
+storm_transition:
+  p01: 0.02
+  p10: 0.04
+noise:
+  wind_speed: 0.4
+  temperature: 0.2
+  humidity: 0.8
+  radiation: 18.0
+  surface_temperature: 0.15
+  diameter: 0.03
+  particle_velocity: 0.08
+  flux: 2.0e-6

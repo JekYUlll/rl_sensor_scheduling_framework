@@ -1,0 +1,75 @@
+{
+  "version": "heater_quality_relation_v2",
+  "description": "Predeclared windblown-snow icing-exposure relation with heater-dependent channel quality.",
+  "risk_rule": {
+    "event_column": "storm_flag",
+    "air_temperature_max_c": -5.0,
+    "dew_point_margin_max_c": 1.0,
+    "snow_surface_temperature_max_c": -5.0
+  },
+  "channels": {
+    "met_station_core": {
+      "heater_column": "resource_heater_on_met_station_core",
+      "heated_quality": 1.0,
+      "risk_quality": {
+        "storm": 0.35
+      },
+      "quality_columns": [
+        "agent_context_quality_met_station_core"
+      ]
+    },
+    "laser_disdrometer": {
+      "heater_column": "resource_heater_on_laser_disdrometer",
+      "heated_quality": 1.0,
+      "risk_quality": {
+        "storm": 0.25
+      },
+      "quality_columns": [
+        "agent_context_quality_laser_disdrometer"
+      ]
+    },
+    "radiometer_basic": {
+      "heater_column": null,
+      "heated_quality": 1.0,
+      "risk_quality": {
+        "storm": 0.75
+      },
+      "quality_columns": [
+        "agent_context_quality_radiometer_basic"
+      ]
+    },
+    "surface_temp_ir": {
+      "heater_column": null,
+      "heated_quality": 1.0,
+      "risk_quality": {
+        "storm": 0.8
+      },
+      "quality_columns": [
+        "agent_context_quality_surface_temp_ir"
+      ]
+    },
+    "fc4_flux": {
+      "heater_column": null,
+      "heated_quality": 1.0,
+      "risk_quality": {
+        "storm": 0.95
+      },
+      "quality_columns": [
+        "agent_context_quality_fc4_flux"
+      ]
+    },
+    "cr1000xe_backbone": {
+      "heater_column": null,
+      "heated_quality": 1.0,
+      "risk_quality": {
+        "storm": 1.0
+      },
+      "quality_columns": [
+        "agent_context_quality_cr1000xe_backbone"
+      ]
+    }
+  },
+  "risk_columns": {
+    "storm": "storm_flag"
+  }
+}

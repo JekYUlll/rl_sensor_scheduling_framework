@@ -1,0 +1,9 @@
+# Matched learned-policy summary
+
+Positive margins mean the corrected forecast-reward PPO has lower held-out loss than masked Double-DQN.
+The collector verifies identical truth, frozen evaluator, candidate-mask count, final starts, exact-event exclusion, and fixed-schedule replay scores.
+The same action-trace complexity audit is reported for both learned policies; it is descriptive for the DQN baseline rather than a prerequisite for retaining it.
+
+| n_seeds | ppo_step_wins_vs_dqn | ppo_macro_wins_vs_dqn | step_margin_dqn_minus_ppo_mean | step_margin_ci95_low | step_margin_ci95_high | macro_margin_dqn_minus_ppo_mean | macro_margin_ci95_low | macro_margin_ci95_high | ppo_macro_wins_vs_static | dqn_macro_wins_vs_static | ppo_warmup_abort_total | dqn_warmup_abort_total | ppo_behavior_gate_passes | dqn_behavior_gate_passes |
+| ------- | -------------------- | --------------------- | ------------------------------ | -------------------- | --------------------- | ------------------------------- | --------------------- | ---------------------- | ------------------------ | ------------------------ | ---------------------- | ---------------------- | ------------------------ | ------------------------ |
+| 24      | 23                   | 24                    | 0.14077500248487243            | 0.10412918504985057  | 0.1787481113463476    | 0.06971894530636462             | 0.053915812540867636  | 0.08540628443987977    | 24                       | 12                       | 0                      | 0                      | 24                       | 21                       |

@@ -1,0 +1,3 @@
+phase: phase1_full
+budgets: [1.5, 2.0, 2.5]
+max_active: [1, 2, 3]

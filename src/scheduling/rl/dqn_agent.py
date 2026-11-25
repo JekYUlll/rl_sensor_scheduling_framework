@@ -1,0 +1,156 @@
+from __future__ import annotations
+
+from typing import Any
+
+import numpy as np
+import torch
+from torch import nn
+
+from scheduling.rl.epsilon_scheduler import LinearEpsilonScheduler
+from scheduling.rl.q_network import QNetwork
+from scheduling.rl.replay_buffer import ReplayBuffer
+
+
+class RunningRewardNormalizer:
+    """Online Welford mean/variance normalizer for reward signals."""
+
+    def __init__(self, clip: float = 10.0, enabled: bool = True) -> None:
+        self.mean = 0.0
+        self.var = 1.0
+        self.count = 0
+        self.clip = clip
+        self.enabled = enabled
+
+    def update_and_normalize(self, r: float) -> float:
+        if not self.enabled:
+            return r
+        self.count += 1
+        delta = r - self.mean
+        self.mean += delta / self.count
+        self.var = self.var + (delta * (r - self.mean) - self.var) / max(self.count, 1)
+        std = max(self.var ** 0.5, 1e-6)
+        return float(np.clip((r - self.mean) / std, -self.clip, self.clip))
+
+
+class DQNAgent:
+    def __init__(self, state_dim: int, action_dim: int, cfg: dict, device: str | None = None) -> None:
+        hidden_dims = cfg.get("network", {}).get("hidden_dims", [128, 128])
+        train_cfg = cfg.get("training", {})
+        expl_cfg = cfg.get("exploration", {})
+
+        resolved_device = device or str(cfg.get("device", "cpu"))
+        if resolved_device == "auto":
+            resolved_device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device(resolved_device)
+        self.action_dim = int(action_dim)
+        self.q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
+        self.target_q = QNetwork(state_dim, action_dim, hidden_dims).to(self.device)
+        self.target_q.load_state_dict(self.q.state_dict())
+
+        self.gamma = float(train_cfg.get("gamma", 0.99))
+        self.batch_size = int(train_cfg.get("batch_size", 64))
+        self.warmup_steps = int(train_cfg.get("warmup_steps", 500))
+        self.target_update_interval = int(train_cfg.get("target_update_interval", 200))
+        self.train_interval = int(train_cfg.get("train_interval", 1))
+        self.grad_clip = float(train_cfg.get("grad_clip", 5.0))
+
+        lr = float(train_cfg.get("lr", 1e-3))
+        self.optimizer = torch.optim.Adam(self.q.parameters(), lr=lr)
+        self.loss_fn = nn.SmoothL1Loss()
+
+        replay_size = int(train_cfg.get("replay_size", 50000))
+        self.replay = ReplayBuffer(replay_size)
+        self.eps = LinearEpsilonScheduler(
+            eps_start=float(expl_cfg.get("eps_start", 1.0)),
+            eps_end=float(expl_cfg.get("eps_end", 0.05)),
+            decay_steps=int(expl_cfg.get("eps_decay_steps", 10000)),
+        )
+        norm_cfg = cfg.get("reward_normalization", {})
+        self.reward_normalizer = RunningRewardNormalizer(
+            clip=float(norm_cfg.get("clip", 10.0)),
+            enabled=bool(norm_cfg.get("enabled", True)),
+        )
+        self.total_steps = 0
+        self._ep_q_vals: list[float] = []
+
+    def _resolve_feasible(self, feasible_action_ids: list[int] | None) -> list[int]:
+        if feasible_action_ids:
+            return [int(aid) for aid in feasible_action_ids]
+        return list(range(self.action_dim))
+
+    def act(self, state_vec: np.ndarray, greedy: bool = False, feasible_action_ids: list[int] | None = None) -> int:
+        feasible = self._resolve_feasible(feasible_action_ids)
+        if not feasible:
+            return 0
+        epsilon = 0.0 if greedy else self.eps.value(self.total_steps)
+        if np.random.rand() < epsilon:
+            return int(np.random.choice(feasible))
+        with torch.no_grad():
+            s = torch.as_tensor(state_vec, dtype=torch.float32, device=self.device).unsqueeze(0)
+            qv = self.q(s).squeeze(0)
+            feasible_tensor = torch.as_tensor(feasible, dtype=torch.int64, device=self.device)
+            feasible_q = qv.index_select(0, feasible_tensor)
+            best_idx = int(torch.argmax(feasible_q).item())
+            if not greedy:
+                self._ep_q_vals.extend(feasible_q.cpu().tolist())
+            return int(feasible[best_idx])
+
+    def get_q_stats(self) -> dict[str, float]:
+        if not self._ep_q_vals:
+            return {"q_mean": float("nan"), "q_max": float("nan"), "q_entropy": float("nan")}
+        arr = np.array(self._ep_q_vals, dtype=np.float64)
+        shifted = arr - arr.max()
+        probs = np.exp(shifted) / np.exp(shifted).sum()
+        entropy = float(-np.sum(probs * np.log(probs + 1e-9)))
+        result = {"q_mean": float(arr.mean()), "q_max": float(arr.max()), "q_entropy": entropy}
+        self._ep_q_vals.clear()
+        return result
+
+    def observe(
+        self,
+        state: np.ndarray,
+        action: int,
+        reward: float,
+        next_state: np.ndarray,
+        done: bool,
+    ) -> dict[str, float | None]:
+        reward = self.reward_normalizer.update_and_normalize(reward)
+        self.replay.push(state, action, reward, next_state, done)
+        self.total_steps += 1
+        info: dict[str, float | None] = {"loss": None}
+        if self.total_steps % self.train_interval == 0:
+            loss = self._train_step()
+            if loss is not None:
+                info["loss"] = loss
+        if self.total_steps % self.target_update_interval == 0:
+            self.target_q.load_state_dict(self.q.state_dict())
+        return info
+
+    def _train_step(self) -> float | None:
+        if len(self.replay) < max(self.batch_size, self.warmup_steps):
+            return None
+        s, a, r, ns, d = self.replay.sample(self.batch_size)
+        s = torch.as_tensor(s, dtype=torch.float32, device=self.device)
+        a = torch.as_tensor(a, dtype=torch.int64, device=self.device).unsqueeze(1)
+        r = torch.as_tensor(r, dtype=torch.float32, device=self.device).unsqueeze(1)
+        ns = torch.as_tensor(ns, dtype=torch.float32, device=self.device)
+        d = torch.as_tensor(d, dtype=torch.float32, device=self.device).unsqueeze(1)
+
+        q_pred = self.q(s).gather(1, a)
+        with torch.no_grad():
+            q_next = self.target_q(ns).max(dim=1, keepdim=True).values
+            q_tgt = r + (1.0 - d) * self.gamma * q_next
+
+        loss = self.loss_fn(q_pred, q_tgt)
+        self.optimizer.zero_grad()
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.q.parameters(), max_norm=self.grad_clip)
+        self.optimizer.step()
+        return loss.item()
+
+    def save(self, path: str) -> None:
+        torch.save(self.q.state_dict(), path)
+
+    def load(self, path: str) -> None:
+        self.q.load_state_dict(torch.load(path, map_location=self.device))
+        self.target_q.load_state_dict(self.q.state_dict())

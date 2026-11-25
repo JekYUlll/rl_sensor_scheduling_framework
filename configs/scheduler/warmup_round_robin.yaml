@@ -1,0 +1,2 @@
+scheduler_name: warmup_round_robin
+ready_hold_steps: 2

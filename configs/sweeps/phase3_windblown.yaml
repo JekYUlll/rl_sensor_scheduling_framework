@@ -1,0 +1,3 @@
+phase: phase3_windblown
+env_cfg: configs/env/windblown_case.yaml
+sensor_cfg: configs/sensors/windblown_sensors.yaml

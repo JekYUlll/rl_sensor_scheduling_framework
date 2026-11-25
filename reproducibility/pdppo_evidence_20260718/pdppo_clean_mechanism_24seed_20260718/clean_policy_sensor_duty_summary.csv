@@ -1,0 +1,7 @@
+sensor,seed_count,selection_fraction_mean,selection_fraction_min,selection_fraction_max
+fc4_flux,24,0.15977986653645834,0.058349609375,0.286376953125
+laser_disdrometer,24,0.32305908203125,0.228515625,0.43212890625
+met_station_core,24,1.0,1.0,1.0
+radiometer_basic,24,0.0,0.0,0.0
+shielded_thermo_hygro,24,0.17951456705729166,0.031494140625,0.318115234375
+surface_temp_ir,24,0.337646484375,0.22802734375,0.461669921875

@@ -1,0 +1,50 @@
+{
+  "version": "channel_quality_event_relation_v1",
+  "description": "Synthetic but physically motivated event-specific quality relation for exposed six-channel sensing.",
+  "risk_columns": {
+    "particle": "event_subtype_particle",
+    "flux": "event_subtype_flux",
+    "thermal": "event_subtype_thermal"
+  },
+  "channels": {
+    "met_station_core": {
+      "quality_columns": ["agent_context_quality_met_station_core"],
+      "risk_quality": {"particle": 0.65, "flux": 0.55, "thermal": 0.35},
+      "heater_column": "resource_heater_on_met_station_core",
+      "heated_quality": 1.0
+    },
+    "radiometer_basic": {
+      "quality_columns": ["agent_context_quality_radiometer_basic"],
+      "risk_quality": {"particle": 0.85, "flux": 0.75, "thermal": 0.55},
+      "heater_column": null,
+      "heated_quality": 1.0
+    },
+    "surface_temp_ir": {
+      "quality_columns": ["agent_context_quality_surface_temp_ir"],
+      "risk_quality": {"particle": 0.55, "flux": 0.75, "thermal": 0.85},
+      "heater_column": null,
+      "heated_quality": 1.0
+    },
+    "laser_disdrometer": {
+      "quality_columns": ["agent_context_quality_laser_disdrometer"],
+      "risk_quality": {"particle": 0.25, "flux": 0.55, "thermal": 0.70},
+      "heater_column": "resource_heater_on_laser_disdrometer",
+      "heated_quality": 1.0
+    },
+    "fc4_flux": {
+      "quality_columns": ["agent_context_quality_fc4_flux"],
+      "risk_quality": {"particle": 0.90, "flux": 0.95, "thermal": 0.95},
+      "heater_column": null,
+      "heated_quality": 1.0
+    },
+    "cr1000xe_backbone": {
+      "quality_columns": ["agent_context_quality_cr1000xe_backbone"],
+      "risk_quality": {},
+      "heater_column": null,
+      "heated_quality": 1.0
+    }
+  },
+  "combination_rule": "minimum_active_risk_quality",
+  "targets_changed": false,
+  "event_labels_changed": false
+}

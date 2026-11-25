@@ -1,0 +1,122 @@
+sensors:
+  # v24 event-selective laser calibration.
+  #
+  # Design intent:
+  # - Keep the v23 met/laser exchange power boundary so the known action-2
+  #   shortcut remains infeasible at B=1.10:
+  #   met+radiometer+surface+SPC = 0.33+0.10+0.16+0.52 = 1.11.
+  # - V23 exact cyclic replay won event windows but lost calm windows against
+  #   duty-constrained feasible static. The duty-static policy could still use
+  #   laser as a generally useful non-event particle sensor because normal
+  #   laser noise was very low.
+  # - Make laser event-selective by degrading its non-event particle observation
+  #   noise while preserving low event noise and event availability. This
+  #   should favor policies that save laser for blowing-snow windows rather
+  #   than static/duty projections that use it uniformly.
+  - sensor_id: met_station_core
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+      - air_temperature_c
+      - relative_humidity
+      - air_pressure_pa
+    refresh_interval: 1
+    power_cost: 0.33
+    startup_peak_power: 0.38
+    warmup_steps: 0
+    noise_std:
+      wind_speed_ms: 0.20
+      wind_direction_deg: 2.00
+      air_temperature_c: 0.20
+      relative_humidity: 1.00
+      air_pressure_pa: 15.0
+
+  - sensor_id: radiometer_basic
+    variables:
+      - solar_radiation_wm2
+    refresh_interval: 1
+    power_cost: 0.10
+    startup_peak_power: 0.13
+    warmup_steps: 0
+    noise_std:
+      solar_radiation_wm2: 8.0
+
+  - sensor_id: surface_temp_ir
+    variables:
+      - snow_surface_temperature_c
+    refresh_interval: 1
+    power_cost: 0.16
+    startup_peak_power: 0.20
+    warmup_steps: 1
+    noise_std:
+      snow_surface_temperature_c: 0.20
+
+  - sensor_id: ultrasonic_anemometer_hd
+    variables:
+      - wind_speed_ms
+      - wind_direction_deg
+    refresh_interval: 1
+    power_cost: 0.16
+    startup_peak_power: 0.22
+    warmup_steps: 0
+    noise_std:
+      wind_speed_ms: 0.08
+      wind_direction_deg: 0.80
+
+  - sensor_id: shielded_thermo_hygro
+    variables:
+      - air_temperature_c
+      - relative_humidity
+    refresh_interval: 2
+    power_cost: 0.15
+    startup_peak_power: 0.20
+    warmup_steps: 0
+    noise_std:
+      air_temperature_c: 0.08
+      relative_humidity: 0.40
+
+  - sensor_id: snow_particle_counter
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+    refresh_interval: 3
+    power_cost: 0.52
+    startup_peak_power: 0.68
+    warmup_steps: 2
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.07
+      snow_particle_mean_velocity_ms: 0.20
+    event_noise_std:
+      snow_particle_mean_diameter_mm: 0.80
+      snow_particle_mean_velocity_ms: 2.40
+    event_observation_probability:
+      snow_particle_mean_diameter_mm: 0.12
+      snow_particle_mean_velocity_ms: 0.12
+
+  - sensor_id: laser_disdrometer
+    variables:
+      - snow_particle_mean_diameter_mm
+      - snow_particle_mean_velocity_ms
+    refresh_interval: 2
+    power_cost: 0.67
+    startup_peak_power: 0.98
+    warmup_steps: 3
+    noise_std:
+      snow_particle_mean_diameter_mm: 0.16
+      snow_particle_mean_velocity_ms: 0.45
+    event_noise_std:
+      snow_particle_mean_diameter_mm: 0.08
+      snow_particle_mean_velocity_ms: 0.22
+    event_observation_probability:
+      snow_particle_mean_diameter_mm: 0.88
+      snow_particle_mean_velocity_ms: 0.88
+
+  - sensor_id: fc4_flux
+    variables:
+      - snow_mass_flux_kg_m2_s
+    refresh_interval: 1
+    power_cost: 0.72
+    startup_peak_power: 0.96
+    warmup_steps: 1
+    noise_std:
+      snow_mass_flux_kg_m2_s: 6.0e-07
