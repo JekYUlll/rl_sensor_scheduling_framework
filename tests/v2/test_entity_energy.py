@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.v2.entity_energy import system_power_w, validate_channel_mapping
+from v2.entity_energy import system_power_w, validate_channel_mapping
 
 
 def test_logger_backbone_is_always_included() -> None:
